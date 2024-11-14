@@ -1,6 +1,7 @@
 begin
     include("energies.jl")
-    include("SaveCoordsModule.jl")
+    include("heatmap.jl")
+    include("simulation.jl")
 
     C = circleCell([-1.875,1.875], 0.3)
     cDF = cellToDiscreteCell(C, N) 
@@ -39,30 +40,36 @@ begin
     steps = Δt
 
 
+    # save one simulation as give 
+    createSimGif(  gifPath::String, problem::SDEProblem)
+   
+    sol = solve(prob_cell1, EM(), dt=Δt, saveat=Δt)
+    println("saveat = deltaT: ", length(sol))
 
-    
-    sol = solve(prob_cell1, EM(), dt=Δt, saveat=steps)
-
-    simPath = joinpath(homedir(), "simulations", simulationName)
-    locationsPath = joinpath(simPath, "locations")
-    heatMapsPath = joinpath(simPath, "heatmaps")
-
-    mkpath(simPath) 
-    if !isfile(joinpath(simPath, "Parameters.jl"))
-        cp(joinpath(pwd(), "OneDrive", "Desktop", "BA-Code", "Parameters.jl"), joinpath(simPath, "Parameters.jl"))
-    end 
-    mkpath(locationsPath)
-    mkpath(heatMapsPath)
-
-    for i = 1:NumberOfSimulations
-        sol = solve(prob_cell1, EM(), dt=Δt, saveat=steps)
-        createLocationFile(sol, i)
-    end 
-
-    matrices = makeMatrices()
-
-    createHeatmaps(matrices)
+    sol = solve(prob_cell1, EM(), dt=Δt, saveat=saveAtTimes)
+    println("saveat = saveAtTimes: ", length(sol))
 end 
+
+# HEATMAP stuff begins 
+simPath = joinpath(homedir(), "simulations", simulationName)
+locationsPath = joinpath(simPath, "locations")
+heatMapsPath = joinpath(simPath, "heatmaps")
+
+mkpath(simPath) 
+if !isfile(joinpath(simPath, "Parameters.jl"))
+    cp(joinpath(pwd(), "OneDrive", "Desktop", "BA-Code", "Parameters.jl"), joinpath(simPath, "Parameters.jl"))
+end 
+mkpath(locationsPath)
+mkpath(heatMapsPath)
+
+for i = 1:NumberOfSimulations
+    sol = solve(prob_cell1, EM(), dt=Δt, saveat=steps)
+    createLocationFile(sol, i)
+end 
+
+matrices = makeMatrices()
+
+createHeatmaps(matrices)
 
 
 

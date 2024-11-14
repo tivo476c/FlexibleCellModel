@@ -18,15 +18,18 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 
 # Simulation parameters: 
 
-timeInterval = (0.0, 100.0)
-timeStepSize = 2.0^(-8) 
-lengthOfSolVec = Int((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
+timeInterval = (0.0, 1.0)
+timeStepSize = 2.0e-8 
+lengthOfSolVec = Int((timeInterval[2] - timeInterval[1]) / timeStepSize)    # maybe length is one more
 
-sampleTimeStepSize = floor(lengthOfSolVec/10.0) 
+sampleTimeStepSize = floor(lengthOfSolVec/10.0)                             # sample times for creating heatmaps
 #sampleTimes = collect(0:sampleTimeStepSize:lengthOfSolVec) 
-sampleTimes = collect(0:5000:lengthOfSolVec) 
+sampleTimes = collect(0:5000:lengthOfSolVec)                    
 sampleTimes[1] = 1 
-NumberOfSimulations = 300 
+
+saveAtTimes = 0.5
+
+NumberOfSimulations = 1 
 NumberOfSampleTimes = length(sampleTimes) 
 simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
 

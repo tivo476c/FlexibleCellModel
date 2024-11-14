@@ -1,6 +1,6 @@
 include("cell_functionalities.jl")
-include("BakeTheLists5.jl")
-include("Parameters.jl")
+include("bakeTheLists5.jl")
+include("parameters.jl")
 
 using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 

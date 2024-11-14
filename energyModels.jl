@@ -2,44 +2,6 @@ include("energies.jl")
 
 # One has to set: M, N;  u0, A1, E1, I1, 
 
-# Force FUNCTIONS 
-
-function energies(du, u, p, t)
-
-    # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
-    # J1 is vector of all current interior angles, needed for interior angle Force 
-    
-    
-    F1 = zeros(M*N) 
-    J1 = zeros(M*N) 
-    for i = 1:M 
-        c = DiscreteCell( u[ N*(i-1)+1 :  N*i ], u[ N*(i-1+M)+1 :  N*(i+M)] )
-        F1[(i-1)*N+1 : i*N] = computeEdgeLengths(c)
-        J1[(i-1)*N+1 : i*N] = computeInteriorAngles(c) 
-    end 
-
-    res = zeros(2*N*M)
-
-    # scalings = [area, edge, interiorAngle, overlap]
-    scalings = [70,2,1.5,110]
-    scalings = scalings / norm(scalings,2) * 100
-    #println(scalings)
-    res += scalings[1] * areaForce(u, A1) 
-    #res += scalings[2] * edgeForce(u, E1, F1)
-    #res += scalings[3] * interiorAngleForce(u, I1, J1)
-    res += scalings[4] * overlapForce(u) 
-    #res += boundaryForce(u)
-
-    for i = 1:length(du)
-        du[i] = res[i]
-    end 
-
-    return du
-
-end 
-
-
-
 
 # -------------- animations for area Force 
 

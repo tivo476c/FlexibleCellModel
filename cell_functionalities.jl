@@ -3,10 +3,6 @@ using Plots
 using LinearAlgebra
 using OrdinaryDiffEq
 
-include("Parameters.jl")
-
-
-
 import Base: +
 function +(v::Vector{Float64}, x::Float64)
     res = deepcopy(v) 
