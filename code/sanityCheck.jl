@@ -1,7 +1,55 @@
+include("energies.jl")
+include("heatmap.jl")
+include("parameters.jl")
+
+simPath = joinpath(homedir(), "simulations", simulationName)
+locationsPath = joinpath(simPath, "locations")
+heatMapsPath = joinpath(simPath, "heatmaps")
+
+function createSimGif(  gifPath::String, 
+    sol, 
+    title="", 
+    xlab="x",
+    ylab="y",
+    fps=5,
+    dpi=300)
+
+    # is length(sol) == T / dt or length(sol) == T / saveAtTimes ???
+
+    animSDE = @animate for t = 1:length(sol)
+        time = t[1]
+        # time = t[1]*timeStepSize+1
+        # time = t[1]*saveAtTimes+1
+        X, Y = solutionToCells(sol[time])
+        x = X[1]
+        y = Y[1]
+
+        plot(x, y, 
+            seriestype = :shape, 
+            aspect_ratio = :equal, 
+            opacity = 0.25, 
+            dpi = dpi, 
+            title = title,
+            label = false,
+            xlims = domain,
+            ylims = domain,
+            xguidefontsize=13,
+            xlabel = xlab,
+            ylabel = ylab)
+
+        for i = 2:M 
+            plot!(X[i],Y[i], seriestype=:shape, opacity=.25, label = false)
+        end  
+
+    end
+
+    gif(animSDE, gifPath, fps = fps)
+
+end 
+
 begin
     include("energies.jl")
     include("heatmap.jl")
-    include("simulation.jl")
 
     C = circleCell([-1.875,1.875], 0.3)
     cDF = cellToDiscreteCell(C, N) 
@@ -21,58 +69,50 @@ begin
 
     u0 = zeros(2*M*N) 
 
-
     for i = 0:3
         for j = 0:3
-
             c = moveC(cDF, j*1.25, -i*1.25)
             u0[ 1+N*(j+4i): N*(1+j+4*i)] = c.x
             u0[ 1+N*(j+4i+M): N*(1+j+4*i+M) ] = c.y
-
         end     
     end 
-
 
     tspan = timeInterval
     Δt = timeStepSize
     p = [Δt, D]
     prob_cell1 = SDEProblem( energies, brownian, u0, tspan, p, noise=WienerProcess(0., 0.))        
-    steps = Δt
-
-
+    sol = solve(prob_cell1, RKMil(), dt=timeStepSize)
+    
+    #sol = solve(prob_cell1, EM(), dt=Δt, saveat=Δt)
+    #println("saveat = deltaT: ", length(sol))
+    #sol = solve(prob_cell1, EM(), dt=Δt, saveat=saveAtTimes)
+    #println("saveat = saveAtTimes: ", length(sol))
+    
+    
+    # HEATMAP stuff begins 
+    
+    mkpath(simPath) 
+    if !isfile(joinpath(simPath, "Parameters.jl"))
+        cp(joinpath(homedir(), "OneDrive", "Desktop", "BA-Code", "Parameters.jl"), joinpath(simPath, "Parameters.jl"))
+    end 
+    mkpath(locationsPath)
+    mkpath(heatMapsPath)
+    
     # save one simulation as give 
-    createSimGif(  gifPath::String, problem::SDEProblem)
-   
-    sol = solve(prob_cell1, EM(), dt=Δt, saveat=Δt)
-    println("saveat = deltaT: ", length(sol))
+    gifPath = joinpath(simPath, string(simulationName, ".gif"))
+    createSimGif(gifPath, sol)
+    steps = timeStepSize
+    for i = 1:NumberOfSimulations
+        sol = solve(prob_cell1, RKMil(), dt=Δt)
+        createLocationFile(sol, i)
+    end 
 
-    sol = solve(prob_cell1, EM(), dt=Δt, saveat=saveAtTimes)
-    println("saveat = saveAtTimes: ", length(sol))
-end 
+    matrices = makeMatrices()
 
-# HEATMAP stuff begins 
-simPath = joinpath(homedir(), "simulations", simulationName)
-locationsPath = joinpath(simPath, "locations")
-heatMapsPath = joinpath(simPath, "heatmaps")
-
-mkpath(simPath) 
-if !isfile(joinpath(simPath, "Parameters.jl"))
-    cp(joinpath(pwd(), "OneDrive", "Desktop", "BA-Code", "Parameters.jl"), joinpath(simPath, "Parameters.jl"))
-end 
-mkpath(locationsPath)
-mkpath(heatMapsPath)
-
-for i = 1:NumberOfSimulations
-    sol = solve(prob_cell1, EM(), dt=Δt, saveat=steps)
-    createLocationFile(sol, i)
-end 
-
-matrices = makeMatrices()
-
-createHeatmaps(matrices)
+    createHeatmaps(matrices)
 
 
-
+end
 
 #=
 #------------------------------------- ANIMATION
@@ -123,4 +163,5 @@ end
 =#
 
 gif(animSDE, "findParameters.mp4", fps = 3)
+
 =#

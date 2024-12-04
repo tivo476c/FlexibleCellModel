@@ -382,8 +382,7 @@ cDF2 = moveC(cDF, 2.5, 0.0)
 u0 = [cDF.x; cDF2.x; cDF.y; cDF2.y]
 
 
-tspan = (0.0, 15.0)
-Δt = 1 / 2^(8)
+
 D = 1.5
 p = [Δt, D]
 prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?

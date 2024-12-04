@@ -416,24 +416,39 @@ function collectOverlapIndices(o,c1,c2)
 
 end 
 
-function overlapForceCells(c1, c2)
+function overlapForceCells(c1, c2, overlapForceType=overlapForceType)
+    """
+    Returns the force caused by the cell overlap between the 2 given DF cells. 
+    Also selects which overlap force is selected: 
+        overlapforce ∈ {"bachelorThesis", "billiard", "combination"}
+    """
+
+    if(overlapForceType == "bachelorThesis")
+        return bachelorOverlapForceCells(c1,c2)
+    elseif(overlapForceType == "billiard")
+        return billiardOverlapForceCells(c1,c2)
+    elseif(overlapForceType == "combination")
+        return combinationOverlapForceCells(c1,c2,scalingBachelor)
+    else 
+        print("error: 3rd argument overlapForceType must be in {bachelorThesis, billiard, combination}")
+        return []
+    end 
+end 
+
+function bachelorOverlapForceCells(c1,c2)
 
     r1x = zeros(N)
     r1y = zeros(N)
     r2x = zeros(N)
     r2y = zeros(N) 
-
     overlaps = getOverlap(c1,c2)
     for o ∈ overlaps 
-        
         K = length(o.x)
         area = areaPolygon(o.x, o.y) 
-
         # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
         v1, v2 = collectOverlapIndices(o, c1, c2) 
-        
+    
         gradO = areaGradient(o, 0.0)
-
         for ind ∈ v1 
 
             i, j = ind 
@@ -441,7 +456,6 @@ function overlapForceCells(c1, c2)
             r1y[i] = - 0.5 * area * gradO[j+K]
 
         end 
-
         for ind ∈ v2
 
             i, j = ind 
@@ -449,15 +463,57 @@ function overlapForceCells(c1, c2)
             r2y[i] = - 0.5 * area * gradO[j+K]
 
         end 
-
-
     end 
+    return r1x, r1y, r2x, r2y
 
+end 
+
+function billiardOverlapForceCells(c1,c2)
+    # currently the size of overlap is not considered 
+    # TODO: how is correct force scaling? 
+
+    r1x = zeros(N)
+    r1y = zeros(N)
+    r2x = zeros(N)
+    r2y = zeros(N) 
+    
+    overlaps = getOverlap(c1,c2)
+    if(length(overlaps) != 0)  
+
+        centre1 = getCentre(c1)
+        centre2 = getCentre(c2) 
+
+        # push c1 in direction (c1 - c2) 
+        direction1 = centre1 - centre2 
+        direction1 = direction1/norm(direction1) 
+
+        r1x = direction1[1] * ones(N)
+        r1y = direction1[2] * ones(N)
+
+        r2x = -r1x 
+        r2y = -r1y 
+    end 
 
     return r1x, r1y, r2x, r2y
 
 end 
 
+function combinationOverlapForceCells(c1,c2, scalingBachelor=0.5)
+    # scalingBachelor must be in [0,1]
+    r1xBach, r1yBach, r2xBach, r2yBach = bachelorOverlapForceCells(c1,c2)
+    r1xBill, r1yBill, r2xBill, r2yBill = billiardOverlapForceCells(c1,c2)
+    scalingBilliard = 1 - scalingBachelor
+
+    r1x = scalingBachelor*r1xBach + scalingBilliard*r1xBill
+    r1y = scalingBachelor*r1yBach + scalingBilliard*r1yBill
+    r2x = scalingBachelor*r2xBach + scalingBilliard*r2xBill
+    r2y = scalingBachelor*r2yBach + scalingBilliard*r2yBill 
+
+    #resBachelor = bachelorOverlapForceCells(c1,c2)
+    #resBilliard = billiardOverlapForceCells(c1,c2)
+
+    return r1x, r1y, r2x, r2y
+end 
 
 function overlapForce(u) 
 

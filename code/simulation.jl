@@ -1,15 +1,11 @@
-using DifferentialEquations, StochasticDiffEq
+using DifferentialEquations, StochasticDiffEq, Plots
 
 # include("energies.jl")
 include("parameters.jl")
 
-"""
-    createSimGif
 
-solves problem and creates and saves gif at gifPath
-"""
 function createSimGif(  gifPath::String, 
-                        problem::SDEProblem, 
+                        sol, 
                         title="", 
                         label="", 
                         xlab="x",
@@ -17,12 +13,9 @@ function createSimGif(  gifPath::String,
                         fps=5,
                         dpi=300)
 
-    sol = solve(problem, EM(), dt=timeStepSize, saveat=saveAtTimes)
     # is length(sol) == T / dt or length(sol) == T / saveAtTimes ???
 
     animSDE = @animate for t = 1:length(sol)
-    # animSDE = @animate for t = 0:length(sol)
-
         time = t[1]
         # time = t[1]*timeStepSize+1
         # time = t[1]*saveAtTimes+1
@@ -49,7 +42,6 @@ function createSimGif(  gifPath::String,
 
     end
     
-    gif(animSDE, fps = fps)
-    savefig(gifPath)
+    gif(animSDE, gifPath, fps = fps)
 
 end 

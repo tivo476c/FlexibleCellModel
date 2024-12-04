@@ -1,7 +1,6 @@
 using Plots
 using Printf
 
-
 function createLocationFile(sol, sim::Int64) 
     
     sim = @sprintf("%04d", sim)
@@ -22,7 +21,6 @@ function createLocationFile(sol, sim::Int64)
         end
     end     
 end 
-
 
 function makeMatrices()
     # ONE MATRIX STORES THE ENTRIES FOR ONE SAMPLE TIME AT ALL SIMULATION ITERATIONS 
@@ -52,7 +50,6 @@ function makeMatrices()
 
 end 
 
-
 function getMatrixIndex(coords::Vector{Float64})
     x,y = coords
     k = floor(4*x) 
@@ -68,7 +65,6 @@ function getMatrixIndex(coords::Vector{Float64})
 
     return row, column
 end
-
 
 function createHeatmaps(matrices)
     

@@ -922,3 +922,9 @@ function solutionToCells(sol::Vector{Float64})
 
     return X,Y
 end 
+
+function getCentre(c::DiscreteCell)
+    x = sum(c.x) / N 
+    y = sum(c.y) / N 
+    return [x,y]
+end 
