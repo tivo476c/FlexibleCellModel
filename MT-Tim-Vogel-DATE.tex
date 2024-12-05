@@ -1,85 +1,110 @@
-\documentclass[a4paper,12pt,leqno]{report}
+% TODOs: 
+% 	- ask for Max's master thesis Latex directory for copying structures
+
+
+%\documentclass[a4paper,12pt,leqno, draft]{article}
+\documentclass[a4paper,12pt,leqno]{article}
+
+% ----------------------- USED PACKAGES -----------------------
 \usepackage{inputenc,fontenc}
 \usepackage[a4paper,margin=3cm]{geometry}
-\usepackage[english,german]{babel}
+\usepackage[english]{babel}
 
-%%
-%% Pflichtangaben -bitte hier einsetzen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\newcommand{\figurewidth}{4}
+
+\usepackage{subcaption}
+\usepackage{nameref, hyperref}
+\usepackage{algpseudocode}
+\usepackage{amsmath, amssymb, mathtools, amsthm, bbm}
+\usepackage{csquotes}
+\usepackage{mathabx}
+\usepackage{enumerate}   
+\usepackage{booktabs}   
 
 
+% -------------------- STRUCTURES -----------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{model}[theorem]{Model}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{ode}[theorem]{ODE}
 
-\newcommand{\name}{Vogel}
-\newcommand{\vorname}{Tim}
-\newcommand{\gebdatum}{June 9, 2002}
-\newcommand{\ort}{Finsterwalde}
-\newcommand{\betreuer}{Jun.-Prof. Dr. Markus Schmidtchen}
-\newcommand{\institut}{Institute of Scientific Computing}
-\newcommand{\thema}{Diffusitivity of deformable cells}
-\newcommand{\datum}{\today} %Format tt.\ mm.\ jjjj
-\newcommand{\studiengang}{Technomathematics}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{\bf Remark}
+\newtheorem{definition}[theorem]{\bf Definition}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------ COMMANDS ---------------------------------
 
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\entspricht}{\: \wedge }
+\DeclareMathOperator{\atanxy}{arctan2}
+%\DeclareMathOperator{\norm[1]}{\lVert#1\rVert_{_{2}}}
+\newcommand{\norm[1]}{\lVert#1\rVert_{_{2}}}
+\newcommand{\infnorm[1]}{\lVert#1\rVert_{_{\infty}}}
+%\newcommand{\qed}{\hfill \ensuremath{\Box}}
+\setlength{\parindent}{0em} 
+\bibliographystyle{apalike}
+
+
+%% ----------------------------- START OF DOCUMENT ----------------------------------------- 
 
 \begin{document}
-\selectlanguage{english}
 
-%% Titelseite
-\thispagestyle{empty}
+\include{chapters/titlePage}
+% \include{chapters/acknowledgement}
 
-\begin{center}
-{\Large Technische Universit\"{a}t Dresden\  \ \textbullet\ \ Faculty of Mathematics}
+\tableofcontents 
+%\newpage 
+%\listoffigures 
+%\newpage 
+%\listoftables
 
-\vfil
+%\include{chapters/nomenclature}
+%\include{chapters/mathConventions}
+\include{chapters/introduction}
+\include{chapters/cellModel}					
+\include{chapters/sanityCheck}					
+%\include{chapters/}							% add further section in here
+%\include{chapters/conclusion}
+%\include{chapters/listOfTestCases}
+%\include{chapters/appendix}
 
-{\bfseries\Huge\thema}
-
-\vfil
-{\LARGE
-Master's thesis \\[\bigskipamount]
-to obtain the second degree \\[\bigskipamount]
-\bfseries{\itshape Master of Science\\
-\textup{(}M.Sc.\textup{)}}\\[\bigskipamount]
-}
-
-
-
-\vfil\vfil
-
-\vfil
-
-written by
-\\[\bigskipamount]
-\textsc{\vorname} \textsc{\name}
-\\[\bigskipamount]
-(born on \gebdatum\ in \textsc{\ort})
-\\[\bigskipamount]
-Day of submission: \datum
-\\[\bigskipamount]
-Supervised by \betreuer\  \\ (\institut)
-\end{center}
-
-
+\newpage
+\bibliography{quellen}
 
 \cleardoublepage
-
 
 %%
 %% Erscheint auf letzter Seite
 %%
-\chapter*{Erkl\"{a}rung}
+\section*{Statement of authorship}
 \thispagestyle{empty}
-Hiermit erkl\"{a}re ich, dass ich die am \datum\ eingereichte Masterarbeit zum Thema
-\emph{\thema} unter Betreuung von \betreuer\ selbstst\"{a}ndig erarbeitet,
-verfasst und Zitate kenntlich gemacht habe. Andere als die angegebenen Hilfsmittel
-wurden von mir nicht benutzt.
+I hereby declare that I have written this thesis (\emph{\thema}) under the supervision of Jun.-Prof. Dr. Markus Schmidtchen independently  and have listed all used sources and aids. I am submitting this thesis for the first time as part of an examination. I understand that attempted deceit will result in the failing grade „not sufficient“ (5.0). \\
+\bigskip
 
-\bigskip \bigskip \bigskip \bigskip \bigskip
 
-Dresden, \datum\ \hfill Unterschrift
+\bigskip \bigskip  
 
-\normalsize
+\vspace{10mm}
+\begin{tabular}{@{}p{2.5in}@{}}
+	\hrulefill \\
+	Tim Vogel\\
+	Dresden, \datum \\
+	Technische Universität Dresden \\
+	Matriculation Number: 4930487 \\
+\end{tabular}
+
+
 \end{document}
 
 
