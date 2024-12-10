@@ -1,5 +1,5 @@
 include("cell_functionalities.jl")
-include("bakeTheLists5.jl")
+include("computeOverlap.jl")
 include("parameters.jl")
 
 using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
@@ -12,7 +12,6 @@ function energies(du, u, p, t)
     # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
 
-    
     F1 = zeros(M*N) 
     J1 = zeros(M*N) 
     for i = 1:M 
@@ -24,7 +23,12 @@ function energies(du, u, p, t)
     res = zeros(2*N*M)
 
     # scalings = [area, edge, interiorAngle, overlap]
-    scalings = forceScalings / norm(forceScalings,2) * 100
+    if(norm(forceScalings,2) != 0)
+        scalings = forceScalings / norm(forceScalings,2) * 100
+    else 
+        scalings = forceScalings
+    end 
+
     if(scalings[1] != 0) 
         res += scalings[1] * areaForce(u, A1) 
     end
@@ -73,9 +77,7 @@ function areaGradient(c, a1=0.0)
 
     end 
 
-
     return res 
-
 
 end 
 
@@ -97,7 +99,6 @@ function areaForceCell(c, a1)
         res[i+N] = c.x[i-1] - c.x[i+1]
 
     end 
-
 
     return factor * res 
 

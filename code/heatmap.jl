@@ -1,7 +1,8 @@
 using Plots
 using Printf
+include("cell_functionalities.jl")
 
-function createLocationFile(sol, sim::Int64) 
+function createLocationFile(sol, sim::Int64, locationsPath) 
     
     sim = @sprintf("%04d", sim)
     fileName = string("locations-", simulationName, "-", sim, ".txt")
@@ -20,6 +21,8 @@ function createLocationFile(sol, sim::Int64)
 
         end
     end     
+
+    
 end 
 
 function makeMatrices()
@@ -76,19 +79,16 @@ function createHeatmaps(matrices)
         
         heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%04d", sampleTime), ".png") 
         title = string("Heatmap of simulation '", simulationName, "'")
-        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", sampleTime)
+        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.2f", sampleTime*timeStepSize))
 
         grid = -5.0:0.25:5.0
 
         heatmap(grid, grid, matrix,
             xlimits = (-5.0,5.0), 
             ylimits = (-5.0,5.0), 
-            xlabel="x", ylabel="y",
+            xlabel=caption, 
             colormap=:thermal,
             colorrange = (0, maxValue), 
-            title=title,
-            caption=caption,
-            subtitle= caption, 
             ratio=:equal,
             dpi=500
             )

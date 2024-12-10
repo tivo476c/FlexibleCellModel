@@ -6,22 +6,16 @@ The style file: apalike.bst
 Reallocating 'name_of_file' (item size: 1) to 23 items.
 A level-1 auxiliary file: chapters/titlePage.aux
 Reallocating 'name_of_file' (item size: 1) to 26 items.
-A level-1 auxiliary file: chapters/nomenclature.aux
-Reallocating 'name_of_file' (item size: 1) to 29 items.
-A level-1 auxiliary file: chapters/mathConventions.aux
-Reallocating 'name_of_file' (item size: 1) to 26 items.
 A level-1 auxiliary file: chapters/introduction.aux
-Reallocating 'name_of_file' (item size: 1) to 24 items.
-A level-1 auxiliary file: chapters/conclusion.aux
-Reallocating 'name_of_file' (item size: 1) to 29 items.
-A level-1 auxiliary file: chapters/listOfTestCases.aux
-Reallocating 'name_of_file' (item size: 1) to 22 items.
-A level-1 auxiliary file: chapters/appendix.aux
+Reallocating 'name_of_file' (item size: 1) to 23 items.
+A level-1 auxiliary file: chapters/cellModel.aux
+Reallocating 'name_of_file' (item size: 1) to 25 items.
+A level-1 auxiliary file: chapters/sanityCheck.aux
 Reallocating 'name_of_file' (item size: 1) to 8 items.
 Database file #1: quellen.bib
 You've used 1 entry,
             1935 wiz_defined-function locations,
-            487 strings with 4025 characters,
+            484 strings with 3946 characters,
 and the built_in function-call counts, 394 in all, are:
 = -- 37
 > -- 13
