@@ -28,14 +28,12 @@ p = [timeStepSize, D]
 # sus:
 prob_cell1 = SDEProblem( energies, brownian, u0, timeInterval, p, noise=WienerProcess(0., 0.))        
 
-overlapProblem = ODEProblem(energies, u0, timeInterval)
-
-gifPath = joinpath(homedir(), "showOverlap", "overlap-combination.gif")
+gifPath = joinpath(homedir(), "showOverlap", "combinedForces.gif")
 #createSimGif(gifPath, prob_cell1)
 
 # sol = solve(prob_cell1, EM(), dt=timeStepSize, saveat=saveAtTimes)
 
-sol = solve(overlapProblem)
+@time sol = solve(prob_cell1)
 
 
 animSDE = @animate for t = 1:length(sol)
@@ -62,7 +60,7 @@ animSDE = @animate for t = 1:length(sol)
 end
 
 
-gif(animSDE, gifPath, fps = 5)
+gif(animSDE, gifPath, fps = 15)
 
 
 

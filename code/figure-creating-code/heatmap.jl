@@ -1,6 +1,6 @@
 using Plots
 using Printf
-include("cell_functionalities.jl")
+include("../cell_functionalities.jl")
 
 function createLocationFile(sol, sim::Int64, locationsPath) 
     
@@ -10,15 +10,14 @@ function createLocationFile(sol, sim::Int64, locationsPath)
 
     open(filePath, "w") do file 
 
-        for time in sampleTimes 
-            X,Y = solutionToCells(sol[time])
+        for u in sol.u
+            X,Y = solutionToCells(u)
             for i = 1:M 
                 xCentre = round(sum(X[i]) / Float64(N), digits=3)
                 yCentre = round(sum(Y[i]) / Float64(N), digits=3)
                 println(file, "$xCentre $yCentre")
             end 
             println(file)
-
         end
     end     
 
@@ -77,9 +76,9 @@ function createHeatmaps(matrices)
         matrix = matrices[i]
         maxValue = maximum(matrix)        
         
-        heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%04d", sampleTime), ".png") 
+        heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, ".png") 
         title = string("Heatmap of simulation '", simulationName, "'")
-        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.2f", sampleTime*timeStepSize))
+        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
         grid = -5.0:0.25:5.0
 

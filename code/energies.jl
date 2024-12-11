@@ -429,7 +429,9 @@ function overlapForceCells(c1, c2, overlapForceType=overlapForceType)
     elseif(overlapForceType == "billiard")
         return billiardOverlapForceCells(c1,c2)
     elseif(overlapForceType == "combination")
-        return combinationOverlapForceCells(c1,c2,scalingBachelor)
+        return combinationOverlapForceCells(c1,c2)
+    elseif(overlapForceType == "radiusBilliard")
+        return radiusOverlapForceCells(c1,c2)
     else 
         print("error: 3rd argument overlapForceType must be in {bachelorThesis, billiard, combination}")
         return []
@@ -486,7 +488,9 @@ function billiardOverlapForceCells(c1,c2)
 
         # push c1 in direction (c1 - c2) 
         direction1 = centre1 - centre2 
-        direction1 = direction1/norm(direction1) 
+        if(norm(direction1) != 0)
+            direction1 = direction1/norm(direction1) 
+        end  
 
         r1x = direction1[1] * ones(N)
         r1y = direction1[2] * ones(N)
@@ -496,6 +500,39 @@ function billiardOverlapForceCells(c1,c2)
     end 
 
     return r1x, r1y, r2x, r2y
+
+end 
+
+function radiusOverlapForceCells(c1,c2)
+
+    r1x = zeros(N)
+    r1y = zeros(N)
+    r2x = zeros(N)
+    r2y = zeros(N) 
+
+    centre1 = computeCenter(c1)
+    centre2 = computeCenter(c2) 
+    if(norm(centre1 - centre2) < 2*radius) 
+        direction1 = centre1 - centre2 
+        if(norm(direction1) != 0)
+            direction1 = direction1/norm(direction1) 
+        end 
+        r1x = direction1[1] * ones(N)
+        r1y = direction1[2] * ones(N)
+
+        r2x = -r1x 
+        r2y = -r1y 
+    end 
+
+    return r1x, r1y, r2x, r2y
+
+end 
+
+function computeCenter(c::DiscreteCell)
+
+    x = sum(c.x)
+    y = sum(c.y)
+    return [x,y] / N 
 
 end 
 
