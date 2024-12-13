@@ -7,5 +7,5 @@
 *.log
 *.lot
 *.out
-*.synctex(busy)
+*.synctex*
 *.toc

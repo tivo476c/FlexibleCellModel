@@ -1,6 +1,5 @@
-include("energies.jl")
-include("simulation.jl")
-include("parameters.jl")
+include("../energies.jl")
+include("../parameters.jl")
 
 using Plots 
 # SETUP: 2 cells overlapping 
@@ -28,8 +27,7 @@ p = [timeStepSize, D]
 # sus:
 prob_cell1 = SDEProblem( energies, brownian, u0, timeInterval, p, noise=WienerProcess(0., 0.))        
 
-gifPath = joinpath(homedir(), "showOverlap", "combinedForces.gif")
-#createSimGif(gifPath, prob_cell1)
+gifPath = joinpath(homedir(), "showOverlap", "radiusOverlap2.gif")
 
 # sol = solve(prob_cell1, EM(), dt=timeStepSize, saveat=saveAtTimes)
 

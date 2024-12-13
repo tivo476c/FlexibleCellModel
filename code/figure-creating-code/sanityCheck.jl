@@ -92,7 +92,7 @@ begin
     # save one simulation as give 
     gifPath = joinpath(simPath, string(simulationName, ".gif"))
     createSimGif(gifPath, sol)
-    for i = 1:NumberOfSimulations
+    @distributed for i = 1:NumberOfSimulations
         @time sol = solve(prob_cell1, EM(), dt=timeStepSize, saveat=sampleTimes)
         createLocationFile(sol, i, locationsPath)
     end 

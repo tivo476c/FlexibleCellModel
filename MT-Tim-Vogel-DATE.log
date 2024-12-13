@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.5.16)  5 DEC 2024 17:21
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.5.16)  12 DEC 2024 13:14
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/voglt/OneDrive/Desktop/Master Thesis/MT-Tim-Vogel-DATE.tex"
-(c:/Users/voglt/OneDrive/Desktop/Master Thesis/MT-Tim-Vogel-DATE.tex
+**c:/Users/voglt/OneDrive/Desktop/Master-Thesis/MT-Tim-Vogel-DATE.tex
+(c:/Users/voglt/OneDrive/Desktop/Master-Thesis/MT-Tim-Vogel-DATE.tex
 LaTeX2e <2022-11-01> patch level 1
 L3 programming layer <2023-05-11> (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
 Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
@@ -684,7 +684,7 @@ Package csquotes Info: Redefining alias 'default' -> 'english'.
 File: l3backend-pdftex.def 2023-04-19 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count318
 \l__pdf_internal_box=\box54
-) (MT-Tim-Vogel-DATE.aux (chapters/titlePage.aux) (chapters/introduction.aux) (chapters/cellModel.aux) (chapters/sanityCheck.aux))
+) (MT-Tim-Vogel-DATE.aux)
 \openout1 = `MT-Tim-Vogel-DATE.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
@@ -763,7 +763,6 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 Package hyperref Info: Link coloring OFF on input line 61.
- (MT-Tim-Vogel-DATE.out) (MT-Tim-Vogel-DATE.out)
 \@outlinefile=\write3
 \openout3 = `MT-Tim-Vogel-DATE.out'.
 
@@ -774,33 +773,54 @@ LaTeX Info: Command `\ddddot' is already robust on input line 61.
  (chapters/titlePage.tex) [1
 
 
-{C:/Users/voglt/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (MT-Tim-Vogel-DATE.toc
-LaTeX Font Info:    Trying to load font information for U+msa on input line 4.
- (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
-File: umsa.fd 2013/01/14 v3.01 AMS symbols A
-)
-LaTeX Font Info:    Trying to load font information for U+msb on input line 4.
- (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
-File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-))
+{C:/Users/voglt/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+No file MT-Tim-Vogel-DATE.toc.
 \tf@toc=\write4
 \openout4 = `MT-Tim-Vogel-DATE.toc'.
 
- [2
+[2
 
 
 ]
 \openout2 = `chapters/introduction.aux'.
 
- (chapters/introduction.tex) [3
+ (chapters/introduction.tex
+
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 3.
+
+) [3
 
 ]
 \openout2 = `chapters/cellModel.aux'.
 
- (chapters/cellModel.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 9--75
+ (chapters/cellModel.tex
+Underfull \hbox (badness 10000) in paragraph at lines 9--13
 
  []
+
+chapters/cellModel.tex:16: Missing $ inserted.
+<inserted text> 
+                $
+l.16 * solve(prob_
+                  cell1, EM(), dt=timeStepSize)
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 16.
+(C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 16.
+ (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+))
+c:/Users/voglt/OneDrive/Desktop/Master-Thesis/MT-Tim-Vogel-DATE.tex:75: Missing $ inserted.
+<inserted text> 
+                $
+l.75 \include{chapters/cellModel}
+                                 					
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
 
 [4
 
@@ -809,7 +829,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 9--75
 ]
 \openout2 = `chapters/sanityCheck.aux'.
 
- (chapters/sanityCheck.tex) [5
+ (chapters/sanityCheck.tex
+
+LaTeX Warning: Citation `Bruna2012' on page 5 undefined on input line 3.
+
+) [5
 
 
 
@@ -819,21 +843,33 @@ Underfull \hbox (badness 10000) in paragraph at lines 9--75
 ] [7
 
 ] (MT-Tim-Vogel-DATE.aux (chapters/titlePage.aux) (chapters/introduction.aux) (chapters/cellModel.aux) (chapters/sanityCheck.aux))
-Package rerunfilecheck Info: File `MT-Tim-Vogel-DATE.out' has not changed.
-(rerunfilecheck)             Checksum: BA57A4B74485E8A4E994D2D38D87DF45;583.
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `MT-Tim-Vogel-DATE.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `MT-Tim-Vogel-DATE.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  AE681B29686F31639EA8EBA9AFA01912;723.
  ) 
 Here is how much of TeX's memory you used:
- 15736 strings out of 476361
- 257556 string characters out of 5788046
+ 15711 strings out of 476361
+ 256704 string characters out of 5788046
  1854993 words of memory out of 5000000
- 35876 multiletter control sequences out of 15000+600000
+ 35864 multiletter control sequences out of 15000+600000
  523851 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,8n,77p,602b,496s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1728.pk><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on MT-Tim-Vogel-DATE.pdf (7 pages, 98045 bytes).
+ 69i,8n,77p,600b,496s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi600\matha12.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1728.pk><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on MT-Tim-Vogel-DATE.pdf (7 pages, 121007 bytes).
 PDF statistics:
- 107 PDF objects out of 1000 (max. 8388607)
- 17 named destinations out of 1000 (max. 500000)
- 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 105 PDF objects out of 1000 (max. 8388607)
+ 18 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

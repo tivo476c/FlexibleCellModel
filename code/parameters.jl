@@ -1,10 +1,10 @@
 # General setup:
 
 domain = (-5.0, 5.0)                # domain where cells can move: [-5.0, 5.0]^2 
-N = 20                              # number of wall points per cell 
-M = 100                             # number of cells 
-D = 100                             # diffusitivity constant 
-radius = 0.1                             # cell radius 
+N = 40                              # number of wall points per cell 
+M = 2                               # number of cells 
+D = 5                               # diffusitivity constant 
+radius = 1/(sqrt(2)*1000)           # cell radius 
 
 # Force scalings: 
 # [70,2,1.5,110]
@@ -16,14 +16,15 @@ overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliar
 overlapForceType = overlapForceTypes[4]
 boundaryPushForceFactor = 110.0
 
-forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
-#forceScalings = [0, 0, 0, 100, 0]
+# forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
+forceScalings = [0, 0, 0, 100, 0]
 
 
 # Simulation parameters: 
 
-timeInterval = (0.0, 0.05)
-timeStepSize = 10.0^(-4) 
+timeInterval = (0.0, 5.0)
+#timeStepSize = 10.0^(-4) 
+timeStepSize = 2^(-7) 
 lengthOfSolVec = floor((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
 sampleTimeStepSize = floor(lengthOfSolVec/10.0) 
 #sampleTimes = collect(0:sampleTimeStepSize:lengthOfSolVec) 
@@ -34,10 +35,10 @@ sampleTimeStepSize = floor(lengthOfSolVec/10.0)
 # sampleTimes = [1,1000,3000,5000]
 sampleTimes = [0.0, 0.01, 0.02, 0.05]
 
-NumberOfSimulations = 3
+NumberOfSimulations = 300
 NumberOfSampleTimes = length(sampleTimes) 
 #simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
-simulationName = string("imitate-hardsphere-bruna-test2") 
+simulationName = string("imitate-hardsphere-bruna-test4") 
 
 # Space Discretisation
 
