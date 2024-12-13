@@ -1,0 +1,111 @@
+% TODOs: 
+% 	- ask for Max's master thesis Latex directory for copying structures
+
+
+%\documentclass[a4paper,12pt,leqno, draft]{article}
+\documentclass[a4paper,12pt,leqno]{article}
+
+% ----------------------- USED PACKAGES -----------------------
+\usepackage{inputenc,fontenc}
+\usepackage[a4paper,margin=3cm]{geometry}
+\usepackage[english]{babel}
+
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\newcommand{\figurewidth}{4}
+
+\usepackage{subcaption}
+\usepackage{nameref, hyperref}
+\usepackage{algpseudocode}
+\usepackage{amsmath, amssymb, mathtools, amsthm, bbm}
+\usepackage{csquotes}
+\usepackage{mathabx}
+\usepackage{enumerate}   
+\usepackage{booktabs}   
+
+
+% -------------------- STRUCTURES -----------------------------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{model}[theorem]{Model}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{ode}[theorem]{ODE}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{\bf Remark}
+\newtheorem{definition}[theorem]{\bf Definition}
+
+% ------------------ COMMANDS ---------------------------------
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\entspricht}{\: \wedge }
+\DeclareMathOperator{\atanxy}{arctan2}
+%\DeclareMathOperator{\norm[1]}{\lVert#1\rVert_{_{2}}}
+\newcommand{\norm[1]}{\lVert#1\rVert_{_{2}}}
+\newcommand{\infnorm[1]}{\lVert#1\rVert_{_{\infty}}}
+%\newcommand{\qed}{\hfill \ensuremath{\Box}}
+\setlength{\parindent}{0em} 
+\bibliographystyle{apalike}
+
+
+%% ----------------------------- START OF DOCUMENT ----------------------------------------- 
+
+\begin{document}
+
+\include{chapters/titlePage}
+% \include{chapters/acknowledgement}
+
+\tableofcontents 
+%\newpage 
+%\listoffigures 
+%\newpage 
+%\listoftables
+
+%\include{chapters/nomenclature}
+%\include{chapters/mathConventions}
+\include{chapters/introduction}
+\include{chapters/cellModel}					
+\include{chapters/sanityCheck}					
+%\include{chapters/}							% add further section in here
+%\include{chapters/conclusion}
+%\include{chapters/listOfTestCases}
+%\include{chapters/appendix}
+
+\newpage
+\bibliography{quellen}
+
+\cleardoublepage
+
+%%
+%% Erscheint auf letzter Seite
+%%
+\section*{Statement of authorship}
+\thispagestyle{empty}
+I hereby declare that I have written this thesis (\emph{\thema}) under the supervision of Jun.-Prof. Dr. Markus Schmidtchen independently  and have listed all used sources and aids. I am submitting this thesis for the first time as part of an examination. I understand that attempted deceit will result in the failing grade „not sufficient“ (5.0). \\
+\bigskip
+
+
+\bigskip \bigskip  
+
+\vspace{10mm}
+\begin{tabular}{@{}p{2.5in}@{}}
+	\hrulefill \\
+	Tim Vogel\\
+	Dresden, \datum \\
+	Technische Universität Dresden \\
+	Matriculation Number: 4930487 \\
+\end{tabular}
+
+
+\end{document}
+
+
+
