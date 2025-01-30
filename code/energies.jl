@@ -451,7 +451,7 @@ function bachelorOverlapForceCells(c1,c2)
         # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
         v1, v2 = collectOverlapIndices(o, c1, c2) 
     
-        gradO = areaGradient(o, 0.0)
+        gradO = areaGradient(o)
         for ind ∈ v1 
 
             i, j = ind 
