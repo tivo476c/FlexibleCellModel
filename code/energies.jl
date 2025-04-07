@@ -515,6 +515,7 @@ function radiusOverlapForceCells(c1,c2)
     if(norm(centre1 - centre2) < 2*radius) 
         direction1 = centre1 - centre2 
         if(norm(direction1) != 0)
+            # TODO: implement equ (3) function with heaviside from jamming of deformable paper 
             direction1 = direction1/norm(direction1) 
         end 
         r1x = direction1[1] * ones(N)

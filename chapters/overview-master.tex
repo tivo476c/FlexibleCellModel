@@ -92,13 +92,26 @@ Here is our most recent simulation parameters:
 	
 	\item 
 	$
-	initial condition: X' = \sqrt{10} X + 1, \quad \text{where } X \sim N(0,1) \\
+
+
+	initial condition: X' = \sqrt{10} X , \quad \text{where } X \sim N(0, 0.09^2)  \\
+	
 	NoCells' = x (NoCells = 400) \\
 	radius' = y (radius = 0.005) \\
+	(N-1) \epsilon ^2 must be constant 
 	$AND ALSO$ radius' = 0 $ and without interaction [other parameters the same?] $
-	time = [0.00,0.05], \delta t = 10^{-5} \\
+
+	time = [0.00,0.05], \delta t = 10^{-5}, we could choose \delta t' = 10^{-4} \\
 	NoSimulations = 10^4 \\
+	NoSimulations' = 10^3 (TODO check) \\
+
+
+	$DO IT FOR THE DIFFERENT OVERLAPS 
+	Radius Overlap for paper like Look at 
+	bachelor overlap with deformation for new model $
+	$ALSO do the smooth plots from left side  $
 	$Maybe run on linux work station in Z21$
+
 	$
 	\item parallelize code 
 	\item use same color grading as in chapman12 (name?)
