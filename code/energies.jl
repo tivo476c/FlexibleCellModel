@@ -4,6 +4,8 @@ include("parameters.jl")
 
 using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 
+# Printf, StochasticDiffEq, Distributions, DataStructures, LinearAlgebra, OrdinaryDiffEq, Plots, ColorSchemes
+
 
 #-------------------------------------- FINAL ENERGY
 
@@ -12,16 +14,28 @@ function energies(du, u, p, t)
     # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
 
-    F1 = zeros(M*N) 
-    J1 = zeros(M*N) 
-    for i = 1:M 
-        c = DiscreteCell( u[ N*(i-1)+1 :  N*i ], u[ N*(i-1+M)+1 :  N*(i+M)] )
-        F1[(i-1)*N+1 : i*N] = computeEdgeLengths(c)
-        J1[(i-1)*N+1 : i*N] = computeInteriorAngles(c) 
+    if forceScalings[2] != 0    # edge force
+        F1 = zeros(M*N) 
+        for i = 1:M 
+            c = DiscreteCell( u[ N*(i-1)+1 :  N*i ], u[ N*(i-1+M)+1 :  N*(i+M)] )
+            F1[(i-1)*N+1 : i*N] = computeEdgeLengths(c)
+        end 
+    
+    end 
+    if forceScalings[3] != 0    # interior angle force 
+        J1 = zeros(M*N) 
+        for i = 1:M 
+            c = DiscreteCell( u[ N*(i-1)+1 :  N*i ], u[ N*(i-1+M)+1 :  N*(i+M)] )
+            J1[(i-1)*N+1 : i*N] = computeInteriorAngles(c) 
+        end 
+    
     end 
 
-    res = zeros(2*N*M)
-
+    if N != 0
+        res = zeros(2*N*M)
+    else 
+        res = zeros(2*M) 
+    end
     # scalings = [area, edge, interiorAngle, overlap]
     if(norm(forceScalings,2) != 0)
         scalings = forceScalings / norm(forceScalings,2) * 100
@@ -620,24 +634,34 @@ end
 
 function boundaryForce(u)
 
-    res = zeros(2*M*N) 
-
-    for i = 1:M 
-
-        c = DiscreteCell( u[ N*(i-1)+1 :  N*i ], u[ N*(i-1+M)+1 :  N*(i+M)] )
-        a = boundaryForceCell(c)
-        for j = 1:N 
-
-            res[ N*(i-1) + j ]  = a[j] 
-            res[ N*(i-1+M) + j] = a[j+N] 
-
+    if N!=0
+        # CASE: VOLUME PARTICLES
+        res = zeros(2*M*N) 
+        for i = 1:M 
+            c = DiscreteCell( u[ N*(i-1)+1 :  N*i ], u[ N*(i-1+M)+1 :  N*(i+M)] )
+            a = boundaryForceCell(c)
+            for j = 1:N 
+                res[ N*(i-1) + j ]  = a[j] 
+                res[ N*(i-1+M) + j] = a[j+N] 
+            end 
+        end 
+        return res
+    
+    else 
+        # CASE: POINT PARTICLES 
+        # len(u) = 2*M
+        res = zeros(2*M) 
+        for i = 1:2*M 
+            if u[i] < -5
+                res[i] = 1 
+            elseif u[i] > 5
+                res[i] = -1
+            end 
+    
         end 
 
-
+        return res 
     end 
-
-    return res
-
 end 
 
 #------------------- BROWNIAN MOTION 

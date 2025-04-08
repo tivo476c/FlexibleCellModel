@@ -1,65 +1,26 @@
-include("../parameters.jl")
-include("../energies.jl")
-include("../simulationFunctionalities.jl")
-include("heatmap.jl")
+"""
+This file does:
+* simulate the point particles thingy like in chapman12 
+* simulate the the model for our flexible cell model
+"""
 
-using Distributions
+# include("../parameters.jl")
 
-function giveCentreNormalDistrInDomain(radius, mean=0.0, std_dev=1.0)
-    dist = Normal(mean, std_dev)
-    while true
-        numX, numY = rand(dist), rand(dist)
-        if -5 + radius <= numX <= 5 - radius && -5 + radius <= numY <= 5 - radius
-            return [numX, numY]
-        end
-    end
-end
 
-function isFeasible(newCell, oldCells, radius) 
-    for c in oldCells
-        if(norm(newCell - c) < 2*radius)
-            return false 
-        end 
-    end 
-    return true 
-end 
+
+
 
 begin
-    include("../parameters.jl")
-    include("../energies.jl")
-    include("heatmap.jl")
+    """
+    This loop computes one Heatmap from NoSims amount of simulation 
+    """
     
-    function initializeChapman(radius)
-        """
-        Initializes a starting vector u0 for the solver to work with it. 
-        Cell by cell gets inserted at a feasible location in the domain. 
-        A position of newCell is feasible if distance(newCell, oldCell) > 2*radius for all oldCells.
-        This function first just computes a list that holds all cell centres. From this list, all cell wallpoints get computed and outputted in u0. 
-        """
-        savedCentres = []
-        for i = 1:M 
-            newCentre = giveCentreNormalDistrInDomain(radius)
-            while(! isFeasible(newCentre, savedCentres, radius))
-                newCentre = giveCentreNormalDistrInDomain(radius)
-            end 
-            push!(savedCentres, newCentre)
-        end 
-        xCoords = Float64[]
-        yCoords = Float64[]
-        for centre in savedCentres
-            discreteCell = cellToDiscreteCell(circleCell(centre, radius), N)
-
-            xCoords = vcat(xCoords, discreteCell.x)
-            yCoords = vcat(yCoords, discreteCell.y)
-        end 
-            
-        return vcat(xCoords,yCoords)
-    end 
-    
+    # get all needed paths 
     simPath = joinpath(homedir(), "simulations", simulationName)
     locationsPath = joinpath(simPath, "locations")
     heatMapsPath = joinpath(simPath, "heatmaps")
     
+    # INITIALIZATION 
     C = circleCell([0.0,0.0], radius)
     cDF = cellToDiscreteCell(C, N) 
     A1 = ones(M) * areaPolygon(cDF.x, cDF.y) # ∈ R^N
@@ -79,17 +40,17 @@ begin
     
     tspan = timeInterval
     p = [timeStepSize, D]
+    # SOLVE THE SDE PROBLEM 
     prob_cell1 = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0., 0.))     
     @time sol = solve(prob_cell1, EM(), dt=timeStepSize, saveat = collect(0:15*timeStepSize:timeInterval[2]))    
     
     # HEATMAP stuff begins 
-    
     mkpath(simPath) 
     cp(joinpath(homedir(), "OneDrive", "Desktop", "Master-Thesis", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     mkpath(locationsPath)
     mkpath(heatMapsPath)
     
-    # save one simulation as give 
+    # save one simulation as gif 
     gifPath = joinpath(simPath, string(simulationName, ".gif"))
     createSimGif(gifPath, sol)
     @distributed for i = 1:NumberOfSimulations
@@ -98,8 +59,49 @@ begin
     end 
 
     matrices = makeMatrices()
-
     createHeatmaps(matrices)
 
 end
+
+
+include("../parameters_pointParticles.jl")
+include("sanityCheckFunctionalitites.jl")
+addprocs(2)
+begin 
+    ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
+    @everywhere begin 
+        include("../parameters_pointParticles.jl")
+        include("sanityCheckFunctionalitites.jl")
+    
+    ### 1st: DO PRIOR WORK 
+        tspan = timeInterval
+        simPath = joinpath(homedir(), "simulations", simulationName)
+        locationsPath = joinpath(simPath, "locations")
+        heatMapsPath = joinpath(simPath, "heatmaps")
+        gifPath = joinpath(simPath, string(simulationName, ".gif"))
+        p = [timeStepSize, D]
+    end 
+
+    ## create paths 
+    mkpath(simPath) 
+    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    mkpath(locationsPath)
+    mkpath(heatMapsPath)
+    
+    ## save one simulation as gif 
+    u0 = InitializePointParticles()
+    prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0., 0.))     
+    sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat = sampleTimes)  
+    # TODO: DO M=0 case for point particles -> scatter plots 
+    createSimGif(gifPath, sol)
+    
+    ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
+    results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
+   
+     
+    ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
+    matrices = makeMatrices()
+    createHeatmaps(matrices)
+end 
+
 

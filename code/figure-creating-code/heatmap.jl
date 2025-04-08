@@ -12,10 +12,18 @@ function createLocationFile(sol, sim::Int64, locationsPath)
 
         for u in sol.u
             X,Y = solutionToCells(u)
-            for i = 1:M 
-                xCentre = round(sum(X[i]) / Float64(N), digits=3)
-                yCentre = round(sum(Y[i]) / Float64(N), digits=3)
-                println(file, "$xCentre $yCentre")
+            if NumberOfCellWallPoints != 0
+                for i = 1:M 
+                    xCentre = round(sum(X[i]) / Float64(N), digits=3)
+                    yCentre = round(sum(Y[i]) / Float64(N), digits=3)
+                    println(file, "$xCentre $yCentre")
+                end 
+            else 
+                for i = 1:M 
+                    xCentre = round(X[i], digits=3)
+                    yCentre = round(Y[i], digits=3)
+                    println(file, "$xCentre $yCentre")
+                end 
             end 
             println(file)
         end

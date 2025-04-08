@@ -91,12 +91,13 @@ TODOs:
 
 - SIMULATION PARAMETERS: 
 
-    * deltaT = 10^-3
+    * delta t = 10^-3
     * NoCells M = 200  
-    * NoWallpoints = 20 (control whether its enaugh for deformation pde)
+    * NoWallpoints = 20 (control whether its enough for deformation pde)
     * diameter = 1/(sqrt(2)*50)
     * cell radius = 1/(sqrt(2)*100) (-> diameter = 0.02) | BUT MULTIPLY *10  BECAUSE OF LARGER DOMAIN
     * ->> cell radius = 1/(sqrt(2)*1000)
     * noSimulations: look where the point particles do a nice gaussian 
+    * cells get initialized via: N(0,10)^2 
 
 - START WRITING LATEX PDF!!! , also add different overlap forces

@@ -913,13 +913,21 @@ end
 function solutionToCells(sol::Vector{Float64}) 
     # sol = [x1,x2,...,xM,y1,y2,...,yM]
     # res = X, Y, where X[1] = x1 
-    X = Vector{Vector{Float64}}(undef, M)
-    Y = Vector{Vector{Float64}}(undef, M)
-    for i = 1:M 
-        X[i] = sol[1+(i-1)*N : i*N]
-        Y[i] = sol[1+(i-1)*N + N*M: i*N + N*M]
+    if NumberOfCellWallPoints!=0
+        X = Vector{Vector{Float64}}(undef, M)
+        Y = Vector{Vector{Float64}}(undef, M)
+        for i = 1:M 
+            X[i] = sol[1+(i-1)*N : i*N]
+            Y[i] = sol[1+(i-1)*N + N*M: i*N + N*M]
+        end 
+    else
+        X = Vector{Float64}(undef, M)
+        Y = Vector{Float64}(undef, M)
+        for i = 1:M 
+            X[i] = sol[i]
+            Y[i] = sol[i+M]
+        end 
     end 
-
     return X,Y
 end 
 
