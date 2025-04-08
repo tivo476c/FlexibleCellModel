@@ -672,15 +672,20 @@ function brownian(du, u, p, t)
     
     Δt, D = p 
     # Compute the SDE
-    fact = ones(N) * sqrt(2*D*Δt)
     x = rand(Normal(0.0, 1.0) ,2*M)
     
-
-    for i = 1:M 
-
-        du[ (i-1)*N + 1 : i*N ] = fact * x[i] 
-        du[ (i-1+M)*N + 1 : (i+M)*N ] = fact * x[i+M]
-
+    if N != 0
+        fact = ones(N) * sqrt(2*D*Δt)
+        for i = 1:M 
+            du[ (i-1)*N + 1 : i*N ] = fact * x[i] 
+            du[ (i-1+M)*N + 1 : (i+M)*N ] = fact * x[i+M] 
+        end 
+    else 
+        fact = sqrt(2*D*Δt)
+        for i = 1:M
+            du[i] = fact * x[i] 
+            du[i+M] = fact * x[i+M] 
+        end 
     end 
 
 end
