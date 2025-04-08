@@ -1,3 +1,39 @@
 \section{Sanity check}
 
+%%% TODO: Build bridge from previous chapter 
 * After introducing cell model and dynamics, we want to check whether it shows the same dynamics as the billiard model from \cite{Bruna2012} when setting the parameters such that the cells should have the same characteristics. 
+
+%%% TODO: Bridge to Bruna2012
+
+%%% TODO: introduce: Heat equation for point particles 
+%%% TODO: introduce: equation (11) (!?) for hard discs from Bruna12 
+%%% TODO: introduce: all further simulation properties: Domain, Number of cells, Number of Simulations, Initial distribution, Diffusitivity constant, epsilon and cell radius, forces in new simulation, spatial discretisation, time interval, time step size, Number of Cell wall points
+%%% TODO: describe: principle of monte carlo simulation
+%%% TODO: name Julia framework that got used for solving the pde 
+
+Figure $2$ in \cite{Bruna2012} shows the marginal distribution function $p(x_1, t)$ at time $t = 0.05$ for a system of $400$ particles with normally distributed initial data. 
+The figure compares the solution of the nonlinear diffusion equation $(11)$ for finite-sized particles with the solution of the linear diffusion equation $(4)$ for point particles. \\
+The figure consists of four plots:
+
+Plot (a) shows the solution of the linear diffusion equation (4) for point particles.
+Plot (b) shows the histogram of the marginal distribution function p(x1, t) for point particles.
+Plot (c) shows the solution of the nonlinear diffusion equation (11) for finite-sized particles.
+Plot (d) shows the histogram of the marginal distribution function p(x1, t) for finite-sized particles.
+
+The the heat equation and Equation $(4)$ and in Figure $2a$ and $2c$ show similar characteristics as the stochastic simulations in $2b$ and $2d$. 
+We can observe that the excluded-volume effects enhance the overall collective diffusion rate.
+
+
+
+The domain of the system is 
+\begin{center}
+    $
+    \Omega_{\cite{Bruna2012}} = [-0.5, 0.5]^2.- 
+    $
+\end{center}
+
+a square with side length 2, and the time step size is 10^-5. 
+The particles are initially distributed according to a normal distribution with mean 0 and standard deviation 0.09. 
+The volume fraction of particles is 0.0314, and the volume concentration at the origin is 0.0479 at time t = 0.05.
+
+The figure is a useful tool for understanding the behavior of the system and the effects of excluded-volume interactions on the collective diffusion rate.

@@ -1,34 +1,33 @@
 # General setup:
 
 domain = (-5.0, 5.0)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 40               # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 0               # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
-NumberOfCells = 2                         # number of cells [OLD NAME: "M"]
+NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 100                             # diffusitivity constant 
-radius = 1/(sqrt(2)*1000)           # cell radius 
+radius = 0.0           # cell radius 
 
 # Force scalings: 
 # [70,2,1.5,110]
-areaForceFactor = 70.0 
-edgeForceFactor = 2.0
+areaForceFactor = 0.0
+edgeForceFactor = 0.0
 interiorAngleForceFactor = 0.0
-overlapForceFactor = 110.0
+overlapForceFactor = 0.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
-boundaryPushForceFactor = 110.0
+boundaryPushForceFactor = 10.0
 
-# forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
-forceScalings = [0, 0, 0, 100, 0]
+forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
 
 
 # Simulation parameters: 
 
-timeInterval = (0.0, 5.0)
-#timeStepSize = 10.0^(-4) 
-timeStepSize = 2^(-7) 
+timeInterval = (0.0, 0.05)
+timeStepSize = 10^(-3) 
 lengthOfSolVec = floor((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
 sampleTimeStepSize = floor(lengthOfSolVec/10.0) 
+
 #sampleTimes = collect(0:sampleTimeStepSize:lengthOfSolVec) 
 #sampleTimes = collect(0:100:lengthOfSolVec) 
 #sampleTimes = Int.(sampleTimes)              # Convert each element to Int
@@ -37,10 +36,10 @@ sampleTimeStepSize = floor(lengthOfSolVec/10.0)
 # sampleTimes = [1,1000,3000,5000]
 sampleTimes = [0.0, 0.01, 0.02, 0.05]
 
-NumberOfSimulations = 300
+NumberOfSimulations = 10^4  # TODO: change to 300 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes) 
 #simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
-simulationName = string("imitate-hardsphere-bruna-test4") 
+simulationName = string("point-particle-model-working-4.0-higher-derivation") 
 
 # Space Discretisation
 

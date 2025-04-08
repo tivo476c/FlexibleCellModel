@@ -1,5 +1,7 @@
 using Plots
 using Printf
+using ColorSchemes
+
 include("../cell_functionalities.jl")
 
 function createLocationFile(sol, sim::Int64, locationsPath) 
@@ -62,14 +64,14 @@ end
 
 function getMatrixIndex(coords::Vector{Float64})
     x,y = coords
-    k = floor(4*x) 
+    k = trunc(4*x) 
     column = Int(k + 21) 
-    l = floor(4*y) 
+    l = trunc(4*y) 
     row = Int(20 - l)          # = 41 - (4*l + 21) 
-    if(y==5.0)
+    if(row==0)
         row = 1
     end 
-    if(x==5.0)
+    if(column==41)
         column = 40
     end  
 
@@ -81,7 +83,7 @@ function createHeatmaps(matrices)
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
-        matrix = matrices[i]
+        matrix = matrices[i] ./  NumberOfSimulations
         maxValue = maximum(matrix)        
         
         heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, ".png") 
@@ -89,18 +91,17 @@ function createHeatmaps(matrices)
         caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
         grid = -5.0:0.25:5.0
-
         heatmap(grid, grid, matrix,
             xlimits = (-5.0,5.0), 
             ylimits = (-5.0,5.0), 
             xlabel=caption, 
-            colormap=:thermal,
+            c=reverse(cgrad(:hot)),
             colorrange = (0, maxValue), 
             ratio=:equal,
             dpi=500
             )
-        vline!(-5.0:0.25:5.0, c=:white, linewidth=0.1, label=false)
-        hline!(-5.0:0.25:5.0, c=:white, linewidth=0.1, label=false)
+        vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
+        hline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
 
         savefig(joinpath(heatMapsPath, heatMapName))
     end 

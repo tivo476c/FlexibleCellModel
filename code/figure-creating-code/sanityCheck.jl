@@ -64,13 +64,13 @@ begin
 end
 
 
-include("../parameters_pointParticles.jl")
+include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
 addprocs(2)
 begin 
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin 
-        include("../parameters_pointParticles.jl")
+        include("../parameters.jl")
         include("sanityCheckFunctionalitites.jl")
     
     ### 1st: DO PRIOR WORK 
@@ -92,7 +92,6 @@ begin
     u0 = InitializePointParticles()
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0., 0.))     
     sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat = sampleTimes)  
-    # TODO: DO M=0 case for point particles -> scatter plots 
     createSimGif(gifPath, sol)
     
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 

@@ -1,6 +1,6 @@
 include("../energies.jl")
 include("../simulationFunctionalities.jl")
-include("../parameters_pointParticles.jl")
+include("../parameters.jl")
 include("heatmap.jl")
 
 using Distributions, Distributed
@@ -70,17 +70,22 @@ function InitializePointParticles()
         -> just compute NumberOfCells x coordinates, than all y coordinates 
     """
     res = zeros(Float64, 2*NumberOfCells)
-    dist = Normal(0.0, 10.0)
+    dist = Normal(0.0, 9)
     for i = 1:2*NumberOfCells
         newCoord = rand(dist)
-
         while  newCoord < -5 || newCoord > 5 
-            newCoord = rand(dist)
+            dist = Normal(0.0, 0.9)
         end        
         res[i] = newCoord
     end
     return res 
 end 
+
+for i = 1:10
+    dist = Normal(0.0, 0.9)
+    newCoord = rand(dist)
+    println(newCoord)
+end
 
 function doAPointParticleSimulationRun(simRun)
     println("simrun ", simRun)

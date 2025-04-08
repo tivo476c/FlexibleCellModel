@@ -98,6 +98,6 @@ TODOs:
     * cell radius = 1/(sqrt(2)*100) (-> diameter = 0.02) | BUT MULTIPLY *10  BECAUSE OF LARGER DOMAIN
     * ->> cell radius = 1/(sqrt(2)*1000)
     * noSimulations: look where the point particles do a nice gaussian 
-    * cells get initialized via: N(0,10)^2 
+    * cells get initialized via: N(0,0.9)^2 (in paper: N(0, 0.09)) 
 
 - START WRITING LATEX PDF!!! , also add different overlap forces
