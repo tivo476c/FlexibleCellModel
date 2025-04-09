@@ -1,39 +1,87 @@
 \section{Sanity check}
-
 %%% TODO: Build bridge from previous chapter 
-* After introducing cell model and dynamics, we want to check whether it shows the same dynamics as the billiard model from \cite{Bruna2012} when setting the parameters such that the cells should have the same characteristics. 
-
-%%% TODO: Bridge to Bruna2012
-
-%%% TODO: introduce: Heat equation for point particles 
-%%% TODO: introduce: equation (11) (!?) for hard discs from Bruna12 
-%%% TODO: introduce: all further simulation properties: Domain, Number of cells, Number of Simulations, Initial distribution, Diffusitivity constant, epsilon and cell radius, forces in new simulation, spatial discretisation, time interval, time step size, Number of Cell wall points
-%%% TODO: describe: principle of monte carlo simulation
-%%% TODO: name Julia framework that got used for solving the pde 
-
-Figure $2$ in \cite{Bruna2012} shows the marginal distribution function $p(x_1, t)$ at time $t = 0.05$ for a system of $400$ particles with normally distributed initial data. 
-The figure compares the solution of the nonlinear diffusion equation $(11)$ for finite-sized particles with the solution of the linear diffusion equation $(4)$ for point particles. \\
-The figure consists of four plots:
-
-Plot (a) shows the solution of the linear diffusion equation (4) for point particles.
-Plot (b) shows the histogram of the marginal distribution function p(x1, t) for point particles.
-Plot (c) shows the solution of the nonlinear diffusion equation (11) for finite-sized particles.
-Plot (d) shows the histogram of the marginal distribution function p(x1, t) for finite-sized particles.
-
-The the heat equation and Equation $(4)$ and in Figure $2a$ and $2c$ show similar characteristics as the stochastic simulations in $2b$ and $2d$. 
-We can observe that the excluded-volume effects enhance the overall collective diffusion rate.
-
-
-
-The domain of the system is 
+Having introduced our cell dynamics, we now want to take a look at the simulation results.
+Therefore, we aim to compare our simulation results to results from an established cell model from \cite{Bruna2012}. 
+In \cite{Bruna2012} the diffusion dynamics of first a point particle model and second a hard sphere model is studied. 
+Thereby, the two density distributions:
+\begin{itemize}
+    \item the joint probability density function $P(\vec(X), t)$ of the system of all cell centres $\vec(X)$ at time $t$,
+    \item the marginal distribution function of the first particle $p(\vec(x_1), t)$
+\end{itemize}
+play an important roll. \\
+The joint probability density function $P(\vec(X), t)$ is a function describing the positions of all particles in the system, while the marginal distribution function $p(\vec(x_1), t)$ is a function describing only the position of the first particle. \\
+It is sufficient to consider only the marginal distribution function of first particle, because all particle act similarly. \\ 
+Gaining $p(\vec(x_1), t)$ from $P(\vec(X), t)$ is a big reduction of complexity, since we reduce from a high-dimensional PDE for $P$ to a low-dimensional PDE for $p$. 
+The marginal distribution function the of first particle can be computed via
 \begin{center}
     $
-    \Omega_{\cite{Bruna2012}} = [-0.5, 0.5]^2.- 
+    p(\vec(x_1), t) = \int P(\vec(X), t) d\vec{x_2} \dots  d\vec{x_N}.
+    $
+\end{center} 
+
+%%% TODO: introduce: Heat equation for point particles and explain model for this 
+The most simple model that gets considered for the diffusion dynamics of cell systems is the point particle model. 
+Here the cells get modeled with sizeless points that perform a brownian motion on the domain. \\
+Since the cells do not have a real size, no interaction between the cells can occur, since they will never hit upon each other.  
+It is known, that particles in this setup move according to the heat equation, i.e.
+\begin{equation}
+    \frac{\partial p}{\partial t}(\vec{x_1}, t) = \Delta_{\vec{x}_1} p 
+    \label{eq:heat}
+\end{equation}
+on the inside of the domain. \\
+The paper\cite{Bruna2012} analyses these dynamics on the domain 
+\begin{center}
+    $
+    \Omega_{\cite{Bruna2012}} = [-0.5, 0.5]^2,
     $
 \end{center}
-
-a square with side length 2, and the time step size is 10^-5. 
+on which $400$ particles are located. \\
 The particles are initially distributed according to a normal distribution with mean 0 and standard deviation 0.09. 
-The volume fraction of particles is 0.0314, and the volume concentration at the origin is 0.0479 at time t = 0.05.
+This initial distribution has an integral over $\Omega_{\cite{Bruna2012}}$ of one. \\
+The movement of each point particle $\vec{x_i}$ in the simulation is given by the stochastic differential equation (SDE)
+\begin{center}
+    $d \vec{x_i} = \sqrt{2} d B_i dt$, \hskip $1 \leq i \leq 400$, on $ \Omega_{\cite{Bruna2012}}$, \\
+\end{center}
+% TODO: how introduce reflective boundary condition
+TODO: The reflective boundary condition on $\partial \Omega_{\cite{Bruna2012}}$ is imposed.
 
+ 
+%%% TODO: introduce: equation (11) (!?) for hard discs from Bruna12 
+%%% TODO: introduce: all further simulation properties of bruna12: Domain, Number of cells, Number of Simulations, Initial distribution, Diffusitivity constant, epsilon and cell radius, forces in new simulation, spatial discretisation, time interval, time step size, Number of Cell wall points
+* 400 particles/cells 
+* initial distribution ~ N(0,0.09) + no overlaps for hard discs 
+The domain of the system is 
+
+a square with side length $1$ around the origin
+% TODO: discretisation parameters 
+and the time step size is $10^-5$. 
+
+%%% TODO: describe: principle of monte carlo simulation
+%%% TODO: introduce: what does Figure 2 show?
+Figure $2$ in \cite{Bruna2012} shows the marginal distribution function $p(x_1, t)$ at time $t = 0.05$. 
+The figure compares the solution of the nonlinear diffusion equation $(11)$ for finite-sized particles with the solution of the linear diffusion equation $(4)$ for point particles. \\
+The figure consists of four plots:
+\begin{enumerate}[label=(\alph*)]
+    \item shows the solution of the linear diffusion equation $(4)$ for point particles.
+    \item shows the histogram of the marginal distribution function $p(x1, t)$ for point particles.
+    \item shows the solution of the nonlinear diffusion equation $(11)$ for finite-sized particles.
+    \item shows the histogram of the marginal distribution function $p(x1, t)$ for finite-sized particles.
+\end{enumerate}
 The figure is a useful tool for understanding the behavior of the system and the effects of excluded-volume interactions on the collective diffusion rate.
+The the heat equation and Equation $(4)$ and in Figure $2a$ and $2c$ show similar characteristics as the stochastic simulations in $2b$ and $2d$. 
+We can observe that the excluded-volume effects enhance the overall collective diffusion rate.
+% TODO: ... as equation ... already indicated 
+
+%%% TODO: tell that we want to test what our model delivers 
+%%% TODO: explain all parameters from new model 
+%%% TODO: name Julia framework that got used for solving the pde 
+%%% TODO: conclude that we hopefully have matching results 
+
+
+
+
+
+
+
+
+

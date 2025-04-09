@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2025.1.28)  30 JAN 2025 09:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2025.1.28)  9 APR 2025 11:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -654,56 +654,64 @@ LaTeX Font Info:    Redeclaring math accent \widetilde on input line 946.
 )) (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/tools\enumerate.sty
 Package: enumerate 2023/07/04 v3.00 enumerate extensions (DPC)
 \@enLab=\toks33
+) (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+Package: enumitem 2025/02/06 v3.11 Customized lists
+\labelindent=\skip65
+\enit@outerparindent=\dimen185
+\enit@toks=\toks34
+\enit@inbox=\box55
+\enit@count@id=\count324
+\enitdp@description=\count325
 ) (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen185
-\lightrulewidth=\dimen186
-\cmidrulewidth=\dimen187
-\belowrulesep=\dimen188
-\belowbottomsep=\dimen189
-\aboverulesep=\dimen190
-\abovetopsep=\dimen191
-\cmidrulesep=\dimen192
-\cmidrulekern=\dimen193
-\defaultaddspace=\dimen194
-\@cmidla=\count324
-\@cmidlb=\count325
-\@aboverulesep=\dimen195
-\@belowrulesep=\dimen196
-\@thisruleclass=\count326
-\@lastruleclass=\count327
-\@thisrulewidth=\dimen197
+\heavyrulewidth=\dimen186
+\lightrulewidth=\dimen187
+\cmidrulewidth=\dimen188
+\belowrulesep=\dimen189
+\belowbottomsep=\dimen190
+\aboverulesep=\dimen191
+\abovetopsep=\dimen192
+\cmidrulesep=\dimen193
+\cmidrulekern=\dimen194
+\defaultaddspace=\dimen195
+\@cmidla=\count326
+\@cmidlb=\count327
+\@aboverulesep=\dimen196
+\@belowrulesep=\dimen197
+\@thisruleclass=\count328
+\@lastruleclass=\count329
+\@thisrulewidth=\dimen198
 )
-\c@theorem=\count328
+\c@theorem=\count330
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
  (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count329
-\l__pdf_internal_box=\box55
+\l__color_backend_stack_int=\count331
+\l__pdf_internal_box=\box56
 ) (MT-Tim-Vogel-DATE.aux)
 \openout1 = `MT-Tim-Vogel-DATE.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for U/mathx/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for U/mathx/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 63.
+LaTeX Font Info:    ... okay on input line 63.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -741,17 +749,17 @@ LaTeX Font Info:    ... okay on input line 61.
 
 (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count330
-\scratchdimen=\dimen198
-\scratchbox=\box56
-\nofMPsegments=\count331
-\nofMParguments=\count332
-\everyMPshowfont=\toks34
-\MPscratchCnt=\count333
-\MPscratchDim=\dimen199
-\MPnumerator=\count334
-\makeMPintoPDFobject=\count335
-\everyMPtoPDFconversion=\toks35
+\scratchcounter=\count332
+\scratchdimen=\dimen199
+\scratchbox=\box57
+\nofMPsegments=\count333
+\nofMParguments=\count334
+\everyMPshowfont=\toks35
+\MPscratchCnt=\count335
+\MPscratchDim=\dimen256
+\MPnumerator=\count336
+\makeMPintoPDFobject=\count337
+\everyMPtoPDFconversion=\toks36
 ) (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -761,12 +769,12 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 61.
+Package hyperref Info: Link coloring OFF on input line 63.
 \@outlinefile=\write3
 \openout3 = `MT-Tim-Vogel-DATE.out'.
 
-LaTeX Info: Command `\dddot' is already robust on input line 61.
-LaTeX Info: Command `\ddddot' is already robust on input line 61.
+LaTeX Info: Command `\dddot' is already robust on input line 63.
+LaTeX Info: Command `\ddddot' is already robust on input line 63.
 \openout2 = `chapters/titlePage.aux'.
 
  (chapters/titlePage.tex)
@@ -785,384 +793,78 @@ No file MT-Tim-Vogel-DATE.toc.
 
 
 ]
-\openout2 = `chapters/overview-bachelor.aux'.
+\openout2 = `chapters/sanityCheck.aux'.
 
- (chapters/overview-bachelor.tex
+ (chapters/sanityCheck.tex
+
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 4.
+
+
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 5.
+
 LaTeX Font Info:    Trying to load font information for U+msa on input line 8.
- (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
+(C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 8.
  (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 7--9
 
- []
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 32.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 13--16
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 35.
 
- []
 
-<figures/bachelors-thesis/model_illustrations/PhaseFieldModel.png, id=19, 3011.25pt x 2007.5pt>
-File: figures/bachelors-thesis/model_illustrations/PhaseFieldModel.png Graphic file (type png)
-<use figures/bachelors-thesis/model_illustrations/PhaseFieldModel.png>
-Package pdftex.def Info: figures/bachelors-thesis/model_illustrations/PhaseFieldModel.png  used on input line 22.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 40.
 
-Underfull \hbox (badness 2134) in paragraph at lines 23--23
-[]\OT1/cmr/m/n/10.95 (a) |A con-tour plot of a phase
- []
+chapters/sanityCheck.tex:43: Missing number, treated as zero.
+<to be read again> 
+                   $
+l.43 ...d \vec{x_i} = \sqrt{2} d B_i dt$, \hskip $
+                                                  1 \leq i \leq 400$, on $ \...
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
 
-<figures/bachelors-thesis/model_illustrations/VertexModel.png, id=20, 3011.25pt x 2007.5pt>
-File: figures/bachelors-thesis/model_illustrations/VertexModel.png Graphic file (type png)
-<use figures/bachelors-thesis/model_illustrations/VertexModel.png>
-Package pdftex.def Info: figures/bachelors-thesis/model_illustrations/VertexModel.png  used on input line 26.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
+chapters/sanityCheck.tex:43: Illegal unit of measure (pt inserted).
+<to be read again> 
+                   $
+l.43 ...d \vec{x_i} = \sqrt{2} d B_i dt$, \hskip $
+                                                  1 \leq i \leq 400$, on $ \...
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 43.
+
+
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 46.
+
+
+LaTeX Warning: Citation `Bruna2012' on page 3 undefined on input line 61.
+
 
 
 [3
 
- <./figures/bachelors-thesis/model_illustrations/PhaseFieldModel.png> <./figures/bachelors-thesis/model_illustrations/VertexModel.png>]
-<figures/bachelors-thesis/shoelace.png, id=39, 419.79443pt x 315.47426pt>
-File: figures/bachelors-thesis/shoelace.png Graphic file (type png)
-<use figures/bachelors-thesis/shoelace.png>
-Package pdftex.def Info: figures/bachelors-thesis/shoelace.png  used on input line 43.
-(pdftex.def)             Requested size: 227.62204pt x 171.06117pt.
+])
 
+[4] (MT-Tim-Vogel-DATE.bbl)
 
-LaTeX Warning: Citation `ShoelaceFigure2022' on page 4 undefined on input line 46.
+[5
 
 
-LaTeX Warning: Citation `ShoelaceFigure2022' on page 4 undefined on input line 46.
+]
 
+[6
 
-
-[4 <./figures/bachelors-thesis/shoelace.png>]
-
-LaTeX Font Warning: Font shape `OT1/cmr/m/scit' undefined
-(Font)              using `OT1/cmr/m/sc' instead on input line 61.
-
-<figures/bachelors-thesis/discreteOverlap/discreteOverlapEx1.png, id=49, 1656.1875pt x 2007.5pt>
-File: figures/bachelors-thesis/discreteOverlap/discreteOverlapEx1.png Graphic file (type png)
-<use figures/bachelors-thesis/discreteOverlap/discreteOverlapEx1.png>
-Package pdftex.def Info: figures/bachelors-thesis/discreteOverlap/discreteOverlapEx1.png  used on input line 96.
-(pdftex.def)             Requested size: 128.0387pt x 155.18143pt.
-<figures/bachelors-thesis/discreteOverlap/discreteOverlapEx2.png, id=50, 1656.1875pt x 2007.5pt>
-File: figures/bachelors-thesis/discreteOverlap/discreteOverlapEx2.png Graphic file (type png)
-<use figures/bachelors-thesis/discreteOverlap/discreteOverlapEx2.png>
-Package pdftex.def Info: figures/bachelors-thesis/discreteOverlap/discreteOverlapEx2.png  used on input line 100.
-(pdftex.def)             Requested size: 128.0387pt x 155.18143pt.
-<figures/bachelors-thesis/discreteOverlap/discreteOverlapEx3.png, id=51, 1656.1875pt x 2007.5pt>
-File: figures/bachelors-thesis/discreteOverlap/discreteOverlapEx3.png Graphic file (type png)
-<use figures/bachelors-thesis/discreteOverlap/discreteOverlapEx3.png>
-Package pdftex.def Info: figures/bachelors-thesis/discreteOverlap/discreteOverlapEx3.png  used on input line 104.
-(pdftex.def)             Requested size: 128.0387pt x 155.18143pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-
-[5]
-Underfull \hbox (badness 10000) in paragraph at lines 118--119
-
- []
-
-
-
-[6 <./figures/bachelors-thesis/discreteOverlap/discreteOverlapEx1.png> <./figures/bachelors-thesis/discreteOverlap/discreteOverlapEx2.png> <./figures/bachelors-thesis/discreteOverlap/discreteOverlapEx3.png>]
-
-[7]
-<figures/bachelors-thesis/forces/angle/angle1.png, id=81, 5621.0pt x 1204.5pt>
-File: figures/bachelors-thesis/forces/angle/angle1.png Graphic file (type png)
-<use figures/bachelors-thesis/forces/angle/angle1.png>
-Package pdftex.def Info: figures/bachelors-thesis/forces/angle/angle1.png  used on input line 254.
-(pdftex.def)             Requested size: 426.79134pt x 91.45473pt.
-
-
-[8]
-LaTeX Font Info:    Trying to load font information for U+bbm on input line 291.
- (C:\Users\voglt\AppData\Local\Programs\MiKTeX\tex/latex/bbm\ubbm.fd
-File: ubbm.fd 1999/03/15 V 1.2 Font definition for bbm font - TH
-)
-
-[9 <./figures/bachelors-thesis/forces/angle/angle1.png>]
-
-[10]
-<figures/bachelors-thesis/forces/interaction/interaction_rescaled/interaction_rescaled.png, id=101, 3613.5pt x 1204.5pt>
-File: figures/bachelors-thesis/forces/interaction/interaction_rescaled/interaction_rescaled.png Graphic file (type png)
-<use figures/bachelors-thesis/forces/interaction/interaction_rescaled/interaction_rescaled.png>
-Package pdftex.def Info: figures/bachelors-thesis/forces/interaction/interaction_rescaled/interaction_rescaled.png  used on input line 332.
-(pdftex.def)             Requested size: 426.79134pt x 142.25475pt.
-
-
-LaTeX Warning: Reference `eq:interaction2' on page 11 undefined on input line 333.
-
-
-LaTeX Warning: Reference `eq:interaction2' on page 11 undefined on input line 333.
-
-
-
-[11 <./figures/bachelors-thesis/forces/interaction/interaction_rescaled/interaction_rescaled.png>]
-
-LaTeX Warning: Citation `Bruna2023' on page 12 undefined on input line 342.
-
-
-LaTeX Warning: Citation `Bruna2012' on page 12 undefined on input line 342.
-
-)
-Underfull \hbox (badness 10000) in paragraph at lines 342--74
-
- []
-
-
-
-[12]
-\openout2 = `chapters/overview-master.aux'.
-
- (chapters/overview-master.tex
-
-LaTeX Warning: Citation `Bruna2012' on page 13 undefined on input line 2.
-
-<figures/sanity-check/bruna12_theOriginal.png, id=116, 737.00343pt x 616.55344pt>
-File: figures/sanity-check/bruna12_theOriginal.png Graphic file (type png)
-<use figures/sanity-check/bruna12_theOriginal.png>
-Package pdftex.def Info: figures/sanity-check/bruna12_theOriginal.png  used on input line 6.
-(pdftex.def)             Requested size: 426.79135pt x 357.03677pt.
-
-
-[13
-
-
-
- <./figures/sanity-check/bruna12_theOriginal.png>]
-<figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime0001.png, id=125, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime0001.png Graphic file (type png)
-<use figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime0001.png>
-Package pdftex.def Info: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime0001.png  used on input line 29.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-<figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime5000.png, id=126, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime5000.png Graphic file (type png)
-<use figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime5000.png>
-Package pdftex.def Info: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime5000.png  used on input line 33.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-<figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime10000.png, id=127, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime10000.png Graphic file (type png)
-<use figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime10000.png>
-Package pdftex.def Info: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime10000.png  used on input line 37.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-<figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime25000.png, id=128, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime25000.png Graphic file (type png)
-<use figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime25000.png>
-Package pdftex.def Info: figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime25000.png  used on input line 40.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-
-
-[14 <./figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime0001.png> <./figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime5000.png> <./figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime10000.png> <./figures/sanity-check/Heatmap-run1-NoSim300-T100.0/heatmaps/heatmap-run1-NoSim300-T100.0-sampleTime25000.png>]
-<figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.0.png, id=135, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.0.png Graphic file (type png)
-<use figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.0.png>
-Package pdftex.def Info: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.0.png  used on input line 65.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-<figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.01.png, id=136, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.01.png Graphic file (type png)
-<use figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.01.png>
-Package pdftex.def Info: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.01.png  used on input line 69.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-<figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.02.png, id=137, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.02.png Graphic file (type png)
-<use figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.02.png>
-Package pdftex.def Info: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.02.png  used on input line 73.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-<figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.05.png, id=138, 3011.25pt x 2007.5pt>
-File: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.05.png Graphic file (type png)
-<use figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.05.png>
-Package pdftex.def Info: figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.05.png  used on input line 76.
-(pdftex.def)             Requested size: 170.71393pt x 113.79767pt.
-
-
-[15 <./figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.0.png> <./figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.01.png> <./figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.02.png> <./figures/sanity-check/imitate-hardsphere-bruna-test1/heatmaps/heatmap-imitate-hardsphere-bruna-test1-sampleTime0.05.png>]
-
-[16]
-chapters/overview-master.tex:95: Missing $ inserted.
-<inserted text> 
-                $
-l.95 
-     
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:95: Missing } inserted.
-<inserted text> 
-                }
-l.95 
-     
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-chapters/overview-master.tex:95: Extra }, or forgotten \endgroup.
-\par ...m \@noitemerr {\@@par }\fi \else {\@@par }
-                                                  \fi 
-l.95 
-     
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-chapters/overview-master.tex:97: Missing $ inserted.
-<inserted text> 
-                $
-l.97 	initial condition: X' = \sqrt{
-                                    10} X , \quad \text{where } X \sim N(0, ...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:98: Missing $ inserted.
-<inserted text> 
-                $
-l.98 	
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:98: Missing } inserted.
-<inserted text> 
-                }
-l.98 	
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-chapters/overview-master.tex:98: Extra }, or forgotten \endgroup.
-\par ...m \@noitemerr {\@@par }\fi \else {\@@par }
-                                                  \fi 
-l.98 	
-      
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-chapters/overview-master.tex:101: Missing $ inserted.
-<inserted text> 
-                $
-l.101 	(N-1) \epsilon
-                      ^2 must be constant
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:103: Missing $ inserted.
-<inserted text> 
-                $
-l.103 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:103: Missing } inserted.
-<inserted text> 
-                }
-l.103 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-chapters/overview-master.tex:103: Extra }, or forgotten \endgroup.
-\par ...m \@noitemerr {\@@par }\fi \else {\@@par }
-                                                  \fi 
-l.103 
-      
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-chapters/overview-master.tex:104: Missing $ inserted.
-<inserted text> 
-                $
-l.104 	time = [0.00,0.05], \delta
-                                  t = 10^{-5}, we could choose \delta t' = 1...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:107: Missing $ inserted.
-<inserted text> 
-                $
-l.107 
-      
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-chapters/overview-master.tex:107: Missing } inserted.
-<inserted text> 
-                }
-l.107 
-      
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-chapters/overview-master.tex:107: Extra }, or forgotten \endgroup.
-\par ...m \@noitemerr {\@@par }\fi \else {\@@par }
-                                                  \fi 
-l.107 
-      
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-
-Overfull \hbox (243.32076pt too wide) in paragraph at lines 109--114
-[]$\OML/cmm/m/it/12 DOITFORTHEDIFFERENTOVERLAPSRadiusOverlapforpaperlikeLookatbacheloroverlapwithdeformationfornewmodel$
- []
-
-
-chapters/overview-master.tex:116: LaTeX Error: Command \item invalid in math mode.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.116 	\item
-             parallelize code
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-chapters/overview-master.tex:116: Missing $ inserted.
-<inserted text> 
-                $
-l.116 	\item p
-              arallelize code
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-)
-
-[17] (MT-Tim-Vogel-DATE.bbl)
-
-[18
-
-
-
-] (MT-Tim-Vogel-DATE.aux (chapters/titlePage.aux) (chapters/overview-bachelor.aux) (chapters/overview-master.aux))
+] (MT-Tim-Vogel-DATE.aux (chapters/titlePage.aux) (chapters/sanityCheck.aux))
  ***********
 LaTeX2e <2024-11-01> patch level 1
 L3 programming layer <2024-12-25>
@@ -1181,20 +883,20 @@ Package rerunfilecheck Warning: File `MT-Tim-Vogel-DATE.out' has changed.
 
 Package rerunfilecheck Info: Checksums for `MT-Tim-Vogel-DATE.out':
 (rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  D41D8CD98F00B204E9800998ECF8427E;0.
+(rerunfilecheck)             After:  92F18A58D903E311365A61CD7A87A521;106.
  ) 
 Here is how much of TeX's memory you used:
- 15921 strings out of 473535
- 267159 string characters out of 5714935
- 671165 words of memory out of 5000000
- 38855 multiletter control sequences out of 15000+600000
- 574085 words of font info for 89 fonts, out of 8000000 for 9000
+ 15935 strings out of 473535
+ 255332 string characters out of 5714935
+ 668858 words of memory out of 5000000
+ 38913 multiletter control sequences out of 15000+600000
+ 570133 words of font info for 74 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,14n,79p,821b,689s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/bbm/dpi600\bbm12.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi720\mathb12.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi600\matha6.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi720\mathx10.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi657\matha10.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi600\matha8.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi600\matha12.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1728.pk><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on MT-Tim-Vogel-DATE.pdf (18 pages, 3223692 bytes).
+ 69i,8n,79p,604b,579s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi600\matha8.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi720\mathx10.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/public/mathabx/dpi600\matha12.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk> <C:\Users\voglt\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1728.pk><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr17.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/voglt/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on MT-Tim-Vogel-DATE.pdf (6 pages, 143852 bytes).
 PDF statistics:
- 304 PDF objects out of 1000 (max. 8388607)
- 52 named destinations out of 1000 (max. 500000)
- 86 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 129 PDF objects out of 1000 (max. 8388607)
+ 17 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
