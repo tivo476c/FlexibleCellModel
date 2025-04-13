@@ -5,52 +5,40 @@ using ColorSchemes
 using DifferentialEquations
 using LinearAlgebra
 
+
 # 2D Gaussian with μ = 0 and σ^2 as argument: 
 function gaussian2d(x, y, sigma_square)
-    return (1 / (2*pi*sigma_square)) * exp(- (x^2 + y^2) / (2*sigma_square))
-end
-
-function laplacian_1d(N, dx)
-    A = spzeros(N, N)
-    for i in 2:N-1
-        A[i, i-1] = -1
-        A[i, i]   =  2
-        A[i, i+1] = -1
-    end
-    # Neumann BCs (zero derivative at boundaries)
-    A[1,1] = 1
-    A[1,2] = -1
-    A[N,N-1] = -1
-    A[N,N] = 1
-
-    return A / dx^2
+    return (1 / (2 * pi * sigma_square)) * exp(-(x^2 + y^2) / (2 * sigma_square))
 end
 
 # PDE dynamic of Figure 2a 
-function heat_equ!(du, u, p, t)
-    laplace_x = laplacian_1d(Nx, dx)
-    Identity = spdiagm(0 => ones(Nx))
-    L = LinearAlgebra.kron(Identity, laplace_x) + LinearAlgebra.kron(laplace_x, Identity)
-    
-    du .= D * (L * u)
-end 
+function heat_equ(du, u, p, t)
+    # du and u must be vectors 
+    uMatrix = reshape(u, Nx, Nx)
+    _, D = p
 
-function heat2(du, u, p, t)
-    laplace_u = zeros(size(u))
-    for i in 2:size(u, 1)-1
-        for j in 2:size(u, 2)-1
-            laplace_u[i, j] = (u[i+1, j] - 2*u[i, j] + u[i-1, j]) / dx^2 + 
-                        (u[i, j+1] - 2*u[i, j] + u[i, j-1]) / dy^2
-        end
+    # interior 
+    res = (HeatMatrix * uMatrix + uMatrix * HeatMatrix)
+
+    # reflective boundary condition -> u_0 = u_2 
+    for i = 1:Nx
+        res[1, i] += uMatrix[1, i]
+        res[Nx, i] += uMatrix[Nx, i]
+        res[i, 1] += uMatrix[i, 1]
+        res[i, Nx] += uMatrix[i, Nx]
     end
-    du .= u .* laplace_u
 
-    #reflective boundary condition: 
-    du[1, :] .= 0
-    du[end, :] .= 0
-    du[:, 1] .= 0
-    du[:, end] .= 0
-end 
+    res = D * res / (dx^2)
+
+    res = vec(res)
+    for i = 1:length(du)
+        du[i] = res[i]
+    end
+
+    return du
+end
+
+
 
 
 ### Simulation parameters  
@@ -58,40 +46,54 @@ end
 ## spatial discretisation  
 Nx = Ny = 100
 x = y = range(-0.5, 0.5, length=Nx)  # grid in both x and y
-dx = dy = x[2] - x[1] 
+dx = dy = x[2] - x[1]
 # x = y = range(-5.0, 5.0, length=2000)  # grid in both x and y
 X, Y = [x[i] for i in 1:length(x), j in 1:length(y)], [y[j] for i in 1:length(x), j in 1:length(y)]
 
 ## time discretisation
-delta_t = dx^2
+delta_t = 10^-4
 # D = 100 * dx^2 / delta_t
 D = 1
 p = [delta_t, D]
 T = 0.05
-tspan = (0, T) 
+tspan = (0, T)
 
 ## inital condition 
 sigma_square = 0.09
 u0 = gaussian2d.(X, Y, sigma_square)
 
 ## Problem and solution 
-HeatProblem = ODEProblem(heat2, u0, tspan, p)
-@time sol = solve(HeatProblem, Tsit5(); saveat=T)
+HeatMatrix = zeros(Nx, Nx)
+for i = 1:Nx
+    for j = 1:Nx
+        if i == j
+            HeatMatrix[i, j] = -2
+        elseif abs(i - j) == 1
+            HeatMatrix[i, j] = 1
+        end
+    end
+end
+HeatProblem = ODEProblem(heat_equ, vec(u0), tspan, p)
+@time sol = solve(HeatProblem, Tsit5(); saveat=[0, 0.01, 0.02, 0.03, 0.04, T])
+# @time sol = solve(HeatProblem, Tsit5())
 
-u_t05 = sol.u[1]
+u_t05 = reshape(sol.u[5], Nx, Nx)
 
+
+tit = string("N(0,0.09)^2 performing Heat equ \n at t=0.04 with reflective BC \n\n")
 
 heatmap(x, y, u_t05,
-    xlimits = (-0.5,0.5), 
-    ylimits = (-0.5,0.5), 
+    xlimits=(-0.5, 0.5),
+    ylimits=(-0.5, 0.5),
     # xlimits = (-5.0,5.0), 
     # ylimits = (-5.0,5.0), 
     # title="N(0,0.09)^2 \n\n",
-    title="N(0,0.09)^2 performing Heat equ \n at t=0.05 with reflective BC \n\n",
+    title=tit,
     c=reverse(cgrad(:hot)),
-    # clim = (0.55, 1.55), 
+    clim=(0.55, 1.55),
     ratio=:equal,
-    dpi=500
+    dpi=300
 )
+savefig("figures/sanity-check/heat-dynamic-bruna12-scale-T0-04.png")
 
-savefig("figures/sanity-check/normal-distribution-T0_005-.png")
+u_t05 == gaussian2d.(X, Y, sigma_square)
