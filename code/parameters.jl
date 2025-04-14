@@ -5,7 +5,7 @@ NumberOfCellWallPoints = 0               # number of wall points per cell [OLD N
 N = NumberOfCellWallPoints
 NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
-D = 100                             # diffusitivity constant 
+D = 100                          # diffusitivity constant 
 radius = 0.0           # cell radius 
 
 # Force scalings: 
@@ -24,9 +24,9 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 # Simulation parameters: 
 
 timeInterval = (0.0, 0.05)
-timeStepSize = 10^(-3) 
+timeStepSize = 10^(-5)
 lengthOfSolVec = floor((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
-sampleTimeStepSize = floor(lengthOfSolVec/10.0) 
+sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 
 #sampleTimes = collect(0:sampleTimeStepSize:lengthOfSolVec) 
 #sampleTimes = collect(0:100:lengthOfSolVec) 
@@ -36,23 +36,23 @@ sampleTimeStepSize = floor(lengthOfSolVec/10.0)
 # sampleTimes = [1,1000,3000,5000]
 sampleTimes = [0.0, 0.01, 0.02, 0.05]
 
-NumberOfSimulations = 10^4  # TODO: change to 300 or something like this (test how many!!!)
-NumberOfSampleTimes = length(sampleTimes) 
+NumberOfSimulations = 10^4  # TODO: change to 10^4 or something like this (test how many!!!)
+NumberOfSampleTimes = length(sampleTimes)
 #simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
-simulationName = string("point-particle-model-working-4.0-higher-derivation") 
+simulationName = string("ppmodel-13-04-25-lappi4")
 
 # Space Discretisation
 
 grid = [-5.0 + k * 0.25 for k in 0:40]
 discreteSpaceArray = zeros(Int, 40, 40)
-function giveCoordinates(x::Int, y::Int) 
-    x_min = -5.0 + (x-1) * 0.25
-    x_max = x_min + 0.25 
-    y_max =  5.0 - (y-1) * 0.25
-    y_min = y_max - 0.25 
+function giveCoordinates(x::Int, y::Int)
+    x_min = -5.0 + (x - 1) * 0.25
+    x_max = x_min + 0.25
+    y_max = 5.0 - (y - 1) * 0.25
+    y_min = y_max - 0.25
 
     return (x_min, x_max), (y_min, y_max)
-end 
+end
 
 
 
