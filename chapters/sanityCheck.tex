@@ -12,14 +12,7 @@ play an important roll. \\
 The joint probability density function $P(\vec{X}, t)$ is a function describing the positions of all particles in the system, while the marginal distribution function $p(\vec{x}_1, t)$ is a function describing only the position of the first particle. \\
 It is sufficient to consider only the marginal distribution function of first particle, because all particle act similarly. \\ 
 Gaining $p(\vec{x}_1, t)$ from $P(\vec{X}, t)$ is a big reduction of complexity, since we reduce from a high-dimensional PDE for $P$ to a low-dimensional PDE for $p$. 
-The marginal distribution function the of first particle can be computed via
-\begin{center}
-    $
-    p(\vec{x}_1, t) = \int P(\vec{X}, t) d\vec{x}_2 \dots  d\vec{x}_N.
-    $
-\end{center} 
 
-%%% TODO: introduce: Heat equation for point particles and explain model for this 
 The most simple model that gets considered for the diffusion dynamics of cell systems is the point particle model. 
 Here the cells get modeled with sizeless points that perform a Brownian motion on the domain. \\
 Since the cells do not have a real size, no interaction between the cells can occur, since they will never hit upon each other.  
@@ -27,59 +20,96 @@ Since the cells do not have a real size, no interaction between the cells can oc
 The paper\cite{Bruna2012} analyses these dynamics on the domain 
 \begin{center}
     $
-    \Omega_{\cite{Bruna2012}} = [-0.5, 0.5]^2,
+    \Omega_{BC} = [-0.5, 0.5]^2,
     $
 \end{center}
-on which $400$ particles are located. \\
-The particles are initially distributed according to a normal distribution with mean 0 and standard deviation 0.09. 
-This initial distribution has an integral of one over $\Omega_{\cite{Bruna2012}}$. \\
+on which $N_{BC} = 400$ particles are located. \\
 The movement of each point particle $\vec{x}_i$ in the simulation is given by the stochastic differential equation (SDE)
 \begin{center}
-    $d \vec{x}_i = \sqrt{2} d B_i dt$, \hspace{0.5em}
-    $1 \leq i \leq 400$,\hspace{0.5em}
-    on $ \Omega_{\cite{Bruna2012}}$, \\
+    $\dequ \vec{x}_i = \sqrt{2} \dequ B_i \dequ t$, \hspace{0.5em}
+    $1 \leq i \leq N_{BC}$,\hspace{0.5em}
+    on $ \Omega_{BC}$, \\
 \end{center}
-The reflective boundary condition on $\partial \Omega_{\cite{Bruna2012}}$ is imposed:
+The reflective boundary condition on $\partial \Omega_{BC}$ is imposed:
 \begin{equation}
     \nabla_{\vec{x}} p \cdot \vec{n} = 0.
 \end{equation}
-It is known, that particles in this setup move according to the heat equation, i.e.
+It is known, that the joint probability density of the particle system in this setup evolve according to the diffusion equation, i.e.
 \begin{equation}
-    \frac{\partial p}{\partial t}(\vec{x}_1, t) = \Delta_{\vec{x}_1} p = \nabla_{\vec{x}_1} \cdot [ \nabla_{\vec{x}_1} p]
+    \frac{\partial P}{\partial t}(\vec{X}, t) = \Delta_{\vec{X}} P = \nabla_{\vec{X}} \cdot [ \nabla_{\vec{X}} P]
     \label{eq:heat}
 \end{equation}
 inside of the domain. \\
+Since all particles are uncorrelated, we can compute
+\begin{equation}
+    P(\vec{X}) = \prod_{i=1}^{N_{BC}} p(\vec{x}_i, t).
+\end{equation}
+The marginal distribution function the of first particle can then be determined via
+\begin{center}
+    $
+    p(\vec{x}_1, t) = \int P(\vec{X}, t) \dequ \vec{x}_2 \dots  \dequ \vec{x}_{N_{BC}}.
+    $
+\end{center} 
 
 A next step that results in the hard sphere cell model (HSCM) is to give the cell particles a real size. \\
 Let $0 < \epsilon \ll 1$ be the diameter of all cells that are now two dimensional discs with the same size. 
 This changes the dynamics of the cells immense, since they now have chance to collide into each other which is a form of interaction. \\
 The authors of \cite{Bruna2012} also did a simulation with the HSCM. 
 The setting is as similar as possible to the point particle model, because a main goal of the paper was to compare the diffusion characteristics of both models. 
-There are still $400$ cells located on the domain. \\
-But the first changes are already needed to be made in the initial condition.  
-We do not want a setting where two cells overlap each other. 
-Thus, the $400$ cells get initialized in the following way:
-\begin{enumerate}
-    \item Generate a point $\vec{x} ~ N(0,0.09)^2$. 
-    \item If for all already generated centres $\vec{x}_j: \norm[\vec{x} - \vec{x}_j] > \epsilon$ is true, use $\vec{x}$ as the next cell centre, otherwise discard the point and restart with step 1 until $400$ cell centres are found.   
-\end{enumerate}
-Since we do not want any overlap to occur during the whole simulation, the feasible domain is given by $\Omega_{\cite{Bruna2012}}^{\epsilon}$ which is the subset of $\Omega_{\cite{Bruna2012}}$ that excludes all areas where there exists a cell centre that has a distance of less than $\epsilon$ to it. \\
-The cells perform the same Brownian motion as the point particles. 
-The next question is, how cell collisions are modeled. 
+There are still $N_{BC} = 400$ cells located on the domain. \\
+
+The initial condition of both models follows a two dimensional normal distribution $\mathcal{N}_2(0,0.09^2)$ with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
+The distribution $\mathcal{N}_2(0,0.09^2)$ has an integral of one over $\Omega_{BC}$. \\
+We can compute this initial condition with Algorithm \ref{alge:HSCMinitial}.
+\begin{algorithm} \textbf{Computation of the initial cell system} \label{alge:HSCMinitial}
+	\begin{itemize} 
+		\item Generate a point $\vec{x} \sim \mathcal{N}_2(0,0.09^2)$. 
+		\item If for all already generated centres $\vec{x}_j: \norm[\vec{x} - \vec{x}_j] > \epsilon$ is true, use $\vec{x}$ as the next cell centre, otherwise discard the point and restart with step 1 until $N_{BC}$ cell centres are found. 
+	\end{itemize}	
+\end{algorithm}
+
+Since we do not want any overlap to occur during the whole simulation with the HSCM, the feasible domain for the whole cell system is not directly $\Omega_{BC}^{N_{BC}}$, but instead 
+\begin{center}
+    $\Omega_{BC}^{\epsilon} := \Omega_1^{\epsilon} \times \ldots \times \Omega_{N_{BC}}^{\epsilon}$, \\
+    $\Omega_{i}^{\epsilon} := \Omega_{BC} \ ( \cup_{j \neq i} \mathrm{B}_{\epsilon}(\vec{x}_j))$,
+\end{center}
+where $\mathrm{B}_{\epsilon}(\vec{x}_j))$ denotes the ball around $\vec{x}_j$ with radius $\epsilon$. \\
+This domain prevents overlaps between the cells by not allowing each cell to drift to close to any other cell.  
+
+HSCM cells perform the same Brownian motion as the point particles. \\
+The next question is, how cell collisions are modelled. 
+Unlike in our DCF model where cell interactions are modelled as forces acting inside of the domain, the cell collisions from the HSCM arise from the reflective boundary condition. \\
 Let us assume that two cells $i$ and $j$ are given such that $\norm[\vec{x}_i - \vec{x}_j] = \epsilon$ is true. 
-Then, both cell centres are located at the boundary $\partial \Omega_{\cite{Bruna2012}}^{\epsilon}$. 
+Then, both cell centres are located at the boundary $\partial \Omega_{BC}^{\epsilon}$. 
 Here, the reflective boundary condition is still imposed and it causes both cells to bounce of from each other in the direction of the outward normal vector from the excluded area of the respectively other cell. \\ 
-We can note that the interaction does not come from any kind of interaction term that describes the dynamics of the cells inside of the domain, like in our model's approach.
-But instead, the whole feasible domain changes with the moving cells in the HSCM and thus the domain's boundary changes where the reflective boundary condition causes all cells to bounce of. \\ 
 
 In \cite{Bruna2012} the authors managed to compute the marginal distribution function of the first particle of the HSCM. 
 In two dimensions it is given by:
 \begin{equation}
-    \frac{\partial p}{\partial t}(\vec{x}_1, t) = \nabla_{\vec{x}_1} \cdot \{\nabla_{\vec{x}_1}[p + \frac{\pi}{2}(400 - 1)\epsilon^2 p^2]\}.
+    \frac{\partial p}{\partial t}(\vec{x}_1, t) = \nabla_{\vec{x}_1} \cdot \{\nabla_{\vec{x}_1}[p + \frac{\pi}{2}(N_{BC} - 1)\epsilon^2 p^2]\}.
     \label{eq:hard-sphere-p}
 \end{equation}
-We can see, that a positive term was added to the dynamics of the point particle model \ref{eq:heat}. 
-That means that the bounce effect of the real sized hard spheres increases the diffusitivity of the cell system. 
+We can see a connection to Equation \ref{eq:heat}. 
+Let us look at the differential equation
+\begin{center}
+    $\frac{\partial P}{\partial t}(\vec{X}, t) =  \nabla_{\vec{X}} \cdot [D_{\epsilon}(p) \nabla_{\vec{X}} P]$,
+    $D_{\epsilon}(p) = 1 + \frac{\pi}{2}(N_{BC}-1)\epsilon^2 p$ ????.
+\end{center}
+For $\epsilon = 0$ we can then see that $D_{\epsilon}(p) = 1$ and Equation \ref{eq:heat} is given. 
+If $\epsilon > 0$ on the other hand, we have that $D_{\epsilon}(p) \geq 1$ and we get Equation \ref{eq:hard-sphere-p}. \\
+Thus, we have a higher diffusion rate for $\epsilon > 0$. 
+In that case, we can see that the diffusivity increases with either:
+\begin{enumerate}[label=(\alph*)]
+    \item a larger $N_{BC}$ which would mean more interacting cells,
+    \item a larger $\epsilon$ that leads to a higher interaction radius per cell,
+    \item a locally higher cell concentration $p$. 
+\end{enumerate}
+Overall, we conclude that the bounce effect of the HSCM enhances the diffusion rate of the system's density.
+
+
+
+
+
 
 Another evidence of this behavior is shown in Figure 2 in \cite{Bruna2012}. 
 This figure contains the following four plots:
