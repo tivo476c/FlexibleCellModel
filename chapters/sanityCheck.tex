@@ -17,7 +17,7 @@ The most simple model that gets considered for the diffusion dynamics of cell sy
 Here the cells get modeled with sizeless points that perform a Brownian motion on the domain. \\
 Since the cells do not have a real size, no interaction between the cells can occur, since they will never hit upon each other.  
 
-The paper\cite{Bruna2012} analyses these dynamics on the domain 
+The paper \cite{Bruna2012} analyses these dynamics on the domain 
 \begin{center}
     $
     \Omega_{BC} = [-0.5, 0.5]^2,
@@ -26,15 +26,11 @@ The paper\cite{Bruna2012} analyses these dynamics on the domain
 on which $N_{BC} = 400$ particles are located. \\
 The movement of each point particle $\vec{x}_i$ in the simulation is given by the stochastic differential equation (SDE)
 \begin{center}
-    $\dequ \vec{x}_i = \sqrt{2} \dequ B_i \dequ t$, \hspace{0.5em}
-    $1 \leq i \leq N_{BC}$,\hspace{0.5em}
-    on $ \Omega_{BC}$, \\
+    $\dequ \vec{x}_i(t) = \sqrt{2} \dequ B_t^{(i)}$, \hspace{0.5em} $1 \leq i \leq N_{BC}$,
 \end{center}
-The reflective boundary condition on $\partial \Omega_{BC}$ is imposed:
-\begin{equation}
-    \nabla_{\vec{x}} p \cdot \vec{n} = 0.
-\end{equation}
-It is known, that the joint probability density of the particle system in this setup evolve according to the diffusion equation, i.e.
+which describes a Brownian motion in $\Omega_{BC}$.
+The reflective boundary condition on $\partial \Omega_{BC}$ is imposed.
+It is known, that the joint probability density of the particle system in this setup evolves according to the diffusion equation, i.e.
 \begin{equation}
     \frac{\partial P}{\partial t}(\vec{X}, t) = \Delta_{\vec{X}} P = \nabla_{\vec{X}} \cdot [ \nabla_{\vec{X}} P]
     \label{eq:heat}
@@ -58,23 +54,29 @@ The authors of \cite{Bruna2012} also did a simulation with the HSCM.
 The setting is as similar as possible to the point particle model, because a main goal of the paper was to compare the diffusion characteristics of both models. 
 There are still $N_{BC} = 400$ cells located on the domain. \\
 
-The initial condition of both models follows a two dimensional normal distribution $\mathcal{N}_2(0,0.09^2)$ with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
-The distribution $\mathcal{N}_2(0,0.09^2)$ has an integral of one over $\Omega_{BC}$. \\
+The initial condition of both models follows a two dimensional normal distribution with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
+The used distribution $\mathcal{N}_2($ 
+\scalebox{0.7}{$\begin{pmatrix} 0 \\ 0 \end{pmatrix}$}, 
+\scalebox{0.7}{$\begin{pmatrix} 0.09^2 & 0 \\ 0 & 0.09^2 \end{pmatrix}$}
+$)$ has an integral of one over $\Omega_{BC}$. \\
 We can compute this initial condition with Algorithm \ref{alge:HSCMinitial}.
 \begin{algorithm} \textbf{Computation of the initial cell system} \label{alge:HSCMinitial}
-	\begin{itemize} 
-		\item Generate a point $\vec{x} \sim \mathcal{N}_2(0,0.09^2)$. 
+	\begin{enumerate} 
+		\item Generate a point $\vec{x} \sim \mathcal{N}_2($ 
+            \scalebox{0.7}{$\begin{pmatrix} 0 \\ 0 \end{pmatrix}$}, 
+            \scalebox{0.7}{$\begin{pmatrix} 0.09^2 & 0 \\ 0 & 0.09^2 \end{pmatrix}$}
+            $)$. 
 		\item If for all already generated centres $\vec{x}_j: \norm[\vec{x} - \vec{x}_j] > \epsilon$ is true, use $\vec{x}$ as the next cell centre, otherwise discard the point and restart with step 1 until $N_{BC}$ cell centres are found. 
-	\end{itemize}	
+	\end{enumerate}	
 \end{algorithm}
 
 Since we do not want any overlap to occur during the whole simulation with the HSCM, the feasible domain for the whole cell system is not directly $\Omega_{BC}^{N_{BC}}$, but instead 
 \begin{center}
-    $\Omega_{BC}^{\epsilon} := \Omega_1^{\epsilon} \times \ldots \times \Omega_{N_{BC}}^{\epsilon}$, \\
-    $\Omega_{i}^{\epsilon} := \Omega_{BC} \ ( \cup_{j \neq i} \mathrm{B}_{\epsilon}(\vec{x}_j))$,
+    $\Omega_{BC}^{\epsilon} = \Omega_1^{\epsilon} \times \ldots \times \Omega_{N_{BC}}^{\epsilon}$, \\
+    $\Omega_{i}^{\epsilon} = \Omega_{BC} \setminus ( \cup_{j \neq i} \mathrm{B}_{\epsilon}(\vec{x}_j))$, \hspace{0.5em} $1 \leq i \leq N_{BC}$,
 \end{center}
-where $\mathrm{B}_{\epsilon}(\vec{x}_j))$ denotes the ball around $\vec{x}_j$ with radius $\epsilon$. \\
-This domain prevents overlaps between the cells by not allowing each cell to drift to close to any other cell.  
+where $\mathrm{B}_{\epsilon}(\vec{x}_j)$ denotes the ball around $\vec{x}_j$ with radius $\epsilon$. \\
+This domain prevents overlaps between the cells by not allowing each cell to drift closer than $\epsilon$ to any other cell.  
 
 HSCM cells perform the same Brownian motion as the point particles. \\
 The next question is, how cell collisions are modelled. 

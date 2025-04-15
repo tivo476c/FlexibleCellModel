@@ -6,7 +6,7 @@ N = NumberOfCellWallPoints
 NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 100                          # diffusitivity constant 
-radius = 0.0           # cell radius 
+radius = 0.1           # cell radius 
 
 # Force scalings: 
 # [70,2,1.5,110]
@@ -36,10 +36,10 @@ sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 # sampleTimes = [1,1000,3000,5000]
 sampleTimes = [0.0, 0.01, 0.02, 0.05]
 
-NumberOfSimulations = 10^4  # TODO: change to 10^4 or something like this (test how many!!!)
+NumberOfSimulations = 10^3  # TODO: change to 10^4 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes)
 #simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
-simulationName = string("ppmodel-13-04-25-lappi4")
+simulationName = string("ppmodel-15-04-25-pc1")
 
 # Space Discretisation
 
