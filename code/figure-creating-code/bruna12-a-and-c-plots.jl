@@ -20,7 +20,7 @@ function heat_equ(du, u, p, t)
     # interior 
     res = (HeatMatrix * uMatrix + uMatrix * HeatMatrix)
 
-    # reflective boundary condition -> u_0 = u_2 
+    # reflective boundary condition -> u_0 = u_1 
     for i = 1:Nx
         res[1, i] += uMatrix[1, i]
         res[Nx, i] += uMatrix[Nx, i]
@@ -59,7 +59,7 @@ T = 0.05
 tspan = (0, T)
 
 ## inital condition 
-sigma_square = 0.09
+sigma_square = 0.09^2
 u0 = gaussian2d.(X, Y, sigma_square)
 
 ## Problem and solution 
@@ -77,10 +77,11 @@ HeatProblem = ODEProblem(heat_equ, vec(u0), tspan, p)
 @time sol = solve(HeatProblem, Tsit5(); saveat=[0, 0.01, 0.02, 0.03, 0.04, T])
 # @time sol = solve(HeatProblem, Tsit5())
 
-u_t05 = reshape(sol.u[5], Nx, Nx)
+
+u_t05 = reshape(sol.u[end], Nx, Nx)
 
 
-tit = string("N(0,0.09)^2 performing Heat equ \n at t=0.04 with reflective BC \n\n")
+tit = string("N(0,0.09)^2 performing Heat equ \n with reflective BC \n\n")
 
 heatmap(x, y, u_t05,
     xlimits=(-0.5, 0.5),
@@ -89,8 +90,9 @@ heatmap(x, y, u_t05,
     # ylimits = (-5.0,5.0), 
     # title="N(0,0.09)^2 \n\n",
     title=tit,
-    c=reverse(cgrad(:hot)),
-    clim=(0.55, 1.55),
+    c=palette(reverse(cgrad(:hot)), 100),
+    # cgrad=cgrad(reverse(palette(:hot, 8))),
+    clim=(0.5, 1.55),
     ratio=:equal,
     dpi=300
 )
