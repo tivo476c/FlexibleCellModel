@@ -44,7 +44,7 @@ end
 ### Simulation parameters  
 
 ## spatial discretisation  
-Nx = Ny = 400
+Nx = Ny = 300
 x = y = range(-0.5, 0.5, length=Nx)  # grid in both x and y
 dx = dy = x[2] - x[1]
 # x = y = range(-5.0, 5.0, length=2000)  # grid in both x and y
@@ -78,7 +78,7 @@ HeatProblem = ODEProblem(heat_equ, vec(u0), tspan, p)
 # @time sol = solve(HeatProblem, Tsit5())
 
 
-u_t05 = reshape(sol.u[1], Nx, Nx)
+u_t05 = reshape(sol.u[5], Nx, Nx)
 
 
 tit = string("N(0,0.09)^2 performing Heat equ \n with reflective BC \n\n")
@@ -90,10 +90,10 @@ heatmap(x, y, u_t05,
     # ylimits = (-5.0,5.0), 
     # title="N_2(0,0.09) \n\n",
     # title=tit,
-    c=palette(reverse(cgrad(:hot)), 100),
+    c=palette(reverse(cgrad(:hot)), 60),
     # cgrad=cgrad(reverse(palette(:hot, 8))),
-    # clim=(0.5, 1.55),
+    clim=(minimum(u_t05), maximum(u_t05)),
     ratio=:equal,
     dpi=300
 )
-savefig("figures/sanity-check/heat-dynamic-usual-scale-T0-01.png")
+savefig("figures/sanity-check/heat-dynamic-usual-scale-T0-04.png")
