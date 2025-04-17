@@ -16,7 +16,7 @@ interiorAngleForceFactor = 0.0
 overlapForceFactor = 0.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
-boundaryPushForceFactor = 1.0
+boundaryPushForceFactor = 10.0
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
 

@@ -63,14 +63,14 @@ end
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
 include("heatmap.jl")
-addprocs(6)
-# addprocs(3)
+# addprocs(6)
+addprocs(3)
 begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin
         include("../parameters.jl")
         include("sanityCheckFunctionalitites.jl")
-
+        
         ### 1st: DO PRIOR WORK 
         tspan = timeInterval
         simPath = joinpath(homedir(), "simulations", simulationName)

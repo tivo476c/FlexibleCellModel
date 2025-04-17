@@ -5,7 +5,7 @@ NumberOfCellWallPoints = 0               # number of wall points per cell [OLD N
 N = NumberOfCellWallPoints
 NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
-D = 10000                          # diffusitivity constant 
+D = 100                          # diffusitivity constant 
 radius = 0.05           # cell radius 
 
 # Force scalings: 
@@ -16,7 +16,7 @@ interiorAngleForceFactor = 0.0
 overlapForceFactor = 0.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
-boundaryPushForceFactor = 1.0
+boundaryPushForceFactor = 10.0
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
 
@@ -39,7 +39,7 @@ sampleTimes = [0.0, 0.01, 0.02, 0.05]
 NumberOfSimulations = 10^3  # TODO: change to 10^4 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes)
 #simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
-simulationName = string("ppmodel-17-04-25-pc2")
+simulationName = string("ppmodel-17-04-25-pc1")
 
 # Space Discretisation
 
