@@ -62,8 +62,9 @@ end
 
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
-# addprocs(6)
-addprocs(3)
+include("heatmap.jl")
+addprocs(6)
+# addprocs(3)
 begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin
