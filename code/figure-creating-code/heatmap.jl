@@ -79,22 +79,28 @@ function getMatrixIndex(coords::Vector{Float64})
 
     x, y = coords
     # Map from [-5, 5) to [0, 40), then to [1, 40]
-    i = Int(floor((y + 5.0) / 0.25)) + 1  # row (y-axis)
-    j = Int(floor((x + 5.0) / 0.25)) + 1  # column (x-axis)
+    i = Int(floor((y + 5.0) * 4)) + 1  # row (y-axis)
+    j = Int(floor((x + 5.0) * 4)) + 1  # column (x-axis)
+    if i == 41
+        i = 40
+    end
+    if j == 41
+        j = 40
+    end
     return i, j
 
 end
 
 function createHeatmaps(matrices)
 
+    maxVal = maximum([maximum(matrices[i]) / NumberOfSimulations for i = 1:NumberOfSampleTimes])
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
         matrix = matrices[i] ./ NumberOfSimulations
-        maxValue = maximum(matrix)
 
         heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, ".png")
-        heatMapName2 = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
+        # heatMapName2 = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
         caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
@@ -104,8 +110,8 @@ function createHeatmaps(matrices)
             ylimits=(-5.0, 5.0),
             xlabel=caption,
             c=reverse(cgrad(:hot)),
-            colorrange=(0, maxValue),
-            ratio=:equal,
+            clim=(0, maxVal),
+            # clim=(minimum(u_t05), maximum(u_t05)), ratio=:equal,
             dpi=500
         )
         vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
@@ -113,18 +119,18 @@ function createHeatmaps(matrices)
 
         savefig(joinpath(heatMapsPath, heatMapName))
 
-        heatmap(grid, grid, matrix,
-            xlimits=(-5.0, 5.0),
-            ylimits=(-5.0, 5.0),
-            xlabel=caption,
-            c=reverse(cgrad(:hot)),
-            clim=(0.5, 1.55),
-            ratio=:equal,
-            dpi=500
-        )
-        vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
-        hline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
+        #     heatmap(grid, grid, matrix,
+        #         xlimits=(-5.0, 5.0),
+        #         ylimits=(-5.0, 5.0),
+        #         xlabel=caption,
+        #         c=reverse(cgrad(:hot)),
+        #         clim=(0.5, 1.55),
+        #         ratio=:equal,
+        #         dpi=500
+        #     )
+        #     vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
+        #     hline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
 
-        savefig(joinpath(heatMapsPath, heatMapName2))
+        #     savefig(joinpath(heatMapsPath, heatMapName2))
     end
 end
