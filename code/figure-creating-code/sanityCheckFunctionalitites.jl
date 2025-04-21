@@ -94,3 +94,11 @@ function doAPointParticleSimulationRun(simRun)
     sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createLocationFile(sol, simRun, locationsPath)
 end
+
+function doAHSCMSimulationRun(simRun)
+    println("simrun ", simRun)
+    u0 = initializeChapman(radius)
+    prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
+    sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
+    createLocationFile(sol, simRun, locationsPath)
+end

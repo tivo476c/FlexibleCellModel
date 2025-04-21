@@ -112,6 +112,7 @@ function createHeatmaps(matrices)
             c=reverse(cgrad(:hot)),
             clim=(0, maxVal),
             # clim=(minimum(u_t05), maximum(u_t05)), ratio=:equal,
+            ratio=:equal,
             dpi=500
         )
         vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)

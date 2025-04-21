@@ -39,7 +39,7 @@ sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 # sampleTimes = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0]
 sampleTimes = [k for k = 0:100]
 
-NumberOfSimulations = 10^3  # TODO: change to 10^4 or something like this (test how many!!!)
+NumberOfSimulations = 86  # TODO: change to 10^4 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes)
 
 

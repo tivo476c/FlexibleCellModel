@@ -3,7 +3,7 @@ using Dates
 # General setup:
 
 domain = (-5.0, 5.0)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 20               # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 3               # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
 NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
@@ -25,8 +25,8 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 
 # Simulation parameters: 
 
-timeInterval = (0.0, 100.00)
-timeStepSize = 10^(-3)
+timeInterval = (0.0, 100.0)
+timeStepSize = 10^(-2)
 lengthOfSolVec = floor((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
 sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 
@@ -37,7 +37,7 @@ sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 
 # sampleTimes = [0.0, 0.01, 0.02, 0.05]
 # sampleTimes = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0]
-sampleTimes = [10 * k for k = 0:10]
+sampleTimes = [k for k = 0:100]
 
 NumberOfSimulations = 100  # TODO: change to 10^4 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes)
@@ -46,7 +46,7 @@ NumberOfSampleTimes = length(sampleTimes)
 date = today()
 currentTime = Dates.format(now(), "HH-MM")
 
-simulationName = string("SIM_", date, "_", currentTime)
+simulationName = string("HSCM-SIM_", date, "_", currentTime)
 
 # Space Discretisation
 
