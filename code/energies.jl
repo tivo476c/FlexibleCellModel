@@ -13,6 +13,18 @@ function energies(du, u, p, t)
 
     # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
+    if forceScalings[1] != 0    # area force
+        A1 = zeros(M)
+        for i = 1:M
+            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+            polygon = Vector{Vector{Float64}, N}(undef) 
+            for j = 1:N
+                x, y = c.x[j], c.y[j]
+            end 
+            push!(polygon, [x,y])
+            A1[i] = areaPolygon(polygon)
+        end
+    end
 
     if forceScalings[2] != 0    # edge force
         F1 = zeros(M * N)
@@ -523,6 +535,8 @@ function radiusOverlapForceCells(c1, c2)
     r1y = zeros(N)
     r2x = zeros(N)
     r2y = zeros(N)
+
+    # factor = sqrt(2*D) 
 
     centre1 = computeCenter(c1)
     centre2 = computeCenter(c2)

@@ -7,8 +7,10 @@ This file does:
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
 include("heatmap.jl")
-addprocs(5)
-# addprocs(3)
+# addprocs(5)
+addprocs(3)
+
+println("hahahihi")
 begin
     """
     This loop computes one Heatmap from NoSims amount of simulation 

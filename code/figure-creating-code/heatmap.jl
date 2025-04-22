@@ -81,11 +81,17 @@ function getMatrixIndex(coords::Vector{Float64})
     # Map from [-5, 5) to [0, 40), then to [1, 40]
     i = Int(floor((y + 5.0) * 4)) + 1  # row (y-axis)
     j = Int(floor((x + 5.0) * 4)) + 1  # column (x-axis)
-    if i == 41
+    if i > 40
         i = 40
     end
-    if j == 41
+    if i < 1
+        i = 1
+    end
+    if j > 40
         j = 40
+    end
+    if j < 1
+        j = 1
     end
     return i, j
 

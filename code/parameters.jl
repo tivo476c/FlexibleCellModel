@@ -15,7 +15,7 @@ radius = 0.05           # cell radius
 areaForceFactor = 0.0
 edgeForceFactor = 0.0
 interiorAngleForceFactor = 0.0
-overlapForceFactor = 10.0
+overlapForceFactor = 1.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
 boundaryPushForceFactor = 1.0
@@ -25,8 +25,8 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 
 # Simulation parameters: 
 
-timeInterval = (0.0, 100.0)
-timeStepSize = 10^(-2)
+timeInterval = (0.0, 10.0)
+timeStepSize = 10^(-4)
 lengthOfSolVec = floor((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
 sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 
@@ -35,16 +35,17 @@ sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 #sampleTimes = Int.(sampleTimes)              # Convert each element to Int
 #sampleTimes[1] = 1 
 
-# sampleTimes = [0.0, 0.01, 0.02, 0.05]
-# sampleTimes = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 1.0, 2.0, 3.0, 4.0, 5.0]
-sampleTimes = [k for k = 0:100]
+# sampleTimes = [k/10.0 for k = 0:100]
+sampleTimes = [k/10.0 for k = 0:100]
 
-NumberOfSimulations = 100  # TODO: change to 10^4 or something like this (test how many!!!)
+NumberOfSimulations = 39  # TODO: change to 10^4 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes)
 
 
 date = today()
-currentTime = Dates.format(now(), "HH-MM")
+# date = "2025-04-21"
+# currentTime = Dates.format(now(), "HH-MM")
+currentTime = "09-36"
 
 simulationName = string("HSCM-SIM_", date, "_", currentTime)
 
