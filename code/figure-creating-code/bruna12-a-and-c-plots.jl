@@ -45,7 +45,7 @@ end
 
 ## spatial discretisation  
 Nx = Ny = 300
-x = y = range(-5, 5, length=Nx)  # grid in both x and y
+x = y = range(-0.5, 0.5, length=Nx)  # grid in both x and y
 dx = dy = x[2] - x[1]
 # x = y = range(-5.0, 5.0, length=2000)  # grid in both x and y
 X, Y = [x[i] for i in 1:length(x), j in 1:length(y)], [y[j] for i in 1:length(x), j in 1:length(y)]
@@ -59,8 +59,10 @@ T = 0.05
 tspan = (0, T)
 
 ## inital condition 
-sigma_square = 0.9^2
+sigma_square = 0.09^2
 u0 = gaussian2d.(X, Y, sigma_square)
+
+sum(u0 .* dx^2)
 
 ## Problem and solution 
 HeatMatrix = zeros(Nx, Nx)
@@ -86,8 +88,8 @@ tit = string("N(0,0.09)^2 performing Heat equ \n with reflective BC \n\n")
 heatmap(x, y, u_t05,
     # xlimits=(-0.5, 0.5),
     # ylimits=(-0.5, 0.5),
-    xlimits = (-5.0,5.0), 
-    ylimits = (-5.0,5.0), 
+    xlimits=(-5.0, 5.0),
+    ylimits=(-5.0, 5.0),
     # title="N_2(0,0.09) \n\n",
     # title=tit,
     c=palette(reverse(cgrad(:hot)), 60),

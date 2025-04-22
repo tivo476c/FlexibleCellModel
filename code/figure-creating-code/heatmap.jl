@@ -103,26 +103,78 @@ function createHeatmaps(matrices)
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
-        matrix = matrices[i] ./ NumberOfSimulations
-
+        # TODO: factor 1/16 = dx^2 from Discretisation of domain [-5,5]^2 into heatmap 
+        matrix = matrices[i] ./ (NumberOfSimulations * NumberOfCells * 16)
+        println("NumberOfSimulations = ", NumberOfSimulations)
+        println("NumberOfCells = ", NumberOfCells)
         heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, ".png")
         # heatMapName2 = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
         caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
         grid = -5.0:0.25:5.0
+
         heatmap(grid, grid, matrix,
             xlimits=(-5.0, 5.0),
             ylimits=(-5.0, 5.0),
             xlabel=caption,
             c=reverse(cgrad(:hot)),
-            clim=(0, maxVal),
+            # clim=(0, maxVal),
             # clim=(minimum(u_t05), maximum(u_t05)), ratio=:equal,
             ratio=:equal,
             dpi=500
         )
         vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
         hline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
+
+        savefig(joinpath(heatMapsPath, heatMapName))
+
+        #     heatmap(grid, grid, matrix,
+        #         xlimits=(-5.0, 5.0),
+        #         ylimits=(-5.0, 5.0),
+        #         xlabel=caption,
+        #         c=reverse(cgrad(:hot)),
+        #         clim=(0.5, 1.55),
+        #         ratio=:equal,
+        #         dpi=500
+        #     )
+        #     vline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
+        #     hline!(-5.0:0.25:5.0, c=:grey, linewidth=0.1, label=false)
+
+        #     savefig(joinpath(heatMapsPath, heatMapName2))
+    end
+end
+
+
+function createHeatmaps2(matrices)
+
+    maxVal = maximum([maximum(matrices[i]) / NumberOfSimulations for i = 1:NumberOfSampleTimes])
+    for i = 1:NumberOfSampleTimes
+
+        sampleTime = sampleTimes[i]
+        # TODO: factor 1/16 = dx^2 from Discretisation of domain [-5,5]^2 into heatmap 
+        matrix = matrices[i] .* 100 ./ (NumberOfSimulations * NumberOfCells * 16)
+        println("sum(matrix[1] / 40^2 = ", sum(matrix ./ 40^2))
+        println("NumberOfSimulations = ", NumberOfSimulations)
+        println("NumberOfCells = ", NumberOfCells)
+        heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, ".png")
+        # heatMapName2 = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
+        title = string("Heatmap of simulation '", simulationName, "'")
+        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
+
+        grid = -0.5:0.025:0.5
+        heatmap(grid, grid, matrix,
+            xlimits=(-0.5, 0.5),
+            ylimits=(-0.5, 0.5),
+            xlabel=caption,
+            c=reverse(cgrad(:hot)),
+            # clim=(0, maxVal),
+            # clim=(minimum(u_t05), maximum(u_t05)), ratio=:equal,
+            ratio=:equal,
+            dpi=500
+        )
+        vline!(grid, c=:grey, linewidth=0.1, label=false)
+        hline!(grid, c=:grey, linewidth=0.1, label=false)
 
         savefig(joinpath(heatMapsPath, heatMapName))
 
