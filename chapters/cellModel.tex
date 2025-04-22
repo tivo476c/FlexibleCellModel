@@ -1,16 +1,32 @@
 \section{Cell model} 
-* introduce the Discrete cell form (DCF) \\
-- can i just reference my bachelor thesis or how should i do that? 
+% give definition for DF model, before that explain all needed math. terms 
 
-\subsection{Discrete cell form}
-* the discrete cell form consists of a list that holds all wall points in consecutive order 
+This section is a recap of the DF cell model and its dynamics that were introduced in my Bachelor's thesis \cite{Vogel2023}.
 
-\subsection{Cell dynamics} 
-* area force \\
-* edge force \\
-* interior angle force \\ 
-* overlap force \\
+We are considering cells in the two dimensional space $\R^2$. Here, cells are considered to be polygons. 
 
-\subsection{Numerical solver}
-* DifferentialEquations.jl solver \\
-* -> Euler Maruyama method with fixed time step size  \\
+\begin{definition} \textbf{Polygon} \\
+	A polygon is a closed geometric figure in the two dimensional space $\R^2$, formed by connecting a finite number of straight line segments. It can be represented be a sequence $(\vec{x}_1, \ldots, \vec{x}_N)$ of its vertices. \\
+	The following characteristic can be attributed to a polygon.
+	\begin{enumerate}[(i)]
+		\item A \textbf{simple} polygon is a polygon where no two line segments cross each other.
+		\item A polygon has a \textbf{positive orientation} if the vertices are ordered counterclockwise.
+		\item A polygon has a \textbf{negative orientation} if the vertices are ordered clockwise.
+	\end{enumerate}
+\end{definition}
+
+Thereby, each cell has a fixed number of $N_{v}$ vertices. 
+
+
+\begin{definition} \textbf{Discrete form (DF)} \label{def:DF}  \\
+	An ordered sequence of points $C = (\vec{x}_1, \ldots , \vec{x}_N)$ is considered to be a cell in its discrete form (DF) if the polygon that results when connecting every point with its neighbours and $\vec{x}_1$ with $\vec{x}_N$ is simple and positively orientated. \\	
+	Cells in the DF model are sometimes just called discrete cells. \\
+\end{definition}
+
+
+
+
+
+
+
+

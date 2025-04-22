@@ -6,13 +6,13 @@ include("heatmap.jl")
 using Distributions, Distributed
 
 
-function giveCentreNormalDistrInDomain(radius, mean=0.0, deviation=1.0)
+function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.9^2)
     """
         finds a point (x,y) in [-5+radius, 5-radius]^2 that gets initialized according to the Normal distribution N(mean, deviation)
     """
-    dist = Normal(mean, deviation)
+    dist = MvNormal([mean, mean], deviation * I(2))
     while true
-        numX, numY = rand(dist), rand(dist)
+        numX, numY = rand(dist)
         if -5 + radius <= numX <= 5 - radius && -5 + radius <= numY <= 5 - radius
             return [numX, numY]
         end
@@ -64,26 +64,40 @@ function initializeChapman(radius)
     return vcat(xCoords, yCoords)
 end
 
-function InitializePointParticles()
+function InitializePointParticles(radius)
     """
     It does not matter which normally distributed coordinate gets used for x and which for y coordinate. 
         -> just compute NumberOfCells x coordinates, than all y coordinates 
     """
-    res = zeros(Float64, 2 * NumberOfCells)
-    dist = Normal(0.0, 0.09)
-    for i = 1:2*NumberOfCells
-        newCoord = rand(dist)
-        while newCoord < -0.5 || newCoord > 0.5
-            newCoord = rand(dist)
+    savedCentres = []
+    for i = 1:M
+        newCentre = giveCentreNormalDistrInDomain(radius)
+        while (!isFeasible(newCentre, savedCentres, radius))
+            newCentre = giveCentreNormalDistrInDomain(radius)
         end
-        res[i] = 10 * newCoord
+        push!(savedCentres, newCentre)
     end
-    return res
+    xCoords = Float64[]
+    yCoords = Float64[]
+    for centre in savedCentres
+        push!(xCoords, centre[1])
+        push!(yCoords, centre[2])
+    end
+
+    return vcat(xCoords, yCoords)
 end
 
 function doAPointParticleSimulationRun(simRun)
     println("simrun ", simRun)
-    u0 = InitializePointParticles()
+    u0 = InitializePointParticles(radius)
+    prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
+    sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
+    createLocationFile(sol, simRun, locationsPath)
+end
+
+function doAHSCMSimulationRun(simRun)
+    println("simrun ", simRun)
+    u0 = initializeChapman(radius)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
     sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createLocationFile(sol, simRun, locationsPath)

@@ -1,30 +1,32 @@
+using Dates
+
 # General setup:
 
 domain = (-5.0, 5.0)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 0               # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 3               # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
 NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 100                          # diffusitivity constant 
-radius = 0.0           # cell radius 
+radius = 0.05           # cell radius 
 
 # Force scalings: 
 # [70,2,1.5,110]
 areaForceFactor = 0.0
 edgeForceFactor = 0.0
 interiorAngleForceFactor = 0.0
-overlapForceFactor = 0.0
+overlapForceFactor = 1.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
-boundaryPushForceFactor = 10.0
+boundaryPushForceFactor = 1.0
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
 
 
 # Simulation parameters: 
 
-timeInterval = (0.0, 0.05)
-timeStepSize = 10^(-5)
+timeInterval = (0.0, 10.0)
+timeStepSize = 10^(-4)
 lengthOfSolVec = floor((timeInterval[2] - timeInterval[1]) / timeStepSize)   # maybe length is one more
 sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 
@@ -33,13 +35,19 @@ sampleTimeStepSize = floor(lengthOfSolVec / 10.0)
 #sampleTimes = Int.(sampleTimes)              # Convert each element to Int
 #sampleTimes[1] = 1 
 
-# sampleTimes = [1,1000,3000,5000]
-sampleTimes = [0.0, 0.01, 0.02, 0.05]
+# sampleTimes = [k/10.0 for k = 0:100]
+sampleTimes = [k/10.0 for k = 0:100]
 
-NumberOfSimulations = 10^4  # TODO: change to 10^4 or something like this (test how many!!!)
+NumberOfSimulations = 39  # TODO: change to 10^4 or something like this (test how many!!!)
 NumberOfSampleTimes = length(sampleTimes)
-#simulationName = string("run1-NoSim", NumberOfSimulations, "-T",timeInterval[2]) 
-simulationName = string("ppmodel-13-04-25-lappi4")
+
+
+date = today()
+# date = "2025-04-21"
+# currentTime = Dates.format(now(), "HH-MM")
+currentTime = "09-36"
+
+simulationName = string("HSCM-SIM_", date, "_", currentTime)
 
 # Space Discretisation
 
