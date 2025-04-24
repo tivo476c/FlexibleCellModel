@@ -1,9 +1,13 @@
-% TODOs: 
-% 	- ask for Max's master thesis Latex directory for copying structures
+%TODOs:
+%	* check the consistent usage of the N_V, N_C, ...
+%	* ask for computation of the higher diffusion constant D for HSCM  
+%	* use \sum\limits_{k = 1}^{N} for sum or integral limits 
 
 
 %\documentclass[a4paper,12pt,leqno, draft]{article}
 \documentclass[a4paper,12pt,leqno]{article}
+
+
 
 % ----------------------- USED PACKAGES -----------------------
 \usepackage{inputenc,fontenc}
@@ -23,6 +27,7 @@
 \usepackage{enumerate}   
 \usepackage{enumitem}
 \usepackage{booktabs}   
+\usepackage{subfiles}
 
 
 
@@ -48,6 +53,7 @@
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\dequ}{\mathrm{d}}
+\newcommand{\F}{\mathbf{F}}
 \DeclareMathOperator{\sgn}{sgn}
 \DeclareMathOperator{\entspricht}{\: \wedge }
 \DeclareMathOperator{\atanxy}{arctan2}
@@ -56,12 +62,13 @@
 \newcommand{\infnorm[1]}{\lVert#1\rVert_{_{\infty}}}
 %\newcommand{\qed}{\hfill \ensuremath{\Box}}
 \setlength{\parindent}{0em} 
-\bibliographystyle{apalike}
+
 
 
 %% ----------------------------- START OF DOCUMENT ----------------------------------------- 
 
 \begin{document}
+
 
 \include{chapters/titlePage}
 % \include{chapters/acknowledgement}
@@ -78,6 +85,7 @@
 % \include{chapters/overview-master}
 % \include{chapters/introduction}
 \include{chapters/cellModel}					
+\include{chapters/cellDynamics}					
 \include{chapters/sanityCheck}					
 % \include{chapters/}							% add further section in here
 %\include{chapters/conclusion}
@@ -85,7 +93,6 @@
 %\include{chapters/appendix}
 
 \newpage
-\bibliography{quellen}
 
 \cleardoublepage
 
@@ -109,6 +116,9 @@ I hereby declare that I have written this thesis (\emph{\thema}) under the super
 	Matriculation Number: 4930487 \\
 \end{tabular}
 
+\newpage
+\bibliographystyle{apalike}
+\bibliography{quellen}
 
 \end{document}
 

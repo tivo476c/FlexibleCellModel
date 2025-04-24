@@ -5,4 +5,14 @@ Bruna, M. and Chapman, S.~J. (2012).
 \newblock Excluded-volume effects in the diffusion of hard spheres.
 \newblock {\em Phys. Rev. E}, 85:011103.
 
+\bibitem[ShoelaceIlustration, 2022]{ShoelaceFigure2022}
+ShoelaceIlustration (2022).
+\newblock Deriving the trapezoid formula.
+\newblock URL: https://commons.wikimedia.org/wiki/File:Trapez-formel-prinz.svg.
+\newblock Published by user 'Ag2gaeh'. Last accessed on 23.11.2023.
+
+\bibitem[Vogel, 2023]{Vogel2023}
+Vogel, T. (2023).
+\newblock Modelling of cells and their dynamics.
+
 \end{thebibliography}
