@@ -20,6 +20,7 @@ Having established this definition, we are now ready to define our cell model.
 
 \begin{definition} \textbf{Discrete form (DF)} \label{def:DF}  \\
 	A cell in its discrete form (\textbf{DF}) is given by an ordered sequence of its vertices $C = (\vec{v}_1, \ldots , \vec{v}_N)$ if the resulting polygon when connecting every vertex with its neighbours and $\vec{v}_1$ with $\vec{v}_N$  is simple and positively orientated. 
+	We set $\vec{v}_{N+1} = \vec{v}_{1}$ and $\vec{v}_{0} = \vec{v}_{N}$ to enable periodic indexing, which simplifies the computation of the upcoming forces a lot.
 \end{definition}
 
 In this thesis, DF cells may also be called discrete cells. \\ 

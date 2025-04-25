@@ -40,7 +40,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\begin{center}
 		$T_i = \frac{1}{2} (v_i^2 + v_{i+1}^2)(v_i^1 - v_{i+1}^1)$.
 	\end{center}
-	Keep in mind that $\vec{x}_{N + 1} := \vec{x}_1$. \\
+	Keep in mind that $\vec{x}_{N + 1} = \vec{x}_1$. \\
 	The area $T_i$ has a positive sign if $x_i \geq x_{i+1}$ (green arrow in Figure \ref{fig:shoelace}) and a negative sign otherwise (red arrow). 
 	As depicted in the figure, the negatively signed areas precisely cancel the excess portions that would result from summing only the positively signed trapezoids.
 	Thus the total polygon's area is equal to the sum of all trapezes
@@ -74,7 +74,7 @@ This enables us to implement the gradient flow over the area energy.
 To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
 
 \begin{proposition} \textbf{Area force} \\
-	The gradient of $\nabla_{\vec{v}^{\: i}_j} A_i(C_i)$ with respect to the $j$th vertex of cell $i$ is given by 
+	The gradient $\nabla_{\vec{v}^{\: i}_j} A_i(C_i)$ with respect to the $j$th vertex of cell $i$ is given by 
 	\begin{center}
 		$\nabla_{\vec{v}^{\: i}_j} A_i(C_i) = \dfrac{1}{2} (A_{C_i} - A_i^d) \begin{pmatrix} v_{j+1}^{i,2} - v_{j-1}^{i,2} \\[0.5em]  v_{j-1}^{i,1} - v_{j+1}^{i,1} \end{pmatrix}$, 
 	\end{center}
@@ -128,12 +128,130 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 It is also valid to write $F_{j}^{(A_i)}(\vec{C})$ instead of $F_{j}^{(A_i)}(C_i)$, since $C_i$ is included in $\vec{C}$. 
 
 
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{bachelors-thesis/forces/area1/area1.png}
+		\caption{The figure displays the solution of Model  
+		Initially, the cell has an area of approximately $2.6$. 
+		Arrows originating from each vertex represent the forces acting on the vertices at the corresponding time.
+		The area force acts by pushing the vertices outward from the cell center, resulting in an increase in area.
+		The computed areas at each time step are indicated below the respective diagrams.
+		We can observe that the forces decrease as the actual cell area gets closer to its desired state. 
+		Once the target area of $A^d = 10.0$ is reached, the force vanishes and the system reaches a steady state.
+		}
+		\label{fig:areaForce}
+	\end{center}
+\end{figure}
 
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{bachelors-thesis/forces/area2/area2.png}
+		\caption{Similar to Figure \ref{fig:areaForce}, this image shows a cell that develops according to the area force. 
+		In contrast to the previous illustration, the initial area is now larger than the desired target area.
+		As a result, the area force needs to reverse its direction to shrink the cell toward the target area $A^d = 10.0$
+		This outcome is consistently demonstrated across the four diagrams. }
+		\label{fig:areaForce2}
+	\end{center}
+\end{figure}
+
+Figures \ref{fig:areaForce} and \ref{fig:areaForce2} illustrate how the area force acts on a cell to either expand or contract it toward the desired target area.
 
     
 \subsection{Edge force}
 The next force we would like to model is the edge force. 
 It acts on the cell's edges and aims to maintain their lengths.
+We define the edge $1 \leq j \leq N_V$ as 
+\begin{center}
+	$
+	e_j = \overline{\vec{v}_j \: \vec{v}_{j+1}}
+	$
+\end{center}
+and we use the operator 
+\begin{center}
+	$
+	E^j_C = \norm[\vec{v}_j - \vec{v}_{j+1}]
+	$
+\end{center}
+to compute the length of the edge. 
+
+The according energy for this edge is:
+\begin{definition} \textbf{Edge energy} \\
+	The energy $E_{i,j}$, used to keep the edge $j$ of cell $i$ at a constant length, reads 
+	\begin{align}
+		E_{i,j}(C_i) = \frac{1}{2} | E_{i,j}^d - E^j_{C_i}|^2, \label{eq:edgeEnergy} 
+	\end{align}
+	where $E_{i,j}^d$ is the desired edge length of edge $j$ in cell $i$ and $E^j_{C_i}$ is the current edge length. 
+	If not stated otherwise, $E_{i,j}^d$ is the initial $j$th edge length of the $i$th cell at the start of the simulation. 
+\end{definition}
+
+Since each vertex $v_j$ influences exactly the edge lengths of the edges $e_{j}$ and $e_{j-1}$, we get the total edge force on $v_j$ with: 
+
+\begin{proposition} \textbf{Edge force} \\
+	The gradient $\nabla_{\vec{v}^{\: i}_j} E_j(C_i)$ with respect to the $j$th vertex of cell $i$ is given by 
+	\begin{center}
+		$\nabla_{\vec{v}^{\: i}_j} E_{i,j}(C_i) = \dfrac{E^j_{C_i} - E^d_{i,j}}{E^j_{C_i}}  \begin{pmatrix} v_{j}^{i,1} - v_{j+1}^{i,1} \\[0.5em]  v_{j}^{i,2} - v_{j+1}^{i,2} \end{pmatrix}$, 
+	\end{center}
+	where $\vec{v}^{\: i}_j = (v_{j}^{i,1}, v_{j}^{i,2})^T$. \\
+
+	The edge force acting on $v_j^i$ in cell $i$ is given by the formula
+	\begin{align*}
+		F^{(E_{i,j})}_j(C_i) &= - \nabla_{\vec{v}^{\: i}_j} E_{i,j}(C_i) - \nabla_{\vec{v}^{\: i}_j} E_{i,j-1}(C_i) \\
+		&= \dfrac{ E^d_{i,j} - E^j_{C_i}}{E^j_{C_i}}  \begin{pmatrix} v_{j}^{i,1} - v_{j+1}^{i,1} \\[0.5em]  v_{j}^{i,2} - v_{j+1}^{i,2} \end{pmatrix}
+		 + \dfrac{ E^d_{i,j-1} - E^{j-1}_{C_i}}{E^{j-1}_{C_i}}  \begin{pmatrix} v_{j-1}^{i,1} - v_{j}^{i,1} \\[0.5em]  v_{j-1}^{i,2} - v_{j}^{i,2} \end{pmatrix}
+	\end{align*}
+	Proof. \\
+	We drop the $i$ for the ease of notation. 
+	The computation is for the case $E_j^d \geq E^j_C$. 
+
+	\begin{align*}
+		\nabla_{\vec{v}_{j}} E_{j}(C) &= \nabla_{\vec{v}_j} (\frac{1}{2} |E_j^d - E^j_C|^2) \\
+		&= |E_j^d - E^j_C| \nabla_{\vec{v}_j} (E_j^d - E^j_C) \\
+		&= |E_j^d - E^j_C| (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
+		&= |E_j^d - E^j_C| (- \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)^2]^{\frac{1}{2}} ) \\
+		&= |E_j^d - E^j_C| (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)]) \\[0.5em] 
+		&= |E_j^d - E^j_C| (- \frac{1}{2 E^j_C} \begin{pmatrix}
+			\partial_{v_j^1} (v_j^1 - v_{j+1}^1)^2 \\[0.5em]
+			\partial_{v_j^2} (v_j^2 - v_{j+1}^2)^2
+		\end{pmatrix}) \\[0.5em]
+		&= |E_j^d - E^j_C| (- \frac{1}{2 E^j_C} \begin{pmatrix}
+			 2(v_j^1 - v_{j+1}^1) \\[0.5em]
+			 2(v_j^2 - v_{j+1}^2)
+		\end{pmatrix}) \\[0.5em] 
+		&= - \frac{|E_j^d - E^j_C|}{E^j_C} \begin{pmatrix}
+			v_j^1 - v_{j+1}^1 \\[0.5em]
+			v_j^2 - v_{j+1}^2
+	   \end{pmatrix} 
+	\end{align*}
+
+	To include the case $E_j^d < E^j_C$, where simply a sign change arises, we can drop the absolute value and write 
+	\begin{align*}
+		\nabla_{\vec{v}_j} E_{j}(C) &= \frac{E^j_C - E_j^d}{E^j_C} \begin{pmatrix}
+			v_j^1 - v_{j+1}^1 \\[0.5em]
+			v_j^2 - v_{j+1}^2
+	   \end{pmatrix} 
+	\end{align*}
+	to get the result.
+
+	\qed  
+\end{proposition}
+
+An isolated application of the edge force can be seen in Figure \ref{fig:edgeForce}.  
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{bachelors-thesis/forces/edge/edge1.png}
+		\caption{The diagram illustrates the edge force acting on a DF cell.
+		At time $t=0$, the cell is shaped as a rectangle $[-3,3]\times [-1,1]$, giving horizontal edges a length of 6 and vertical edges a length of 2.
+		The corresponding edge lengths at the different time steps are annotated below each diagram.
+		The target configuration is the rectangle $[-1,1]\times [-3,3]$, implying that the horizontal edges need to contract while the vertical edges must stretch.
+		This transformation is clearly observable in the progression of the diagrams.
+		}
+		\label{fig:edgeForce}
+	\end{center}
+\end{figure}
+
+
+
 
 
 \subsection{Interior angle force}
