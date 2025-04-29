@@ -194,11 +194,11 @@ Since each vertex $v_j$ influences exactly the edge lengths of the edges $e_{j}$
 	where $\vec{v}^{\: i}_j = (v_{j}^{i,1}, v_{j}^{i,2})^T$. \\
 
 	The edge force acting on $v_j^i$ in cell $i$ is given by the formula
-	\begin{align*}
+	\begin{align}
 		F^{(E_{i,j})}_j(C_i) &= - \nabla_{\vec{v}^{\: i}_j} E_{i,j}(C_i) - \nabla_{\vec{v}^{\: i}_j} E_{i,j-1}(C_i) \\
 		&= \dfrac{ E^d_{i,j} - E^j_{C_i}}{E^j_{C_i}}  \begin{pmatrix} v_{j}^{i,1} - v_{j+1}^{i,1} \\[0.5em]  v_{j}^{i,2} - v_{j+1}^{i,2} \end{pmatrix}
 		 + \dfrac{ E^d_{i,j-1} - E^{j-1}_{C_i}}{E^{j-1}_{C_i}}  \begin{pmatrix} v_{j-1}^{i,1} - v_{j}^{i,1} \\[0.5em]  v_{j-1}^{i,2} - v_{j}^{i,2} \end{pmatrix}
-	\end{align*}
+	\end{align}
 	Proof. \\
 	We drop the $i$ for the ease of notation. 
 	The computation is for the case $E_j^d \geq E^j_C$. 
@@ -224,7 +224,7 @@ Since each vertex $v_j$ influences exactly the edge lengths of the edges $e_{j}$
 	\end{align*}
 
 	To include the case $E_j^d < E^j_C$, where simply a sign change arises, we can drop the absolute value and write 
-	\begin{align*}
+	\begin{align*} 
 		\nabla_{\vec{v}_j} E_{j}(C) &= \frac{E^j_C - E_j^d}{E^j_C} \begin{pmatrix}
 			v_j^1 - v_{j+1}^1 \\[0.5em]
 			v_j^2 - v_{j+1}^2
@@ -255,6 +255,68 @@ An isolated application of the edge force can be seen in Figure \ref{fig:edgeFor
 
 
 \subsection{Interior angle force}
+The combined application of the area and edge forces revealed instabilities in unfavorable configurations, where self-intersections of the cell edges occurred. 
+Simulations without this energy sometimes can also result in constrictions at certain vertices, where the interior angle approaches $360°$. 
+To address this issue, we introduce the interior angle energy. \\
+The first challenge is to consistently determine the interior angle at a given vertex throughout the simulation.
+Although we could use $\arccos$ to compute the angle, this method would suffer from poor stability as the angle approaches $\pi$ or $-\pi$.
+A better alternative is to use the $\atanxy$ function, as it remains reliably stable for all angles. \\
+
+\begin{definition} \textbf{arctan2} \\
+	The function $$\atanxy:\R^2/\{0\} \rightarrow (-\pi, \pi]$$ is defined by:
+	\begin{center}
+		$ \atanxy(x,y) = 
+		\begin{cases}
+			\arctan(\frac{y}{x}) & x > 0 \\
+			\arctan(\frac{y}{x}) + \pi & x < 0, y > 0 \\
+			\arctan(\frac{y}{x}) - \pi & x < 0, y < 0 \\
+			\pi & x < 0, y = 0 \\
+			\dfrac{\pi}{2} & x = 0, y > 0 \\ 		
+			- \dfrac{\pi}{2} & x = 0, y < 0 \\ 
+		\end{cases}. $
+	\end{center}
+\end{definition}
+
+The $\atanxy(y,x)$ function computes the angle of a vector $(x,y)^T$ with respect to the positive $x$ axis. \\
+With this, we can compute the angles 
+\begin{center}
+	
+	$\theta_1 = \atanxy( \vec{v}_{j-1} - \vec{v_j} )$, \\
+	$\theta_2 = \atanxy( \vec{v}_{j+1} - \vec{v_j} )$
+	
+\end{center}
+between the positive $x$ axis and the vector from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
+We get the wanted angle at $\vec{v}_j$ by subtracting $\theta_2 - \theta_1$.
+To ensure that the angle lies within the interval $[0, 2\pi]$, we use the modulo operator $[ \cdot ]_{[0,2\pi]}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
+Thus, our interior angle operator is: 
+\begin{center}
+	$
+	I^j_C = [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi]}.
+	$
+\end{center}
+
+With that, we can define our interior angle energy. 
+\begin{definition} \textbf{Interior angle energy} \\
+	The energy associated with preserving the angle at vertex $j$ of cell $i$ is given by
+	\begin{align*}
+		I_{i, j}(C_i) = \frac{1}{2}| I_{i, j}^d - I^j_{C_i} |^2, 
+	\end{align*}
+	where $I_{i, j}^d$ is the desired interior angle at vertex $j$ of cell $i$. 
+\end{definition}
+
+We continue by computing the resulting force. 
+\begin{proposition} \textbf{Interior angle force} \\
+
+	
+\end{proposition}
+
+
+
+
+
+
+
+
 
 \subsection{Overlap force}
 % explain the algorithm
