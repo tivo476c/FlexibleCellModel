@@ -47,7 +47,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\begin{center}
 		$A_C = \sum\limits_{i = 1}^{N} T_i = \frac{1}{2} \sum\limits_{i = 1}^{N} (v_i^2 + v_{i+1}^2)(v_i^1 - v_{i+1}^1) = \frac{1}{2}\sum\limits_{i = 1}^{N} (v_i^1 v_{i+1}^2 - v_{i+1}^1 v_i^2) $.
 	\end{center} 
-	\begin{figure}[h!]
+	\begin{figure}
 		\begin{center}
 			\includegraphics[width=8cm]{bachelors-thesis/shoelace.png}
 			\caption{
@@ -73,7 +73,7 @@ This enables us to implement the gradient flow over the area energy.
 
 To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
 
-\begin{proposition} \textbf{Area force} \\
+\begin{proposition} \textbf{Area force} \label{force:area}\\
 	The gradient $\nabla_{\vec{v}^{\: i}_j} A_i(C_i)$ with respect to the $j$th vertex of cell $i$ is given by 
 	\begin{center}
 		$\nabla_{\vec{v}^{\: i}_j} A_i(C_i) = \dfrac{1}{2} (A_{C_i} - A_i^d) \begin{pmatrix} v_{j+1}^{i,2} - v_{j-1}^{i,2} \\[0.5em]  v_{j-1}^{i,1} - v_{j+1}^{i,1} \end{pmatrix}$, 
@@ -128,7 +128,7 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 It is also valid to write $F_{j}^{(A_i)}(\vec{C})$ instead of $F_{j}^{(A_i)}(C_i)$, since $C_i$ is included in $\vec{C}$. 
 
 
-\begin{figure}[h!]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=15cm]{bachelors-thesis/forces/area1/area1.png}
 		\caption{The figure displays the solution of Model  
@@ -143,7 +143,7 @@ It is also valid to write $F_{j}^{(A_i)}(\vec{C})$ instead of $F_{j}^{(A_i)}(C_i
 	\end{center}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=15cm]{bachelors-thesis/forces/area2/area2.png}
 		\caption{Similar to Figure \ref{fig:areaForce}, this image shows a cell that develops according to the area force. 
@@ -237,7 +237,7 @@ Since each vertex $v_j$ influences exactly the edge lengths of the edges $e_{j}$
 
 An isolated application of the edge force can be seen in Figure \ref{fig:edgeForce}.  
 
-\begin{figure}[h!]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=15cm]{bachelors-thesis/forces/edge/edge1.png}
 		\caption{The diagram illustrates the edge force acting on a DF cell.
@@ -287,11 +287,11 @@ With this, we can compute the angles
 \end{center}
 between the positive $x$ axis and the vector from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
 We get the wanted angle at $\vec{v}_j$ by subtracting $\theta_2 - \theta_1$.
-To ensure that the angle lies within the interval $[0, 2\pi]$, we use the modulo operator $[ \cdot ]_{[0,2\pi]}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
+To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
 Thus, our interior angle operator is: 
 \begin{center}
 	$
-	I^j_C = [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi]}.
+	I^j_C = [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
 	$
 \end{center}
 
@@ -304,13 +304,183 @@ With that, we can define our interior angle energy.
 	where $I_{i, j}^d$ is the desired interior angle at vertex $j$ of cell $i$. 
 \end{definition}
 
+
 We continue by computing the resulting force. 
+The function $\atanxy$ is partly defined and not truly differentiable. 
+We still want to compute a gradient to use it for our interior angle force. 
+Since $\atanxy(x,y) = \arctan(\frac{y}{x}) + constant$ almost everywhere, we just compute the gradient of $\arctan(\frac{y}{x})$ instead. \\
+Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
+However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
+
 \begin{proposition} \textbf{Interior angle force} \\
 
+	The interior angle force that gets applied on vertex $\vec{v}_j$ of cell $i$ is given by 
+	\begin{align}
+		F^{(I_{i,j})}_j(C_i) &= - \nabla_{\vec{v}_j^i} (I_{i, j-1}(C_i) + I_{i, j}(C_i) + I_{i, j+1}(C_i) ) \\
+		&= (I^{j-1}_{C_i} - I_{i, j-1}^d) \left( - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
+		  v_{j}^2 - v_{j-1}^2 \\[0.5em]
+		  v_{j-1}^1 - v_{j}^1
+	  \end{pmatrix} 
+	  \right) \notag \\[0.5em] 
+	  & + (I^{j}_{C_i} - I_{i, j}^d) \left( 
+		\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+		  v_{j-1}^2 - v_{j}^2 \\[0.5em]
+		  v_{j}^1 - v_{j-1}^1
+	  \end{pmatrix} 
+	  - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+		  v_{j+1}^2 - v_{j}^2 \\[0.5em]
+		  v_{j}^1 - v_{j+1}^1
+	  \end{pmatrix} 
+	  \right) \notag \\[0.5em] 
+	  & + (I^{j+1}_{C_i} - I_{i, j+1}^d) \left( \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+		v_{j}^2 - v_{j+1}^2 \\[0.5em]
+		v_{j+1}^1 - v_{j}^1
+	\end{pmatrix} 
+	\right) \notag
+	\end{align}
+
+
+	Proof. \\
+	We are looking for 
+	\begin{center}
+		$
+		\nabla_{\vec{v}_j} ( I_{i, j-1}(C_i) + I_{i, j}(C_i) + I_{i, j+1}(C_i) )
+		$
+	\end{center}
+	as the vertex $\vec{v}_j$ has an influence on the interior angles at the vertices $\vec{v}_{j-1}$, $\vec{v}_{j}$ and $\vec{v}_{j+1}$. \\
+	Let us start with the computation of $\nabla_{\vec{v}_j} I_{i, j}(C_i)$. 
+	Similarly to the first forces, we get:
+	\begin{align*}
+		\nabla_{\vec{v}_j}  I_{i, j}(C_i) &= (I_{i, j}^d - I^j_{C_i}) \nabla_{\vec{v}_j} (- I^j_{C_i}) \\
+		&= (I_{i, j}^d - I^j_{C_i}) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
+	\end{align*}
+	At this point, the previously mentioned simplifications come into play and we use $\arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1})$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator $[\cdot]_{[0, 2\pi)}$.
+
+	In the next step, we need to compute the gradient 
+	\begin{center}
+		$
+		\nabla_{\vec{v}_j} \arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}).
+		$
+	\end{center}
 	
+	Therefore, we define helper functions 
+	$$ f(x,y) = \arctan( \frac{y}{x})$$ 
+	and 
+	$$g(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
+		v_{j-1}^1 - v_{j}^1 \\[0.5em] 
+		v_{j-1}^2 - v_{j}^2
+	\end{pmatrix}.$$
+	With these helper functions, we can write 
+	$$ \arctan\left(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}) $$
+	and use the two dimensional chain rule to stepwise compute the searched gradient. 
+ 
+	\begin{center}
+		
+		$\dfrac{\partial f(x,y)}{\partial x} = \dfrac{1}{1 + \dfrac{y}{x}^2} (- \dfrac{y}{x^2}) = - \dfrac{y}{x^2 + y^2}$, \\
+		$\dfrac{\partial f(x,y)}{\partial y} = \dfrac{1}{1 + \dfrac{y}{x}^2}  \dfrac{1}{x} =  \dfrac{x}{x^2 + y^2}$, \\ [0.5em]
+
+		$ \nabla_{v_j^1} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$, \\
+		$ \nabla_{v_j^2} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$. 
+	
+	\end{center}
+
+	With that, we can compute:
+	\begin{align*}
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^1} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j)) \cdot \nabla_{v_j^1} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		&= \begin{pmatrix}
+			- \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[1.0em]
+			\frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2}
+		\end{pmatrix}
+		\cdot 
+		\begin{pmatrix}
+			-1 \\
+			0
+		\end{pmatrix} \\[0.5em]
+		&= \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[0.5em]
+		&= \frac{v_{j-1}^2 - v_{j}^2}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2}
+	\end{align*}
+
+	And similarly:
+	\begin{align*}
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^2} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j)) \cdot \nabla_{v_j^2} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		&= \begin{pmatrix}
+			- \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[1.0em]
+			\frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2}
+		\end{pmatrix}
+		\cdot 
+		\begin{pmatrix}
+			0 \\
+			-1
+		\end{pmatrix} \\[0.5em]
+		&= - \frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[0.5em]
+		&= \frac{v_{j}^1 - v_{j-1}^1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \\[0.5em]
+	\end{align*}
+
+	Overall, we get 
+	\begin{align*}
+		\nabla_{\vec{v}_j} \arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+			v_{j-1}^2 - v_{j}^2 \\[0.5em]
+			v_{j}^1 - v_{j-1}^1
+		\end{pmatrix}.
+	\end{align*}
+	
+	Thus, we can come back to: 
+	\begin{align*}
+		\nabla_{\vec{v}_j}  I_{i, j}(C_i) 
+		&= (I_{i, j}^d - I^j_{C_i}) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}) - \arctan(\frac{v_{j+1}^2 - v_{j}^2}{v_{j+1}^1 - v_{j}^1})) \\
+		&= (I_{i, j}^d - I^j_{C_i}) \left( 
+		  \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+			v_{j-1}^2 - v_{j}^2 \\[0.5em]
+			v_{j}^1 - v_{j-1}^1
+		\end{pmatrix} 
+		- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+			v_{j+1}^2 - v_{j}^2 \\[0.5em]
+			v_{j}^1 - v_{j+1}^1
+		\end{pmatrix} \right) 
+	\end{align*}
+
+	For the neighboring vertices, we get 
+	\begin{align*}
+		\nabla_{\vec{v}_j}  I_{i, j-1}(C_i) 
+		&= (I_{i, j-1}^d - I^{j-1}_{C_i}) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j-2}^2 - v_{j-1}^2}{v_{j-2}^1 - v_{j-1}^1}) - \arctan(\frac{v_{j}^2 - v_{j-1}^2}{v_{j}^1 - v_{j-1}^1})) \\
+		&= (I_{i, j-1}^d - I^{j-1}_{C_i}) \left( 0
+		  - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
+			v_{j}^2 - v_{j-1}^2 \\[0.5em]
+			v_{j-1}^1 - v_{j}^1
+		\end{pmatrix} 
+		\right) 
+	\end{align*}
+	and 
+	\begin{align*}
+		\nabla_{\vec{v}_j}  I_{i, j+1}(C_i) 
+		&= (I_{i, j+1}^d - I^{j+1}_{C_i}) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j}^2 - v_{j+1}^2}{v_{j}^1 - v_{j+1}^1}) - \arctan(\frac{v_{j+2}^2 - v_{j+1}^2}{v_{j+2}^1 - v_{j+1}^1})) \\
+		&= (I_{i, j+1}^d - I^{j+1}_{C_i}) \left( \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+			v_{j}^2 - v_{j+1}^2 \\[0.5em]
+			v_{j+1}^1 - v_{j}^1
+		\end{pmatrix} 
+		  - 0
+		\right). 
+	\end{align*}
+
+	The sum of these three gradients is equal to the force stated in the proposition. 
+	
+	\qed
 \end{proposition}
 
 
+Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angle force.
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=15cm]{bachelors-thesis/forces/angle/angle1.png}
+		\caption{The figure illustrates the action of the interior angle force on the vertices of a DF cell.
+		The initial state, shown in the first plot, must be mirrored horizontally to achieve the desired state depicted in the final plot.
+		This reshaping shows on the one hand that the dynamic is capable of decreasing interior angles from $270$° to $90$° and on the other hand it can also increase interior angles from $90$° to $270$°. 
+		Below each chart, we can see the current interior angles of the two vertices that have the $y$ value zero. 
+		}
+		\label{fig:angleForce}
+	\end{center}
+\end{figure}
 
 
 
@@ -320,6 +490,94 @@ We continue by computing the resulting force.
 
 \subsection{Overlap force}
 % explain the algorithm
+Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. \\
+The challenging aspect of computing the overlap force lies in detecting overlaps within the cell system.An overlap is treated as a DF cell in its own right, composed of the vertices from each of the two overlapping cells that lie inside the other, along with the two intersection points where the cell boundaries intersect. \\ 
+Once all overlaps have been identified, we apply a dynamic similar to that of the area force—but with a desired area of zero. 
+This generates a force that acts to eliminate the overlap by reducing its area to zero. 
+The resulting force is then applied to the vertices of the original cells that define the overlapping region. \\
+The first step in detecting overlaps is identifying the intersection points between cell boundaries.
+Intersections can be identified by representing the cell edges as line segments and computing the intersection points between segments belonging to different cells. \\
+Having found all intersections, we can apply the following algorithm, that can be used to compute all overlaps between two cells. 
+
+\begin{algorithm} \textbf{Computation of a discrete overlap} \label{alge:discreteOverlap}
+	\begin{itemize} 
+		\itemsep0em 
+		\item[] \text{INPUT:}
+		\item Discrete cells  $C$and $\zeta$
+		\item List $I$ of unused intersections of $C$ and $\zeta$ 
+	\end{itemize}
+	\begin{algorithmic}
+		\Function{constructOverlap}{$C$, $\zeta$, $I$}		
+			\State usedIntersections = List$\{$Intersection$\}$(I[1]) 
+			\State newOverlap = List$\{$Vertices$\}$(I[1]) 
+			\State currentIntersection = I[1]
+			
+			\For{counter = 1 : length(I)} 
+			
+				\If{counter is even}
+					\State newPath, newIntersection = findPath(currentIntersection, $C$, $I$) 
+				\Else 
+					\State newPath, newIntersection = findPath(currentIntersection, $\zeta$, $I$) 
+				\EndIf
+				
+				\State append!(newOverlap, newPath)
+				\If{newIntersection == I[1]} 
+					\State \Return newOverlap, usedIntersections
+				\Else 
+					\State append!(newOverlap, newIntersection)
+					\State append!(usedIntersections, newIntersection) 
+					\State currentIntersection = newIntersection
+				\EndIf
+			\EndFor
+		\EndFunction
+	\end{algorithmic}
+	\begin{itemize} 
+		\itemsep0em 
+		\item[] \text{OUTPUT:}
+		\item A single intersection `newOverlap' which occurs between $C$ and $\zeta$ and which uses vertices from  $C$ and $\zeta$ as well as only intersections from $I$
+		\item A list `usedIntersections' of all intersection that are used in `newOverlap'
+	\end{itemize}	
+\end{algorithm}
+%TODO; rewrite that shit 
+The algorithm takes the first intersection $I[1]$ in $I$ as the starting vertex of the overlap cell `newOverlap'. 
+$I[1]$ is also added initially to the list `usedIntersections'. \\
+Next, the function `getOverlap' uses another function called `findPath' which delivers the path on the discrete cell $\zeta$ from the starting intersection to the next intersection in $I$ that appears when traversing through the edges of $\zeta$. This new intersection will also be returned. The just mentioned path is a list of vertices in $\zeta$ that exactly occur between both intersections. It may be empty if the next intersection is already found on the same edge where the current intersection is located. The new path and the new intersection will then get appended to `newOverlap'. The new intersection will also get added to the list `usedIntersections'. \\
+Since each intersection implies changing the cell from which the overlapping cell uses the edges, `findPath' is now applied to the other cell. Again, it will deliver the next intersection as well as a list of the in between laying vertices. The vertex list always gets appended to `newOverlap'. \\
+If the new intersection is equal to the first intersection $I[1]$, we have already constructed the final discrete cell `newOverlap'. Then, `newOverlap' and `usedIntersections' can get returned by `constructOverlap'. \\
+Otherwise, we can add the new intersection to `newOverlap' and `usedIntersections' and then, we will have to call `findPath' on the other discrete cell once more and repeat the last part of the algorithm, until we find our starting intersection. \\
+Once we are able to extract an overlap from $C$ and $\zeta$, we can delete all used intersections from $I$, because every intersection point is part of exactly one overlap. While $I$ is not empty, we can make a new call to the function `constructOverlap' with the adjusted $I$, to obtain another overlap. When $I$ is empty, we have surely found every intersection of $C$ and $\zeta$ and thus, have solved Problem \ref{problem:overlap}. \\
+\smallskip \\
+Every time `findPath' gets called, it is questionable in which direction the function should traverse through the vertices of the given cell. But it can be tested in the succeeding way. \\
+Starting from the current intersection that is passed into the function, go a little bit in one direction on the edge of the passed cell where the intersection is located. For the then obtained point, examine whether it is located in the other cell, too. If the point is located on both cells, we know that the chosen direction is the right one. Otherwise, we know that we must use the other direction. \\ 
+A simple way to investigate whether a point is located in a polygon, is to draw a straight line from the point to the outside of the polygon. Then, the number of intersections of the drawn line and the wall of the discrete cell determines whether the point is inside the polygon or not. The point is located in the inside of the polygon if and only if the number of intersections is odd. \\ 
+\smallskip  \\
+% until here the rewriting!! 
+% then continue with the energy and the force 
+After introducing the method for detecting overlaps, we can now define the overlap force, which acts on the cell vertices involved in an overlap. 
+This force is first computed based on the geometry of the overlap and then distributed to the corresponding vertices of the original cells. 
+
+\begin{definition} \textbf{Overlap energy} \\
+	Let $C_i$ and $C_k$ be two cells from the system $\vec{C}$ and $\Omega_{i,k}$ be the set of all overlaps that appear between $C_i$ and $C_k$, like explained above. Then, the overlap energy of $C_i$ is given by the formula 
+	\begin{align}
+		O_i(\vec{C}) = \sum\limits_{k=1, k \neq i}^{N_C} (\sum\limits_{D_l \in \Omega_{i,k}} \frac{1}{2}|A_{D_l}|^2),		
+	\end{align} 
+	where $A_{D_l}$ is the area of the overlap $D_l$.  \\
+\end{definition}
+
+To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
+
+\begin{proposition} \textbf{Overlap force} \\
+	The overlap force that acts on the vertex $\vec{v}_j$ of cell $i$ is given by 
+
+	\begin{align}
+		F_j^{O_i}(\vec{C}) = \sum\limits_{k=1, k \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,k}} \dfrac{1}{2} A_{D_l} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right),
+	\end{align}
+	where $\Omega_{i,k}$ is the set of all overlaps that arise between the cells $i$ and $k$, $\vec{d}_{j-1}^{\: D_l} = (d_{j-1}^{D_l, 1}, d_{j-1}^{D_l, 2})^T$ and $\vec{d}_{j+1}^{\: D_l} = (d_{j+1}^{D_l, 1}, d_{j+1}^{D_l, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D_l$ and $A_{D_l}$ is the area of the overlap $D_l$. \\
+
+	Proof. \\
+	The formula arises from the sums from the overlap energy and the gradient from the area force in Proposition \ref{force:area}, where the desired area is set to zero. 
+\end{proposition}
+
 
 \subsection{A simulation run}
 % state the force system
