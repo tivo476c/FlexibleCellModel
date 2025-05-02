@@ -385,6 +385,52 @@ function interiorAngleForceCell2(c, I, J)
 
 end
 
+function interiorAngleForceCell_MT1(c, I, J)
+    """
+    given: 
+        * 1 DF cell c 
+        * list of desired cell interior angles for that cell I 
+        * list of current cell interior angles for that cell J 
+    """
+
+    res = zeros(2 * NumberOfCellWallPoints) # res[1:NumberOfCellWallPoints] for x coordinates, res[NumberOfCellWallPoints+1:2*NumberOfCellWallPoints] for y coordinates
+    for k = 1:NumberOfCellWallPoints
+
+        currentIdx = k 
+        if currentIdx == 1 
+            prevIdx = NumberOfCellWallPoints 
+        else 
+            prevIdx = currentIdx - 1 
+        end 
+
+        if currentIdx == NumberOfCellWallPoints 
+            nextIdx = 1 
+        else 
+            nextIdx = currentIdx + 1 
+        end 
+
+        v_prev = vertex(c, prevIdx)
+        v_curr = vertex(c, currentIdx)
+        v_next = vertex(c, nextIdx)
+
+        # assign x dynamic for vertex k 
+        res[k] += (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)*(v_curr[2] - v_prev[2]) )                
+        res[k] += (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)*(v_prev[2] - v_curr[2]) )                
+        res[k] += (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)*(v_next[2] - v_curr[2]) )                
+        res[k] += (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)*(v_curr[2] - v_next[2]) )
+        
+        # assign y dynamic for vertex k 
+        res[NumberOfCellWallPoints + k] += (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)*(v_prev[1] - v_curr[1]) )                
+        res[NumberOfCellWallPoints + k] += (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)*(v_curr[1] - v_prev[1]) )                
+        res[NumberOfCellWallPoints + k] += (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)*(v_curr[1] - v_next[1]) )                
+        res[NumberOfCellWallPoints + k] += (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)*(v_next[1] - v_curr[1]) )
+
+    end 
+    
+    return res 
+
+end 
+
 function interiorAngleForce(u, I1, J1)
 
     res = zeros(2 * M * N)
@@ -394,7 +440,8 @@ function interiorAngleForce(u, I1, J1)
 
         i1 = I1[(i-1)*N+1:i*N]
         j1 = J1[(i-1)*N+1:i*N]
-        a = interiorAngleForceCell2(c, i1, j1)
+        # a = interiorAngleForceCell2(c, i1, j1)
+        a = interiorAngleForceCell_MT1(c, i1, j1)
         for j = 1:N
 
             res[N*(i-1)+j] = a[j]
