@@ -486,7 +486,7 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 
 
 
-
+ 
 
 \subsection{Overlap force}
 % explain the algorithm
@@ -539,17 +539,33 @@ Having found all intersections, we can apply the following algorithm, that can b
 	\end{itemize}	
 \end{algorithm}
 %TODO; rewrite that shit 
-The algorithm takes the first intersection $I[1]$ in $I$ as the starting vertex of the overlap cell `newOverlap'. 
-$I[1]$ is also added initially to the list `usedIntersections'. \\
-Next, the function `getOverlap' uses another function called `findPath' which delivers the path on the discrete cell $\zeta$ from the starting intersection to the next intersection in $I$ that appears when traversing through the edges of $\zeta$. This new intersection will also be returned. The just mentioned path is a list of vertices in $\zeta$ that exactly occur between both intersections. It may be empty if the next intersection is already found on the same edge where the current intersection is located. The new path and the new intersection will then get appended to `newOverlap'. The new intersection will also get added to the list `usedIntersections'. \\
-Since each intersection implies changing the cell from which the overlapping cell uses the edges, `findPath' is now applied to the other cell. Again, it will deliver the next intersection as well as a list of the in between laying vertices. The vertex list always gets appended to `newOverlap'. \\
-If the new intersection is equal to the first intersection $I[1]$, we have already constructed the final discrete cell `newOverlap'. Then, `newOverlap' and `usedIntersections' can get returned by `constructOverlap'. \\
-Otherwise, we can add the new intersection to `newOverlap' and `usedIntersections' and then, we will have to call `findPath' on the other discrete cell once more and repeat the last part of the algorithm, until we find our starting intersection. \\
-Once we are able to extract an overlap from $C$ and $\zeta$, we can delete all used intersections from $I$, because every intersection point is part of exactly one overlap. While $I$ is not empty, we can make a new call to the function `constructOverlap' with the adjusted $I$, to obtain another overlap. When $I$ is empty, we have surely found every intersection of $C$ and $\zeta$ and thus, have solved Problem \ref{problem:overlap}. \\
-\smallskip \\
-Every time `findPath' gets called, it is questionable in which direction the function should traverse through the vertices of the given cell. But it can be tested in the succeeding way. \\
-Starting from the current intersection that is passed into the function, go a little bit in one direction on the edge of the passed cell where the intersection is located. For the then obtained point, examine whether it is located in the other cell, too. If the point is located on both cells, we know that the chosen direction is the right one. Otherwise, we know that we must use the other direction. \\ 
-A simple way to investigate whether a point is located in a polygon, is to draw a straight line from the point to the outside of the polygon. Then, the number of intersections of the drawn line and the wall of the discrete cell determines whether the point is inside the polygon or not. The point is located in the inside of the polygon if and only if the number of intersections is odd. \\ 
+The algorithm begins by selecting the first intersection point $I[1]$ from the list $I$ as the initial vertex of the overlap cell `newOverlap'. 
+This point is also added to the list `usedIntersections' \\
+Next, the function `getOverlap' calls another function, `findPath', which determines the path along the discrete cell $\zeta$ from the current intersection point to the next intersection in $I$ encountered while traversing the edges of $\zeta$. 
+This next intersection is also returned by the function. 
+The identified path is a list of vertices in $\zeta$ that lie strictly between the two intersections. 
+It may be empty if the next intersection occurs on the same edge as the current one. 
+Both the path and the newly found intersection are appended to `newOverlap', and the intersection is also added to the list usedIntersections.\\
+Since each intersection implies changing the cell from which the overlapping cell uses the edges, `findPath' is now applied to the other cell. 
+Again, it will deliver the next intersection as well as a list of the in between laying vertices. 
+The vertex list always gets appended to `newOverlap'. \\
+If the newly found intersection is equal to the initial intersection $I[1]$, then the construction of the discrete overlap cell `newOverlap' is complete. 
+At this point, both `newOverlap' and `usedIntersections' can be returned by the function `constructOverlap'. \\
+Otherwise, the newly found intersection is appended to both `newOverlap' and `usedIntersections', and the process continues by calling `findPath' on the other discrete cell.   
+This step is repeated until the starting intersection is reached, completing the overlap cell construction. \\
+Once an overlap between $C$ and $\zeta$ has been successfully extracted, all intersections used in its construction can be removed from the list $I$, since each intersection point belongs to exactly one overlap. 
+As long as $I$ is not empty, the function `constructOverlap' can be called again with the updated list to extract the next overlap. 
+When $I$ is empty, we can be certain that all intersections between $C$ and $\zeta$ have been processed, and thus all overlaps between the two cells have been identified. \\
+
+Each time `findPath' is called, it is not immediately clear in which direction the function should traverse the vertices of the given cell. 
+However, the correct direction can be determined using the following approach. \\
+Starting from the current intersection passed into the function, move a small distance in one direction along the edge of the given cell where the intersection is located. Next, check whether this new point lies within the boundaries of the other cell as well. 
+If the point is found in both cells, the chosen direction is correct. 
+If not, then the opposite direction must be used. \\ 
+A simple method to determine whether a point lies inside a polygon is to draw a ray from the point to the outside of the polygon. 
+The number of intersections between the ray and the polygon's edges determines the point's position. 
+If the number of intersections is odd, the point is inside the polygon.
+If it is even, the point is outside the polygon. \\ 
 \smallskip  \\
 % until here the rewriting!! 
 % then continue with the energy and the force 
@@ -577,6 +593,18 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 	Proof. \\
 	The formula arises from the sums from the overlap energy and the gradient from the area force in Proposition \ref{force:area}, where the desired area is set to zero. 
 \end{proposition}
+
+Figure \ref{fig:overlapForce} illustrates the interaction between two overlapping cells, highlighting the effect of the overlap force on their vertices.
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{forces/overlap/overlap1.png}
+			\caption{This figure demonstrates how the overlap force acts on two overlapping DF cells.
+			The blue arrows indicate the forces acting on the blue cell, while the red arrows represent those acting on the red cell.
+			The current overlap areas at each time step are displayed below the corresponding diagrams.			
+			On each consecutive diagram, we can see that the overlap gets reduced, until the area of the overlap is zero.  }
+			\label{fig:overlapForce}
+	\end{center}
+\end{figure}
 
 
 \subsection{A simulation run}
