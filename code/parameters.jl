@@ -3,9 +3,9 @@ using Dates
 # General setup:
 
 domain = (-5.0, 5.0)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 3               # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 6               # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
-NumberOfCells = 400                         # number of cells [OLD NAME: "M"] TODO: change to 400
+NumberOfCells = 1                         # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 100                          # diffusitivity constant 
 radius = 0.05           # cell radius 
@@ -14,11 +14,11 @@ radius = 0.05           # cell radius
 # [70,2,1.5,110]
 areaForceFactor = 0.0
 edgeForceFactor = 0.0
-interiorAngleForceFactor = 0.0
-overlapForceFactor = 1.0
+interiorAngleForceFactor = 1.0
+overlapForceFactor = 0.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
-boundaryPushForceFactor = 1.0
+boundaryPushForceFactor = 0.0
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
 

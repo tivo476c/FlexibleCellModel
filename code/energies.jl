@@ -278,7 +278,43 @@ end
 =#
 
 # turn in vectors that span the according angle 
+
+function arctan2(x,y) 
+    if x > 0
+        return atan(y / x)
+    elseif x < 0 
+        if y > 0 
+            return atan(y / x) + pi 
+        elseif y < 0 
+            return atan(y / x) - pi 
+        elseif y == 0 
+            return pi 
+        end 
+    elseif x == 0 
+        if y > 0
+            return pi/2.0
+        elseif y < 0
+            return - pi/2.0
+        elseif y==0
+            println("(0,0) cant be put in arctan2(x,y)")
+        end 
+    end 
+end 
+
+function intAngleMT(v_prev, v_curr, v_next) 
+
+    v1 = v_prev - v_curr 
+    v2 = v_next - v_curr 
+
+    a1 = arctan2(v1[1], v1[2])
+    a2 = arctan2(v2[1], v2[2])
+    res = mod(a1 - a2 , (2 * π))
+    return res
+end
+
+
 function intAngle2(x, y, z)
+
     v1 = x - y
     v2 = z - y
     return mod(-atan(v1[1] * v2[2] - v1[2] * v2[1], dot(v1, v2)), (2 * π))
@@ -414,20 +450,20 @@ function interiorAngleForceCell_MT1(c, I, J)
         v_next = vertex(c, nextIdx)
 
         # assign x dynamic for vertex k 
-        res[k] += (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)*(v_curr[2] - v_prev[2]) )                
-        res[k] += (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)*(v_prev[2] - v_curr[2]) )                
-        res[k] += (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)*(v_next[2] - v_curr[2]) )                
-        res[k] += (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)*(v_curr[2] - v_next[2]) )
+        res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
+        res[k] -= (J[currentIdx] - I[currentIdx]) * ( 1.0/norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]) )                
+        res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0/norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]) )                
+        res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
         
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints + k] += (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)*(v_prev[1] - v_curr[1]) )                
-        res[NumberOfCellWallPoints + k] += (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)*(v_curr[1] - v_prev[1]) )                
-        res[NumberOfCellWallPoints + k] += (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)*(v_curr[1] - v_next[1]) )                
-        res[NumberOfCellWallPoints + k] += (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)*(v_next[1] - v_curr[1]) )
+        res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
+        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)^2*(v_curr[1] - v_prev[1]) )                
+        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)^2*(v_curr[1] - v_next[1]) )                
+        res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
 
     end 
     
-    return res 
+    return res ./ 360.0
 
 end 
 

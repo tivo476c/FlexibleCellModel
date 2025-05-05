@@ -286,7 +286,7 @@ With this, we can compute the angles
 	
 \end{center}
 between the positive $x$ axis and the vector from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
-We get the wanted angle at $\vec{v}_j$ by subtracting $\theta_2 - \theta_1$.
+We get the wanted angle at $\vec{v}_j$ by subtracting $\theta_1 - \theta_2$.
 To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
 Thus, our interior angle operator is: 
 \begin{center}

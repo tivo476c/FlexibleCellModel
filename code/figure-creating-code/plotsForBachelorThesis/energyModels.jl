@@ -1,207 +1,92 @@
-include("energies.jl")
+include("../../energies.jl")
 
 # One has to set: M, N;  u0, A1, E1, I1, 
 
 
 # -------------- animations for area Force 
-
-M = 1
-N = 6
-
-C = cellToDiscreteCell( circleCell([0.,0.],3.), N )
-u0 = [C.x; C.y]
-
-#for i = 1:length(C.x)
-#    println(vertex(C, i))
-#end
-
-A1 = [10.]
-
-tspan = (0.0, 20.0)
-Δt = 1 / 2^(8)
-D = 1.5
-p = [Δt, D]
-prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?
-sol = solve(prob_cell1, EM(), dt=Δt)
-domain = (-3.5,3.5)
-
-animSDE = @animate for t ∈ 0:300
-
-    time = t[1]*4+1
-    x = sol[time][1:N]
-    y = sol[time][ M*N+1 : N*(M+1)]
-    #lab = string("time: ", time)
-    area = areaPolygon(x,y)
-    xlab = string("a(C(", time ,")) = ", round(area, digits=2))
-    plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
-         label = false, xlims=domain, ylims = domain, xguidefontsize=16, xlabel = xlab )
-    #xlabel!(xlab, fontsize=1)
-
-    for i = 2:M 
-
-        x = sol[time][ (i-1)*N+1  : i*N]
-        y = sol[time][ (i-1+M)*N+1  : (i+M)*N]
-        plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
-
-    end 
-
-
-    # plot arrows: 
-    forces = energies(sol[time][:], sol[time][:], 0., 0.)
-    c1 = DiscreteCell(sol[time][ 1:N], sol[time][ M*N+1 : N*(M+1)])
-    x1 = MutableLinkedList{Float64}()
-    y1 = MutableLinkedList{Float64}()
-    GR.setarrowsize(1)
-    for j = 1:M
-
-        for i = 1:N 
-
-            c1 = DiscreteCell( sol[time][(j-1)*N+1 : j*N],  sol[time][(j-1+M)*N+1 : (j+M)*N] )
-            cellForceX = forces[(j-1)*N+1 : j*N ]
-            cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
-            v = vertex(c1, i)
-            push!(x1, v[1])
-            push!(x1, cellForceX[i] + v[1])
-            push!(y1, v[2])
-            push!(y1, cellForceY[i] + v[2])
-            push!(x1, NaN)
-            push!(y1, NaN)
-
-        end 
-        plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
-
-    end 
-    
-end
-
-gif(animSDE, fps = 5)
-
-
-
-# t ∈ {0, 50, 100, 1000}
-times = 1001
-x = sol[times][1:N]
-y = sol[times][ M*N+1 : N*(M+1)]
-#lab = string("times: ", times)
-area = areaPolygon(x,y)
-xlab = string("a(C(", times-1 ,")) = ", round(area, digits=2))
-plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=500, 
-         label = false, xlims=domain, ylims = domain, xguidefontsize=16, xlabel = xlab )
-forces = energies(sol[times][:], sol[times][:], 0., 0.)
-c1 = DiscreteCell(sol[times][ 1:N], sol[times][ M*N+1 : N*(M+1)])
-x1 = MutableLinkedList{Float64}()
-y1 = MutableLinkedList{Float64}()
-GR.setarrowsize(1)
-for j = 1:M
-
-    for i = 1:N 
-
-        c1 = DiscreteCell( sol[times][(j-1)*N+1 : j*N],  sol[times][(j-1+M)*N+1 : (j+M)*N] )
-        cellForceX = forces[(j-1)*N+1 : j*N ]
-        cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
-        v = vertex(c1, i)
-        push!(x1, v[1])
-        push!(x1, cellForceX[i] + v[1])
-        push!(y1, v[2])
-        push!(y1, cellForceY[i] + v[2])
-        push!(x1, NaN)
-        push!(y1, NaN)
-
-    end 
-    plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
-
-end 
-p1000 = plot!()
-
-
-savefig("areaEnergy1000_2")
-
-
-# -------------- animations for edge Force 
-
-
-M = 1
-N = 4
-
-C = rectangleCell(Rectangle(-3.,3.,-1.,1.), N)
-u0 = [C.x; C.y]
-E1 = [2., 6., 2., 6.]
-
-tspan = (0.0, 20.0)
-Δt = 1 / 2^(8)
-D = 1.5
-p = [Δt, D]
-prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?
-sol = solve(prob_cell1, EM(), dt=Δt)
-domain = (-3.5,3.5)
-
-animSDE = @animate for t ∈ 0:300
-
-    time = t[1]*4+1
-    x = sol[time][1:N]
-    y = sol[time][ M*N+1 : N*(M+1)]
-    #lab = string("time: ", time)
-    area = areaPolygon(x,y)
-    x1 = [x[1], y[1]]
-    x2 = [x[2], y[2]]
-    x3 = [x[3], y[3]]
-    xlab = string( "e1(C(", time ,")) = ", round(norm( x1-x2, 2), digits=1), "; e2(C(", time ,")) = ", round(norm( x3-x2, 1),digits=2)  )
-    plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
-         label = false, xlims=domain, ylims = (-5.,5.), xguidefontsize=13, xlabel = xlab )
-    #xlabel!(xlab, fontsize=1)
-
-    for i = 2:M 
-
-        x = sol[time][ (i-1)*N+1  : i*N]
-        y = sol[time][ (i-1+M)*N+1  : (i+M)*N]
-        plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
-
-    end 
-
-
-    # plot arrows: 
-    forces = energies(sol[time][:], sol[time][:], 0., 0.)
-    c1 = DiscreteCell(sol[time][ 1:N], sol[time][ M*N+1 : N*(M+1)])
-    x1 = MutableLinkedList{Float64}()
-    y1 = MutableLinkedList{Float64}()
-    GR.setarrowsize(1)
-    for j = 1:M
-
-        for i = 1:N 
-
-            c1 = DiscreteCell( sol[time][(j-1)*N+1 : j*N],  sol[time][(j-1+M)*N+1 : (j+M)*N] )
-            cellForceX = forces[(j-1)*N+1 : j*N ]
-            cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
-            v = vertex(c1, i)
-            push!(x1, v[1])
-            push!(x1, cellForceX[i] + v[1])
-            push!(y1, v[2])
-            push!(y1, cellForceY[i] + v[2])
-            push!(x1, NaN)
-            push!(y1, NaN)
-
-        end 
-        plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
-
-    end 
-    
-end
-
-gif(animSDE, fps = 5)
-
-# t ∈ {0, 100, 200, 1000}
 begin 
+    M = 1
+    N = 6
+
+    C = cellToDiscreteCell( circleCell([0.,0.],3.), N )
+    u0 = [C.x; C.y]
+
+    #for i = 1:length(C.x)
+    #    println(vertex(C, i))
+    #end
+
+    A1 = [10.]
+
+    tspan = (0.0, 20.0)
+    Δt = 1 / 2^(8)
+    D = 1.5
+    p = [Δt, D]
+    prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?
+    sol = solve(prob_cell1, EM(), dt=Δt)
+    domain = (-3.5,3.5)
+
+    animSDE = @animate for t ∈ 0:300
+
+        time = t[1]*4+1
+        x = sol[time][1:N]
+        y = sol[time][ M*N+1 : N*(M+1)]
+        #lab = string("time: ", time)
+        area = areaPolygon(x,y)
+        xlab = string("a(C(", time ,")) = ", round(area, digits=2))
+        plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
+            label = false, xlims=domain, ylims = domain, xguidefontsize=16, xlabel = xlab )
+        #xlabel!(xlab, fontsize=1)
+
+        for i = 2:M 
+
+            x = sol[time][ (i-1)*N+1  : i*N]
+            y = sol[time][ (i-1+M)*N+1  : (i+M)*N]
+            plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
+
+        end 
+
+
+        # plot arrows: 
+        forces = energies(sol[time][:], sol[time][:], 0., 0.)
+        c1 = DiscreteCell(sol[time][ 1:N], sol[time][ M*N+1 : N*(M+1)])
+        x1 = MutableLinkedList{Float64}()
+        y1 = MutableLinkedList{Float64}()
+        GR.setarrowsize(1)
+        for j = 1:M
+
+            for i = 1:N 
+
+                c1 = DiscreteCell( sol[time][(j-1)*N+1 : j*N],  sol[time][(j-1+M)*N+1 : (j+M)*N] )
+                cellForceX = forces[(j-1)*N+1 : j*N ]
+                cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
+                v = vertex(c1, i)
+                push!(x1, v[1])
+                push!(x1, cellForceX[i] + v[1])
+                push!(y1, v[2])
+                push!(y1, cellForceY[i] + v[2])
+                push!(x1, NaN)
+                push!(y1, NaN)
+
+            end 
+            plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
+
+        end 
+        
+    end
+
+    gif(animSDE, fps = 5)
+
+
+
+    # t ∈ {0, 50, 100, 1000}
     times = 1001
     x = sol[times][1:N]
     y = sol[times][ M*N+1 : N*(M+1)]
     #lab = string("times: ", times)
     area = areaPolygon(x,y)
-    x1 = [x[1], y[1]]
-    x2 = [x[2], y[2]]
-    x3 = [x[3], y[3]]
-    xlab = string( "e1(C(", times-1 ,")) = ", round(norm( x1-x2, 2), digits=1), "; e2(C(", times-1 ,")) = ", round(norm( x3-x2, 1),digits=2)  )
+    xlab = string("a(C(", times-1 ,")) = ", round(area, digits=2))
     plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=500, 
-            label = false, xlims=domain, ylims = (-5.,5.), xguidefontsize=13, xlabel = xlab )
+            label = false, xlims=domain, ylims = domain, xguidefontsize=16, xlabel = xlab )
     forces = energies(sol[times][:], sol[times][:], 0., 0.)
     c1 = DiscreteCell(sol[times][ 1:N], sol[times][ M*N+1 : N*(M+1)])
     x1 = MutableLinkedList{Float64}()
@@ -226,146 +111,281 @@ begin
         plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
 
     end 
-    p0 = plot!()
-end 
-savefig("edgeEnergy1000")
+    p1000 = plot!()
 
 
-# ---------------- Interior angle energy 
-N = 6
-M = 1
-
-C = DiscreteCell([0.0, 2.0, 1.0, 2.0, -0.0, -1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
-shapePlot(C)
-
-C1 = DiscreteCell([0.0, 2.0, 3.0, 2.0, -0.0, 1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
-shapePlot(C1)
-
-I1 = zeros(6)
-I1[1] = intAngle2( vertex(C1, 6),vertex(C1, 1), vertex(C1, 2) )
-I1[6] = intAngle2( vertex(C1, 5),vertex(C1, 6), vertex(C1, 1) )
-for i = 2:5
-    I1[i] = intAngle2( vertex(C1, i-1),vertex(C1, i), vertex(C1, i+1) )
-end 
-
-u0 = [C.x; C.y]
-
-tspan = (0.0, 15.0)
-Δt = 1 / 2^(8)
-D = 1.5
-p = [Δt, D]
-prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?
-sol = solve(prob_cell1, EM(), dt=Δt)
-domain = (-3.5,3.5)
-
-animSDE = @animate for t ∈ 0: round(Int64, length(sol)/4 - 1 )  
-
-    time = t[1]*4+1
-    x = sol[time][1:N]
-    y = sol[time][ M*N+1 : N*(M+1)]
-    ct = DiscreteCell(x,y)
-    #lab = string("time: ", time)
-    area = areaPolygon(x,y)
-    a1 = round(  intAngle2( vertex(ct, 2), vertex(ct, 3),vertex(ct, 4) ) / π * 180 , digits=1)
-    a2 = round(  intAngle2( vertex(ct, 5), vertex(ct, 6),vertex(ct, 1) ) / π * 180 , digits=1)
-
-    xlab = string( "ι3(C(", time ,")) = ", a1, "°; ι6(C(", time ,")) = ", a2, "°"  )
-    plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
-         label = false, xlims=domain, ylims = domain, xguidefontsize=13, xlabel = xlab )
-    #xlabel!(xlab, fontsize=1)
-
-    for i = 2:M 
-
-        x = sol[time][ (i-1)*N+1  : i*N]
-        y = sol[time][ (i-1+M)*N+1  : (i+M)*N]
-        plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
-
-    end 
-
-
-    # plot arrows: 
-    forces = energies(sol[time][:], sol[time][:], 0., 0.)
-    c1 = DiscreteCell(sol[time][ 1:N], sol[time][ M*N+1 : N*(M+1)])
-    x1 = MutableLinkedList{Float64}()
-    y1 = MutableLinkedList{Float64}()
-    GR.setarrowsize(1)
-    for j = 1:M
-
-        for i = 1:N 
-
-            c1 = DiscreteCell( sol[time][(j-1)*N+1 : j*N],  sol[time][(j-1+M)*N+1 : (j+M)*N] )
-            cellForceX = forces[(j-1)*N+1 : j*N ]
-            cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
-            v = vertex(c1, i)
-            push!(x1, v[1])
-            push!(x1, cellForceX[i] + v[1])
-            push!(y1, v[2])
-            push!(y1, cellForceY[i] + v[2])
-            push!(x1, NaN)
-            push!(y1, NaN)
-
-        end 
-        plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
-
-    end 
-    
+    savefig("areaEnergy1000_2")
 end
 
-gif(animSDE, fps = 10)
+# -------------- animations for edge Force 
 
-
-# t ∈ {0, 50, 100, 3000}
 begin 
-    times = 1
-    x = sol[times][1:N]
-    y = sol[times][ M*N+1 : N*(M+1)]
+    M = 1
+    N = 4
 
-    ct = DiscreteCell(x,y)
+    C = rectangleCell(Rectangle(-3.,3.,-1.,1.), N)
+    u0 = [C.x; C.y]
+    E1 = [2., 6., 2., 6.]
 
-    a1 = round(  intAngle2( vertex(ct, 2), vertex(ct, 3),vertex(ct, 4) ) / π * 180 , digits=1)
-    a2 = round(  intAngle2( vertex(ct, 5), vertex(ct, 6),vertex(ct, 1) ) / π * 180 , digits=1)
+    tspan = (0.0, 20.0)
+    Δt = 1 / 2^(8)
+    D = 1.5
+    p = [Δt, D]
+    prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?
+    sol = solve(prob_cell1, EM(), dt=Δt)
+    domain = (-3.5,3.5)
 
-    xlab = string( "ι3(C(", times-1 ,")) = ", a1, "°; ι6(C(", times-1 ,")) = ", a2, "°"  )
-    plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
-            label = false, xlims=(-1.5, 5.5), ylims = (-3., 3.), xguidefontsize=13, xlabel = xlab )
-    #xlabel!(xlab, fontsize=1)
+    animSDE = @animate for t ∈ 0:300
 
-    for i = 2:M 
+        time = t[1]*4+1
+        x = sol[time][1:N]
+        y = sol[time][ M*N+1 : N*(M+1)]
+        #lab = string("time: ", time)
+        area = areaPolygon(x,y)
+        x1 = [x[1], y[1]]
+        x2 = [x[2], y[2]]
+        x3 = [x[3], y[3]]
+        xlab = string( "e1(C(", time ,")) = ", round(norm( x1-x2, 2), digits=1), "; e2(C(", time ,")) = ", round(norm( x3-x2, 1),digits=2)  )
+        plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
+            label = false, xlims=domain, ylims = (-5.,5.), xguidefontsize=13, xlabel = xlab )
+        #xlabel!(xlab, fontsize=1)
 
-        x = sol[times][ (i-1)*N+1  : i*N]
-        y = sol[times][ (i-1+M)*N+1  : (i+M)*N]
-        plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
+        for i = 2:M 
 
-    end 
-
-
-    # plot arrows: 
-    forces = energies(sol[times][:], sol[times][:], 0., 0.)
-    c1 = DiscreteCell(sol[times][ 1:N], sol[times][ M*N+1 : N*(M+1)])
-    x1 = MutableLinkedList{Float64}()
-    y1 = MutableLinkedList{Float64}()
-    GR.setarrowsize(1)
-    for j = 1:M
-
-        for i = 1:N 
-
-            c1 = DiscreteCell( sol[times][(j-1)*N+1 : j*N],  sol[times][(j-1+M)*N+1 : (j+M)*N] )
-            cellForceX = forces[(j-1)*N+1 : j*N ]
-            cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
-            v = vertex(c1, i)
-            push!(x1, v[1])
-            push!(x1, cellForceX[i] + v[1])
-            push!(y1, v[2])
-            push!(y1, cellForceY[i] + v[2])
-            push!(x1, NaN)
-            push!(y1, NaN)
+            x = sol[time][ (i-1)*N+1  : i*N]
+            y = sol[time][ (i-1+M)*N+1  : (i+M)*N]
+            plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
 
         end 
-        plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
 
+
+        # plot arrows: 
+        forces = energies(sol[time][:], sol[time][:], 0., 0.)
+        c1 = DiscreteCell(sol[time][ 1:N], sol[time][ M*N+1 : N*(M+1)])
+        x1 = MutableLinkedList{Float64}()
+        y1 = MutableLinkedList{Float64}()
+        GR.setarrowsize(1)
+        for j = 1:M
+
+            for i = 1:N 
+
+                c1 = DiscreteCell( sol[time][(j-1)*N+1 : j*N],  sol[time][(j-1+M)*N+1 : (j+M)*N] )
+                cellForceX = forces[(j-1)*N+1 : j*N ]
+                cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
+                v = vertex(c1, i)
+                push!(x1, v[1])
+                push!(x1, cellForceX[i] + v[1])
+                push!(y1, v[2])
+                push!(y1, cellForceY[i] + v[2])
+                push!(x1, NaN)
+                push!(y1, NaN)
+
+            end 
+            plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
+
+        end 
+        
+    end
+
+    gif(animSDE, fps = 5)
+
+    # t ∈ {0, 100, 200, 1000}
+    begin 
+        times = 1001
+        x = sol[times][1:N]
+        y = sol[times][ M*N+1 : N*(M+1)]
+        #lab = string("times: ", times)
+        area = areaPolygon(x,y)
+        x1 = [x[1], y[1]]
+        x2 = [x[2], y[2]]
+        x3 = [x[3], y[3]]
+        xlab = string( "e1(C(", times-1 ,")) = ", round(norm( x1-x2, 2), digits=1), "; e2(C(", times-1 ,")) = ", round(norm( x3-x2, 1),digits=2)  )
+        plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=500, 
+                label = false, xlims=domain, ylims = (-5.,5.), xguidefontsize=13, xlabel = xlab )
+        forces = energies(sol[times][:], sol[times][:], 0., 0.)
+        c1 = DiscreteCell(sol[times][ 1:N], sol[times][ M*N+1 : N*(M+1)])
+        x1 = MutableLinkedList{Float64}()
+        y1 = MutableLinkedList{Float64}()
+        GR.setarrowsize(1)
+        for j = 1:M
+
+            for i = 1:N 
+
+                c1 = DiscreteCell( sol[times][(j-1)*N+1 : j*N],  sol[times][(j-1+M)*N+1 : (j+M)*N] )
+                cellForceX = forces[(j-1)*N+1 : j*N ]
+                cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
+                v = vertex(c1, i)
+                push!(x1, v[1])
+                push!(x1, cellForceX[i] + v[1])
+                push!(y1, v[2])
+                push!(y1, cellForceY[i] + v[2])
+                push!(x1, NaN)
+                push!(y1, NaN)
+
+            end 
+            plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
+
+        end 
+        p0 = plot!()
     end 
-    p0 = plot!()
+    savefig("edgeEnergy1000")
 end 
+
+# ---------------- Interior angle energy 
+
+begin 
+    include("../../energies.jl")
+    N = 6
+    M = 1
+
+    C = DiscreteCell([0.0, 2.0, 1.0, 2.0, -0.0, -1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
+    shapePlot(C)
+
+    C1 = DiscreteCell([0.0, 2.0, 3.0, 2.0, -0.0, 1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
+    shapePlot(C1)
+
+    I1 = zeros(6)
+    I1[1] = intAngleMT( vertex(C1, 6),vertex(C1, 1), vertex(C1, 2) )
+    I1[6] = intAngleMT( vertex(C1, 5),vertex(C1, 6), vertex(C1, 1) )
+    for i = 2:5
+        I1[i] = intAngleMT( vertex(C1, i-1),vertex(C1, i), vertex(C1, i+1) )
+    end 
+    
+    I1 ./ pi .* 180
+
+
+    u0 = [C.x; C.y]
+
+    T = 10.0
+    tspan = (0.0, T)
+    Δt = 10^(-4)
+    D = 1.0
+    p = [Δt, D]
+    prob_cell1 = SDEProblem( energies, nomotion, u0, tspan, p, noise=WienerProcess(0., 0.))        # how to correctly pass Δt and D in p ?
+    sol = solve(prob_cell1, EM(), dt=Δt, saveat=[T*k/10.0 for k in 0:10])
+    domain = (-5.0,5.0)
+
+    animSDE = @animate for t ∈ 1:length(sol)
+
+        time = t[1]
+        print("time = ", time)
+        x = sol[time][1:N]
+        print("x = ", x)
+        y = sol[time][ M*N+1 : N*(M+1)]
+        print("y = ", y)
+        ct = DiscreteCell(x,y)
+        #lab = string("time: ", time)
+        area = areaPolygon(x,y)
+        a1 = round(  intAngleMT( vertex(ct, 2), vertex(ct, 3),vertex(ct, 4) ) / π * 180 , digits=1)
+        a2 = round(  intAngleMT( vertex(ct, 5), vertex(ct, 6),vertex(ct, 1) ) / π * 180 , digits=1)
+
+        xlab = string( "ι3(C(", time ,")) = ", a1, "°; ι6(C(", time ,")) = ", a2, "°"  )
+        plot(x, y, 
+        seriestype=:shape, 
+        aspect_ratio=:equal, 
+        opacity=.25, 
+        dpi=300,
+        label = false, 
+        # xlims=domain, 
+        # ylims = domain, 
+        xguidefontsize=13, 
+        xlabel = xlab )
+        #xlabel!(xlab, fontsize=1)
+
+        for i = 2:M 
+
+            x = sol[time][ (i-1)*N+1  : i*N]
+            y = sol[time][ (i-1+M)*N+1  : (i+M)*N]
+            plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
+
+        end 
+
+
+        # plot arrows: 
+        forces = energies(sol[time][:], sol[time][:], 0., 0.)
+        c1 = DiscreteCell(sol[time][ 1:N], sol[time][ M*N+1 : N*(M+1)])
+        x1 = MutableLinkedList{Float64}()
+        y1 = MutableLinkedList{Float64}()
+        GR.setarrowsize(1)
+        for j = 1:M
+
+            for i = 1:N 
+
+                c1 = DiscreteCell( sol[time][(j-1)*N+1 : j*N],  sol[time][(j-1+M)*N+1 : (j+M)*N] )
+                cellForceX = forces[(j-1)*N+1 : j*N ]
+                cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
+                v = vertex(c1, i)
+                push!(x1, v[1])
+                push!(x1, cellForceX[i] + v[1])
+                push!(y1, v[2])
+                push!(y1, cellForceY[i] + v[2])
+                push!(x1, NaN)
+                push!(y1, NaN)
+
+            end 
+            plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
+
+        end 
+        
+    end
+
+    gif(animSDE, fps = 1)
+end 
+
+#     # t ∈ {0, 50, 100, 3000}
+#     begin 
+#         times = 1
+#         x = sol[times][1:N]
+#         y = sol[times][ M*N+1 : N*(M+1)]
+
+#         ct = DiscreteCell(x,y)
+
+#         a1 = round(  intAngle2( vertex(ct, 2), vertex(ct, 3),vertex(ct, 4) ) / π * 180 , digits=1)
+#         a2 = round(  intAngle2( vertex(ct, 5), vertex(ct, 6),vertex(ct, 1) ) / π * 180 , digits=1)
+
+#         xlab = string( "ι3(C(", times-1 ,")) = ", a1, "°; ι6(C(", times-1 ,")) = ", a2, "°"  )
+#         plot(x, y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, 
+#                 label = false, xlims=(-1.5, 5.5), ylims = (-3., 3.), xguidefontsize=13, xlabel = xlab )
+#         #xlabel!(xlab, fontsize=1)
+
+#         for i = 2:M 
+
+#             x = sol[times][ (i-1)*N+1  : i*N]
+#             y = sol[times][ (i-1+M)*N+1  : (i+M)*N]
+#             plot!(x,y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, dpi=300, label = false)
+
+#         end 
+
+
+#         # plot arrows: 
+#         forces = energies(sol[times][:], sol[times][:], 0., 0.)
+#         c1 = DiscreteCell(sol[times][ 1:N], sol[times][ M*N+1 : N*(M+1)])
+#         x1 = MutableLinkedList{Float64}()
+#         y1 = MutableLinkedList{Float64}()
+#         GR.setarrowsize(1)
+#         for j = 1:M
+
+#             for i = 1:N 
+
+#                 c1 = DiscreteCell( sol[times][(j-1)*N+1 : j*N],  sol[times][(j-1+M)*N+1 : (j+M)*N] )
+#                 cellForceX = forces[(j-1)*N+1 : j*N ]
+#                 cellForceY = forces[(j-1+M)*N+1 : (j+M)*N ]
+#                 v = vertex(c1, i)
+#                 push!(x1, v[1])
+#                 push!(x1, cellForceX[i] + v[1])
+#                 push!(y1, v[2])
+#                 push!(y1, cellForceY[i] + v[2])
+#                 push!(x1, NaN)
+#                 push!(y1, NaN)
+
+#             end 
+#             plot!(collect(x1),collect(y1), arrow=(:closed, 2.0), color = j, label=false)
+
+#         end 
+#         p0 = plot!()
+#     end 
+# end 
+
 
 #savefig("angleEnergy3000")
 
