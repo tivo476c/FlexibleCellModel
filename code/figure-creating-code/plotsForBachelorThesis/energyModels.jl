@@ -238,10 +238,10 @@ begin
     N = 6
     M = 1
 
-    C = DiscreteCell([0.0, 2.0, 1.0, 2.0, -0.0, -1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
+    C = DiscreteCell([0.0, 1.0, 1.0, 1.0, 0.0, 0.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
     shapePlot(C)
 
-    C1 = DiscreteCell([0.0, 2.0, 3.0, 2.0, -0.0, 1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
+    C1 = DiscreteCell([0.0, 1.0, 2.0, 1.0, 0.0, -1.0], [-1.0, -1.0, 0.0, 1.0, 1.0, 0.0])
     shapePlot(C1)
 
     I1 = zeros(6)
@@ -286,8 +286,8 @@ begin
         opacity=.25, 
         dpi=300,
         label = false, 
-        # xlims=domain, 
-        # ylims = domain, 
+        xlims=domain, 
+        ylims = domain, 
         xguidefontsize=13, 
         xlabel = xlab )
         #xlabel!(xlab, fontsize=1)
