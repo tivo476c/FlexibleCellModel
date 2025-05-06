@@ -6,18 +6,21 @@ include("heatmap.jl")
 using Distributions, Distributed
 
 
-function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.9^2)
+function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.09^2)
     """
         finds a point (x,y) in [-5+radius, 5-radius]^2 that gets initialized according to the Normal distribution N(mean, deviation)
     """
     dist = MvNormal([mean, mean], deviation * I(2))
-    while true
+    for _ = 1:1000
         numX, numY = rand(dist)
-        if -5 + radius <= numX <= 5 - radius && -5 + radius <= numY <= 5 - radius
+        if -domainL + radius <= numX <= domainL - radius && -domainL + radius <= numY <= domainL - radius
             return [numX, numY]
         end
     end
+    println("ERROR: could not find a point in the domain in giveCentreNormalDistrInDomain in 1000 iterations")
+    return 
 end
+
 
 function isFeasible(newCell, oldCells, radius)
     """

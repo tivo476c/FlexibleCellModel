@@ -89,15 +89,23 @@ end
 function createHeatmaps(matrices)
 
     matrices .= [Float64.(M) for M in matrices]
-    foreach(M -> M ./ (NumberOfSimulations * NumberOfCells * HeatStepSize^2), matrices)
     maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
     minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-     
+    println("old minVal = ", minVal, "; old maxVal = ", maxVal) 
+    matrices = [matrices[i]./(NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i=1:NumberOfSampleTimes]
+
+    maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
+    minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
+    println("new minVal = ", minVal, "; new maxVal = ", maxVal) 
+    mass1 = sum(matrices[1]) * HeatStepSize^2
+    massN = sum(matrices[NumberOfSampleTimes]) * HeatStepSize^2
+    println("mass1 = ", mass1, "; massN = ", massN)
+
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
-        heatMapName = string("heatmap-", simulationName, "-sampleTime", @printf("%.2f", x), ".png")
-        # heatMapName2 = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
+        # heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.4f", sampleTime), ".png")
+        heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
         caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
@@ -106,8 +114,8 @@ function createHeatmaps(matrices)
             ylimits=domain,
             xlabel=caption,
             c=reverse(cgrad(:hot)),
-            clim=(minVal, maxVal),
-            # clim=(minimum(u_t05), maximum(u_t05)), ratio=:equal,
+            # clim=(minVal, maxVal),
+            clim=(0.55, 1.55),  # activate for bruna scaling 
             ratio=:equal,
             dpi=500
         )

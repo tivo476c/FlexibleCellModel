@@ -712,15 +712,15 @@ function boundaryForceCell(c)
     end
 
     res = zeros(2 * N)
-    if (xmin < -5.0)
+    if (xmin < -domainL)
         res[1:N] = ones(N)
-    elseif (xmax > 5.0)
+    elseif (xmax > domainL)
         res[1:N] = -ones(N)
     end
 
-    if (ymin < -5.0)
+    if (ymin < -domainL)
         res[N+1:2*N] = ones(N)
-    elseif (ymax > 5.0)
+    elseif (ymax > domainL)
         res[N+1:2*N] = -ones(N)
     end
 
@@ -749,9 +749,9 @@ function boundaryForce(u)
         # len(u) = 2*M
         res = zeros(2 * M)
         for i = 1:2*M
-            if u[i] < -5
+            if u[i] < -domainL
                 res[i] = 1
-            elseif u[i] > 5
+            elseif u[i] > domainL
                 res[i] = -1
             end
 

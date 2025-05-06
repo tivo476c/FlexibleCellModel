@@ -93,24 +93,33 @@ begin
     end
 
     ## create paths 
+    println("creating paths")
     mkpath(simPath)
     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     mkpath(locationsPath)
     mkpath(heatMapsPath)
 
     ## save one simulation as gif 
+    println("save one sim as gif")
     u0 = InitializePointParticles(radius)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
     sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
-
+    println("compute ", NumberOfSampleTimes, "simulations to save locations at times ", sampleTimes)
+    
+    
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
+    println("plot heatmaps for each time step")
     matrices = makeMatrices()
+
     createHeatmaps(matrices)
 end
 
 
+
+
+
+ 
