@@ -450,20 +450,20 @@ function interiorAngleForceCell_MT1(c, I, J)
         v_next = vertex(c, nextIdx)
 
         # assign x dynamic for vertex k 
-        res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
+        # res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
         res[k] -= (J[currentIdx] - I[currentIdx]) * ( 1.0/norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]) )                
         res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0/norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]) )                
-        res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
+        # res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
         
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
+        # res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
         res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)^2*(v_curr[1] - v_prev[1]) )                
         res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)^2*(v_curr[1] - v_next[1]) )                
-        res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
+        # res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
 
     end 
     
-    return res ./ 360.0
+    return res ./ 20
 
 end 
 
