@@ -103,12 +103,12 @@ begin
     println("save one sim as gif")
     u0 = InitializePointParticles(radius)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
-    sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
+    @time sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    println("compute ", NumberOfSampleTimes, "simulations to save locations at times ", sampleTimes)
-    
+    println("compute ", NumberOfSampleTimes, " simulations to save locations at times ", sampleTimes)
+    @time results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
     
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
