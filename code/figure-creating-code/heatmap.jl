@@ -104,8 +104,8 @@ function createHeatmaps(matrices)
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
-        # heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.4f", sampleTime), ".png")
         heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
+        # heatMapName = string("heatmap-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
         caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 

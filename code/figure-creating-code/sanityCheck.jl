@@ -71,6 +71,7 @@ begin
 end
 
 
+
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
 # addprocs(6)
@@ -102,20 +103,17 @@ begin
     ## save one simulation as gif 
     println("save one sim as gif")
     u0 = InitializePointParticles(radius)
+    # u0 = InitializePointParticles(0.0)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
     @time sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    println("compute ", NumberOfSampleTimes, " simulations to save locations at times ", sampleTimes)
-    @time results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
-    
+    results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations) 
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
-    println("plot heatmaps for each time step")
     matrices = makeMatrices()
-
-    createHeatmaps(matrices)
+    createHeatmaps(matrices)    
 end
 
 
