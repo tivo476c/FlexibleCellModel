@@ -24,22 +24,21 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 
 
 ## Simulation time parameters: 
-T = 0.00001
+T = 20.0
 timeInterval = (0.0, T)
 timeStepSize = 10^(-5)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
 NumberOfSimulations = 100
-NumberOfSampleTimes = 2
+NumberOfSampleTimes = 11
 sampleTimes = [T*k/(NumberOfSampleTimes-1) for k = 0:NumberOfSampleTimes-1]
 
 ## Simulation name 
-# date = today()
-date = "2025-05-06"
+date = today()
+# date = "2025-04-21"
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "23-00"
-# simulationName = string("HSCM-SIM_", date, "_", currentTime)
-simulationName = "PP-model-initial_gauss-without-radius-exclusion"
+simulationName = string("HSCM-SIM_", date, "_", currentTime)
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50 

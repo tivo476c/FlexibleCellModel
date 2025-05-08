@@ -6,7 +6,7 @@ include("heatmap.jl")
 using Distributions, Distributed
 
 
-function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.09^2)
+function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.009^2)
     """
         finds a point (x,y) in [-5+radius, 5-radius]^2 that gets initialized according to the Normal distribution N(mean, deviation)
     """
@@ -75,9 +75,9 @@ function InitializePointParticles(radius)
     savedCentres = []
     for i = 1:M
         newCentre = giveCentreNormalDistrInDomain(radius)
-        while (!isFeasible(newCentre, savedCentres, radius))
-            newCentre = giveCentreNormalDistrInDomain(radius)
-        end
+        # while (!isFeasible(newCentre, savedCentres, radius))
+        #     newCentre = giveCentreNormalDistrInDomain(radius)
+        # end
         push!(savedCentres, newCentre)
     end
     xCoords = Float64[]
