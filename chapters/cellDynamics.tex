@@ -257,11 +257,11 @@ An isolated application of the edge force can be seen in Figure \ref{fig:edgeFor
 \subsection{Interior angle force}
 % mention scaling factor of /360 for interior angle force 
 The combined application of the area and edge forces revealed instabilities in unfavorable configurations, where self-intersections of the cell edges occurred. 
-Simulations without this energy sometimes can also result in constrictions at certain vertices, where the interior angle approaches $360°$. 
+Simulations without this energy sometimes can also result in constrictions at certain vertices, where the interior angle approaches $360$°. 
 To address this issue, we introduce the interior angle energy. \\
 The first challenge is to consistently determine the interior angle at a given vertex throughout the simulation.
-Although we could use $\arccos$ to compute the angle, this method would suffer from poor stability as the angle approaches $\pi$ or $-\pi$.
-A better alternative is to use the $\atanxy$ function, as it remains reliably stable for all angles. \\
+Although we could apply the law of cosines and use $\arccos$ to compute the angle, this method would suffer from poor stability as the angle approaches $180$°.
+A better alternative is to use the $\atanxy$ function, as it remains reliably stable at all angles. \\
 
 \begin{definition} \textbf{arctan2} \\
 	The function $$\atanxy:\R^2/\{0\} \rightarrow (-\pi, \pi]$$ is defined by:
@@ -278,7 +278,7 @@ A better alternative is to use the $\atanxy$ function, as it remains reliably st
 	\end{center}
 \end{definition}
 
-The $\atanxy(y,x)$ function computes the angle of a vector $(x,y)^T$ with respect to the positive $x$ axis. \\
+The $\atanxy(x,x)$ function computes the angle of a vector $(x,y)^T$ with respect to the positive $x$ axis. \\
 With this, we can compute the angles 
 \begin{center}
 	
@@ -286,8 +286,8 @@ With this, we can compute the angles
 	$\theta_2 = \atanxy( \vec{v}_{j+1} - \vec{v_j} )$
 	
 \end{center}
-between the positive $x$ axis and the vector from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
-We get the wanted angle at $\vec{v}_j$ by subtracting $\theta_1 - \theta_2$.
+between the positive $x$ axis and the vectors from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
+We get the searched angle at $\vec{v}_j$ by subtracting $\theta_1 - \theta_2$.
 To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
 Thus, our interior angle operator is: 
 \begin{center}
@@ -307,23 +307,18 @@ With that, we can define our interior angle energy.
 
 
 We continue by computing the resulting force. 
-The function $\atanxy$ is partly defined and not truly differentiable. 
+The $\atanxy$ function is partly defined and not truly differentiable. 
 We still want to compute a gradient to use it for our interior angle force. 
-Since $\atanxy(x,y) = \arctan(\frac{y}{x}) + constant$ almost everywhere, we just compute the gradient of $\arctan(\frac{y}{x})$ instead. \\
+Since $$\atanxy(x,y) = \arctan\left(\frac{y}{x} \right) + \text{constant}$$ almost everywhere, we just compute the gradient of $\arctan(\frac{y}{x})$ instead. \\
 Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
 However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
 
 \begin{proposition} \textbf{Interior angle force} \\
 
-	The interior angle force that gets applied on vertex $\vec{v}_j$ of cell $i$ is given by 
+	The interior angle force that gets applied on vertex $\vec{v}_j$ of cell $C$ is given by 
 	\begin{align}
-		F^{(I_{i,j})}_j(C_i) &= - \nabla_{\vec{v}_j^i} (I_{i, j-1}(C_i) + I_{i, j}(C_i) + I_{i, j+1}(C_i) ) \\
-		&= (I^{j-1}_{C_i} - I_{i, j-1}^d) \left( - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
-		  v_{j}^2 - v_{j-1}^2 \\[0.5em]
-		  v_{j-1}^1 - v_{j}^1
-	  \end{pmatrix} 
-	  \right) \notag \\[0.5em] 
-	  & + (I^{j}_{C_i} - I_{i, j}^d) \left( 
+		F^{(I_{j})}_j(C) &= - \nabla_{\vec{v}_j} I_{j}(C) \\
+		&= (I_{j}^d - I^{j}_{C}) \left( 
 		\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
 		  v_{j-1}^2 - v_{j}^2 \\[0.5em]
 		  v_{j}^1 - v_{j-1}^1
@@ -333,11 +328,6 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		  v_{j}^1 - v_{j+1}^1
 	  \end{pmatrix} 
 	  \right) \notag \\[0.5em] 
-	  & + (I^{j+1}_{C_i} - I_{i, j+1}^d) \left( \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-		v_{j}^2 - v_{j+1}^2 \\[0.5em]
-		v_{j+1}^1 - v_{j}^1
-	\end{pmatrix} 
-	\right) \notag
 	\end{align}
 
 
@@ -345,27 +335,33 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	We are looking for 
 	\begin{center}
 		$
-		\nabla_{\vec{v}_j} ( I_{i, j-1}(C_i) + I_{i, j}(C_i) + I_{i, j+1}(C_i) )
+		\nabla_{\vec{v}_j} I_{j}(C)
 		$
 	\end{center}
-	as the vertex $\vec{v}_j$ has an influence on the interior angles at the vertices $\vec{v}_{j-1}$, $\vec{v}_{j}$ and $\vec{v}_{j+1}$. \\
-	Let us start with the computation of $\nabla_{\vec{v}_j} I_{i, j}(C_i)$. 
+	
 	Similarly to the first forces, we get:
 	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{i, j}(C_i) &= (I_{i, j}^d - I^j_{C_i}) \nabla_{\vec{v}_j} (- I^j_{C_i}) \\
-		&= (I_{i, j}^d - I^j_{C_i}) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
+		\nabla_{\vec{v}_j}  I_{j}(C) &=  \nabla_{\vec{v}_j} \frac{1}{2}|I^d_j - I^j_{C}|^2 \\
+		&= |I_{j}^d - I^j_{C}| \nabla_{\vec{v}_j} |I^d_j - I^j_{C}| \\
+		&=  \begin{cases}
+				(I_{j}^d - I^j_{C}) \nabla_{\vec{v}_j} (I^d_j - I^j_{C}) &\text{if } I_{j}^d \geq I^j_{C}\\[0.5em]
+				- (I_{j}^d - I^j_{C}) \nabla_{\vec{v}_j} - (I^d_j - I^j_{C}) &\text{if } I_{j}^d < I^j_{C}
+		    \end{cases} \\
+		&= (I_{j}^d - I^j_{C}) \nabla_{\vec{v}_j} (- I^j_{C})\\
+		&= (I^j_{C} - I_{j}^d) \nabla_{\vec{v}_j}  I^j_{C}   \\
+		&= (I^j_{C} - I_{j}^d) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
 	\end{align*}
 	At this point, the previously mentioned simplifications come into play and we use $\arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1})$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator $[\cdot]_{[0, 2\pi)}$.
 
 	In the next step, we need to compute the gradient 
 	\begin{center}
 		$
-		\nabla_{\vec{v}_j} \arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}).
+		\nabla_{\vec{v}_j} \arctan \left(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1} \right).
 		$
 	\end{center}
 	
 	Therefore, we define helper functions 
-	$$ f(x,y) = \arctan( \frac{y}{x})$$ 
+	$$ f(x,y) = \arctan \left( \frac{y}{x} \right)$$ 
 	and 
 	$$g(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
 		v_{j-1}^1 - v_{j}^1 \\[0.5em] 
@@ -377,21 +373,21 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
  
 	\begin{center}
 		
-		$\dfrac{\partial f(x,y)}{\partial x} = \dfrac{1}{1 + \dfrac{y}{x}^2} (- \dfrac{y}{x^2}) = - \dfrac{y}{x^2 + y^2}$, \\
-		$\dfrac{\partial f(x,y)}{\partial y} = \dfrac{1}{1 + \dfrac{y}{x}^2}  \dfrac{1}{x} =  \dfrac{x}{x^2 + y^2}$, \\ [0.5em]
+		$\dfrac{\partial f(x,y)}{\partial x} = \dfrac{1}{1 + (\dfrac{y}{x})^2} (- \dfrac{y}{x^2}) = - \dfrac{y}{x^2 + y^2}$ \\
+		$\dfrac{\partial f(x,y)}{\partial y} = \dfrac{1}{1 + (\dfrac{y}{x})^2}  \dfrac{1}{x} =  \dfrac{x}{x^2 + y^2}$ \\ [0.5em]
 
-		$ \nabla_{v_j^1} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$, \\
-		$ \nabla_{v_j^2} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$. 
+		$ \nabla_{v_j^1} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\
+		$ \nabla_{v_j^2} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$ 
 	
 	\end{center}
 
 	With that, we can compute:
 	\begin{align*}
-		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^1} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j)) \cdot \nabla_{v_j^1} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^1} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^1} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
 			- \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[1.0em]
 			\frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2}
-		\end{pmatrix}
+		\end{pmatrix}^T
 		\cdot 
 		\begin{pmatrix}
 			-1 \\
@@ -403,11 +399,11 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 	And similarly:
 	\begin{align*}
-		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^2} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j)) \cdot \nabla_{v_j^2} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^2} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^2} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
 			- \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[1.0em]
 			\frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2}
-		\end{pmatrix}
+		\end{pmatrix}^T
 		\cdot 
 		\begin{pmatrix}
 			0 \\
@@ -419,7 +415,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 	Overall, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+		\nabla_{\vec{v}_j} \arctan \left(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1} \right) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j-1}^2 - v_{j}^2 \\[0.5em]
 			v_{j}^1 - v_{j-1}^1
 		\end{pmatrix}.
@@ -427,9 +423,9 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	
 	Thus, we can come back to: 
 	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{i, j}(C_i) 
-		&= (I_{i, j}^d - I^j_{C_i}) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}) - \arctan(\frac{v_{j+1}^2 - v_{j}^2}{v_{j+1}^1 - v_{j}^1})) \\
-		&= (I_{i, j}^d - I^j_{C_i}) \left( 
+		\nabla_{\vec{v}_j}  I_{j}(C) 
+		&= (I^j_{C} - I_{j}^d) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}) - \arctan(\frac{v_{j+1}^2 - v_{j}^2}{v_{j+1}^1 - v_{j}^1})) \\
+		&= (I^j_{C} - I_{j}^d) \left( 
 		  \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j-1}^2 - v_{j}^2 \\[0.5em]
 			v_{j}^1 - v_{j-1}^1
@@ -440,34 +436,16 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		\end{pmatrix} \right) 
 	\end{align*}
 
-	For the neighboring vertices, we get 
-	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{i, j-1}(C_i) 
-		&= (I_{i, j-1}^d - I^{j-1}_{C_i}) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j-2}^2 - v_{j-1}^2}{v_{j-2}^1 - v_{j-1}^1}) - \arctan(\frac{v_{j}^2 - v_{j-1}^2}{v_{j}^1 - v_{j-1}^1})) \\
-		&= (I_{i, j-1}^d - I^{j-1}_{C_i}) \left( 0
-		  - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
-			v_{j}^2 - v_{j-1}^2 \\[0.5em]
-			v_{j-1}^1 - v_{j}^1
-		\end{pmatrix} 
-		\right) 
-	\end{align*}
-	and 
-	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{i, j+1}(C_i) 
-		&= (I_{i, j+1}^d - I^{j+1}_{C_i}) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j}^2 - v_{j+1}^2}{v_{j}^1 - v_{j+1}^1}) - \arctan(\frac{v_{j+2}^2 - v_{j+1}^2}{v_{j+2}^1 - v_{j+1}^1})) \\
-		&= (I_{i, j+1}^d - I^{j+1}_{C_i}) \left( \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-			v_{j}^2 - v_{j+1}^2 \\[0.5em]
-			v_{j+1}^1 - v_{j}^1
-		\end{pmatrix} 
-		  - 0
-		\right). 
-	\end{align*}
-
-	The sum of these three gradients is equal to the force stated in the proposition. 
-	
 	\qed
 \end{proposition}
-
+As the vertex $\vec{v}_j$ has an influence on the interior angles at the vertices $\vec{v}_{j-1}$, $\vec{v}_{j}$ and $\vec{v}_{j+1}$, one could also use the force 
+\begin{center}
+	$
+	F^{(\hat{I}_{j})}_j(C) = - \nabla_{\vec{v}_j} (I_{j-1}(C) + I_{j}(C) + I_{j+1}(C)).
+	$
+\end{center}
+The application of this force resulted in a poorer ability to recover the cell shape.
+Therefore, we use the force $F^{(I_{j})}_j(C)$ instead.
 
 Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angle force.
 
