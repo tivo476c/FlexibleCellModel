@@ -23,7 +23,11 @@ Having established this definition, we are now ready to define our cell model.
 	We set $\vec{v}_{N+1} = \vec{v}_{1}$ and $\vec{v}_{0} = \vec{v}_{N}$ to enable periodic indexing, which simplifies the computation of the upcoming forces a lot.
 \end{definition}
 
-In this thesis, DF cells may also be called discrete cells. \\ 
+In this thesis, DF cells may also be called discrete cells. 
+In our model, the cell vertices are denoted by $\vec{v}$. 
+Thus, the character $v$ refers to vertex positions and not to velocity.
+The term velocity is not used throughout this thesis as vertex dynamics are entirely given by the upcoming forces and a cell wise computed Brownian motion. \\
+
 
 The next step is to describe the setup of a DF simulation. 
 \begin{definition} \textbf{DF simulation} \label{def:DF-Sim}  \\
@@ -42,7 +46,7 @@ The next step is to describe the setup of a DF simulation.
 
 	The simulation's dynamics are defined on all cell vertices via the stochastic differential equation (SDE):
 	\begin{center}
-		$ \dequ \vec{v}^{\:i}_j(\vec{C}) = \F^i_j(\vec{C}) + \sqrt{2 D} \dequ \vec{B}^{\:i}$, \hspace{0.5em} $1 \leq i \leq N_{C}$, \hspace{0.5em} $1 \leq j \leq N_{V}$. 
+		$ \dequ \vec{v}^{\:i}_j(\vec{C}) = \F^i_j(\vec{C}) \dequ t + \sqrt{2 D} \dequ \vec{B}^{\:i}$, \hspace{0.5em} $1 \leq i \leq N_{C}$, \hspace{0.5em} $1 \leq j \leq N_{V}$. 
 	\end{center}
 	where $\F^i_j$ describes the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system $\vec{C}$ and $\sqrt{2 D} \dequ \vec{B}^{\:i}$ models the two dimensional standard Brownian motion of cell $i$ with diffusion coefficient $D$.  
 	Note, that all vertices of cell $i$ perform the same Brownian motion such that the whole cell $i$ moves in the direction of $\vec{B}^{\:i}$. \\

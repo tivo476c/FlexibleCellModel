@@ -74,8 +74,9 @@ end
 
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
-addprocs(6)
-# addprocs(3)
+include("../simulationFunctionalities.jl")
+# addprocs(6)
+addprocs(3)
 println("hallo")
 begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
@@ -83,6 +84,7 @@ begin
         include("heatmap.jl")
         include("../parameters.jl")
         include("sanityCheckFunctionalitites.jl")
+        include("../simulationFunctionalities.jl")
 
 
         ### 1st: DO PRIOR WORK 
@@ -105,8 +107,8 @@ begin
     println("save one sim as gif")
     u0 = InitializePointParticles(radius)
     # u0 = InitializePointParticles(0.0)
-    prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
-    @time sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
+    prob_pointParticles = ODEProblem(energies, u0, tspan, p)
+    @time sol = solve(prob_pointParticles, Tsit5(), dt=timeStepSize, saveat=sampleTimes)
     createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
@@ -114,6 +116,38 @@ begin
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     matrices = makeMatrices()
+    createHeatmaps(matrices)
+end
+
+
+# do own explicit euler 
+begin 
+    include("heatmap.jl")
+    include("sanityCheckFunctionalitites.jl")
+    include("../parameters.jl")
+    include("../simulationFunctionalities.jl")
+    include("../energies.jl")
+
+    tspan = timeInterval
+    simPath = joinpath(homedir(), "simulations", simulationName)
+    locationsPath = joinpath(simPath, "locations")
+    heatMapsPath = joinpath(simPath, "heatmaps")
+    gifPath = joinpath(simPath, string(simulationName, ".gif"))
+    p = [timeStepSize, D]
+
+    ## create paths 
+    println("creating paths")
+    mkpath(simPath)
+    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    mkpath(locationsPath)
+    mkpath(heatMapsPath)
+
+    matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
+    for i = 1:NumberOfSimulations
+        u0 = InitializePointParticles(radius)
+        res = simulateExplicitEuler(u0)
+        addSolToMatrices(res, matrices)
+    end 
     createHeatmaps(matrices)
 end
 

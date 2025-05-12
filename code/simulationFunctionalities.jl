@@ -1,3 +1,6 @@
+include("energies.jl")
+include("parameters.jl")
+
 using Printf
 
 function createSimGif(  gifPath::String, 
@@ -46,7 +49,7 @@ function createSimGif(  gifPath::String,
         animSDE = @animate for i = 1:length(sol) 
             # time = t[1]*timeStepSize+1
             # time = t[1]*saveAtTimes+1
-
+           
             u = sol.u[i]
             time = sol.t[i]
 
@@ -70,3 +73,33 @@ function createSimGif(  gifPath::String,
     end 
 
 end 
+
+
+
+function simulateExplicitEuler(u0)
+
+    currentState = u0
+    stateLength = length(u0)
+    time = 0 
+    res = [zeros(stateLength) for _ = 1:length(sampleTimes)]
+    
+    NumberOfTimeSteps = floor(T / timeStepSize)
+    NumberOfTimeStepsPerSave = floor(NumberOfTimeSteps/(length(sampleTimes)-1))
+
+    res[1] = u0 
+    resCount = 2 
+    NumberOfTimeStep = 0
+
+    while resCount <= length(res) 
+        time += timeStepSize
+        currentState += timeStepSize * energies(zeros(stateLength), currentState, p, time)
+        NumberOfTimeStep += 1 
+        if mod(NumberOfTimeStep, NumberOfTimeStepsPerSave) == 0 
+            res[resCount] = currentState 
+            resCount += 1
+        end 
+    end 
+
+    return res  
+
+end

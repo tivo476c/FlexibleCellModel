@@ -10,66 +10,64 @@ using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 #-------------------------------------- FINAL ENERGY
 
 function energies(du, u, p, t)
-
-    # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
-    # J1 is vector of all current interior angles, needed for interior angle Force 
-    if forceScalings[1] != 0    # area force
-        A1 = zeros(M)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            polygon = Vector{Vector{Float64}, N}(undef) 
-            for j = 1:N
-                x, y = c.x[j], c.y[j]
-            end 
-            push!(polygon, [x,y])
-            A1[i] = areaPolygon(polygon)
-        end
-    end
-
-    if forceScalings[2] != 0    # edge force
-        F1 = zeros(M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            F1[(i-1)*N+1:i*N] = computeEdgeLengths(c)
-        end
-
-    end
-    if forceScalings[3] != 0    # interior angle force 
-        J1 = zeros(M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            J1[(i-1)*N+1:i*N] = computeInteriorAngles(c)
-        end
-
-    end
-
+    
     if N != 0
         res = zeros(2 * N * M)
     else
         res = zeros(2 * M)
     end
-    # scalings = [area, edge, interiorAngle, overlap]
-    if (norm(forceScalings, 2) != 0)
-        scalings = forceScalings / norm(forceScalings, 2) * 100
-    else
-        scalings = forceScalings
-    end
 
-    if (scalings[1] != 0)
-        res += scalings[1] * areaForce(u, A1)
-    end
-    if (scalings[2] != 0)
-        res += scalings[2] * edgeForce(u, E1, F1)
-    end
-    if (scalings[3] != 0)
-        res += scalings[3] * interiorAngleForce(u, I1, J1)
-    end
-    if (scalings[4] != 0)
-        res += scalings[4] * overlapForce(u)
-    end
-    if (scalings[5] != 0)
-        res += scalings[5] * boundaryForce(u)
-    end
+    # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
+    # J1 is vector of all current interior angles, needed for interior angle Force 
+    # if forceScalings[1] != 0    # area force
+    #     A1 = zeros(M)
+    #     for i = 1:M
+    #         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+    #         polygon = Vector{Vector{Float64}, N}(undef) 
+    #         for j = 1:N
+    #             x, y = c.x[j], c.y[j]
+    #         end 
+    #         push!(polygon, [x,y])
+    #         A1[i] = areaPolygon(polygon)
+    #     end
+    # end
+
+    # if forceScalings[2] != 0    # edge force
+    #     F1 = zeros(M * N)
+    #     for i = 1:M
+    #         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+    #         F1[(i-1)*N+1:i*N] = computeEdgeLengths(c)
+    #     end
+
+    # end
+    # if forceScalings[3] != 0    # interior angle force 
+    #     J1 = zeros(M * N)
+    #     for i = 1:M
+    #         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+    #         J1[(i-1)*N+1:i*N] = computeInteriorAngles(c)
+    #     end
+
+    # end
+
+    # if (scalings[1] != 0)
+    #     res += scalings[1] * areaForce(u, A1)
+    # end
+    # if (scalings[2] != 0)
+    #     res += scalings[2] * edgeForce(u, E1, F1)
+    # end
+    # if (scalings[3] != 0)
+    #     res += scalings[3] * interiorAngleForce(u, I1, J1)
+    # end
+    # if (scalings[4] != 0)
+    #     res += scalings[4] * overlapForce(u)
+    # end
+    # if (scalings[5] != 0)
+    #     res += scalings[5] * boundaryForce(u)
+    # end
+
+    ## NOW ADD BROWNIAN MOTION 
+    p = timeStepSize, D
+    res += brownianODE(p) 
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -763,7 +761,30 @@ end
 
 #------------------- BROWNIAN MOTION 
 
+function brownianODE(p)
 
+    Δt, D = p
+    x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
+    
+    if NumberOfCellWallPoints == 0 
+        res = zeros(2*NumberOfCells)
+        fact = sqrt(2 * D * Δt)
+        for i = 1:M
+            res[i] = fact * x[i]
+            res[i+M] = fact * x[i+M]
+        end
+    elseif NumberOfCellWallPoints != 0
+        res = zeros(2*NumberOfCells*NumberOfCellWallPoints)
+        fact = ones(N) * sqrt(2 * D * Δt)
+        for i = 1:M
+            res[(i-1)*N+1:i*N] = fact * x[i]
+            res[(i-1+M)*N+1:(i+M)*N] = fact * x[i+M]
+        end
+    end 
+
+    return res 
+
+end 
 
 function brownian(du, u, p, t)
 
@@ -785,7 +806,6 @@ function brownian(du, u, p, t)
             du[i+M] = fact * x[i+M]
         end
     end
-
 end
 
 function nomotion(du, u, p, t)

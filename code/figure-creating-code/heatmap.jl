@@ -63,6 +63,36 @@ function makeMatrices()
 
 end
 
+function addSolToMatrices(solution, matrices)
+    
+    for counter=1:NumberOfSampleTimes
+        
+        # extract centres from solution 
+        X,Y = solutionToCells(solution[counter])
+        centresX = zeros(NumberOfCells)
+        centresY = zeros(NumberOfCells)
+        if NumberOfCellWallPoints == 0 
+            centresX = X 
+            centresY = Y 
+        else 
+            for i = 1:NumberOfCells
+                centresX[i] = sum(X[i]) / Float64(NumberOfCellWallPoints)
+                centresY[i] = sum(Y[i]) / Float64(NumberOfCellWallPoints)
+            end 
+        end 
+
+        # add centres to matrices
+        for i = 1:NumberOfCells
+            coords = [centresX[i], centresY[i]]
+            row, column = getMatrixIndex(coords)
+            matrices[counter][row, column] += 1
+        end 
+    end 
+end 
+
+
+
+
 function getMatrixIndex(coords::Vector{Float64})
 
     x, y = coords
@@ -104,7 +134,7 @@ function createHeatmaps(matrices)
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
-        heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
+        heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.3f", sampleTime), "bruna12scale.png")
         # heatMapName = string("heatmap-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
         caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
