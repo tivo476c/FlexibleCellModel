@@ -71,14 +71,16 @@ begin
 end
 
 
+
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
-include("heatmap.jl")
 addprocs(6)
 # addprocs(3)
+println("hallo")
 begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin
+        include("heatmap.jl")
         include("../parameters.jl")
         include("sanityCheckFunctionalitites.jl")
 
@@ -93,24 +95,29 @@ begin
     end
 
     ## create paths 
+    println("creating paths")
     mkpath(simPath)
     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     mkpath(locationsPath)
     mkpath(heatMapsPath)
 
     ## save one simulation as gif 
+    println("save one sim as gif")
     u0 = InitializePointParticles(radius)
+    # u0 = InitializePointParticles(0.0)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
-    sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
+    @time sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
 
-
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     matrices = makeMatrices()
     createHeatmaps(matrices)
 end
+
+
+
 
 

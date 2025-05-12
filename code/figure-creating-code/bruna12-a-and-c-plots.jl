@@ -38,9 +38,6 @@ function heat_equ(du, u, p, t)
     return du
 end
 
-
-
-
 ### Simulation parameters  
 
 ## spatial discretisation  
@@ -51,7 +48,7 @@ dx = dy = x[2] - x[1]
 X, Y = [x[i] for i in 1:length(x), j in 1:length(y)], [y[j] for i in 1:length(x), j in 1:length(y)]
 
 ## time discretisation
-delta_t = 10^-4
+delta_t = 10^-5
 # D = 100 * dx^2 / delta_t
 D = 100
 p = [delta_t, D]
@@ -86,10 +83,10 @@ u_t05 = reshape(sol.u[6], Nx, Nx)
 tit = string("N(0,0.09)^2 performing Heat equ \n with reflective BC \n\n")
 
 heatmap(x, y, u_t05,
-    # xlimits=(-0.5, 0.5),
-    # ylimits=(-0.5, 0.5),
-    xlimits=(-5.0, 5.0),
-    ylimits=(-5.0, 5.0),
+    xlimits=(-0.5, 0.5),
+    ylimits=(-0.5, 0.5),
+    # xlimits=(-5.0, 5.0),
+    # ylimits=(-5.0, 5.0),
     # title="N_2(0,0.09) \n\n",
     # title=tit,
     c=palette(reverse(cgrad(:hot)), 60),
@@ -98,4 +95,5 @@ heatmap(x, y, u_t05,
     ratio=:equal,
     dpi=300
 )
-savefig("figures/sanity-check/BIG-heat-dynamic-usual-scale-T0-05.png")
+
+savefig("figures/sanity-check/dt10^-5-small.png")

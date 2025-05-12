@@ -21,7 +21,7 @@ function createSimGif(  gifPath::String,
             x = X[1]
             y = Y[1]
 
-            timelabel = "t = $(@sprintf("%.4f", time))"  
+            timelabel = "t = $(@sprintf("%.2f", time))"  
 
             plot(x, y, 
                 seriestype = :shape, 

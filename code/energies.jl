@@ -278,7 +278,43 @@ end
 =#
 
 # turn in vectors that span the according angle 
+
+function arctan2(x,y) 
+    if x > 0
+        return atan(y / x)
+    elseif x < 0 
+        if y > 0 
+            return atan(y / x) + pi 
+        elseif y < 0 
+            return atan(y / x) - pi 
+        elseif y == 0 
+            return pi 
+        end 
+    elseif x == 0 
+        if y > 0
+            return pi/2.0
+        elseif y < 0
+            return - pi/2.0
+        elseif y==0
+            println("(0,0) cant be put in arctan2(x,y)")
+        end 
+    end 
+end 
+
+function intAngleMT(v_prev, v_curr, v_next) 
+
+    v1 = v_prev - v_curr 
+    v2 = v_next - v_curr 
+
+    a1 = arctan2(v1[1], v1[2])
+    a2 = arctan2(v2[1], v2[2])
+    res = mod(a1 - a2 , (2 * π))
+    return res
+end
+
+
 function intAngle2(x, y, z)
+
     v1 = x - y
     v2 = z - y
     return mod(-atan(v1[1] * v2[2] - v1[2] * v2[1], dot(v1, v2)), (2 * π))
@@ -385,6 +421,52 @@ function interiorAngleForceCell2(c, I, J)
 
 end
 
+function interiorAngleForceCell_MT1(c, I, J)
+    """
+    given: 
+        * 1 DF cell c 
+        * list of desired cell interior angles for that cell I 
+        * list of current cell interior angles for that cell J 
+    """
+
+    res = zeros(2 * NumberOfCellWallPoints) # res[1:NumberOfCellWallPoints] for x coordinates, res[NumberOfCellWallPoints+1:2*NumberOfCellWallPoints] for y coordinates
+    for k = 1:NumberOfCellWallPoints
+
+        currentIdx = k 
+        if currentIdx == 1 
+            prevIdx = NumberOfCellWallPoints 
+        else 
+            prevIdx = currentIdx - 1 
+        end 
+
+        if currentIdx == NumberOfCellWallPoints 
+            nextIdx = 1 
+        else 
+            nextIdx = currentIdx + 1 
+        end 
+
+        v_prev = vertex(c, prevIdx)
+        v_curr = vertex(c, currentIdx)
+        v_next = vertex(c, nextIdx)
+
+        # assign x dynamic for vertex k 
+        # res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
+        res[k] -= (J[currentIdx] - I[currentIdx]) * ( 1.0/norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]) )                
+        res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0/norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]) )                
+        # res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
+        
+        # assign y dynamic for vertex k 
+        # res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
+        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)^2*(v_curr[1] - v_prev[1]) )                
+        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)^2*(v_curr[1] - v_next[1]) )                
+        # res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
+
+    end 
+    
+    return res ./ 20
+
+end 
+
 function interiorAngleForce(u, I1, J1)
 
     res = zeros(2 * M * N)
@@ -394,7 +476,8 @@ function interiorAngleForce(u, I1, J1)
 
         i1 = I1[(i-1)*N+1:i*N]
         j1 = J1[(i-1)*N+1:i*N]
-        a = interiorAngleForceCell2(c, i1, j1)
+        # a = interiorAngleForceCell2(c, i1, j1)
+        a = interiorAngleForceCell_MT1(c, i1, j1)
         for j = 1:N
 
             res[N*(i-1)+j] = a[j]
@@ -629,15 +712,15 @@ function boundaryForceCell(c)
     end
 
     res = zeros(2 * N)
-    if (xmin < -5.0)
+    if (xmin < -domainL)
         res[1:N] = ones(N)
-    elseif (xmax > 5.0)
+    elseif (xmax > domainL)
         res[1:N] = -ones(N)
     end
 
-    if (ymin < -5.0)
+    if (ymin < -domainL)
         res[N+1:2*N] = ones(N)
-    elseif (ymax > 5.0)
+    elseif (ymax > domainL)
         res[N+1:2*N] = -ones(N)
     end
 
@@ -666,9 +749,9 @@ function boundaryForce(u)
         # len(u) = 2*M
         res = zeros(2 * M)
         for i = 1:2*M
-            if u[i] < -5
+            if u[i] < -domainL
                 res[i] = 1
-            elseif u[i] > 5
+            elseif u[i] > domainL
                 res[i] = -1
             end
 
