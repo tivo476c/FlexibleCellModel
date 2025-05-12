@@ -74,8 +74,9 @@ end
 
 include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
-# addprocs(6)
-addprocs(3)
+addprocs(6)
+# addprocs(3)
+println("hallo")
 begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin
@@ -109,15 +110,14 @@ begin
     createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations) 
+    results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     matrices = makeMatrices()
-    createHeatmaps(matrices)    
+    createHeatmaps(matrices)
 end
 
 
 
 
 
- 

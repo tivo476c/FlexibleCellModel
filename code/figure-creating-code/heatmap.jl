@@ -7,7 +7,7 @@ include("../parameters.jl")
 
 function createLocationFile(sol, sim::Int64, locationsPath)
 
-    sim = @sprintf("%04d", sim)
+    sim = @sprintf("%07d", sim)
     fileName = string("locations-", simulationName, "-", sim, ".txt")
     filePath = joinpath(locationsPath, fileName)
 
@@ -69,7 +69,7 @@ function getMatrixIndex(coords::Vector{Float64})
 
     i = NumberOfHeatGridPoints - (Int(floor((y + domainL) / HeatStepSize)))     # row (y-axis)
     j = Int(floor((x + domainL) / HeatStepSize)) + 1            # column (x-axis)
-    
+
     if i > NumberOfHeatGridPoints
         i = NumberOfHeatGridPoints
     end
@@ -91,12 +91,12 @@ function createHeatmaps(matrices)
     matrices .= [Float64.(M) for M in matrices]
     maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
     minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    println("old minVal = ", minVal, "; old maxVal = ", maxVal) 
-    matrices = [matrices[i]./(NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i=1:NumberOfSampleTimes]
+    println("old minVal = ", minVal, "; old maxVal = ", maxVal)
+    matrices = [matrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]
 
     maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
     minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    println("new minVal = ", minVal, "; new maxVal = ", maxVal) 
+    println("new minVal = ", minVal, "; new maxVal = ", maxVal)
     mass1 = sum(matrices[1]) * HeatStepSize^2
     massN = sum(matrices[NumberOfSampleTimes]) * HeatStepSize^2
     println("mass1 = ", mass1, "; massN = ", massN)
