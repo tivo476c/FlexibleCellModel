@@ -18,7 +18,7 @@ interiorAngleForceFactor = 0.0
 overlapForceFactor = 0.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
-boundaryPushForceFactor = 0.1
+boundaryPushForceFactor = 0.0
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor, boundaryPushForceFactor]
 
@@ -26,19 +26,20 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 ## Simulation time parameters: 
 T = 0.05
 timeInterval = (0.0, T)
-timeStepSize = 10^(-3)
+timeStepSize = 10^(-5)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-NumberOfSimulations = 10^6
-NumberOfSampleTimes = 2
+NumberOfSimulations = 100
+NumberOfSampleTimes = 11
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
+# sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
 ## Simulation name 
 date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "explicit-euler-dt10e-3-numSims10e5"
+simulationName = "diffEqujl-callback-T0-05-dt10e-5"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50

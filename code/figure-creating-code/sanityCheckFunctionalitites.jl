@@ -93,9 +93,11 @@ end
 function doAPointParticleSimulationRun(simRun)
     println("simrun ", simRun)
     u0 = InitializePointParticles(radius)
-    prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
-    sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
-    createLocationFile(sol, simRun, locationsPath)
+
+    prob_pointParticles = SDEProblem(energies!, brownian!, u0, tspan, p) 
+    sol = solve(prob_pointParticles, EM(), callback=CallBack_reflectiveBC, dt=timeStepSize, saveat=sampleTimes)
+    extractedSol = extractSolution(sol)
+    createLocationFile(extractedSol, simRun, locationsPath)
 end
 
 function doAHSCMSimulationRun(simRun)
@@ -103,5 +105,6 @@ function doAHSCMSimulationRun(simRun)
     u0 = initializeChapman(radius)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
     sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
-    createLocationFile(sol, simRun, locationsPath)
+    extractedSol = extractSolution(sol)
+    createLocationFile(extractedSol, simRun, locationsPath)
 end

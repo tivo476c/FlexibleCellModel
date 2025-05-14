@@ -17,8 +17,6 @@ function energies!(du, u, p, t)
         res = zeros(2 * M)
     end
 
-    boundaryPush!(u)
-
     # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
     # if forceScalings[1] != 0    # area force
@@ -84,6 +82,23 @@ function boundaryPush!(u)
         end
     end
 end
+
+function apply_BC(u,t, integrator)
+    return minimum(u) < -domainL || maximum(u) > domainL
+end 
+
+function reflectiveBC!(integrator)
+    u = integrator.u
+    for i in eachindex(u)
+        if u[i] < -domainL
+            u[i] = -domainL + (-domainL - u[i])
+        elseif u[i] > domainL
+            u[i] = domainL - (u[i] - domainL)
+        end
+    end
+end 
+
+CallBack_reflectiveBC = DiscreteCallback(apply_BC, reflectiveBC!)
 
 
 
@@ -771,51 +786,25 @@ end
 
 #------------------- BROWNIAN MOTION 
 
-function brownianODE(p)
+function brownian!(du, u, p, t)
 
     Δt, D = p
-    x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
+    # x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
 
     if NumberOfCellWallPoints == 0
-        res = zeros(2 * NumberOfCells)
-        fact = sqrt(2 * D * Δt)
+        fact = sqrt(2 * D)
         for i = 1:M
-            res[i] = fact * x[i]
-            res[i+M] = fact * x[i+M]
+            du .= fact # * x
         end
     elseif NumberOfCellWallPoints != 0
-        res = zeros(2 * NumberOfCells * NumberOfCellWallPoints)
-        fact = ones(N) * sqrt(2 * D * Δt)
-        for i = 1:M
-            res[(i-1)*N+1:i*N] = fact * x[i]
-            res[(i-1+M)*N+1:(i+M)*N] = fact * x[i+M]
-        end
-    end
-
-    return res
-
-end
-
-function brownian(du, u, p, t)
-
-    Δt, D = p
-
-    # Compute the SDE
-    x = rand(Normal(0.0, 1.0), 2 * M)
-
-    if N != 0
+        # TODO: implement this case 
         fact = ones(N) * sqrt(2 * D * Δt)
         for i = 1:M
             du[(i-1)*N+1:i*N] = fact * x[i]
             du[(i-1+M)*N+1:(i+M)*N] = fact * x[i+M]
         end
-    else
-        fact = sqrt(2 * D * Δt)
-        for i = 1:M
-            du[i] = fact * x[i]
-            du[i+M] = fact * x[i+M]
-        end
     end
+
 end
 
 function nomotion(du, u, p, t)

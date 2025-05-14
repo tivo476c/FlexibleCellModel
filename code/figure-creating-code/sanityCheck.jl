@@ -72,8 +72,8 @@ end
 
 
 
-include("../parameters.jl")
 include("sanityCheckFunctionalitites.jl")
+include("../parameters.jl")
 include("../simulationFunctionalities.jl")
 # addprocs(6)
 addprocs(3)
@@ -82,8 +82,9 @@ begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin
         include("heatmap.jl")
-        include("../parameters.jl")
         include("sanityCheckFunctionalitites.jl")
+        include("../parameters.jl")
+        include("../energies.jl")
         include("../simulationFunctionalities.jl")
 
 
@@ -105,11 +106,20 @@ begin
 
     ## save one simulation as gif 
     println("save one sim as gif")
+
     u0 = InitializePointParticles(radius)
-    # u0 = InitializePointParticles(0.0)
-    prob_pointParticles = ODEProblem(energies, u0, tspan, p)
-    @time sol = solve(prob_pointParticles, Tsit5(), dt=timeStepSize, saveat=sampleTimes)
-    createSimGif(gifPath, sol)
+
+    prob_pointParticles = SDEProblem(energies!, brownian!, u0, tspan, p) 
+    @time sol = solve(prob_pointParticles, 
+                      EM(), 
+                      callback=CallBack_reflectiveBC, 
+                      dt=timeStepSize, 
+                    #   saveat=sampleTimes, 
+                    #   tstops=sampleTimes,
+                    #   dense=false
+                    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol) 
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     results = pmap(doAPointParticleSimulationRun, 1:NumberOfSimulations)
@@ -118,7 +128,6 @@ begin
     matrices = makeMatrices()
     createHeatmaps(matrices)
 end
-
 
 # do own explicit euler 
 begin 
