@@ -83,7 +83,6 @@ function boundaryPush!(u)
             u[i] = domainL - (u[i] - domainL)
         end
     end
-
 end
 
 

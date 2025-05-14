@@ -29,17 +29,21 @@ for i_sim = 1:NumSims
     # compute solution at T=0.05 
     time = 0
     while time < T
-        # energies(du, u, p, t)
-        du = zeros(800)
-        energies!(du, currentState, (dt, D), time)
-        currentState += dt * du + sqrt(2 * D * dt) * randn(2 * NumParticle)
+
+        # checkState = copy(currentState)
         # for i = 1:2*NumParticle
-        #     if currentState[i] < -0.5
-        #         currentState[i] = -1.0 - currentState[i]  # reflect back into domain
-        #     elseif currentState[i] > 0.5
-        #         currentState[i] = 1.0 - currentState[i]   # reflect back into domain
+        #     if checkState[i] < -0.5
+        #         checkState[i] = -1.0 - checkState[i]  # reflect back into domain
+        #     elseif checkState[i] > 0.5
+        #         checkState[i] = 1.0 - checkState[i]   # reflect back into domain
         #     end
         # end
+
+        du = zeros(800)
+        # println("checkState == currentState: ", checkState == currentState)
+        # println("du == zeros(800): ", du == zeros(800))
+        currentState += dt * du + sqrt(2 * D * dt) * randn(2 * NumParticle)
+        energies!(du, currentState, (dt, D), time)                                  # this changes du and currentState 
         time += dt
     end
 
@@ -70,5 +74,5 @@ heatmap(HeatGrid, HeatGrid, matrix,
 vline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
 hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
 
-savefig("bottomTest/testPPModel-includingEnergies-newBoundaryCondition2.png")
+savefig("bottomTest/testPPModel-includingEnergies-BCafter.png")
 
