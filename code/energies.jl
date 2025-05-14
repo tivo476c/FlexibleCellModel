@@ -9,13 +9,15 @@ using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 
 #-------------------------------------- FINAL ENERGY
 
-function energies(du, u, p, t)
-    
+function energies!(du, u, p, t)
+
     if N != 0
         res = zeros(2 * N * M)
     else
         res = zeros(2 * M)
     end
+
+    boundaryPush!(u)
 
     # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
@@ -49,25 +51,20 @@ function energies(du, u, p, t)
 
     # end
 
-    # if (scalings[1] != 0)
-    #     res += scalings[1] * areaForce(u, A1)
+    # if (forceScalings[1] != 0)
+    #     res += forceScalings[1] * areaForce(u, A1)
     # end
-    # if (scalings[2] != 0)
-    #     res += scalings[2] * edgeForce(u, E1, F1)
+    # if (forceScalings[2] != 0)
+    #     res += forceScalings[2] * edgeForce(u, E1, F1)
     # end
-    # if (scalings[3] != 0)
-    #     res += scalings[3] * interiorAngleForce(u, I1, J1)
+    # if (forceScalings[3] != 0)
+    #     res += forceScalings[3] * interiorAngleForce(u, I1, J1)
     # end
-    # if (scalings[4] != 0)
-    #     res += scalings[4] * overlapForce(u)
-    # end
-    # if (scalings[5] != 0)
-    #     res += scalings[5] * boundaryForce(u)
+    # if (forceScalings[4] != 0)
+    #     res += forceScalings[4] * overlapForce(u)
     # end
 
     ## NOW ADD BROWNIAN MOTION 
-    p = timeStepSize, D
-    res += brownianODE(p) 
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -76,6 +73,19 @@ function energies(du, u, p, t)
     return du
 
 end
+
+function boundaryPush!(u)
+
+    for i = 1:length(u)
+        if u[i] < -domainL
+            u[i] = -domainL + (-domainL - u[i])
+        elseif u[i] > domainL
+            u[i] = domainL - (u[i] - domainL)
+        end
+    end
+
+end
+
 
 
 #-------------------------------------- SET Force FUNCTIONS
@@ -277,36 +287,36 @@ end
 
 # turn in vectors that span the according angle 
 
-function arctan2(x,y) 
+function arctan2(x, y)
     if x > 0
         return atan(y / x)
-    elseif x < 0 
-        if y > 0 
-            return atan(y / x) + pi 
-        elseif y < 0 
-            return atan(y / x) - pi 
-        elseif y == 0 
-            return pi 
-        end 
-    elseif x == 0 
+    elseif x < 0
         if y > 0
-            return pi/2.0
+            return atan(y / x) + pi
         elseif y < 0
-            return - pi/2.0
-        elseif y==0
+            return atan(y / x) - pi
+        elseif y == 0
+            return pi
+        end
+    elseif x == 0
+        if y > 0
+            return pi / 2.0
+        elseif y < 0
+            return -pi / 2.0
+        elseif y == 0
             println("(0,0) cant be put in arctan2(x,y)")
-        end 
-    end 
-end 
+        end
+    end
+end
 
-function intAngleMT(v_prev, v_curr, v_next) 
+function intAngleMT(v_prev, v_curr, v_next)
 
-    v1 = v_prev - v_curr 
-    v2 = v_next - v_curr 
+    v1 = v_prev - v_curr
+    v2 = v_next - v_curr
 
     a1 = arctan2(v1[1], v1[2])
     a2 = arctan2(v2[1], v2[2])
-    res = mod(a1 - a2 , (2 * π))
+    res = mod(a1 - a2, (2 * π))
     return res
 end
 
@@ -430,18 +440,18 @@ function interiorAngleForceCell_MT1(c, I, J)
     res = zeros(2 * NumberOfCellWallPoints) # res[1:NumberOfCellWallPoints] for x coordinates, res[NumberOfCellWallPoints+1:2*NumberOfCellWallPoints] for y coordinates
     for k = 1:NumberOfCellWallPoints
 
-        currentIdx = k 
-        if currentIdx == 1 
-            prevIdx = NumberOfCellWallPoints 
-        else 
-            prevIdx = currentIdx - 1 
-        end 
+        currentIdx = k
+        if currentIdx == 1
+            prevIdx = NumberOfCellWallPoints
+        else
+            prevIdx = currentIdx - 1
+        end
 
-        if currentIdx == NumberOfCellWallPoints 
-            nextIdx = 1 
-        else 
-            nextIdx = currentIdx + 1 
-        end 
+        if currentIdx == NumberOfCellWallPoints
+            nextIdx = 1
+        else
+            nextIdx = currentIdx + 1
+        end
 
         v_prev = vertex(c, prevIdx)
         v_curr = vertex(c, currentIdx)
@@ -449,21 +459,21 @@ function interiorAngleForceCell_MT1(c, I, J)
 
         # assign x dynamic for vertex k 
         # res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
-        res[k] -= (J[currentIdx] - I[currentIdx]) * ( 1.0/norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]) )                
-        res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0/norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]) )                
+        res[k] -= (J[currentIdx] - I[currentIdx]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
         # res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
-        
+
         # assign y dynamic for vertex k 
         # res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
-        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)^2*(v_curr[1] - v_prev[1]) )                
-        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)^2*(v_curr[1] - v_next[1]) )                
+        res[NumberOfCellWallPoints+k] -= (J[currentIdx] - I[currentIdx]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+k] -= (J[currentIdx] - I[currentIdx]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
         # res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
 
-    end 
-    
+    end
+
     return res ./ 20
 
-end 
+end
 
 function interiorAngleForce(u, I1, J1)
 
@@ -745,12 +755,13 @@ function boundaryForce(u)
     else
         # CASE: POINT PARTICLES 
         # len(u) = 2*M
+        # print("boundary force for point particles")
         res = zeros(2 * M)
         for i = 1:2*M
             if u[i] < -domainL
-                res[i] = 1
+                res[i] = -domainL + (-domainL - u[i])
             elseif u[i] > domainL
-                res[i] = -1
+                res[i] = -1.5 / timeStepSize
             end
 
         end
@@ -765,26 +776,26 @@ function brownianODE(p)
 
     Δt, D = p
     x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
-    
-    if NumberOfCellWallPoints == 0 
-        res = zeros(2*NumberOfCells)
+
+    if NumberOfCellWallPoints == 0
+        res = zeros(2 * NumberOfCells)
         fact = sqrt(2 * D * Δt)
         for i = 1:M
             res[i] = fact * x[i]
             res[i+M] = fact * x[i+M]
         end
     elseif NumberOfCellWallPoints != 0
-        res = zeros(2*NumberOfCells*NumberOfCellWallPoints)
+        res = zeros(2 * NumberOfCells * NumberOfCellWallPoints)
         fact = ones(N) * sqrt(2 * D * Δt)
         for i = 1:M
             res[(i-1)*N+1:i*N] = fact * x[i]
             res[(i-1+M)*N+1:(i+M)*N] = fact * x[i+M]
         end
-    end 
+    end
 
-    return res 
+    return res
 
-end 
+end
 
 function brownian(du, u, p, t)
 

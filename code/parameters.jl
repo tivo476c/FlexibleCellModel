@@ -29,7 +29,7 @@ timeInterval = (0.0, T)
 timeStepSize = 10^(-3)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-NumberOfSimulations = 10^6 
+NumberOfSimulations = 10^6
 NumberOfSampleTimes = 2
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 
@@ -38,7 +38,7 @@ date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "explicit-euler-dt10e-3-numSims10e6"
+simulationName = "explicit-euler-dt10e-3-numSims10e5"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50
