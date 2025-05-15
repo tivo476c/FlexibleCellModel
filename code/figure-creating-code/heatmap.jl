@@ -119,17 +119,14 @@ end
 function createHeatmaps(matrices)
 
     matrices .= [Float64.(M) for M in matrices]
-    maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    println("old minVal = ", minVal, "; old maxVal = ", maxVal)
     matrices = [matrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]
-
+    print
     maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
     minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    println("new minVal = ", minVal, "; new maxVal = ", maxVal)
+    println("NumberOfSimulations = $NumberOfSimulations \nNumberOfCells = $NumberOfCells \nHeatStepSize = $HeatStepSize")
     mass1 = sum(matrices[1]) * HeatStepSize^2
     massN = sum(matrices[NumberOfSampleTimes]) * HeatStepSize^2
-    println("mass1 = ", mass1, "; massN = ", massN)
+    println("mass1 = $mass1, massN = $massN")
 
     for i = 1:NumberOfSampleTimes
 

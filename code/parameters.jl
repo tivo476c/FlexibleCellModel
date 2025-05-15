@@ -6,10 +6,10 @@ domainL = 0.5
 domain = (-domainL, domainL)                # domain where cells can move: [-5.0, 5.0]^2 
 NumberOfCellWallPoints = 0                  # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
-NumberOfCells = 1                          # number of cells [OLD NAME: "M"] TODO: change to 400
+NumberOfCells = 400                           # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 1                                       # diffusitivity constant 
-radius = 0.005                               # cell radius 
+radius = 0.005                              # cell radius 
 
 ## Force scalings: 
 areaForceFactor = 0.0
@@ -29,7 +29,7 @@ timeInterval = (0.0, T)
 timeStepSize = 10^(-2)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-NumberOfSimulations = 1
+NumberOfSimulations = 100
 NumberOfSampleTimes = 2     # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
