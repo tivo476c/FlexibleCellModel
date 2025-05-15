@@ -246,13 +246,13 @@ function do1SimulationRun(simRun)
     createLocationFile(extractedSol, simRun, locationsPath)
 end
 
-function doSimulationRuns_countLocations(nuSims)
+function doSimulationRuns_countLocations(currentProcss, NuSims)
     
+    println("Starting simulations $(Int64((currentProcss-1)*NuSims+1))-$(Int64(currentProcss*NuSims)) on this core.")
     res = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
 
     for counter = 1:nuSims
 
-        println("Now doing sim $counter")
         if N == 0
             u0 = InitializePointParticles(radius)
         else 
@@ -314,7 +314,7 @@ function computeDesiredStates_circleCells()
     return A1, E1, I1
 end 
 
-function runSimulation_locations()
+function runSimulation_locations(NuProcs, simsPerLocationsSave)
     """
     Runs a full simulation that results in heatmaps over NumberOfSimulations simulation runs.
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
@@ -398,7 +398,7 @@ function runSimulation(NuProcs)
     NuSims = floor(NumberOfSimulations / NuProcs)
     # then: NumberOfSimulations = NuSims*NuProcs + missingSims
 
-    resultingMatrices = pmap(x -> doSimulationRuns_countLocations(NuSims), 1:NuProcs)
+    resultingMatrices = pmap(currentProcss -> doSimulationRuns_countLocations(currentProcss, NuSims), 1:NuProcs)
     matrices = doSimulationRuns_countLocations(missingSims)
     for res in resultingMatrices 
         for t = 1:NumberOfSampleTimes

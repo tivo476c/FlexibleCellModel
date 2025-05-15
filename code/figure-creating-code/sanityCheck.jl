@@ -25,8 +25,8 @@ addprocs(NuProcs)
 
 end
 
-
-@time runSimulation(NuProcs)
+simsPerLocationsSave = 100
+@time runSimulation_locations(NuProcs, simsPerLocationsSave)
 
 
 
