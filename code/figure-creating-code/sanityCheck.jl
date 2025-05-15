@@ -22,7 +22,9 @@ addprocs(NuProcs)
     heatMapsPath = joinpath(simPath, "heatmaps")
     gifPath = joinpath(simPath, string(simulationName, ".gif"))
     p = [timeStepSize, D]
+
 end
+
 
 @time runSimulation(NuProcs)
 

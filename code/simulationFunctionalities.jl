@@ -239,7 +239,7 @@ function do1SimulationRun(simRun)
     cellProb = SDEProblem(energies!, brownian!, u0, tspan, p) 
     @time sol = solve(cellProb, 
                       EM(), 
-                      callback=CallBack_reflectiveBC, 
+                      callback=energies.CallBack_reflectiveBC_cellOverlap, 
                       dt=timeStepSize, 
                     )
     extractedSol = extractSolution(sol)
@@ -262,7 +262,7 @@ function doSimulationRuns_countLocations(nuSims)
         cellProb = SDEProblem(energies!, brownian!, u0, tspan, p) 
         sol = solve(cellProb, 
                         EM(), 
-                        callback=CallBack_reflectiveBC, 
+                        callback=CallBack_reflectiveBC_cellOverlap, 
                         dt=timeStepSize, 
                         )
         extractedSol = extractSolution(sol)
@@ -342,7 +342,7 @@ function runSimulation_locations()
     cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
     @time sol = solve(cellProblem, 
                       EM(), 
-                      callback=CallBack_reflectiveBC, 
+                      callback=energies.CallBack_reflectiveBC_cellOverlap, 
                       dt=timeStepSize, 
                     )
     extractedSol = extractSolution(sol)
@@ -373,22 +373,22 @@ function runSimulation(NuProcs)
     end 
 
     ## 1st save one simulation as gif 
-    println("save one sim as gif")
+    # println("save one sim as gif")
 
-    if N == 0
-        u0 = InitializePointParticles(radius)
-    else 
-        u0 = initializeCells(radius)
-    end 
+    # if N == 0
+    #     u0 = InitializePointParticles(radius)
+    # else 
+    #     u0 = initializeCells(radius)
+    # end 
 
-    cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
-    @time sol = solve(cellProblem, 
-                      EM(), 
-                      callback=CallBack_reflectiveBC, 
-                      dt=timeStepSize, 
-                    )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol) 
+    # cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
+    # @time sol = solve(cellProblem, 
+    #                   EM(), 
+    #                   callback=CallBack_reflectiveBC_cellOverlap, 
+    #                   dt=timeStepSize, 
+    #                 )
+    # extractedSol = extractSolution(sol)
+    # createSimGif(gifPath, extractedSol) 
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     @everywhere matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]

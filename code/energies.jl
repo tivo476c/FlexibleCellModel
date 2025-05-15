@@ -113,6 +113,48 @@ end
 
 CallBack_reflectiveBC = DiscreteCallback(apply_BC, reflectiveBC!)
 
+function apply_BC_overlap(u,t, integrator)
+    return true
+end 
+
+function reflectiveBC_overlap!(integrator)
+    u = integrator.u
+    
+    # reflective BC
+    for i in eachindex(u)
+        if u[i] < -domainL
+            u[i] = -domainL + (-domainL - u[i])
+        elseif u[i] > domainL
+            u[i] = domainL - (u[i] - domainL)
+        end
+    end
+
+    # Overlap check 
+    for i = 1:NumberOfCells
+        
+        u_i = [u[i], u[i + NumberOfCells]]
+        for j = i+1:NumberOfCells
+            u_j = [u[j], u[j + NumberOfCells]]
+
+            distance = norm(u_i - u_j)
+            if distance < 2*radius 
+
+                pushVec = (u_i - u_j) / distance * (2*radius - distance)
+                u[i] += pushVec[1]
+                u[i+NumberOfCells] += pushVec[2]
+                u[j] -= pushVec[1]
+                u[j+NumberOfCells] -= pushVec[2]
+
+
+            end 
+
+        end 
+    end 
+end 
+
+CallBack_reflectiveBC_cellOverlap = DiscreteCallback(apply_BC_overlap, reflectiveBC_overlap!)
+
+
 
 
 #-------------------------------------- SET Force FUNCTIONS

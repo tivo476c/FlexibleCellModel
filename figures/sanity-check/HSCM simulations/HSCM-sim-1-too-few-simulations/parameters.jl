@@ -24,10 +24,10 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 ## Simulation time parameters: 
 T = 0.05
 timeInterval = (0.0, T)
-timeStepSize = 10^(-4)
+timeStepSize = 10^(-5)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-NumberOfSimulations = 10^3
+NumberOfSimulations = 10^2
 NumberOfSampleTimes = 6     # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
@@ -37,7 +37,7 @@ date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "HSCM-sim-2-withLocations"
+simulationName = "HSCM-sim-1"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50
