@@ -27,36 +27,6 @@ end
 @time runSimulation(NuProcs)
 
 
-# do own explicit euler 
-begin 
-    include("heatmap.jl")
-    include("sanityCheckFunctionalitites.jl")
-    include("../parameters.jl")
-    include("../simulationFunctionalities.jl")
-    include("../energies.jl")
-
-    tspan = timeInterval
-    simPath = joinpath(homedir(), "simulations", simulationName)
-    locationsPath = joinpath(simPath, "locations")
-    heatMapsPath = joinpath(simPath, "heatmaps")
-    gifPath = joinpath(simPath, string(simulationName, ".gif"))
-    p = [timeStepSize, D]
-
-    ## create paths 
-    println("creating paths")
-    mkpath(simPath)
-    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    mkpath(locationsPath)
-    mkpath(heatMapsPath)
-
-    matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
-    for i = 1:NumberOfSimulations
-        u0 = InitializePointParticles(radius)
-        res = simulateExplicitEuler(u0)
-        addSolToMatrices(res, matrices)
-    end 
-    createHeatmaps(matrices)
-end
 
 
 

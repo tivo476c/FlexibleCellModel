@@ -290,10 +290,7 @@ function doSimulationRuns_countLocations(nuSims)
                 res[sampleTime][row, column] += 1
             end 
 
-            println("sum of particles in simrun $counter at time $sampleTime = $(sum(res[sampleTime]))")
         end 
-
-
 
     end 
 
@@ -400,12 +397,6 @@ function runSimulation(NuProcs)
     missingSims = mod(NumberOfSimulations, NuProcs)
     NuSims = floor(NumberOfSimulations / NuProcs)
     # then: NumberOfSimulations = NuSims*NuProcs + missingSims
-
-    println("NuSimsPerCore = $NuSims")
-    println("NuProcs = $NuProcs")
-    println("missingSims = $missingSims")
-    println("sim ran totally = $( NuSims*NuProcs+ missingSims)")
-
 
     resultingMatrices = pmap(x -> doSimulationRuns_countLocations(NuSims), 1:NuProcs)
     matrices = doSimulationRuns_countLocations(missingSims)

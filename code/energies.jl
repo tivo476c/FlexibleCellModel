@@ -19,50 +19,48 @@ function energies!(du, u, p, t)
 
     # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
-    # if forceScalings[1] != 0    # area force
-    #     A1 = zeros(M)
-    #     for i = 1:M
-    #         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-    #         polygon = Vector{Vector{Float64}, N}(undef) 
-    #         for j = 1:N
-    #             x, y = c.x[j], c.y[j]
-    #         end 
-    #         push!(polygon, [x,y])
-    #         A1[i] = areaPolygon(polygon)
-    #     end
-    # end
+    if forceScalings[1] != 0    # area force
+        A1 = zeros(M)
+        for i = 1:M
+            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+            polygon = Vector{Vector{Float64}, N}(undef) 
+            for j = 1:N
+                x, y = c.x[j], c.y[j]
+            end 
+            push!(polygon, [x,y])
+            A1[i] = areaPolygon(polygon)
+        end
+    end
 
-    # if forceScalings[2] != 0    # edge force
-    #     F1 = zeros(M * N)
-    #     for i = 1:M
-    #         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-    #         F1[(i-1)*N+1:i*N] = computeEdgeLengths(c)
-    #     end
+    if forceScalings[2] != 0    # edge force
+        F1 = zeros(M * N)
+        for i = 1:M
+            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+            F1[(i-1)*N+1:i*N] = computeEdgeLengths(c)
+        end
 
-    # end
-    # if forceScalings[3] != 0    # interior angle force 
-    #     J1 = zeros(M * N)
-    #     for i = 1:M
-    #         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-    #         J1[(i-1)*N+1:i*N] = computeInteriorAngles(c)
-    #     end
+    end
+    if forceScalings[3] != 0    # interior angle force 
+        J1 = zeros(M * N)
+        for i = 1:M
+            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+            J1[(i-1)*N+1:i*N] = computeInteriorAngles(c)
+        end
 
-    # end
+    end
 
-    # if (forceScalings[1] != 0)
-    #     res += forceScalings[1] * areaForce(u, A1)
-    # end
-    # if (forceScalings[2] != 0)
-    #     res += forceScalings[2] * edgeForce(u, E1, F1)
-    # end
-    # if (forceScalings[3] != 0)
-    #     res += forceScalings[3] * interiorAngleForce(u, I1, J1)
-    # end
-    # if (forceScalings[4] != 0)
-    #     res += forceScalings[4] * overlapForce(u)
-    # end
-
-    ## NOW ADD BROWNIAN MOTION 
+    if (forceScalings[1] != 0)
+        res += forceScalings[1] * areaForce(u, A1)
+    end
+    if (forceScalings[2] != 0)
+        res += forceScalings[2] * edgeForce(u, E1, F1)
+    end
+    if (forceScalings[3] != 0)
+        res += forceScalings[3] * interiorAngleForce(u, I1, J1)
+    end
+    if (forceScalings[4] != 0)
+        res += forceScalings[4] * overlapForce(u)
+    end
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -97,17 +95,6 @@ end
 
 
 #-------------------------------------- BOUNDARY CONDITION
-
-function boundaryPush!(u)
-
-    for i = 1:length(u)
-        if u[i] < -domainL
-            u[i] = -domainL + (-domainL - u[i])
-        elseif u[i] > domainL
-            u[i] = domainL - (u[i] - domainL)
-        end
-    end
-end
 
 function apply_BC(u,t, integrator)
     return minimum(u) < -domainL || maximum(u) > domainL

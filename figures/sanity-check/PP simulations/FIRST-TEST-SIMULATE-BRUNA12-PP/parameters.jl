@@ -38,7 +38,7 @@ date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "HSCM-sim-1"
+simulationName = "FIRST-TEST-SIMULATE-BRUNA12-PP"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50
