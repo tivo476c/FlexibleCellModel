@@ -71,6 +71,32 @@ function energies!(du, u, p, t)
     return du
 
 end
+#-------------------------------------- BROWNIAN MOTION 
+
+function brownian!(du, u, p, t)
+
+    Δt, D = p
+    # x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
+
+    if NumberOfCellWallPoints == 0
+        du .= sqrt(2 * D) 
+    elseif NumberOfCellWallPoints != 0
+        # TODO: TO BE TESTED
+        du = zeros(2*M*N, 2*M)
+        for i = 1:2*M
+            lineIdx = N*(i-1)+1:i*N
+            du[lineIdx,i] = sqrt(2 * D) 
+        end
+    end
+
+end
+
+function nomotion(du, u, p, t)
+    du = zeros(2 * M * N)
+end
+
+
+#-------------------------------------- BOUNDARY CONDITION
 
 function boundaryPush!(u)
 
@@ -712,101 +738,3 @@ function overlapForce(u)
 
 end
 
-
-#------------------- boundary push 
-
-function boundaryForceCell(c)
-
-    xmin, ymin = vertex(c, 1)
-    xmax, ymax = xmin, ymin
-    for i = 2:N
-        x, y = vertex(c, i)
-        if (x < xmin)
-            xmin = x
-        elseif (x > xmax)
-            xmax = x
-        end
-        if (y < ymin)
-            ymin = y
-        elseif (y > ymax)
-            ymax = y
-        end
-    end
-
-    res = zeros(2 * N)
-    if (xmin < -domainL)
-        res[1:N] = ones(N)
-    elseif (xmax > domainL)
-        res[1:N] = -ones(N)
-    end
-
-    if (ymin < -domainL)
-        res[N+1:2*N] = ones(N)
-    elseif (ymax > domainL)
-        res[N+1:2*N] = -ones(N)
-    end
-
-    return res
-
-end
-
-
-function boundaryForce(u)
-
-    if N != 0
-        # CASE: VOLUME PARTICLES
-        res = zeros(2 * M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            a = boundaryForceCell(c)
-            for j = 1:N
-                res[N*(i-1)+j] = a[j]
-                res[N*(i-1+M)+j] = a[j+N]
-            end
-        end
-        return res
-
-    else
-        # CASE: POINT PARTICLES 
-        # len(u) = 2*M
-        # print("boundary force for point particles")
-        res = zeros(2 * M)
-        for i = 1:2*M
-            if u[i] < -domainL
-                res[i] = -domainL + (-domainL - u[i])
-            elseif u[i] > domainL
-                res[i] = -1.5 / timeStepSize
-            end
-
-        end
-
-        return res
-    end
-end
-
-#------------------- BROWNIAN MOTION 
-
-function brownian!(du, u, p, t)
-
-    Δt, D = p
-    # x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
-
-    if NumberOfCellWallPoints == 0
-        fact = sqrt(2 * D)
-        for i = 1:M
-            du .= fact # * x
-        end
-    elseif NumberOfCellWallPoints != 0
-        # TODO: implement this case 
-        fact = ones(N) * sqrt(2 * D * Δt)
-        for i = 1:M
-            du[(i-1)*N+1:i*N] = fact * x[i]
-            du[(i-1+M)*N+1:(i+M)*N] = fact * x[i+M]
-        end
-    end
-
-end
-
-function nomotion(du, u, p, t)
-    du = zeros(2 * M * N)
-end

@@ -6,7 +6,7 @@ domainL = 0.5
 domain = (-domainL, domainL)                # domain where cells can move: [-5.0, 5.0]^2 
 NumberOfCellWallPoints = 0                  # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
-NumberOfCells = 1                          # number of cells [OLD NAME: "M"] TODO: change to 400
+NumberOfCells = 400                          # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 1                                       # diffusitivity constant 
 radius = 0.005                               # cell radius 
@@ -26,11 +26,11 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 ## Simulation time parameters: 
 T = 0.05
 timeInterval = (0.0, T)
-timeStepSize = 10^(-2)
+timeStepSize = 10^(-5)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-NumberOfSimulations = 1
-NumberOfSampleTimes = 2     # must be 2 at least
+NumberOfSimulations = 10000
+NumberOfSampleTimes = 11
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
@@ -39,7 +39,7 @@ date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "testNewFunction"
+simulationName = "diffEqujl-callback-T0-05-dt10e-5-10000sims"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50

@@ -1,7 +1,91 @@
 include("energies.jl")
 include("parameters.jl")
+include("figure-creating-code/heatmap.jl")
 
-using Printf
+using Distributions, Distributed, Printf
+
+function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.09^2)
+    """
+        finds a point (x,y) in [-5+radius, 5-radius]^2 that gets initialized according to the Normal distribution N(mean, deviation)
+    """
+    dist = MvNormal([mean, mean], deviation * I(2))
+    for _ = 1:1000
+        numX, numY = rand(dist)
+        if -domainL + radius <= numX <= domainL - radius && -domainL + radius <= numY <= domainL - radius
+            return [numX, numY]
+        end
+    end
+    println("ERROR: could not find a point in the domain in giveCentreNormalDistrInDomain in 1000 iterations")
+    return
+end
+
+function isFeasible(newCell, oldCells, radius)
+    """
+    Returns true, iff |newCell - oldCell| > 2*radius for all oldCells     
+    
+    args:
+            * newCell: midpoint of the new cell 
+            * oldCells: list of midpoints of all already initialized cells 
+            * radius: cell radius of all cells (that get initialized as circles in this model) 
+    """
+
+    for c in oldCells
+        if (norm(newCell - c) < 2 * radius)
+            return false
+        end
+    end
+    return true
+end
+
+function initializeCells(radius)
+    """
+    Initializes a starting vector u0 for the solver to work with it. 
+    Cell by cell gets inserted at a feasible location in the domain. 
+    A position of newCell is feasible if distance(newCell, oldCell) > 2*radius for all oldCells.
+    This function first just computes a list that holds all cell centres. From this list, all cell wallpoints get computed and outputted in u0. 
+    """
+    savedCentres = []
+    for i = 1:M
+        newCentre = giveCentreNormalDistrInDomain(radius)
+        while (!isFeasible(newCentre, savedCentres, radius))
+            newCentre = giveCentreNormalDistrInDomain(radius)
+        end
+        push!(savedCentres, newCentre)
+    end
+    xCoords = Float64[]
+    yCoords = Float64[]
+    for centre in savedCentres
+        discreteCell = cellToDiscreteCell(circleCell(centre, radius), N)
+
+        xCoords = vcat(xCoords, discreteCell.x)
+        yCoords = vcat(yCoords, discreteCell.y)
+    end
+
+    return vcat(xCoords, yCoords)
+end
+
+function InitializePointParticles(radius)
+    """
+    It does not matter which normally distributed coordinate gets used for x and which for y coordinate. 
+        -> just compute NumberOfCells x coordinates, than all y coordinates 
+    """
+    savedCentres = []
+    for i = 1:M
+        newCentre = giveCentreNormalDistrInDomain(radius)
+        # while (!isFeasible(newCentre, savedCentres, radius))
+        #     newCentre = giveCentreNormalDistrInDomain(radius)
+        # end
+        push!(savedCentres, newCentre)
+    end
+    xCoords = Float64[]
+    yCoords = Float64[]
+    for centre in savedCentres
+        push!(xCoords, centre[1])
+        push!(yCoords, centre[2])
+    end
+
+    return vcat(xCoords, yCoords)
+end
 
 function createSimGif(  gifPath::String, 
     sol, 
@@ -106,7 +190,7 @@ function giveClosestTimeIdx(sol, wantTime)
         return 1 
     else 
         for i = 2:length(sol.t)
-            if sol.t[i] > wantTime
+            if sol.t[i] >= wantTime
                 return i-1
             end 
         end
@@ -143,3 +227,55 @@ function simulateExplicitEuler(u0)
     return res  
 
 end
+
+function do1SimulationRun(simRun)
+    println("simrun ", simRun)
+    if N == 0
+        u0 = InitializePointParticles(radius)
+    else 
+        u0 = initializeCells(radius)
+    end
+
+    cellProb = SDEProblem(energies!, brownian!, u0, tspan, p) 
+    @time sol = solve(cellProb, 
+                      EM(), 
+                      callback=CallBack_reflectiveBC, 
+                      dt=timeStepSize, 
+                    )
+    extractedSol = extractSolution(sol)
+    createLocationFile(extractedSol, simRun, locationsPath)
+end
+
+function runSimulation_locations()
+    
+    ## create paths 
+    println("creating paths")
+    mkpath(simPath)
+    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    mkpath(locationsPath)
+    mkpath(heatMapsPath)
+
+    ## save one simulation as gif 
+    println("save one sim as gif")
+
+    u0 = InitializePointParticles(radius)
+
+    prob_pointParticles = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
+    @time sol = solve(prob_pointParticles, 
+                      EM(), 
+                      callback=CallBack_reflectiveBC, 
+                      dt=timeStepSize, 
+                    #   saveat=sampleTimes, 
+                    #   tstops=sampleTimes,
+                    #   dense=false
+                    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol) 
+
+    ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
+    results = pmap(do1SimulationRun, 1:NumberOfSimulations)
+
+    ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
+    matrices = makeMatrices()
+    createHeatmaps(matrices)
+end 

@@ -4,9 +4,27 @@ This file does:
 * simulate the the model for our flexible cell model
 """
 
-include("../parameters.jl")
-include("sanityCheckFunctionalitites.jl")
-include("heatmap.jl")
+using Distributed
+addprocs(3)
+
+# load all parameters 
+@everywhere begin   
+    include("heatmap.jl")
+    include("../simulationFunctionalities.jl")
+    include("../parameters.jl")
+    include("../energies.jl")
+
+    tspan = timeInterval
+    simPath = joinpath(homedir(), "simulations", simulationName)
+    locationsPath = joinpath(simPath, "locations")
+    heatMapsPath = joinpath(simPath, "heatmaps")
+    gifPath = joinpath(simPath, string(simulationName, ".gif"))
+    p = [timeStepSize, D]
+end
+runSimulation_locations()
+
+
+
 # addprocs(5)
 addprocs(3)
 
@@ -54,7 +72,7 @@ begin
 
     ## save one simulation as gif 
     println("Save a simulation as .gif")
-    u0 = initializeChapman(radius)
+    u0 = initializeCells(radius)
     prob_pointParticles = SDEProblem(energies, brownian, u0, tspan, p, noise=WienerProcess(0.0, 0.0))
     sol = solve(prob_pointParticles, EM(), dt=timeStepSize, saveat=sampleTimes)
     createSimGif(gifPath, sol)
@@ -71,13 +89,12 @@ begin
 end
 
 
-
 include("sanityCheckFunctionalitites.jl")
 include("../parameters.jl")
 include("../simulationFunctionalities.jl")
 # addprocs(6)
-addprocs(3)
 println("hallo")
+addprocs(3)
 begin
     ##### PARALLELIZED CREATION OF POINT PARTICLE HEAT MAP 
     @everywhere begin
@@ -114,9 +131,6 @@ begin
                       EM(), 
                       callback=CallBack_reflectiveBC, 
                       dt=timeStepSize, 
-                    #   saveat=sampleTimes, 
-                    #   tstops=sampleTimes,
-                    #   dense=false
                     )
     extractedSol = extractSolution(sol)
     createSimGif(gifPath, extractedSol) 
