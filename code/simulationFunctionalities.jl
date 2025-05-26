@@ -239,7 +239,7 @@ function do1SimulationRun(simRun)
     cellProb = SDEProblem(energies!, brownian!, u0, tspan, p) 
     @time sol = solve(cellProb, 
                       EM(), 
-                      callback=energies.CallBack_reflectiveBC_cellOverlap, 
+                      callback=CallBack_reflectiveBC, 
                       dt=timeStepSize, 
                     )
     extractedSol = extractSolution(sol)
@@ -314,7 +314,7 @@ function computeDesiredStates_circleCells()
     return A1, E1, I1
 end 
 
-function runSimulation_locations(NuProcs, simsPerLocationsSave)
+function runSimulation_locations()
     """
     Runs a full simulation that results in heatmaps over NumberOfSimulations simulation runs.
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
@@ -342,7 +342,7 @@ function runSimulation_locations(NuProcs, simsPerLocationsSave)
     cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
     @time sol = solve(cellProblem, 
                       EM(), 
-                      callback=energies.CallBack_reflectiveBC_cellOverlap, 
+                      callback=CallBack_reflectiveBC, 
                       dt=timeStepSize, 
                     )
     extractedSol = extractSolution(sol)

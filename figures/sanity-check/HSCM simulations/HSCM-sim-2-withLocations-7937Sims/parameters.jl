@@ -15,7 +15,7 @@ radius = 0.005                              # cell radius
 areaForceFactor = 0.0
 edgeForceFactor = 0.0
 interiorAngleForceFactor = 0.0
-overlapForceFactor = 1.0
+overlapForceFactor = 0.0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[4]
 
@@ -27,8 +27,8 @@ timeInterval = (0.0, T)
 timeStepSize = 10^(-5)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-NumberOfSimulations = 10^4
-NumberOfSampleTimes = 6          # must be 2 at least
+NumberOfSimulations = 7937
+NumberOfSampleTimes = 6     # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
@@ -37,7 +37,7 @@ date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "HSCM-sim-3-withLocations-radiusBilliard"
+simulationName = "HSCM-sim-2-withLocations-10e4Sims"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 50

@@ -5,7 +5,7 @@ This file does:
 """
 
 using Distributed
-NuProcs = 3
+NuProcs = 2
 addprocs(NuProcs)
 
 # load all parameters 
@@ -25,8 +25,7 @@ addprocs(NuProcs)
 
 end
 
-simsPerLocationsSave = 100
-@time runSimulation_locations(NuProcs, simsPerLocationsSave)
+@time runSimulation_locations()
 
 
 

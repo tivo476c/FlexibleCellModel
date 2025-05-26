@@ -657,64 +657,30 @@ function bachelorOverlapForceCells(c1, c2)
 
 end
 
-function billiardOverlapForceCells(c1, c2)
+function radiusBilliardOverlapForce(u)
     # currently the size of overlap is not considered 
-    # TODO: how is correct force scaling? 
+    res = zeros(2*M)
 
-    r1x = zeros(N)
-    r1y = zeros(N)
-    r2x = zeros(N)
-    r2y = zeros(N)
+    for i = 1:M 
+        centreI = [u[i], u[i+M]]
+        for j = i+1:M 
+            centreJ = [u[j], u[j+M]]
+            
+            distance = norm(centreI - centreJ)
+            if distance < 2*radius 
 
-    overlaps = getOverlap(c1, c2)
-    if (length(overlaps) != 0)
+                pushVec = (centreI - centreJ) / distance * (2*radius - distance)
+                res[i] += pushVec[1]
+                res[i+M] += pushVec[2]
+                res[j] -= pushVec[1]
+                res[j+M] -= pushVec[2]
 
-        centre1 = getCentre(c1)
-        centre2 = getCentre(c2)
+            end 
 
-        # push c1 in direction (c1 - c2) 
-        direction1 = centre1 - centre2
-        if (norm(direction1) != 0)
-            direction1 = direction1 / norm(direction1)
-        end
+        end 
+    end 
 
-        r1x = direction1[1] * ones(N)
-        r1y = direction1[2] * ones(N)
-
-        r2x = -r1x
-        r2y = -r1y
-    end
-
-    return r1x, r1y, r2x, r2y
-
-end
-
-function radiusOverlapForceCells(c1, c2)
-
-    r1x = zeros(N)
-    r1y = zeros(N)
-    r2x = zeros(N)
-    r2y = zeros(N)
-
-    # factor = sqrt(2*D) 
-
-    centre1 = computeCenter(c1)
-    centre2 = computeCenter(c2)
-    if (norm(centre1 - centre2) < 2 * radius)
-        direction1 = centre1 - centre2
-        if (norm(direction1) != 0)
-            # TODO: implement equ (3) function with heaviside from jamming of deformable paper 
-            direction1 = direction1 / norm(direction1)
-        end
-        r1x = direction1[1] * ones(N)
-        r1y = direction1[2] * ones(N)
-
-        r2x = -r1x
-        r2y = -r1y
-    end
-
-    return r1x, r1y, r2x, r2y
-
+    return res 
 end
 
 function computeCenter(c::DiscreteCell)
@@ -743,6 +709,11 @@ function combinationOverlapForceCells(c1, c2, scalingBachelor=0.5)
 end
 
 function overlapForce(u)
+
+    if N == 0 
+        # we can just do radiusBilliard
+        return radiusBilliardOverlapForce(u)
+    end 
 
     cells = Vector{DiscreteCell}(undef, M)
     for i = 1:M
