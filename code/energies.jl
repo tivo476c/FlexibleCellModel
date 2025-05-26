@@ -145,9 +145,7 @@ function reflectiveBC_overlap!(integrator)
                 u[j] -= pushVec[1]
                 u[j+NumberOfCells] -= pushVec[2]
 
-
             end 
-
         end 
     end 
 end 
