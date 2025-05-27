@@ -52,9 +52,16 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\end{center} 
 	\begin{figure}
 		\begin{center}
-			\includegraphics[width=8cm]{bachelors-thesis/shoelace.png}
+			\includegraphics[width=8cm]{bachelors-thesis/shoelace_new.png}
 			\caption{
-				This figure shows a geometrical interpretation of the shoelace formula. In difference to the proposition, here the vertices are called $P_j$ and not $\vec{v}_j$. \\
+				This figure shows a geometrical interpretation of the shoelace formula.
+				The green arrows, which point from right to left, represent positive trapezoidal areas that contribute positively to the total area of the polygon.
+				In contrast, the red arrows point from left to right and represent negative areas that are subtracted in the computation.
+				The vertical black lines divide the plot into subregions.
+				Within each subregion, green arrows are counted with plus signs and red arrows with minus signs.
+				We observe that the subregions lying outside the polygon contain an equal number of plus and minus signs, indicating that their net contribution to the area is zero.
+				In contrast, the subregions inside the polygon always have one more plus sign than minus signs, meaning their area is counted exactly once in the total.
+				Overall, this illustrates that the method correctly computes the area of the polygon.
 				Source: \cite{ShoelaceFigure2022}}
 			\label{fig:shoelace}
 		\end{center}
