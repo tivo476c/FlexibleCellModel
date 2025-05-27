@@ -23,11 +23,11 @@ function energies!(du, u, p, t)
         A1 = zeros(M)
         for i = 1:M
             c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            polygon = Vector{Vector{Float64}, N}(undef) 
+            polygon = Vector{Vector{Float64},N}(undef)
             for j = 1:N
                 x, y = c.x[j], c.y[j]
-            end 
-            push!(polygon, [x,y])
+            end
+            push!(polygon, [x, y])
             A1[i] = areaPolygon(polygon)
         end
     end
@@ -77,13 +77,13 @@ function brownian!(du, u, p, t)
     # x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
 
     if NumberOfCellWallPoints == 0
-        du .= sqrt(2 * D) 
+        du .= sqrt(2 * D)
     elseif NumberOfCellWallPoints != 0
         # TODO: TO BE TESTED
-        du = zeros(2*M*N, 2*M)
+        du = zeros(2 * M * N, 2 * M)
         for i = 1:2*M
             lineIdx = N*(i-1)+1:i*N
-            du[lineIdx,i] = sqrt(2 * D) 
+            du[lineIdx, i] = sqrt(2 * D)
         end
     end
 
@@ -96,9 +96,9 @@ end
 
 #-------------------------------------- BOUNDARY CONDITION
 
-function apply_BC(u,t, integrator)
+function apply_BC(u, t, integrator)
     return minimum(u) < -domainL || maximum(u) > domainL
-end 
+end
 
 function reflectiveBC!(integrator)
     u = integrator.u
@@ -109,17 +109,17 @@ function reflectiveBC!(integrator)
             u[i] = domainL - (u[i] - domainL)
         end
     end
-end 
+end
 
 CallBack_reflectiveBC = DiscreteCallback(apply_BC, reflectiveBC!)
 
-function apply_BC_overlap(u,t, integrator)
+function apply_BC_overlap(u, t, integrator)
     return true
-end 
+end
 
 function reflectiveBC_overlap!(integrator)
     u = integrator.u
-    
+
     # reflective BC
     for i in eachindex(u)
         if u[i] < -domainL
@@ -131,24 +131,24 @@ function reflectiveBC_overlap!(integrator)
 
     # Overlap check 
     for i = 1:NumberOfCells
-        
-        u_i = [u[i], u[i + NumberOfCells]]
+
+        u_i = [u[i], u[i+NumberOfCells]]
         for j = i+1:NumberOfCells
-            u_j = [u[j], u[j + NumberOfCells]]
+            u_j = [u[j], u[j+NumberOfCells]]
 
             distance = norm(u_i - u_j)
-            if distance < 2*radius 
+            if distance < 2 * radius
 
-                pushVec = (u_i - u_j) / distance * (2*radius - distance)
+                pushVec = (u_i - u_j) / distance * (2 * radius - distance)
                 u[i] += pushVec[1]
                 u[i+NumberOfCells] += pushVec[2]
                 u[j] -= pushVec[1]
                 u[j+NumberOfCells] -= pushVec[2]
 
-            end 
-        end 
-    end 
-end 
+            end
+        end
+    end
+end
 
 CallBack_reflectiveBC_cellOverlap = DiscreteCallback(apply_BC_overlap, reflectiveBC_overlap!)
 
@@ -525,20 +525,20 @@ function interiorAngleForceCell_MT1(c, I, J)
         v_next = vertex(c, nextIdx)
 
         # assign x dynamic for vertex k 
-        # res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
+        res[k] -= (J[prevIdx] - I[prevIdx]) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
         res[k] -= (J[currentIdx] - I[currentIdx]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
         res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
-        # res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
+        res[k] -= (J[nextIdx] - I[nextIdx]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
 
         # assign y dynamic for vertex k 
-        # res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
+        res[NumberOfCellWallPoints+k] -= (J[prevIdx] - I[prevIdx]) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
         res[NumberOfCellWallPoints+k] -= (J[currentIdx] - I[currentIdx]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
         res[NumberOfCellWallPoints+k] -= (J[currentIdx] - I[currentIdx]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
-        # res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
+        res[NumberOfCellWallPoints+k] -= (J[nextIdx] - I[nextIdx]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
 
     end
 
-    return res ./ 20
+    return res ./ 30
 
 end
 
@@ -657,28 +657,28 @@ end
 
 function radiusBilliardOverlapForce(u)
     # currently the size of overlap is not considered 
-    res = zeros(2*M)
+    res = zeros(2 * M)
 
-    for i = 1:M 
+    for i = 1:M
         centreI = [u[i], u[i+M]]
-        for j = i+1:M 
+        for j = i+1:M
             centreJ = [u[j], u[j+M]]
-            
-            distance = norm(centreI - centreJ)
-            if distance < 2*radius 
 
-                pushVec = (centreI - centreJ) / distance * (2*radius - distance)
+            distance = norm(centreI - centreJ)
+            if distance < 2 * radius
+
+                pushVec = (centreI - centreJ) / distance * (2 * radius - distance)
                 res[i] += pushVec[1]
                 res[i+M] += pushVec[2]
                 res[j] -= pushVec[1]
                 res[j+M] -= pushVec[2]
 
-            end 
+            end
 
-        end 
-    end 
+        end
+    end
 
-    return res 
+    return res
 end
 
 function computeCenter(c::DiscreteCell)
@@ -708,10 +708,10 @@ end
 
 function overlapForce(u)
 
-    if N == 0 
+    if N == 0
         # we can just do radiusBilliard
         return radiusBilliardOverlapForce(u)
-    end 
+    end
 
     cells = Vector{DiscreteCell}(undef, M)
     for i = 1:M
