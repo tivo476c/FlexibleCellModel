@@ -146,89 +146,40 @@ Figure~\ref{fig:fig2BC12} shows the discussed graphic from~\cite{Bruna2012}.
 \end{figure}
 
 \subsection{Reproduction of reference results}
-In order to guarantee that my simulations are running in the correct setup, I first recreate the Monte Carlo simulation for the point particles. 
+Before running our new dynamics that include cell flexibility, we first want to guarantee that the simulations are running in the correct setup.
+Therefore, we started with recreating the Monte Carlo simulation for the point particles. 
+I always fixed the color scale to be the same as in~\cite{Bruna2012} in order to gain comparability. 
 The simulation parameters are the same as in~\cite{Bruna2012}. \\
-All my simulations run in the Julia programming language. 
-There, I used the package 'DifferentialEquations.jl' and its function 
+All of our simulations run in the Julia programming language. 
+There, we used the package `DifferentialEquations.jl' with its structure `SDEProblem()' and then solved it with the package inbuilt Euler Maruyama scheme that uses a constant time step size. \\
+I employed a callback function that was triggered after each simulation step to implement a reflective boundary condition. 
+Whenever a particle moved outside the domain, it was relocated to the position within the domain such that its distance to the domain boundary remained unchanged, effectively reflecting the particle off the boundary. \\
+Beside of this, all particles moved according to the two dimensional Brownian motion
+\begin{center}
+		$ \dequ \vec{x}_i(t) = \sqrt{2} \dequ \vec{B}^{\:i}$, \hspace{0.5em} $1 \leq i \leq N_{C}$.
+\end{center}
+Figure~\ref{fig:ppHeatmaps} shows the evolution of the particle density in terms of heatmaps for different time steps. 
+The results of our Monte Carlo simulation appear to be in good agreement with those of Bruna and Chapman, suggesting that our approach is robust and accurate.
+\begin{figure}
+	\centering
+    \includegraphics[width=\textwidth]{sanity-check/PP-simulations/FIRST-TEST-SIMULATE-BRUNA12-PP/heatmaps/together-plot/ppHeatmaps.png}
+    \caption{Heatmaps of a Monte Carlo simulation of the point particle model at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
+    They visualise the evolution of the particle density over time. 
+    }
+    \label{fig:ppHeatmaps}
+\end{figure}
 
-and the time step size is $10^-5$. 
-
-%%% TODO: describe: principle of Monte Carlo simulation
-%%% TODO: introduce: what does Figure 2 show?
-Figure $2$ in~\cite{Bruna2012} shows the marginal distribution function $p(x_1, t)$ at time $t = 0.05$. 
-The figure compares the solution of the nonlinear diffusion equation $(11)$ for finite-sized particles with the solution of the linear diffusion equation $(4)$ for point particles. \\
-The figure consists of four plots:
-
-The figure is a useful tool for understanding the behavior of the system and the effects of excluded-volume interactions on the collective diffusion rate.
-The the heat equation and Equation $(4)$ and in Figure $2a$ and $2c$ show similar characteristics as the stochastic simulations in $2b$ and $2d$. 
-We can observe that the excluded-volume effects enhance the overall collective diffusion rate.
-% TODO: ... as equation ... already indicated 
-
+Next, we consider the HSCM and run the Monte Carlo simulation for a cell diameter of $\epsilon = 0.01$. 
+Figure~\ref{fig:hscmHeatmaps} shows the density evolution of the HSCM.
 %%% TODO: tell that we want to test what our model delivers 
-%%% TODO: explain all parameters from new model 
-%%% TODO: name Julia framework that got used for solving the pde 
 %%% TODO: conclude that we hopefully have matching results 
-
-
-
-% \begin{figure}[]
-% 	\centering
-%     \includegraphics[width=\textwidth]{sanity-check/bruna12_theOriginal.png}
-%     % \caption{Plot from Bruna & Chapman 2012}
-% \end{figure}
-
-% \begin{figure}[]
-% 	\centering
-% 	\begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{figures/sanity-check/bruna-scale/normal-distribution-bruna12-scale.png}
-% 		\caption{}
-% 	\end{subfigure}
-%     \begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/bruna-scale/heat-dynamic-bruna12-scale-T0-01.png}
-% 		\caption{}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/bruna-scale/heat-dynamic-bruna12-scale-T0-02.png}
-% 		\caption{}
-% 	\end{subfigure}
-%     \begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/bruna-scale/heat-dynamic-bruna12-scale-T0-03.png}
-% 		\caption{}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/bruna-scale/heat-dynamic-bruna12-scale-T0-04.png}
-% 		\caption{}
-% 	\end{subfigure}
-%     \begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/bruna-scale/heat-dynamic-bruna12-scale-T0-05.png}
-% 		\caption{}
-% 	\end{subfigure}
-% \end{figure}
-
-% \begin{figure}[]
-% 	\centering
-% 	\begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/usual-scale/...}
-% 		\caption{}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/usual-scale/...}
-% 		\caption{}
-% 	\end{subfigure}
-%     \begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/usual-scale/...}
-% 		\caption{}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.4\textwidth}
-% 		\includegraphics[width=\textwidth]{sanity-check/usual-scale/...}
-% 		\caption{}
-% 	\end{subfigure}
-% \end{figure}
-
-
+\begin{figure}
+	\centering
+    \includegraphics[width=\textwidth]{sanity-check/HSCM-simulations/HSCM-sim-2-withLocations-7937Sims/heatmaps/hscmHeatmaps.png}
+    \caption{Heatmaps of a Monte Carlo simulation of the hard sphere cell model at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
+    They visualise the evolution of the particle density over time. 
+    }
+    \label{fig:hscmHeatmaps}
+\end{figure}
 
 
