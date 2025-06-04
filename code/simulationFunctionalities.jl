@@ -320,40 +320,42 @@ function runSimulation_locations()
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
     """
     ### create paths 
-    println("creating paths")
-    mkpath(simPath)
-    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    mkpath(locationsPath)
-    mkpath(heatMapsPath)
+    # println("creating paths")
+    # mkpath(simPath)
+    # cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    # mkpath(locationsPath)
+    # mkpath(heatMapsPath)
 
     if N != 0
         A1, E1, I1 = computeDesiredStates_circleCells()
     end 
 
     ### 1st save one simulation as gif 
-    println("save one sim as gif")
+    # println("save one sim as gif")
 
-    if N == 0
-        u0 = InitializePointParticles(radius)
-    else 
-        u0 = initializeCells(radius)
-    end 
+    # if N == 0
+    #     u0 = InitializePointParticles(radius)
+    # else 
+    #     u0 = initializeCells(radius)
+    # end 
 
-    cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
-    @time sol = solve(cellProblem, 
-                      EM(), 
-                      callback=CallBack_reflectiveBC, 
-                      dt=timeStepSize, 
-                    )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol) 
+    # cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
+    # @time sol = solve(cellProblem, 
+    #                   EM(), 
+    #                   callback=CallBack_reflectiveBC, 
+    #                   dt=timeStepSize, 
+    #                 )
+    # extractedSol = extractSolution(sol)
+    # createSimGif(gifPath, extractedSol) 
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(do1SimulationRun, 1:NumberOfSimulations)
+    # results = pmap(do1SimulationRun, 1:NumberOfSimulations)
+    # results = pmap(do1SimulationRun, 1648:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
-    matrices = makeMatrices()
-    createHeatmaps(matrices)
+    heatmatrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
+    heatmatrices = makeMatrices() 
+    createHeatmaps(heatmatrices)
 end 
 
 function runSimulation(NuProcs)

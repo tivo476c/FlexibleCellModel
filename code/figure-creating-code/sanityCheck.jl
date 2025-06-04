@@ -5,11 +5,12 @@ This file does:
 """
 
 using Distributed
-NuProcs = 2
-addprocs(NuProcs)
+NuProcs = 3
+# addprocs(NuProcs)
 
 # load all parameters 
 @everywhere begin   
+    
     include("heatmap.jl")
     include("../simulationFunctionalities.jl")
     include("../parameters.jl")

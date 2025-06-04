@@ -28,7 +28,7 @@ timeStepSize = 10^(-4)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
 NumberOfSimulations = 10^4
-NumberOfSampleTimes = 6          # must be 2 at least
+NumberOfSampleTimes = 11          # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
@@ -37,10 +37,10 @@ date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "HSCM-sim-3-withLocations-radiusBilliard-dt10e-4"
+simulationName = "PP-diffEqujl-callback-T0-05-dt10e-5-10000sims"
 
 ## Space Discretisation for heatmap 
-NumberOfHeatGridPoints = 50
+NumberOfHeatGridPoints = 30
 HeatStepSize = 2 * domainL / NumberOfHeatGridPoints
 # [-L, -L + HeatStepSize, -L + 2*HeatStepSize, ..., -L + NumberOfHeatGridPoints*HeatStepSize]
 HeatGrid = [-domainL + k * HeatStepSize for k in 0:NumberOfHeatGridPoints]
