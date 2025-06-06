@@ -92,7 +92,7 @@ function createSimGif(  gifPath::String,
     title="", 
     xlab="x",
     ylab="y",
-    fps=5,
+    fps=1,
     dpi=300)
 
     # is length(sol) == T / dt or length(sol) == T / saveAtTimes ???
@@ -326,11 +326,11 @@ function runSimulation_locations()
     # mkpath(locationsPath)
     # mkpath(heatMapsPath)
 
-    if N != 0
-        A1, E1, I1 = computeDesiredStates_circleCells()
-    end 
+    # if N != 0
+    #     A1, E1, I1 = computeDesiredStates_circleCells()
+    # end 
 
-    ### 1st save one simulation as gif 
+    # ### 1st save one simulation as gif 
     # println("save one sim as gif")
 
     # if N == 0
@@ -349,11 +349,9 @@ function runSimulation_locations()
     # createSimGif(gifPath, extractedSol) 
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    # results = pmap(do1SimulationRun, 1:NumberOfSimulations)
-    # results = pmap(do1SimulationRun, 1648:NumberOfSimulations)
+    # results = pmap(do1SimulationRun, 8639:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
-    heatmatrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
     heatmatrices = makeMatrices() 
     createHeatmaps(heatmatrices)
 end 

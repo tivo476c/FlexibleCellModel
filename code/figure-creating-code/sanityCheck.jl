@@ -6,7 +6,10 @@ This file does:
 
 using Distributed
 NuProcs = 3
-# addprocs(NuProcs)
+if nprocs() == 1
+    addprocs(NuProcs)
+end
+println("Using $(nprocs()) procs")
 
 # load all parameters 
 @everywhere begin   

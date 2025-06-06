@@ -27,8 +27,8 @@ timeInterval = (0.0, T)
 timeStepSize = 10^(-4)
 
 ## sampleTimes = [k/10.0 for k = 0:100]
-# NumberOfSimulations = 10^4
-NumberOfSimulations = 8638
+NumberOfSimulations = 10^4
+# NumberOfSimulations = 6631
 NumberOfSampleTimes = 6          # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
