@@ -29,7 +29,8 @@ println("Using $(nprocs()) procs")
 
 end
 
-@time runSimulation_locations()
+# @time runSimulation_locations()
+@time runShow_overlap()
 
 
 

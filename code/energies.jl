@@ -10,14 +10,14 @@ using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 #-------------------------------------- FINAL ENERGY
 
 function energies!(du, u, p, t)
-
+    dt,D,A1,E1,I1  = p
     if N != 0
         res = zeros(2 * N * M)
     else
         res = zeros(2 * M)
     end
 
-    # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
+    # F1 is vector of all current edge lengths, needed for edge Force and interior angle Force 
     # J1 is vector of all current interior angles, needed for interior angle Force 
     if forceScalings[1] != 0    # area force
         A1 = zeros(M)
@@ -89,11 +89,9 @@ function brownian!(du, u, p, t)
 
 end
 
-function nomotion(du, u, p, t)
-    du = zeros(2 * M * N)
-end
-
-
+function nomotion!(du, u, p, t)
+    du = zeros(2*M*N) 
+end 
 #-------------------------------------- BOUNDARY CONDITION
 
 function apply_BC(u, t, integrator)
@@ -667,7 +665,9 @@ function radiusBilliardOverlapForce(u)
             distance = norm(centreI - centreJ)
             if distance < 2 * radius
 
-                pushVec = (centreI - centreJ) / distance * (2 * radius - distance)
+                # pushVec = (centreI - centreJ) / distance * (2 * radius - distance)  # pushVec b
+                # pushVec = (centreI - centreJ) / distance                            # pushVec c
+                pushVec = (centreI - centreJ)                                       # pushVec d
                 res[i] += pushVec[1]
                 res[i+M] += pushVec[2]
                 res[j] -= pushVec[1]
