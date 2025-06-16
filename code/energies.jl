@@ -10,53 +10,35 @@ using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 #-------------------------------------- FINAL ENERGY
 
 function energies!(du, u, p, t)
-    dt,D,A1,E1,I1  = p
+    """
+     Deterministic part of our SDE, includes area, edge, interior angle and overlap force. 
+     
+     Args:
+        du ... change that gets applied to u: u += dt*du + brownian 
+        u  ... current state of the cell system [c1.x, ..., cM.x, c1.y, ..., cM.y] (in R^(2MN))
+        p = dt, D, A1, E1, I1, where
+            dt ... time step size (in R) 
+            D  ... diffusion coefficient (in R) 
+            A1 ... desired cell areas for all cells (in R)
+            E1 ... desired edge lengths of a cell (in R^N)
+            I1 ... desired interior angles of a cell (in R^N)
+        t  ... current time 
+    """
+    _, _, A1, E1, I1 = p
     if N != 0
         res = zeros(2 * N * M)
     else
         res = zeros(2 * M)
     end
 
-    # F1 is vector of all current edge lengths, needed for edge Force and interior angle Force 
-    # J1 is vector of all current interior angles, needed for interior angle Force 
-    if forceScalings[1] != 0    # area force
-        A1 = zeros(M)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            polygon = Vector{Vector{Float64},N}(undef)
-            for j = 1:N
-                x, y = c.x[j], c.y[j]
-            end
-            push!(polygon, [x, y])
-            A1[i] = areaPolygon(polygon)
-        end
-    end
-
-    if forceScalings[2] != 0    # edge force
-        F1 = zeros(M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            F1[(i-1)*N+1:i*N] = computeEdgeLengths(c)
-        end
-
-    end
-    if forceScalings[3] != 0    # interior angle force 
-        J1 = zeros(M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            J1[(i-1)*N+1:i*N] = computeInteriorAngles(c)
-        end
-
-    end
-
     if (forceScalings[1] != 0)
         res += forceScalings[1] * areaForce(u, A1)
     end
     if (forceScalings[2] != 0)
-        res += forceScalings[2] * edgeForce(u, E1, F1)
+        res += forceScalings[2] * edgeForce(u, E1)
     end
     if (forceScalings[3] != 0)
-        res += forceScalings[3] * interiorAngleForce(u, I1, J1)
+        res += forceScalings[3] * interiorAngleForce(u, I1)
     end
     if (forceScalings[4] != 0)
         res += forceScalings[4] * overlapForce(u)
@@ -211,7 +193,8 @@ function areaForce(u, A1)
     for i = 1:M
 
         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        a = areaForceCell(c, A1[i])
+        # a = areaForceCell(c, A1[i])                               # old indexing
+        a = areaForceCell(c, A1)
         for j = 1:N
 
             res[N*(i-1)+j] = a[j]
@@ -276,23 +259,20 @@ end
 
 
 # computes all vertice forces for all cells 
-function edgeForce(u, E1, F1)
+function edgeForce(u, E1)
 
     res = zeros(2 * M * N)
 
     for i = 1:M
 
         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        edges = E1[(i-1)*N+1:i*N]
-        f1 = F1[(i-1)*N+1:i*N]
-        e = edgeForceCell(c, edges, f1)
+        # edges = E1[(i-1)*N+1:i*N]                                        # [OLD INDEXING] desired edge lengths of c 
+        f1 = computeEdgeLengths(c)                                         # current edge lengths of c  
+        e = edgeForceCell(c, E1, f1)
         for j = 1:N
-
             res[N*(i-1)+j] = e[j]
             res[N*(i-1+M)+j] = e[j+N]
-
         end
-
 
     end
 
@@ -470,7 +450,7 @@ function interiorAngleForceCell(c, I, J)
 
     end
 
-    return -res
+    return -res 
 
 end
 
@@ -536,32 +516,24 @@ function interiorAngleForceCell_MT1(c, I, J)
 
     end
 
-    return res ./ 30
+    return res
 
 end
 
-function interiorAngleForce(u, I1, J1)
+function interiorAngleForce(u, I1)
 
     res = zeros(2 * M * N)
+
     for i = 1:M
-
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-
-        i1 = I1[(i-1)*N+1:i*N]
-        j1 = J1[(i-1)*N+1:i*N]
-        # a = interiorAngleForceCell2(c, i1, j1)
-        a = interiorAngleForceCell_MT1(c, i1, j1)
+        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])        
+        a = interiorAngleForceCell_MT1(c, I1, computeInteriorAngles(c))
         for j = 1:N
-
             res[N*(i-1)+j] = a[j]
             res[N*(i-1+M)+j] = a[j+N]
-
         end
-
-
     end
 
-    return res
+    return res ./ 30 
 
 end
 
