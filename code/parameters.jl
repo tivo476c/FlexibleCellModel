@@ -1,4 +1,14 @@
-using Pkg
+"""
+This is the one file one should use to 
+    a) define all simulation parameters,
+    b) start the simulation. 
+
+It triggers entryPoint.jl after getting all parameters.
+parameters.jl must never be included by other files in this project, 
+just assume it is loaded in all other files. 
+"""
+
+
 
 # import Pkg; Pkg.add(["DifferentialEquations", "StochasticDiffEq", "OrdinaryDiffEq", "Plots", "DataStructures", "Distributed", "Distributions", "Printf", "ColorSchemes", "LinearAlgebra", "LaTeXStrings"])
 # import Pkg; Pkg.add(["OrdinaryDiffEq", "Plots", "DataStructures", "Distributed", "Distributions", "Printf", "ColorSchemes", "LinearAlgebra", "LaTeXStrings"])
@@ -49,9 +59,3 @@ NumberOfHeatGridPoints = 30
 HeatStepSize = 2 * domainL / NumberOfHeatGridPoints
 # [-L, -L + HeatStepSize, -L + 2*HeatStepSize, ..., -L + NumberOfHeatGridPoints*HeatStepSize]
 HeatGrid = [-domainL + k * HeatStepSize for k in 0:NumberOfHeatGridPoints]
-
-"""
-Now loading Package and trigger entryPoint.jl 
-"""
-Pkg.develop(path="C:/Users/voglt/Desktop/FlexibleCellModel")
-include("entryPoint.jl")

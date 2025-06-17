@@ -18,11 +18,18 @@ println("Loading parameters")
 # load all parameters 
 @everywhere begin   
     
-    include("heatmap.jl")
-    include("../simulationFunctionalities.jl")
+    # including cell functionalities with decreasing grade of fundamentality 
     include("../parameters.jl")
-    include("../energies.jl") 
     include("../cell_functionalities.jl") 
+    include("../computeOverlap.jl") 
+    
+    include("../energies.jl") 
+    
+    include("heatmap.jl")
+    
+    include("../simulationFunctionalities.jl")
+
+
 
     tspan = timeInterval
     simPath = joinpath(homedir(), "simulations", simulationName)

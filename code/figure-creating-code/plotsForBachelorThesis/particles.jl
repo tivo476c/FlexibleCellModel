@@ -1,7 +1,7 @@
 using DataStructures
 using Plots
 using LinearAlgebra
-include("../cell_functionalities.jl")
+include("../../cell_functionalities.jl")
 
 
 domain = (0.0,10.0)

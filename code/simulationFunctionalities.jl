@@ -1,9 +1,9 @@
 include("energies.jl")
 include("cell_functionalities.jl")
-include("parameters.jl")
+# include("parameters.jl")
 include("figure-creating-code/heatmap.jl")
 
-using Distributions, Distributed, Printf
+using Distributions, Distributed, Printf, Sockets
 
 function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.09^2)
     """
@@ -469,7 +469,11 @@ function runShow_overlap()
     ## create paths 
     println("creating paths")
     mkpath(simPath)
-    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    if gethostname() == "treuesStueck"      # home pc xd 
+        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    else # laptop 
+        cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    end 
     mkpath(heatMapsPath)
 
 
