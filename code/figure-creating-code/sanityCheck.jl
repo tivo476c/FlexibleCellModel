@@ -4,13 +4,17 @@ This file does:
 * simulate the the model for our flexible cell model
 """
 
+println("Started sanityCheck.jl \nHere a paralized run can be implemented.")
+
+
 using Distributed
+
 NuProcs = 3
 if nprocs() == 1
     addprocs(NuProcs)
 end
-println("Using $(nprocs()) procs")
-
+println("Using $(nprocs()) processors")
+println("Loading parameters")
 # load all parameters 
 @everywhere begin   
     
@@ -30,6 +34,8 @@ println("Using $(nprocs()) procs")
 end
 
 # @time runSimulation_locations()
+println("Starting simulation: $simulationName")
+
 @time runShow_overlap()
 
 

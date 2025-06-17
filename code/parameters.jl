@@ -1,4 +1,10 @@
-using Dates
+using Pkg
+
+# import Pkg; Pkg.add(["DifferentialEquations", "StochasticDiffEq", "OrdinaryDiffEq", "Plots", "DataStructures", "Distributed", "Distributions", "Printf", "ColorSchemes", "LinearAlgebra", "LaTeXStrings"])
+# import Pkg; Pkg.add(["OrdinaryDiffEq", "Plots", "DataStructures", "Distributed", "Distributions", "Printf", "ColorSchemes", "LinearAlgebra", "LaTeXStrings"])
+
+# name = "mastersThesisJuliaPackages"
+# uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 
 ## General setup:
 
@@ -32,7 +38,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
 ## Simulation name 
-date = today()
+# date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
@@ -43,3 +49,9 @@ NumberOfHeatGridPoints = 30
 HeatStepSize = 2 * domainL / NumberOfHeatGridPoints
 # [-L, -L + HeatStepSize, -L + 2*HeatStepSize, ..., -L + NumberOfHeatGridPoints*HeatStepSize]
 HeatGrid = [-domainL + k * HeatStepSize for k in 0:NumberOfHeatGridPoints]
+
+"""
+Now loading Package and trigger entryPoint.jl 
+"""
+Pkg.develop(path="C:/Users/voglt/Desktop/FlexibleCellModel")
+include("entryPoint.jl")
