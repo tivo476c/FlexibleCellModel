@@ -4,21 +4,32 @@ This file does:
 * simulate the the model for our flexible cell model
 """
 
+println("Started sanityCheck.jl \nHere a paralized run can be implemented.")
+
+
 using Distributed
+
 NuProcs = 3
 if nprocs() == 1
     addprocs(NuProcs)
 end
-println("Using $(nprocs()) procs")
-
+println("Using $(nprocs()) processors")
+println("Loading parameters")
 # load all parameters 
 @everywhere begin   
     
-    include("heatmap.jl")
-    include("../simulationFunctionalities.jl")
+    # including cell functionalities with decreasing grade of fundamentality 
     include("../parameters.jl")
-    include("../energies.jl") 
     include("../cell_functionalities.jl") 
+    include("../computeOverlap.jl") 
+    
+    include("../energies.jl") 
+    
+    include("heatmap.jl")
+    
+    include("../simulationFunctionalities.jl")
+
+
 
     tspan = timeInterval
     simPath = joinpath(homedir(), "simulations", simulationName)
@@ -30,6 +41,8 @@ println("Using $(nprocs()) procs")
 end
 
 # @time runSimulation_locations()
+println("Starting simulation: $simulationName")
+
 @time runShow_overlap()
 
 

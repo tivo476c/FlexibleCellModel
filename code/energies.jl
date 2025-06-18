@@ -1,6 +1,6 @@
 include("cell_functionalities.jl")
 include("computeOverlap.jl")
-include("parameters.jl")
+# include("parameters.jl")
 
 using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 

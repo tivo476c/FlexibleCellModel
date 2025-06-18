@@ -1,5 +1,5 @@
 include("../energies.jl")
-include("../parameters.jl")
+# include("../parameters.jl")
 
 using Plots 
 # SETUP: 2 cells overlapping 

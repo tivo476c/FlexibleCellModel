@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Julia: Run active file in REPL",
+      "type": "julia",
+      "request": "launch",
+      "program": "${file}",
+      "stopOnEntry": false,
+      "cwd": "${workspaceFolder}",
+      "juliaEnv": "${workspaceFolder}",
+      "repl": true,
+      "internalConsoleOptions": "neverOpen"
+    }
+  ]
+}
