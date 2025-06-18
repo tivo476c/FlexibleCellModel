@@ -181,7 +181,7 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 
 \begin{proposition} \textbf{Edge force} \\
 
-	The edge force $F^{(E)}_j: (\R^2)^{N_V} \rightarrow \R^2$ acting on $\vec{v}_j$ in cell is given by the formula
+	The edge force $F^{(E)}_j: (\R^2)^{N_V} \rightarrow \R^2$ acting on $\vec{v}_j$ of the given cell is described by the formula
 	\begin{align}
 		\begin{split}
 			F^{(E)}_j(C) &= - \nabla_{\vec{v}_j} E(C) \\
@@ -195,53 +195,52 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 
 	\begin{align*}
 		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 \\
-		&= \nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 + \nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j-1}_d - E^{j-1}_{C_i}|^2
-	\end{align*}
-
-	For the second summand we get:
-
-	\begin{align*}
-		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
-		&= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
-		&= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)^2]^{\frac{1}{2}} ) \\
-		&= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
-		&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)]) \\[0.5em] 
-		&= (E^j_d - E^j_C) (- \frac{1}{2 E^j_C} \begin{pmatrix}
-			\partial_{v_j^1} (v_j^1 - v_{j+1}^1)^2 \\[0.5em]
-			\partial_{v_j^2} (v_j^2 - v_{j+1}^2)^2
-		\end{pmatrix}) \\[0.5em]
-		&= (E^j_d - E^j_C) (- \frac{1}{2 E^j_C} \begin{pmatrix}
-			 2(v_j^1 - v_{j+1}^1) \\[0.5em]
-			 2(v_j^2 - v_{j+1}^2)
-		\end{pmatrix}) \\[0.5em] 
-		&= \frac{E^j_C - E^j_d}{E^j_C} \begin{pmatrix}
-			v_j^1 - v_{j+1}^1 \\[0.5em]
-			v_j^2 - v_{j+1}^2
-	   \end{pmatrix} 
+		&= \nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j-1}_d - E^{j-1}_{C_i}|^2 + \nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 
 	\end{align*}
 
 	For the first summand, we can compute 
 	\begin{align*}
+		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j-1}_d - E^{j-1}_{C_i}|^2 &= (E^{j-1}_d - E^{j-1}_C) \nabla_{\vec{v}_j} (E^{j-1}_d - E^{j-1}_C) \\
+		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_{j}} \norm[\vec{v}_{j-1} - \vec{v}_{j}] ) \\
+		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_j} [(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2]^{\frac{1}{2}} ) \\
+		&= (E^{j-1}_d - E^{j-1}_C) \nabla_{\vec{v}_j} ( - E^{j-1}_C) \\
+		&= (E^{j-1}_d - E^{j-1}_C) (- \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \nabla_{\vec{v}_j} [(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)]) \\[0.5em] 
+		&= (E^{j-1}_d - E^{j-1}_C) \left(- \frac{1}{2 E^{j-1}_C} \begin{pmatrix}
+			\partial_{v_{j}^1} (v_{j-1}^1 - v_{j}^1)^2 \\[0.5em]
+			\partial_{v_{j}^2} (v_{j-1}^2 - v_{j}^2)^2
+		\end{pmatrix}\right) \\[0.5em]
+		&= (E^{j-1}_d - E^{j-1}_C)  \left( - \frac{1}{2 E^{j-1}_C} \begin{pmatrix}
+			 -2(v_{j-1}^1 - v_{j}^1) \\[0.5em]
+			 -2(v_{j-1}^2 - v_{j}^2)
+		\end{pmatrix}\right) \\[0.5em] 
+		&= \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \begin{pmatrix}
+			v_{j}^1 - v_{j-1}^1 \\[0.5em]
+			v_{j}^2 - v_{j-1}^2
+	   \end{pmatrix} 
+	\end{align*}
+
+	For the second summand we get:
+	\begin{align*}
 		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
-		&= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
-		&= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)^2]^{\frac{1}{2}} ) \\
-		&= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
+		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
+		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)^2]^{\frac{1}{2}} ) \\
+		% &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
 		&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)]) \\[0.5em] 
-		&= (E^j_d - E^j_C) (- \frac{1}{2 E^j_C} \begin{pmatrix}
+		&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
 			\partial_{v_j^1} (v_j^1 - v_{j+1}^1)^2 \\[0.5em]
 			\partial_{v_j^2} (v_j^2 - v_{j+1}^2)^2
-		\end{pmatrix}) \\[0.5em]
-		&= (E^j_d - E^j_C) (- \frac{1}{2 E^j_C} \begin{pmatrix}
+		\end{pmatrix}\right) \\[0.5em]
+		&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
 			 2(v_j^1 - v_{j+1}^1) \\[0.5em]
 			 2(v_j^2 - v_{j+1}^2)
-		\end{pmatrix}) \\[0.5em] 
+		\end{pmatrix}\right) \\[0.5em] 
 		&= \frac{E^j_C - E^j_d}{E^j_C} \begin{pmatrix}
 			v_j^1 - v_{j+1}^1 \\[0.5em]
 			v_j^2 - v_{j+1}^2
 	   \end{pmatrix} 
 	\end{align*}
-
-	The computation for the second summand is quite similar and the result gives the formula \ref{force:edge}. 
+	
+	
 
 	\qed  
 \end{proposition}
@@ -306,11 +305,11 @@ Thus, our interior angle operator is:
 
 With that, we can define our interior angle energy. 
 \begin{definition} \textbf{Interior angle energy} \\
-	The energy $I$ associated with preserving the cell interior angles is given by
+	The energy $I: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ associated with preserving the cell interior angles is given by
 	\begin{align}
-		I(C_i) = \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C_i} |^2, 
+		I(C) = \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C} |^2, 
 	\end{align}
-	where $I^{j}_d$ is the desired interior angle at vertex $j$ and $I^j_{C_i}$ is the current interior angle at vertex $j$ of cell $i$. 
+	where $I^{j}_d$ is the desired interior angle at vertex $j$ and $I^j_{C}$ is the current interior angle at vertex $j$ of the considered cell. 
 \end{definition}
 
 
@@ -323,12 +322,12 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 \begin{proposition} \textbf{Interior angle force} \\
 
-	The interior angle force that gets applied on vertex $\vec{v}_j$ of cell $C$ is given by 
+	The interior angle force $F^{(I)}_j(C): (\R^2)^{N_V} \rightarrow \R^2$ that gets applied on vertex $\vec{v}_j$ of cell $C$ is given by 
 	\begin{align}
 		\begin{split}
 			F^{(I)}_j(C) &= - \nabla_{\vec{v}_j} I(C)  \\
 				&= (I^{j-1}_d - I^{j-1}_{C}) \left( 
-					- \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_{j}]^2} \begin{pmatrix}
+					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
 						v_{j}^2 - v_{j-1}^2 \\[0.5em]
 						v_{j-1}^1 - v_{j}^1
 					\end{pmatrix} 
@@ -354,6 +353,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 
 	Proof. \\
+	% TODO: check this force and the computations in the proof, especially the neighboring vertices part 
 	We are looking for 
 	\begin{center}
 		$
@@ -361,16 +361,15 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		$
 	\end{center}
 	
-	Similarly to the first forces, we get:
+	Vertex $\vec{v}_j$ impacts the interior angles at $\vec{v}_{j-1}$, $\vec{v}_j$ and $\vec{v}_{j+1}$. 
+	Thus, we get 
 	\begin{align*}
 		\nabla_{\vec{v}_j}  I_{j}(C) &=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C_i} |^2 \\
 		&= \nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
 		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
 		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2
 	\end{align*}
-	since the vertex $\vec{v}_j$ has an impact on the interior angles at $\vec{v}_{j-1}$, $\vec{v}_{j}$ and $\vec{v}_{j+1}$. \\
-	In this proof, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2$. 
-	The computation at the neighboring vertices is similar, there are just some terms less, that are independent of $\vec{v}_j$.
+	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2$. 
 
 	\begin{align*}
 		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
@@ -459,9 +458,32 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j+1}^2 - v_{j}^2 \\[0.5em]
 			v_{j}^1 - v_{j+1}^1
-		\end{pmatrix} \right)
+		\end{pmatrix} \right).
 	\end{align*}
 
+	For the neighboring vertices, we compute 
+
+	\begin{align*}
+		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
+		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(\arctan(\frac{v_{j-2}^2 - v_{j-1}^2}{v_{j-2}^1 - v_{j-1}^1}) - \arctan(\frac{v_{j}^2 - v_{j-1}^2}{v_{j}^1 - v_{j-1}^1})\right) \\
+		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(- \arctan(\frac{v_{j}^2 - v_{j-1}^2}{v_{j}^1 - v_{j-1}^1})\right) \\
+		&= (I^{j-1}_{C} - I^{j-1}_d) \left( 
+		 - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
+			v_{j}^2 - v_{j-1}^2 \\[0.5em]
+			v_{j-1}^1 - v_{j}^1
+		\end{pmatrix} \right),
+	\end{align*}
+
+	\begin{align*}
+		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2 
+		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left(\arctan(\frac{v_{j}^2 - v_{j+1}^2}{v_{j}^1 - v_{j+1}^1}) - \arctan(\frac{v_{j+2}^2 - v_{j+1}^2}{v_{j+2}^1 - v_{j+1}^1})\right) \\
+		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left( \arctan(\frac{v_{j}^2 - v_{j+1}^2}{v_{j}^1 - v_{j+1}^1}) \right) \\
+		&= (I^{j+1}_{C} - I^{j+1}_d) \left( 
+		 \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+			v_{j}^2 - v_{j+1}^2 \\[0.5em]
+			v_{j+1}^1 - v_{j}^1
+		\end{pmatrix} \right).
+	\end{align*}
 	\qed
 \end{proposition}
 
