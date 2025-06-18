@@ -668,6 +668,7 @@ function radiusBilliardOverlapForce(u)
             if distance < 2 * radius
 
                 pushVec = (centreI - centreJ) / distance * (2 * radius - distance)
+                pushVec = (centreI - centreJ)
                 res[i] += pushVec[1]
                 res[i+M] += pushVec[2]
                 res[j] -= pushVec[1]
