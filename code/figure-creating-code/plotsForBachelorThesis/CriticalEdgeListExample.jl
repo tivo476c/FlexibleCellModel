@@ -1,4 +1,4 @@
-include("../cell_functionalities.jl")
+include("../../cell_functionalities.jl")
 include("../BakeTheLists4.jl")
 
 C = DiscreteCell([ 5.0, 4.0, 1.0, 1.0, 2.0, 3.0, 2.0, 0.0, 0.0, 7.0, 8.0, 7.0, 1.0, 1.0, 4.0 ], [0.0, 1.0, 1.0, 3.0, 3.0, 4.0, 5.0, 5.0, -5.0, -5.0, -4.0, -3.0, -3.0,-1.0,  -1.0])

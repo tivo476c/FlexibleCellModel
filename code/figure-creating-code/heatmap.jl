@@ -3,7 +3,7 @@ using Printf
 using ColorSchemes
 
 include("../cell_functionalities.jl")
-include("../parameters.jl")
+# include("../parameters.jl")
 
 function createLocationFile(sol, sim::Int64, locationsPath)
 

@@ -1,8 +1,9 @@
 include("energies.jl")
-include("parameters.jl")
+include("cell_functionalities.jl")
+# include("parameters.jl")
 include("figure-creating-code/heatmap.jl")
 
-using Distributions, Distributed, Printf
+using Distributions, Distributed, Printf, Sockets
 
 function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.09^2)
     """
@@ -88,76 +89,125 @@ function InitializePointParticles(radius)
 end
 
 function createSimGif(  gifPath::String, 
-    sol, 
+    sol; 
     title="", 
     xlab="x",
     ylab="y",
     fps=1,
     dpi=300)
 
-    # is length(sol) == T / dt or length(sol) == T / saveAtTimes ???
-    if N != 0
-        # HSCM cells 
-        animSDE = @animate for i = 1:length(sol.t) 
-            # time = t[1]*timeStepSize+1
-            # time = t[1]*saveAtTimes+1
+    if N == 0
+        if radius == 0
+            # PP cells 
+            animSDE = @animate for i = 1:length(sol.t) 
 
-            u = sol.u[i]
-            time = sol.t[i]
+                u = sol.u[i]
+                time = sol.t[i]
 
-            X, Y = solutionToCells(u)
-            x = X[1]
-            y = Y[1]
+                X, Y = solutionToCells(u)
 
-            timelabel = "t = $(@sprintf("%.2f", time))"  
+                timelabel = "t = $(@sprintf("%.5f", time))"  
 
-            plot(x, y, 
-                seriestype = :shape, 
-                aspect_ratio = :equal, 
-                opacity = 0.25, 
-                dpi = dpi, 
-                title = title,
-                label = false,
-                xlims = domain,
-                ylims = domain,
-                xguidefontsize=13,
-                xlabel = timelabel)
+                scatter(X, Y, 
+                    markersize=2, 
+                    aspect_ratio = :equal, 
+                    opacity = 0.25, 
+                    dpi = dpi, 
+                    title = title,
+                    label = false,
+                    xlims = domain,
+                    ylims = domain,
+                    xguidefontsize=13,
+                    xlabel = timelabel)
+            end
+        else
+            # radius > 0 -> HSCM cells 
 
-            for i = 2:M 
-                plot!(X[i],Y[i], seriestype=:shape, opacity=.25, label = false)
-            end  
+            animSDE = @animate for i = 1:length(sol.t) 
+
+                u = sol.u[i]
+                time = sol.t[i]
+
+                X, Y = solutionToCells(u)
+
+                circle = circleCell([X[1], Y[1]], radius)
+                discreteCircleCell = cellToDiscreteCell(circle, 20)
+
+                plot(discreteCircleCell.x, discreteCircleCell.y, 
+                    seriestype=:shape,
+                    aspect_ratio = :equal, 
+                    opacity = 0.25, 
+                    dpi = dpi, 
+                    title = title,
+                    label = false,
+                    xlims = domain,
+                    ylims = domain,
+                    xguidefontsize=13,
+                    xlabel = "t = $(@sprintf("%.5f", time))")
+
+                for i = 2:NumberOfCells
+
+                    circle = circleCell([X[i], Y[i]], radius)
+                    discreteCircleCell = cellToDiscreteCell(circle,20)
+
+                    plot!(discreteCircleCell.x, discreteCircleCell.y, 
+                        seriestype=:shape,
+                        aspect_ratio = :equal, 
+                        opacity = 0.25, 
+                        dpi = dpi, 
+                        title = title,
+                        label = false,
+                        xlims = domain,
+                        ylims = domain,
+                        xguidefontsize=13,
+                        xlabel = "t = $(@sprintf("%.5f", time))")
+                end 
+                
+            end
 
         end
-
-        gif(animSDE, gifPath, fps = fps)
     else 
-        # Point particles 
+        # DF cells 
         animSDE = @animate for i = 1:length(sol.t) 
-            # time = t[1]*timeStepSize+1
-            # time = t[1]*saveAtTimes+1
-           
-            u = sol.u[i]
-            time = sol.t[i]
 
-            X, Y = solutionToCells(u)
-           
-            timelabel = "t = $(@sprintf("%.4f", time))"  
+                u = sol.u[i]
+                time = sol.t[i]
 
-            scatter(X, Y,
-                aspect_ratio = :equal, 
-                dpi = dpi, 
-                title = title,
-                label = false,
-                xlims = domain,
-                ylims = domain,
-                xguidefontsize=13,
-                xlabel = timelabel)
+                X, Y = solutionToCells(u)               # now each cell is: [X[...], Y[...]]
 
-        end
 
-        gif(animSDE, gifPath, fps = fps)
-    end 
+                plot(X[1], Y[1], 
+                    seriestype=:shape,
+                    aspect_ratio = :equal, 
+                    opacity = 0.25, 
+                    dpi = dpi, 
+                    title = title,
+                    label = false,
+                    xlims = domain,
+                    ylims = domain,
+                    xguidefontsize=13,
+                    xlabel = "t = $(@sprintf("%.5f", time))")
 
+                for i = 2:NumberOfCells
+
+                    plot!(X[i], Y[i], 
+                        seriestype=:shape,
+                        aspect_ratio = :equal, 
+                        opacity = 0.25, 
+                        dpi = dpi, 
+                        title = title,
+                        label = false,
+                        xlims = domain,
+                        ylims = domain,
+                        xguidefontsize=13,
+                        xlabel = "t = $(@sprintf("%.5f", time))")
+                end 
+                
+            end
+
+        end 
+        
+    gif(animSDE, gifPath, fps = fps)
 end 
 
 struct smallSolution
@@ -239,7 +289,7 @@ function do1SimulationRun(simRun)
     cellProb = SDEProblem(energies!, brownian!, u0, tspan, p) 
     @time sol = solve(cellProb, 
                       EM(), 
-                      callback=CallBack_reflectiveBC, 
+                      callback=CallBack_reflectiveBC_cellOverlap, 
                       dt=timeStepSize, 
                     )
     extractedSol = extractSolution(sol)
@@ -320,36 +370,36 @@ function runSimulation_locations()
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
     """
     ### create paths 
-    # println("creating paths")
-    # mkpath(simPath)
-    # cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    # mkpath(locationsPath)
-    # mkpath(heatMapsPath)
+    println("creating paths")
+    mkpath(simPath)
+    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    mkpath(locationsPath)
+    mkpath(heatMapsPath)
 
-    # if N != 0
-    #     A1, E1, I1 = computeDesiredStates_circleCells()
-    # end 
+    if N != 0
+        A1, E1, I1 = computeDesiredStates_circleCells()
+    end 
 
-    # ### 1st save one simulation as gif 
-    # println("save one sim as gif")
+    ### 1st save one simulation as gif 
+    println("save one sim as gif")
 
-    # if N == 0
-    #     u0 = InitializePointParticles(radius)
-    # else 
-    #     u0 = initializeCells(radius)
-    # end 
+    if N == 0
+        u0 = InitializePointParticles(radius)
+    else 
+        u0 = initializeCells(radius)
+    end 
 
-    # cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
-    # @time sol = solve(cellProblem, 
-    #                   EM(), 
-    #                   callback=CallBack_reflectiveBC, 
-    #                   dt=timeStepSize, 
-    #                 )
-    # extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol) 
+    cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
+    @time sol = solve(cellProblem, 
+                      EM(), 
+                      callback=CallBack_reflectiveBC_cellOverlap, 
+                      dt=timeStepSize, 
+                    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol) 
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    # results = pmap(do1SimulationRun, 8639:NumberOfSimulations)
+    results = pmap(do1SimulationRun, 1:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices() 
@@ -372,25 +422,25 @@ function runSimulation(NuProcs)
         A1, E1, I1 = computeDesiredStates_circleCells()
     end 
 
-    ## 1st save one simulation as gif 
-    # println("save one sim as gif")
+    # 1st save one simulation as gif 
+    println("save one sim as gif")
 
-    # if N == 0
-    #     u0 = InitializePointParticles(radius)
-    # else 
-    #     u0 = initializeCells(radius)
-    # end 
+    if N == 0
+        u0 = InitializePointParticles(radius)
+    else 
+        u0 = initializeCells(radius)
+    end 
 
-    # cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
-    # @time sol = solve(cellProblem, 
-    #                   EM(), 
-    #                   callback=CallBack_reflectiveBC_cellOverlap, 
-    #                   dt=timeStepSize, 
-    #                 )
-    # extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol) 
+    cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p) 
+    @time sol = solve(cellProblem, 
+                      EM(), 
+                      callback=CallBack_reflectiveBC_cellOverlap, 
+                      dt=timeStepSize, 
+                    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol) 
 
-    ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
+    ## 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     @everywhere matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
 
     # distribute NumberOfSimulations 
@@ -408,5 +458,57 @@ function runSimulation(NuProcs)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     createHeatmaps(matrices)
+
+end 
+
+function runShow_overlap()
+    """
+    Runs a light simulation that produces a gif showing the process of resolving an overlap between two cells. 
+    """
+
+    ## create paths 
+    println("creating paths")
+    mkpath(simPath)
+    if gethostname() == "treuesStueck"      # home pc xd 
+        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    else # laptop 
+        cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    end 
+    mkpath(heatMapsPath)
+
+
+    ## 1st save one simulation as gif 
+    println("save one sim as gif")
+
+    # u0 = [-0.15, 0.15, 0.0, 0.0]  # point particle initialisation 
+
+    c1 = cellToDiscreteCell(circleCell([-0.15, 0.0], radius), NumberOfCellWallPoints) 
+    c2 = cellToDiscreteCell(circleCell([ 0.15, 0.0], radius), NumberOfCellWallPoints) 
+    u0 = [c1.x; c2.x; c1.y; c2.y]
+    A1 = 0.4*sin(0.1*pi)
+    E1 = 0.0626*ones(N)  
+    I1 = 0.9*pi*ones(N)  
+    p = timeStepSize,D,A1,E1,I1  
+    cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p) 
+    @time sol = solve(cellProblem, 
+                        EM(), 
+                        dt=timeStepSize, 
+                        )
+    extractedSol = extractSolution(sol)
+    
+    createSimGif(gifPath, extractedSol; title=simulationName) 
+
+    # for overlapScaling in [1, 10, 10^2, 10^3, round(timeStepSize^(-1))]
+        # forceScalings[4] = overlapScaling 
+        # cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p) 
+        # @time sol = solve(cellProblem, 
+        #                 EM(), 
+        #                 dt=timeStepSize, 
+        #                 )
+        # extractedSol = extractSolution(sol)
+        
+        # gifPath = joinpath(simPath, string("$simulationName-scaling_$overlapScaling.gif"))
+        # createSimGif(gifPath, extractedSol; title="$simulationName-scaling_$overlapScaling") 
+    # end 
 
 end 
