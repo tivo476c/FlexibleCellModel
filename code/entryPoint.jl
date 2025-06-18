@@ -8,4 +8,24 @@ Pkg.develop(path="C:/Users/voglt/Desktop/FlexibleCellModel")
 
 println("Started entryPoint.jl")
 
-include("figure-creating-code/sanityCheck.jl")
+
+###  OPTION 1: JUST RUN A METHOD WITHOUT PARALLELIZING
+include("parameters.jl")
+include("cell_functionalities.jl") 
+include("computeOverlap.jl") 
+include("energies.jl") 
+include("figure-creating-code/heatmap.jl")
+include("simulationFunctionalities.jl")
+
+tspan = timeInterval
+simPath = joinpath(homedir(), "simulations", simulationName)
+locationsPath = joinpath(simPath, "locations")
+heatMapsPath = joinpath(simPath, "heatmaps")
+gifPath = joinpath(simPath, string(simulationName, ".gif"))
+p = [timeStepSize, D]
+
+runShow_overlap()
+
+###  OPTION 2: PARALLELIZED 
+# if wanna use parallelized run, inclusions happen in startParallelizedRun.jl: 
+# include("startParallelizedRun.jl")

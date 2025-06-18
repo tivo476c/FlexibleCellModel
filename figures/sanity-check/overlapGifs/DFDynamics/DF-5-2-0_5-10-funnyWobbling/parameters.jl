@@ -12,7 +12,7 @@ radius = 0.005                               # cell radius
 
 ## Force scalings: 
 areaForceFactor =  1e5
-edgeForceFactor =  1e1
+edgeForceFactor =  1e2
 interiorAngleForceFactor = 1e0*5
 overlapForceFactor = 1e10
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
@@ -35,7 +35,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "DF-5-1-0_5-10"
+simulationName = "DF-5-2-0_5-10"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 30

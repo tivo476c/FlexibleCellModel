@@ -474,16 +474,14 @@ function runShow_overlap()
     else # laptop 
         cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     end 
-    mkpath(heatMapsPath)
-
 
     ## 1st save one simulation as gif 
     println("save one sim as gif")
 
-    # u0 = [-0.15, 0.15, 0.0, 0.0]  # point particle initialisation 
+    # u0 = [-0.00375, 0.15, 0.0, 0.0]  # point particle initialisation 
 
-    c1 = cellToDiscreteCell(circleCell([-0.15, 0.0], radius), NumberOfCellWallPoints) 
-    c2 = cellToDiscreteCell(circleCell([ 0.15, 0.0], radius), NumberOfCellWallPoints) 
+    c1 = cellToDiscreteCell(circleCell([-0.00375, 0.0], radius), NumberOfCellWallPoints) 
+    c2 = cellToDiscreteCell(circleCell([0.00375, 0.0], radius), NumberOfCellWallPoints) 
     u0 = [c1.x; c2.x; c1.y; c2.y]
     A1 = 0.4*sin(0.1*pi)
     E1 = 0.0626*ones(N)  
