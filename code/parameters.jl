@@ -12,7 +12,7 @@ radius = 0.005                               # cell radius
 
 ## Force scalings: 
 areaForceFactor = 0
-edgeForceFactor = 1e3
+edgeForceFactor = 1e7
 interiorAngleForceFactor = 0
 overlapForceFactor = 0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]

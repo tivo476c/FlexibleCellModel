@@ -239,7 +239,7 @@ function edgeForceCell(c, E_d; k=2)
     """
     res = zeros(2 * N)
     E = computeEdgeLengths(c) 
-    
+    # print("edges: E = $E, desired edges: E_d = $E_d")
     # all remaining values 
     for i = 1:N
 
@@ -252,12 +252,12 @@ function edgeForceCell(c, E_d; k=2)
         else 
             next = i+1
             prev = i-1
-            res[i]   = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.x[i] - c.x[prev]) 
-                     + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.x[i] - c.x[next])
-            res[i+N] = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.y[i] - c.y[prev]) 
-                     + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.y[i] - c.y[next])
         end 
 
+        res[i]   = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.x[i] - c.x[prev]) 
+                 + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.x[i] - c.x[next])
+        res[i+N] = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.y[i] - c.y[prev]) 
+                 + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.y[i] - c.y[next])
     end
 
     return res

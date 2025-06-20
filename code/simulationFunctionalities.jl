@@ -487,7 +487,7 @@ function runShow_overlap()
     u0 = [c1.x; c2.x; c1.y; c2.y]
     # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
     A_d = circleArea(radius,N)
-    E_d = circleEdgeLengths(radius,N) 
+    E_d = circleEdgeLengths(radius,N) * 2
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
