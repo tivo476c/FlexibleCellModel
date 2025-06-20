@@ -480,14 +480,14 @@ function runShow_overlap()
 
     # u0 = [-0.00375, 0.15, 0.0, 0.0]  # point particle initialisation 
 
-    # c1 = rectangleCell(Rectangle(-0.003, -0.001, -0.005, 0.005), NumberOfCellWallPoints)
-    # c2 = rectangleCell(Rectangle(0.001, 0.003, -0.005, 0.005), NumberOfCellWallPoints)
-    c1 = cellToDiscreteCell(circleCell([-0.004, 0.0], radius), NumberOfCellWallPoints)
-    c2 = cellToDiscreteCell(circleCell([0.004, 0.0], radius), NumberOfCellWallPoints)
+    c1 = rectangleCell(Rectangle(-0.003, -0.001, -0.005, 0.005), NumberOfCellWallPoints)
+    c2 = rectangleCell(Rectangle(0.001, 0.003, -0.005, 0.005), NumberOfCellWallPoints)
+    # c1 = cellToDiscreteCell(circleCell([-0.004, 0.0], radius), NumberOfCellWallPoints)
+    # c2 = cellToDiscreteCell(circleCell([0.004, 0.0], radius), NumberOfCellWallPoints)
     u0 = [c1.x; c2.x; c1.y; c2.y]
     # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
     A_d = circleArea(radius,N)
-    E_d = circleEdgeLengths(radius,N) * 2
+    E_d = circleEdgeLengths(radius,N)
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)

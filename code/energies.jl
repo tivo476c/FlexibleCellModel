@@ -284,54 +284,6 @@ end
 
 #------------------- INTERIOR ANGLE Force -> add I_d ∈ R^(M*N) to initialisation 
 
-# we need a vector of all wanted interior angles I_d ∈ R^(M*N) in order to implement the edge Force 
-# I_d[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
-
-#= old stuff 
-function computeCenter(c::DiscreteCell)
-
-    x = 0.0
-    y = 0.0
-    for i = 1:N 
-        x += c.x[i]
-        y += c.y[i]
-    end 
-
-    return [x,y] / N 
-
-end 
-
-function intAngle(x,y,z, centre) 
-
-    d1 = norm(x-y, 2)
-    d2 = norm(y-z, 2)
-    d3 = norm(z-x, 2) 
-
-    r1 = norm(centre-x, 2)
-    r2 = norm(centre-y, 2)
-    r3 = norm(centre-z, 2)
-
-    d = (d1^2 + d2^2 - d3^2) / (2*d1*d2)
-
-    if( d <= -1)
-        return π 
-    elseif(d >= 1)
-        return 0.0 
-    else 
-        res = acos(d) 
-    end 
-
-    if( r2*1.01 < min(r1,r3) ) 
-        return 2*π - res 
-    else 
-        return res 
-    end 
-
-end 
-=#
-
-# turn in vectors that span the according angle 
-
 function arctan2(x, y)
     if x > 0
         return atan(y / x)
@@ -365,154 +317,77 @@ function intAngleMT(v_prev, v_curr, v_next)
     return res
 end
 
-
-function intAngle2(x, y, z)
-
-    v1 = x - y
-    v2 = z - y
-    return mod(-atan(v1[1] * v2[2] - v1[2] * v2[1], dot(v1, v2)), (2 * π))
-end
-
-function intAngle2(v1, v2)
-    return mod(-atan(v1[1] * v2[2] - v1[2] * v2[1], dot(v1, v2)), (2 * π))
-end
-
-function intAngle3(x, y, z)
-    v1 = x - y
-    v2 = z - y
-    return mod(atan(v1[2], v1[1]) - atan(v2[2], v2[1]), (2 * π))
-end
-
-function computeInteriorAngles(c::DiscreteCell)
+function computeIntAngles(c) 
 
     V = Vector{Vector{Float64}}(undef, N)
     for i = 1:N
         V[i] = vertex(c, i)
     end
-
     res = zeros(N)
-    res[1] = intAngle2(V[N], V[1], V[2])
-    res[N] = intAngle2(V[N-1], V[N], V[1])
-    for i = 2:N-1
-        res[i] = intAngle2(V[i-1], V[i], V[i+1])
+    for i = 1:N
+        if i == 1 
+            prev = N 
+            next = 2 
+        elseif  i==N 
+            prev = N-1 
+            next = 1
+        else 
+            prev = i-1
+            next = i+1 
+        end 
+        res[i] = intAngleMT(V[prev], V[i], V[next])
     end
-
     return res
 
-end
+end 
 
-function d_xi_interiorAngle(x, y, z)
+function intAngleEnergy(c, I_d; k=2)
+    res = 0
+    intAngles = computeIntAngles(c)
+    for i = 1:N 
+        res += 1.0/k * abs(I_d[i] - intAngles[i])^k 
+    end 
+    return res 
+end 
 
-    h = 0.01
-    return (intAngle2(x, [y[1] + h, y[2]], z) - intAngle2(x, y, z)) / h
-
-end
-
-function d_yi_interiorAngle(x, y, z)
-
-    h = 0.01
-    return (intAngle2(x, [y[1], y[2] + h], z) - intAngle2(x, y, z)) / h
-
-end
-
-function d_xi_interiorAngle2(x, y, z)
-
-    v1 = x - y
-    v2 = z - y
-
-
-    return v1[2] / (v1[1]^2 + v1[2]^2) - v2[2] / (v2[1]^2 + v2[2]^2)
-
-end
-
-function d_yi_interiorAngle2(x, y, z)
-
-    v1 = x - y
-    v2 = z - y
-
-    return v2[1] / (v2[1]^2 + v2[2]^2) - v1[1] / (v1[1]^2 + v1[2]^2)
-end
-
-
-
-function interiorAngleForceCell(c, I, J)
-
-    res = zeros(2 * N)
-    res[1] = (I[1] - J[1]) * d_xi_interiorAngle(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[N] = (I[N] - J[N]) * d_xi_interiorAngle(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-    res[N+1] = (I[1] - J[1]) * d_yi_interiorAngle(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[2*N] = (I[N] - J[N]) * d_yi_interiorAngle(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-
-    for i = 2:N-1
-
-        res[i] = (I[i] - J[i]) * d_xi_interiorAngle(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-        res[i+N] = (I[i] - J[i]) * d_yi_interiorAngle(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-
-    end
-
-    return -res
-
-end
-
-function interiorAngleForceCell2(c, I, J)
-
-    res = zeros(2 * N)
-
-    res[1] = (I[1] - J[1]) * d_xi_interiorAngle2(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[N] = (I[N] - J[N]) * d_xi_interiorAngle2(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-    res[N+1] = (I[1] - J[1]) * d_yi_interiorAngle2(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[2*N] = (I[N] - J[N]) * d_yi_interiorAngle2(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-
-    for i = 2:N-1
-
-        res[i] = (I[i] - J[i]) * d_xi_interiorAngle2(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-        res[i+N] = (I[i] - J[i]) * d_yi_interiorAngle2(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-
-    end
-
-    return res
-
-end
-
-function interiorAngleForceCell_MT1(c, I, J)
+function interiorAngleForceCell_MT1(c, I_d)
     """
     given: 
         * 1 DF cell c 
         * list of desired cell interior angles for that cell I 
-        * list of current cell interior angles for that cell J 
     """
 
+    intAngles = computeIntAngles(c)
     res = zeros(2 * NumberOfCellWallPoints) # res[1:NumberOfCellWallPoints] for x coordinates, res[NumberOfCellWallPoints+1:2*NumberOfCellWallPoints] for y coordinates
-    for k = 1:NumberOfCellWallPoints
+    for i = 1:NumberOfCellWallPoints
 
-        currentIdx = k
-        if currentIdx == 1
-            prevIdx = NumberOfCellWallPoints
+        if i == 1
+            prev = NumberOfCellWallPoints
         else
-            prevIdx = currentIdx - 1
+            prev = i - 1
         end
 
-        if currentIdx == NumberOfCellWallPoints
-            nextIdx = 1
+        if i == NumberOfCellWallPoints
+            next = 1
         else
-            nextIdx = currentIdx + 1
+            next = i + 1
         end
 
-        v_prev = vertex(c, prevIdx)
-        v_curr = vertex(c, currentIdx)
-        v_next = vertex(c, nextIdx)
+        v_prev = vertex(c, prev)
+        v_curr = vertex(c, i)
+        v_next = vertex(c, next)
 
         # assign x dynamic for vertex k 
-        res[k] -= (J[prevIdx] - I[prevIdx]) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
-        res[k] -= (J[currentIdx] - I[currentIdx]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
-        res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
-        res[k] -= (J[nextIdx] - I[nextIdx]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
+        res[i] += (I_d[prev] - intAngles[prev]) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
+        res[i] += (I_d[i] - intAngles[i]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[i] += (I_d[i] - intAngles[i]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
+        res[i] += (I_d[next] - intAngles[next]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
 
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints+k] -= (J[prevIdx] - I[prevIdx]) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
-        res[NumberOfCellWallPoints+k] -= (J[currentIdx] - I[currentIdx]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+k] -= (J[currentIdx] - I[currentIdx]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
-        res[NumberOfCellWallPoints+k] -= (J[nextIdx] - I[nextIdx]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += (I_d[prev] - intAngles[prev] ) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += (I_d[i] - intAngles[i]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += (I_d[i] - intAngles[i]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += (I_d[next] - intAngles[next]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
 
     end
 
@@ -523,10 +398,9 @@ end
 function interiorAngleForce(u, I_d)
 
     res = zeros(2 * M * N)
-
+    C = getCellsFromU(u) 
     for i = 1:M
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        a = interiorAngleForceCell_MT1(c, I_d, computeInteriorAngles(c))
+        a = interiorAngleForceCell_MT1(C[i], I_d)
         for j = 1:N
             res[N*(i-1)+j] = a[j]
             res[N*(i-1+M)+j] = a[j+N]
