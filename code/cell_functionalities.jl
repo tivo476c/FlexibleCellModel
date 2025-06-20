@@ -761,20 +761,6 @@ l(x,y) = norm(x-y)
 l(x1, y1, x2, y2) = norm([x1-x2, y1-y2])
 
 
-# returns the force caused by the edge i 
-function edgeForce(x::Vector{Float64}, y::Vector{Float64}, i::Int64, j::Int64)
-
-    N = length(x)
-    if( i < 1 || j < 1 || i > N || j > N) 
-        println("Wrong Indices in edgeForce.")
-    end
-    if(N != length(y))
-        println("In edgeForce x & y must have the same dimension.")
-    end
-        
-    return (l1[j] / l(x[i], y[i], x[j], y[j]) - 1)*[x[i]-x[j], y[i]-y[j]] 
-
-end
 
 # TODO: go on 
 
@@ -949,4 +935,25 @@ function getCellsFromU(u)
     end 
     return res 
     
+end 
+
+function circleArea(radius, N)
+    """
+    Returns area of a regular polygon with N vertices and each vertex having a distance of radius to centre. 
+    """
+    return 0.5*N*radius^2*sin(2*pi/N) 
+end 
+
+function circleEdgeLengths(radius, N)
+    """
+    Returns edge lengths of a regular polygon with N vertices and each vertex having a distance of radius to centre. 
+    """
+    return 2*radius*sin(pi/N)*ones(N)
+end 
+
+function circleInteriorAngles(N)
+    """
+    Returns interior angles of a regular polygon with N vertices and each vertex having a distance of radius to centre. 
+    """
+    return (N-2)/N * pi *ones(N)
 end 

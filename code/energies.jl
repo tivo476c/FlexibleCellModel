@@ -32,10 +32,10 @@ function energies!(du, u, p, t)
     end
 
     if (forceScalings[1] != 0)
-        res += forceScalings[1] * areaForce(u, A_d)
+        res += forceScalings[1] * areaForce(u, A_d; k=2)
     end
     if (forceScalings[2] != 0)
-        res += forceScalings[2] * edgeForce(u, E_d)
+        res += forceScalings[2] * edgeForce(u, E_d; k=2)
     end
     if (forceScalings[3] != 0)
         res += forceScalings[3] * interiorAngleForce(u, I_d)
@@ -146,7 +146,6 @@ function areaEnergyCell(c, A_d; k=2)
     return 1.0/k * abs(A_d - areaPolygon(c.x, c.y))^k
 end 
 
-
 function areaGradientCell(c)
     """
     Returns for a cell c a vector of length (R^2)^N, that holds for each vertex its area gradient.  
@@ -167,7 +166,6 @@ function areaGradientCell(c)
     return res
 
 end
-
 
 # computes all vertice forces for a single cell  
 function areaForceCell(c, A_d; k=2)
@@ -211,40 +209,54 @@ end
 # E_d[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
 
 function computeEdgeLengths(c::DiscreteCell)
-
-    N = length(c.x)
+    """
+    Returns vector R^N of all edge lengths of the given cell. 
+    """
     res = zeros(N)
-
     for i = 1:N-1
         res[i] = norm([c.x[i], c.y[i]] - [c.x[i+1], c.y[i+1]], 2)
     end
     res[N] = norm([c.x[N], c.y[N]] - [c.x[1], c.y[1]], 2)
-
     return res
-    # res[1] = length(vertex_1, vertex_2) | res[i] = length(vertex_i, vertex_i+1) | res[N] = length(vertex_N, vertex_1)
-
 end
 
-
+function edgeEnergyCell(c, E_d; k=2)
+    """
+    Returns edge energy of cell c. 
+    """
+    edgeLengths = computeEdgeLengths(c)
+    res = 0
+    for i=1:N 
+        res += 1.0/k * abs(E_d[i] - edgeLengths[i])^k 
+    end 
+    return res 
+end 
 
 # computes all Edge Energies for a single cell 
-function edgeForceCell(c, e1, f1)
-
+function edgeForceCell(c, E_d; k=2)
+    """
+    Returns the edge force vectors for all cell vertices of c. 
+    """
     res = zeros(2 * N)
-    #f1 = computeEdgeLengths(c) 
-
-    # 1st and last x value 
-    res[1] = (e1[1] / f1[1] - 1) * (c.x[1] - c.x[2]) + (e1[N] / f1[N] - 1) * (c.x[1] - c.x[N])
-    res[N] = (e1[N] / f1[N] - 1) * (c.x[N] - c.x[1]) + (e1[N-1] / f1[N-1] - 1) * (c.x[N] - c.x[N-1])
-    # 1st and last y value 
-    res[N+1] = (e1[1] / f1[1] - 1) * (c.y[1] - c.y[2]) + (e1[N] / f1[N] - 1) * (c.y[1] - c.y[N])
-    res[2*N] = (e1[N] / f1[N] - 1) * (c.y[N] - c.y[1]) + (e1[N-1] / f1[N-1] - 1) * (c.y[N] - c.y[N-1])
-
+    E = computeEdgeLengths(c) 
+    
     # all remaining values 
-    for i = 2:(N-1)
+    for i = 1:N
 
-        res[i] = (e1[i] / f1[i] - 1) * (c.x[i] - c.x[i+1]) + (e1[i-1] / f1[i-1] - 1) * (c.x[i] - c.x[i-1])
-        res[i+N] = (e1[i] / f1[i] - 1) * (c.y[i] - c.y[i+1]) + (e1[i-1] / f1[i-1] - 1) * (c.y[i] - c.y[i-1])
+        if i == 1
+            next = 2 
+            prev = N 
+        elseif i == N 
+            next = 1
+            prev = N-1 
+        else 
+            next = i+1
+            prev = i-1
+            res[i]   = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.x[i] - c.x[prev]) 
+                     + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.x[i] - c.x[next])
+            res[i+N] = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.y[i] - c.y[prev]) 
+                     + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.y[i] - c.y[next])
+        end 
 
     end
 
@@ -252,29 +264,21 @@ function edgeForceCell(c, e1, f1)
 
 end
 
-
-
 # computes all vertice forces for all cells 
-function edgeForce(u, E_d)
-
+function edgeForce(u, E_d; k=2)
+    """
+    Returns all edge force vectors for all vertices in the cell system u.  
+    """
     res = zeros(2 * M * N)
-
+    cells = getCellsFromU(u) 
     for i = 1:M
-
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        # edges = E_d[(i-1)*N+1:i*N]                                        # [OLD INDEXING] desired edge lengths of c 
-        f1 = computeEdgeLengths(c)                                         # current edge lengths of c  
-        e = edgeForceCell(c, E_d, f1)
+        e = edgeForceCell(cells[i], E_d; k=k)
         for j = 1:N
             res[N*(i-1)+j] = e[j]
             res[N*(i-1+M)+j] = e[j+N]
         end
-
     end
-
     return res
-
-
 end
 
 

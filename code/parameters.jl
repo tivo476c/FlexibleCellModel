@@ -11,8 +11,8 @@ D = 1                                       # diffusitivity constant
 radius = 0.005                               # cell radius 
 
 ## Force scalings: 
-areaForceFactor = 1e10
-edgeForceFactor = 0
+areaForceFactor = 0
+edgeForceFactor = 1e3
 interiorAngleForceFactor = 0
 overlapForceFactor = 0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
@@ -35,7 +35,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "testAreaForce"
+simulationName = "testEdgeForce"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 30

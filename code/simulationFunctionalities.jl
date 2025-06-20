@@ -93,8 +93,8 @@ function createSimGif(gifPath::String,
     title="",
     xlab="x",
     ylab="y",
-    fps=3,
-    dpi=300)
+    fps=1,
+    dpi=100)
 
     if N == 0
         if radius == 0
@@ -486,9 +486,9 @@ function runShow_overlap()
     c2 = cellToDiscreteCell(circleCell([0.004, 0.0], radius), NumberOfCellWallPoints)
     u0 = [c1.x; c2.x; c1.y; c2.y]
     # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
-    A_d = 7.853981633974483e-5 * 2 
-    E_d = 0.0015643446504023087 * ones(N)
-    I_d = 0.9 * pi * ones(N)
+    A_d = circleArea(radius,N)
+    E_d = circleEdgeLengths(radius,N) 
+    I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
     @time sol = solve(cellProblem,
@@ -496,8 +496,6 @@ function runShow_overlap()
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-   
-    println("len(extractedSol) = $(length(extractedSol.t))")
     createSimGif(gifPath, extractedSol; title=simulationName)
 
     # for overlapScaling in [1, 10, 10^2, 10^3, round(timeStepSize^(-1))]
