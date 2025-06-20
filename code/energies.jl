@@ -72,8 +72,8 @@ function brownian!(du, u, p, t)
 end
 
 function nomotion!(du, u, p, t)
-    du = zeros(2*M*N) 
-end 
+    du = zeros(2 * M * N)
+end
 #-------------------------------------- BOUNDARY CONDITION
 
 function apply_BC(u, t, integrator)
@@ -204,8 +204,7 @@ function areaForce(u, A1)
 
 
     end
-
-    return 0.2 * res
+    return res
 
 end
 
@@ -450,7 +449,7 @@ function interiorAngleForceCell(c, I, J)
 
     end
 
-    return -res 
+    return -res
 
 end
 
@@ -525,7 +524,7 @@ function interiorAngleForce(u, I1)
     res = zeros(2 * M * N)
 
     for i = 1:M
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])        
+        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
         a = interiorAngleForceCell_MT1(c, I1, computeInteriorAngles(c))
         for j = 1:N
             res[N*(i-1)+j] = a[j]
@@ -533,7 +532,7 @@ function interiorAngleForce(u, I1)
         end
     end
 
-    return res ./ 30 
+    return res ./ 30
 
 end
 
@@ -609,15 +608,19 @@ function bachelorOverlapForceCells(c1, c2)
         for ind ∈ v1
 
             i, j = ind
-            r1x[i] = -0.5 * area * gradO[j]
-            r1y[i] = -0.5 * area * gradO[j+K]
+            r1x[i] = -0.5 * 2 * gradO[j]
+            r1y[i] = -0.5 * 2 * gradO[j+K]
+            # r1x[i] = -0.5 * area * gradO[j]
+            # r1y[i] = -0.5 * area * gradO[j+K]
 
         end
         for ind ∈ v2
 
             i, j = ind
-            r2x[i] = -0.5 * area * gradO[j]
-            r2y[i] = -0.5 * area * gradO[j+K]
+            r2x[i] = -0.5 * 2 * gradO[j]
+            r2y[i] = -0.5 * 2 * gradO[j+K]
+            # r2x[i] = -0.5 * area * gradO[j]
+            # r2y[i] = -0.5 * area * gradO[j+K]
 
         end
     end

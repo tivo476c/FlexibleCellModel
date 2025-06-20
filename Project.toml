@@ -16,4 +16,5 @@ Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
 StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 
 [compat]
+DataStructures = "0.18.22"
 Sockets = "1.11.0"
