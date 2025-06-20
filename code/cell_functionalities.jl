@@ -936,3 +936,17 @@ function getCentre(c::DiscreteCell)
     y = sum(c.y) / N 
     return [x,y]
 end 
+
+function getCellsFromU(u)
+    """
+    Returns vector [c1, c2, ..., cM] of type DiscreteCell for u from DifferentialEquations.jl 
+    """
+
+    res = DiscreteCell[]
+    for i = 1:M
+        c_i = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+        push!(res, c_i)
+    end 
+    return res 
+    
+end 

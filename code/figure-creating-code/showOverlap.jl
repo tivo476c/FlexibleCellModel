@@ -8,17 +8,17 @@ C = circleCell([-1.5,0.0], 2.0)
 cDF1 = cellToDiscreteCell(C, N) 
 cDF2 = moveC(cDF1, 3.0, 0.0)
 
-A1 = ones(M) * areaPolygon(cDF1.x, cDF1.y) # ∈ R^N
-E1 = ones(N*M)              # ∈ (R^N)^M
-I1 = ones(N*M)              # ∈ (R^N)^M
+A_d = ones(M) * areaPolygon(cDF1.x, cDF1.y) # ∈ R^N
+E_d = ones(N*M)              # ∈ (R^N)^M
+I_d = ones(N*M)              # ∈ (R^N)^M
 e = computeEdgeLengths(cDF1)
 ia = computeInteriorAngles(cDF1)
 
 # initial condition 
 
 for i = 1:M
-    E1[(i-1)*N+1 : i*N] = e
-    I1[(i-1)*N+1 : i*N] = ia
+    E_d[(i-1)*N+1 : i*N] = e
+    I_d[(i-1)*N+1 : i*N] = ia
 end 
 
 u0 = vcat(cDF1.x, cDF2.x, cDF1.y, cDF2.y)

@@ -16,15 +16,15 @@ function energies!(du, u, p, t)
      Args:
         du ... change that gets applied to u: u += dt*du + brownian 
         u  ... current state of the cell system [c1.x, ..., cM.x, c1.y, ..., cM.y] (in R^(2MN))
-        p = dt, D, A1, E1, I1, where
+        p = dt, D, A_d, E_d, I_d, where
             dt ... time step size (in R) 
             D  ... diffusion coefficient (in R) 
-            A1 ... desired cell areas for all cells (in R)
-            E1 ... desired edge lengths of a cell (in R^N)
-            I1 ... desired interior angles of a cell (in R^N)
+            A_d ... desired cell areas for all cells (in R)
+            E_d ... desired edge lengths of a cell (in R^N)
+            I_d ... desired interior angles of a cell (in R^N)
         t  ... current time 
     """
-    _, _, A1, E1, I1 = p
+    _, _, A_d, E_d, I_d = p
     if N != 0
         res = zeros(2 * N * M)
     else
@@ -32,13 +32,13 @@ function energies!(du, u, p, t)
     end
 
     if (forceScalings[1] != 0)
-        res += forceScalings[1] * areaForce(u, A1)
+        res += forceScalings[1] * areaForce(u, A_d)
     end
     if (forceScalings[2] != 0)
-        res += forceScalings[2] * edgeForce(u, E1)
+        res += forceScalings[2] * edgeForce(u, E_d)
     end
     if (forceScalings[3] != 0)
-        res += forceScalings[3] * interiorAngleForce(u, I1)
+        res += forceScalings[3] * interiorAngleForce(u, I_d)
     end
     if (forceScalings[4] != 0)
         res += forceScalings[4] * overlapForce(u)
@@ -137,25 +137,31 @@ CallBack_reflectiveBC_cellOverlap = DiscreteCallback(apply_BC_overlap, reflectiv
 
 #-------------------------------------- SET Force FUNCTIONS
 
-#------------------- AREA Force -> add A1 ∈ R^M to initialisation 
+#------------------- AREA Force -> add A_d ∈ R to initialisation 
 
-# we need a vector of all wanted cell volumes A1 ∈ R^M in order to implement the area Force 
+function areaEnergyCell(c, A_d; k=2)
+    """
+    Returns area energy of a cell c. 
+    """
+    return 1.0/k * abs(A_d - areaPolygon(c.x, c.y))^k
+end 
 
-function areaGradient(c, a1=0.0)
 
-    N = length(c.x)
+function areaGradientCell(c)
+    """
+    Returns for a cell c a vector of length (R^2)^N, that holds for each vertex its area gradient.  
+    First N entries are for the x coords of the N vertices and the second N entries for the y coords. 
+    """
+
     #A = areaPolygon( c.x, c.y ) 
-    #factor = a1 - A  
     res = zeros(2 * N)
     res[1] = c.y[2] - c.y[N]
     res[N+1] = c.x[N] - c.x[2]
     res[N] = c.y[1] - c.y[N-1]
     res[2*N] = c.x[N-1] - c.x[1]
     for i = 2:N-1
-
         res[i] = c.y[i+1] - c.y[i-1]
         res[i+N] = c.x[i-1] - c.x[i+1]
-
     end
 
     return res
@@ -164,54 +170,45 @@ end
 
 
 # computes all vertice forces for a single cell  
-function areaForceCell(c, a1)
+function areaForceCell(c, A_d; k=2)
+    """
+    Returns for a cell c a vector of length (R^2)^N, that holds for each vertex the area force that gets applied in each time step of a simulation.  
+    First N entries are for the x coords of the N vertices and the second N entries for the y coords. 
+    """
 
     A = areaPolygon(c.x, c.y)
-    factor = 0.5 * (a1 - A)
-    res = zeros(2 * N)
+    factor = 0.5* sign(A_d - A) * abs(A_d - A)^(k-1)
 
-    res[1] = c.y[2] - c.y[N]
-    res[N+1] = c.x[N] - c.x[2]
-    res[N] = c.y[1] - c.y[N-1]
-    res[2*N] = c.x[N-1] - c.x[1]
-    for i = 2:N-1
-
-        res[i] = c.y[i+1] - c.y[i-1]
-        res[i+N] = c.x[i-1] - c.x[i+1]
-
-    end
-
-    return factor * res
+    return factor * areaGradientCell(c)
 
 end
 
 # final area Force that can be used in foo 
-function areaForce(u, A1)
-
+function areaForce(u, A_d; k=2)
+    """
+    Returns for a cell system u a vector of length (R^2N)^M, that holds for each vertex the area force that gets applied in each time step of a simulation.  
+    """
     res = zeros(2 * M * N)
-
+    cells = getCellsFromU(u) 
     for i = 1:M
 
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        # a = areaForceCell(c, A1[i])                               # old indexing
-        a = areaForceCell(c, A1)
+        a = areaForceCell(cells[i], A_d; k=k)
         for j = 1:N
-
             res[N*(i-1)+j] = a[j]
             res[N*(i-1+M)+j] = a[j+N]
-
         end
-
 
     end
     return res
 
 end
 
-#------------------- EDGE Force -> add E1 ∈ R^(M*N) to initialisation 
 
-# we need a vector of all wanted edge lengths E1 ∈ R^(M*N) in order to implement the edge Force 
-# E1[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
+
+#------------------- EDGE Force -> add E_d ∈ R^(M*N) to initialisation 
+
+# we need a vector of all wanted edge lengths E_d ∈ R^(M*N) in order to implement the edge Force 
+# E_d[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
 
 function computeEdgeLengths(c::DiscreteCell)
 
@@ -258,16 +255,16 @@ end
 
 
 # computes all vertice forces for all cells 
-function edgeForce(u, E1)
+function edgeForce(u, E_d)
 
     res = zeros(2 * M * N)
 
     for i = 1:M
 
         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        # edges = E1[(i-1)*N+1:i*N]                                        # [OLD INDEXING] desired edge lengths of c 
+        # edges = E_d[(i-1)*N+1:i*N]                                        # [OLD INDEXING] desired edge lengths of c 
         f1 = computeEdgeLengths(c)                                         # current edge lengths of c  
-        e = edgeForceCell(c, E1, f1)
+        e = edgeForceCell(c, E_d, f1)
         for j = 1:N
             res[N*(i-1)+j] = e[j]
             res[N*(i-1+M)+j] = e[j+N]
@@ -281,10 +278,10 @@ function edgeForce(u, E1)
 end
 
 
-#------------------- INTERIOR ANGLE Force -> add I1 ∈ R^(M*N) to initialisation 
+#------------------- INTERIOR ANGLE Force -> add I_d ∈ R^(M*N) to initialisation 
 
-# we need a vector of all wanted interior angles I1 ∈ R^(M*N) in order to implement the edge Force 
-# I1[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
+# we need a vector of all wanted interior angles I_d ∈ R^(M*N) in order to implement the edge Force 
+# I_d[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
 
 #= old stuff 
 function computeCenter(c::DiscreteCell)
@@ -519,13 +516,13 @@ function interiorAngleForceCell_MT1(c, I, J)
 
 end
 
-function interiorAngleForce(u, I1)
+function interiorAngleForce(u, I_d)
 
     res = zeros(2 * M * N)
 
     for i = 1:M
         c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        a = interiorAngleForceCell_MT1(c, I1, computeInteriorAngles(c))
+        a = interiorAngleForceCell_MT1(c, I_d, computeInteriorAngles(c))
         for j = 1:N
             res[N*(i-1)+j] = a[j]
             res[N*(i-1+M)+j] = a[j+N]
@@ -604,7 +601,7 @@ function bachelorOverlapForceCells(c1, c2)
         # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
         v1, v2 = collectOverlapIndices(o, c1, c2)
 
-        gradO = areaGradient(o)
+        gradO = areaGradientCell(o)
         for ind ∈ v1
 
             i, j = ind

@@ -93,7 +93,7 @@ function createSimGif(gifPath::String,
     title="",
     xlab="x",
     ylab="y",
-    fps=5,
+    fps=3,
     dpi=300)
 
     if N == 0
@@ -186,7 +186,7 @@ function createSimGif(gifPath::String,
                 xlims=domain,
                 ylims=domain,
                 xguidefontsize=13,
-                xlabel="t = $(@sprintf("%.5f", time))")
+                xlabel="t = $(@sprintf("%.6f", time))")
 
             for i = 2:NumberOfCells
 
@@ -200,7 +200,7 @@ function createSimGif(gifPath::String,
                     xlims=domain,
                     ylims=domain,
                     xguidefontsize=13,
-                    xlabel="t = $(@sprintf("%.5f", time))")
+                    xlabel="t = $(@sprintf("%.6f", time))")
             end
 
         end
@@ -350,18 +350,18 @@ end
 function computeDesiredStates_circleCells()
     C = circleCell([0.0, 0.0], radius)
     cDF = cellToDiscreteCell(C, N)
-    A1 = ones(M) * areaPolygon(cDF.x, cDF.y) # ∈ R^N
-    E1 = ones(N * M)              # ∈ (R^N)^M
-    I1 = ones(N * M)              # ∈ (R^N)^M
+    A_d = ones(M) * areaPolygon(cDF.x, cDF.y) # ∈ R^N
+    E_d = ones(N * M)              # ∈ (R^N)^M
+    I_d = ones(N * M)              # ∈ (R^N)^M
     e = computeEdgeLengths(cDF)
     ia = computeInteriorAngles(cDF)
 
     for i = 1:M
-        E1[(i-1)*N+1:i*N] = e
-        I1[(i-1)*N+1:i*N] = ia
+        E_d[(i-1)*N+1:i*N] = e
+        I_d[(i-1)*N+1:i*N] = ia
     end
 
-    return A1, E1, I1
+    return A_d, E_d, I_d
 end
 
 function runSimulation_locations()
@@ -377,7 +377,7 @@ function runSimulation_locations()
     mkpath(heatMapsPath)
 
     if N != 0
-        A1, E1, I1 = computeDesiredStates_circleCells()
+        A_d, E_d, I_d = computeDesiredStates_circleCells()
     end
 
     ### 1st save one simulation as gif 
@@ -419,7 +419,7 @@ function runSimulation(NuProcs)
     mkpath(heatMapsPath)
 
     if N != 0
-        A1, E1, I1 = computeDesiredStates_circleCells()
+        A_d, E_d, I_d = computeDesiredStates_circleCells()
     end
 
     # 1st save one simulation as gif 
@@ -485,18 +485,19 @@ function runShow_overlap()
     c1 = cellToDiscreteCell(circleCell([-0.004, 0.0], radius), NumberOfCellWallPoints)
     c2 = cellToDiscreteCell(circleCell([0.004, 0.0], radius), NumberOfCellWallPoints)
     u0 = [c1.x; c2.x; c1.y; c2.y]
-    # A1 = 0.4 * sin(0.1 * pi) # TODO: change back
-    A1 = 7.725424859373685e-5
-    E1 = 0.0015643446504023087 * ones(N)
-    I1 = 0.9 * pi * ones(N)
-    p = timeStepSize, D, A1, E1, I1
+    # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
+    A_d = 7.853981633974483e-5 * 2 
+    E_d = 0.0015643446504023087 * ones(N)
+    I_d = 0.9 * pi * ones(N)
+    p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
     @time sol = solve(cellProblem,
         EM(),
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-
+   
+    println("len(extractedSol) = $(length(extractedSol.t))")
     createSimGif(gifPath, extractedSol; title=simulationName)
 
     # for overlapScaling in [1, 10, 10^2, 10^3, round(timeStepSize^(-1))]

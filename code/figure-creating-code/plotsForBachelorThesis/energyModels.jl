@@ -1,6 +1,6 @@
 include("../../energies.jl")
 
-# One has to set: M, N;  u0, A1, E1, I1, 
+# One has to set: M, N;  u0, A_d, E_d, I_d, 
 
 
 # -------------- animations for area Force 
@@ -15,7 +15,7 @@ begin
     #    println(vertex(C, i))
     #end
 
-    A1 = [10.]
+    A_d = [10.]
 
     tspan = (0.0, 20.0)
     Δt = 1 / 2^(8)
@@ -125,7 +125,7 @@ begin
 
     C = rectangleCell(Rectangle(-3.,3.,-1.,1.), N)
     u0 = [C.x; C.y]
-    E1 = [2., 6., 2., 6.]
+    E_d = [2., 6., 2., 6.]
 
     tspan = (0.0, 20.0)
     Δt = 1 / 2^(8)
@@ -246,11 +246,11 @@ begin
     C1 = cellToDiscreteCell(circleCell([0.0,0.0],2.0), 6)
     shapePlot(C1)
 
-    I1 = zeros(6)
-    I1[1] = intAngleMT( vertex(C1, 6),vertex(C1, 1), vertex(C1, 2) )
-    I1[6] = intAngleMT( vertex(C1, 5),vertex(C1, 6), vertex(C1, 1) )
+    I_d = zeros(6)
+    I_d[1] = intAngleMT( vertex(C1, 6),vertex(C1, 1), vertex(C1, 2) )
+    I_d[6] = intAngleMT( vertex(C1, 5),vertex(C1, 6), vertex(C1, 1) )
     for i = 2:5
-        I1[i] = intAngleMT( vertex(C1, i-1),vertex(C1, i), vertex(C1, i+1) )
+        I_d[i] = intAngleMT( vertex(C1, i-1),vertex(C1, i), vertex(C1, i+1) )
     end 
     
     u0 = [C.x; C.y]
@@ -539,14 +539,14 @@ C_D = cellToDiscreteCell(C_D, N)
 areaPolygon(C_D.x, C_D.y)
 multiShapePlot(MutableLinkedList{DiscreteCell}(C, C_D), MutableLinkedList{String}("cell0", "cellD"))
 u0 = [C.x; C.y]
-A1 = ones(M) * areaPolygon(C_D.x, C_D.y) # ∈ R^M
-E1 = ones(N*M)              # ∈ (R^N)^M
-I1 = ones(N*M)              # ∈ (R^N)^M
+A_d = ones(M) * areaPolygon(C_D.x, C_D.y) # ∈ R^M
+E_d = ones(N*M)              # ∈ (R^N)^M
+I_d = ones(N*M)              # ∈ (R^N)^M
 e = computeEdgeLengths(C_D)
 ia = computeInteriorAngles(C_D)
 for i = 1:M 
-    E1[(i-1)*N+1 : i*N] = e
-    I1[(i-1)*N+1 : i*N] = ia
+    E_d[(i-1)*N+1 : i*N] = e
+    I_d[(i-1)*N+1 : i*N] = ia
 end 
 
 tspan = (0.0, 15.0)
@@ -684,14 +684,14 @@ for i = 0:2
     end 
 end 
 
-A1 = ones(M) * areaPolygon(cDF.x, cDF.y) # ∈ R^M
-E1 = ones(N*M)              # ∈ (R^N)^M
-I1 = ones(N*M)              # ∈ (R^N)^M
+A_d = ones(M) * areaPolygon(cDF.x, cDF.y) # ∈ R^M
+E_d = ones(N*M)              # ∈ (R^N)^M
+I_d = ones(N*M)              # ∈ (R^N)^M
 e = computeEdgeLengths(cDF)
 ia = computeInteriorAngles(cDF)
 for i = 1:M 
-    E1[(i-1)*N+1 : i*N] = e
-    I1[(i-1)*N+1 : i*N] = ia
+    E_d[(i-1)*N+1 : i*N] = e
+    I_d[(i-1)*N+1 : i*N] = ia
 end 
 
 
