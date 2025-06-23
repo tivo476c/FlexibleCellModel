@@ -175,7 +175,10 @@ function createSimGif(gifPath::String,
 
             X, Y = solutionToCells(u)               # now each cell is: [X[...], Y[...]]
 
-
+            timelab = "t = $(@sprintf("%.6f", time))"
+            currentAngle = computeIntAngles(DiscreteCell(X[1], Y[1]))[2] / pi * 180
+            wantAngle = 20
+            xlab = "$timelab\ncurrentAngle = $currentAngle °\nwantAngle = $wantAngle °"
             plot(X[1], Y[1],
                 seriestype=:shape,
                 aspect_ratio=:equal,
@@ -186,7 +189,7 @@ function createSimGif(gifPath::String,
                 xlims=domain,
                 ylims=domain,
                 xguidefontsize=13,
-                xlabel="t = $(@sprintf("%.6f", time))")
+                xlabel=xlab)
 
             for i = 2:NumberOfCells
 
@@ -480,15 +483,22 @@ function runShow_overlap()
 
     # u0 = [-0.00375, 0.15, 0.0, 0.0]  # point particle initialisation 
 
-    c1 = rectangleCell(Rectangle(-0.003, -0.001, -0.005, 0.005), NumberOfCellWallPoints)
-    c2 = rectangleCell(Rectangle(0.001, 0.003, -0.005, 0.005), NumberOfCellWallPoints)
+    # c1 = rectangleCell(Rectangle(-0.003, -0.001, -0.005, 0.005), NumberOfCellWallPoints)
+    # c2 = rectangleCell(Rectangle(0.001, 0.003, -0.005, 0.005), NumberOfCellWallPoints)
+
     # c1 = cellToDiscreteCell(circleCell([-0.004, 0.0], radius), NumberOfCellWallPoints)
     # c2 = cellToDiscreteCell(circleCell([0.004, 0.0], radius), NumberOfCellWallPoints)
-    u0 = [c1.x; c2.x; c1.y; c2.y]
+
+    # u0 = [c1.x; c2.x; c1.y; c2.y]
+    # c1 = cellToDiscreteCell(circleCell([0.0, 0.0], radius), 20) # 
+
+    x = -6.0
+    u0 = [0, x, 0, 9, 1, 0, -1, 0]
     # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
-    A_d = circleArea(radius,N)
-    E_d = circleEdgeLengths(radius,N)
-    I_d = circleInteriorAngles(N)
+    A_d = circleArea(0.002, N)
+    E_d = circleEdgeLengths(radius, N)
+    remainingAngles = circleInteriorAngles(20)[1]
+    I_d = [0, 340 / 180 * pi, 0, 0]
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
     @time sol = solve(cellProblem,

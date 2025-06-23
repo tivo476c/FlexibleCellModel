@@ -44,6 +44,10 @@ function energies!(du, u, p, t)
         res += forceScalings[4] * overlapForce(u)
     end
 
+    res[1] = 0
+    res[3:5] = [0, 0, 0]
+    res[7:8] = [0, 0]
+
     for i = 1:length(du)
         du[i] = res[i]
     end
@@ -143,8 +147,8 @@ function areaEnergyCell(c, A_d; k=2)
     """
     Returns area energy of a cell c. 
     """
-    return 1.0/k * abs(A_d - areaPolygon(c.x, c.y))^k
-end 
+    return 1.0 / k * abs(A_d - areaPolygon(c.x, c.y))^k
+end
 
 function areaGradientCell(c)
     """
@@ -175,7 +179,7 @@ function areaForceCell(c, A_d; k=2)
     """
 
     A = areaPolygon(c.x, c.y)
-    factor = 0.5* sign(A_d - A) * abs(A_d - A)^(k-1)
+    factor = 0.5 * sign(A_d - A) * abs(A_d - A)^(k - 1)
 
     return factor * areaGradientCell(c)
 
@@ -187,7 +191,7 @@ function areaForce(u, A_d; k=2)
     Returns for a cell system u a vector of length (R^2N)^M, that holds for each vertex the area force that gets applied in each time step of a simulation.  
     """
     res = zeros(2 * M * N)
-    cells = getCellsFromU(u) 
+    cells = getCellsFromU(u)
     for i = 1:M
 
         a = areaForceCell(cells[i], A_d; k=k)
@@ -226,11 +230,11 @@ function edgeEnergyCell(c, E_d; k=2)
     """
     edgeLengths = computeEdgeLengths(c)
     res = 0
-    for i=1:N 
-        res += 1.0/k * abs(E_d[i] - edgeLengths[i])^k 
-    end 
-    return res 
-end 
+    for i = 1:N
+        res += 1.0 / k * abs(E_d[i] - edgeLengths[i])^k
+    end
+    return res
+end
 
 # computes all Edge Energies for a single cell 
 function edgeForceCell(c, E_d; k=2)
@@ -238,26 +242,26 @@ function edgeForceCell(c, E_d; k=2)
     Returns the edge force vectors for all cell vertices of c. 
     """
     res = zeros(2 * N)
-    E = computeEdgeLengths(c) 
+    E = computeEdgeLengths(c)
     # print("edges: E = $E, desired edges: E_d = $E_d")
     # all remaining values 
     for i = 1:N
 
         if i == 1
-            next = 2 
-            prev = N 
-        elseif i == N 
+            next = 2
+            prev = N
+        elseif i == N
             next = 1
-            prev = N-1 
-        else 
-            next = i+1
-            prev = i-1
-        end 
+            prev = N - 1
+        else
+            next = i + 1
+            prev = i - 1
+        end
 
-        res[i]   = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.x[i] - c.x[prev]) 
-                 + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.x[i] - c.x[next])
-        res[i+N] = sign(E_d[prev]- E[prev]) / E[prev] * abs(E_d[prev]- E[prev])^(k-1) * (c.y[i] - c.y[prev]) 
-                 + sign(E_d[i]- E[i]) / E[i] * abs(E_d[i]- E[i])^(k-1) * (c.y[i] - c.y[next])
+        res[i] = sign(E_d[prev] - E[prev]) / E[prev] * abs(E_d[prev] - E[prev])^(k - 1) * (c.x[i] - c.x[prev])
+        +sign(E_d[i] - E[i]) / E[i] * abs(E_d[i] - E[i])^(k - 1) * (c.x[i] - c.x[next])
+        res[i+N] = sign(E_d[prev] - E[prev]) / E[prev] * abs(E_d[prev] - E[prev])^(k - 1) * (c.y[i] - c.y[prev])
+        +sign(E_d[i] - E[i]) / E[i] * abs(E_d[i] - E[i])^(k - 1) * (c.y[i] - c.y[next])
     end
 
     return res
@@ -270,7 +274,7 @@ function edgeForce(u, E_d; k=2)
     Returns all edge force vectors for all vertices in the cell system u.  
     """
     res = zeros(2 * M * N)
-    cells = getCellsFromU(u) 
+    cells = getCellsFromU(u)
     for i = 1:M
         e = edgeForceCell(cells[i], E_d; k=k)
         for j = 1:N
@@ -317,7 +321,7 @@ function intAngleMT(v_prev, v_curr, v_next)
     return res
 end
 
-function computeIntAngles(c) 
+function computeIntAngles(c)
 
     V = Vector{Vector{Float64}}(undef, N)
     for i = 1:N
@@ -325,30 +329,30 @@ function computeIntAngles(c)
     end
     res = zeros(N)
     for i = 1:N
-        if i == 1 
-            prev = N 
-            next = 2 
-        elseif  i==N 
-            prev = N-1 
+        if i == 1
+            prev = N
+            next = 2
+        elseif i == N
+            prev = N - 1
             next = 1
-        else 
-            prev = i-1
-            next = i+1 
-        end 
+        else
+            prev = i - 1
+            next = i + 1
+        end
         res[i] = intAngleMT(V[prev], V[i], V[next])
     end
     return res
 
-end 
+end
 
 function intAngleEnergy(c, I_d; k=2)
     res = 0
     intAngles = computeIntAngles(c)
-    for i = 1:N 
-        res += 1.0/k * abs(I_d[i] - intAngles[i])^k 
-    end 
-    return res 
-end 
+    for i = 1:N
+        res += 1.0 / k * abs(I_d[i] - intAngles[i])^k
+    end
+    return res
+end
 
 function interiorAngleForceCell_MT1(c, I_d)
     """
@@ -378,16 +382,16 @@ function interiorAngleForceCell_MT1(c, I_d)
         v_next = vertex(c, next)
 
         # assign x dynamic for vertex k 
-        res[i] += (I_d[prev] - intAngles[prev]) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
-        res[i] += (I_d[i] - intAngles[i]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
-        res[i] += (I_d[i] - intAngles[i]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
-        res[i] += (I_d[next] - intAngles[next]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
+        # res[i] += sign(I_d[prev] - intAngles[prev]) * (I_d[prev] - intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
+        # res[i] += sign(I_d[next] - intAngles[next]) * (I_d[next] - intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
 
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints+i] += (I_d[prev] - intAngles[prev] ) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
-        res[NumberOfCellWallPoints+i] += (I_d[i] - intAngles[i]) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += (I_d[i] - intAngles[i]) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
-        res[NumberOfCellWallPoints+i] += (I_d[next] - intAngles[next]) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
+        # res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * (I_d[prev] - intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
+        # res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * (I_d[next] - intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
 
     end
 
@@ -398,7 +402,7 @@ end
 function interiorAngleForce(u, I_d)
 
     res = zeros(2 * M * N)
-    C = getCellsFromU(u) 
+    C = getCellsFromU(u)
     for i = 1:M
         a = interiorAngleForceCell_MT1(C[i], I_d)
         for j = 1:N

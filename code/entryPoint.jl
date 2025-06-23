@@ -3,7 +3,7 @@ using Pkg
 This file is the entry point of my FlexibleCellModel code. 
 It gets executed, whenever parameters.jl gets executed.
 It uses its parameter configuration to start the according simulation. 
-""" 
+"""
 Pkg.develop(path="C:/Users/voglt/Desktop/FlexibleCellModel")
 
 println("Started entryPoint.jl")
@@ -11,9 +11,9 @@ println("Started entryPoint.jl")
 
 ###  OPTION 1: JUST RUN A METHOD WITHOUT PARALLELIZING
 include("parameters.jl")
-include("cell_functionalities.jl") 
-include("computeOverlap.jl") 
-include("energies.jl") 
+include("cell_functionalities.jl")
+include("computeOverlap.jl")
+include("energies.jl")
 include("figure-creating-code/heatmap.jl")
 include("simulationFunctionalities.jl")
 
