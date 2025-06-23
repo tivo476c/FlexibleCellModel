@@ -147,7 +147,7 @@ function areaEnergyCell(c, A_d; k=2)
     """
     Returns area energy of a cell c. 
     """
-    return 1.0 / k * abs(A_d - areaPolygon(c.x, c.y))^k
+    return areaForceFactor / k * abs(A_d - areaPolygon(c.x, c.y))^k
 end
 
 function areaGradientCell(c)
@@ -231,7 +231,7 @@ function edgeEnergyCell(c, E_d; k=2)
     edgeLengths = computeEdgeLengths(c)
     res = 0
     for i = 1:N
-        res += 1.0 / k * abs(E_d[i] - edgeLengths[i])^k
+        res += edgeForceFactor / k * abs(E_d[i] - edgeLengths[i])^k
     end
     return res
 end
@@ -345,11 +345,20 @@ function computeIntAngles(c)
 
 end
 
-function intAngleEnergy(c, I_d; k=2)
+function distAngles(a1, a2) 
+    """
+    Returns the distance between the two angles a1, a2 in [0, 2*pi) considering the periodicity of the interval (0 = 2*pi). 
+    """
+    d = mod(a1-a2, 2*pi)
+    return minimum( [d, 2*pi - d] )
+
+end
+
+function angleEnergyCell(c, I_d; k=2)
     res = 0
     intAngles = computeIntAngles(c)
     for i = 1:N
-        res += 1.0 / k * abs(I_d[i] - intAngles[i])^k
+        res += interiorAngleForceFactor / k * distAngles(I_d[i], intAngles[i])^k
     end
     return res
 end
@@ -382,16 +391,16 @@ function interiorAngleForceCell_MT1(c, I_d)
         v_next = vertex(c, next)
 
         # assign x dynamic for vertex k 
-        # res[i] += sign(I_d[prev] - intAngles[prev]) * (I_d[prev] - intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
-        # res[i] += sign(I_d[next] - intAngles[next]) * (I_d[next] - intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
+        # res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
+        # res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
 
         # assign y dynamic for vertex k 
-        # res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * (I_d[prev] - intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * (I_d[i] - intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
-        # res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * (I_d[next] - intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
+        # res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
+        # res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
 
     end
 
@@ -417,8 +426,31 @@ end
 
 
 #------------------- OVERLAP Force (the notorious)
-
 # pairs the vertex indice j from the overlap with the according vertex indice i in c1(v1) / c2(v2)
+
+function overlapEnergy(u; k=1) 
+    """
+    Computes bachelor overlap energy of the cell system.  
+    """
+    if overlapForceFactor == 0 
+        return 0 
+    end 
+
+    C = solutionToCells(u) 
+    overlapEnergy = 0 
+    for i = 1:length(C) 
+        for j = i+1:length(C) 
+
+            overlaps = getOverlap(C[i], C[j])
+            for o ∈ overlaps
+                area = areaPolygon(o.x, o.y)
+                overlapEnergy += overlapForceFactor/k * area ^ k 
+            end 
+            
+        end 
+    end 
+end 
+    
 function collectOverlapIndices(o, c1, c2)
 
     v1 = Set()

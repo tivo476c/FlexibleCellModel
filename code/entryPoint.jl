@@ -22,6 +22,7 @@ simPath = joinpath(homedir(), "simulations", simulationName)
 locationsPath = joinpath(simPath, "locations")
 heatMapsPath = joinpath(simPath, "heatmaps")
 gifPath = joinpath(simPath, string(simulationName, ".gif"))
+energyDiaPath = joinpath(simPath, "energies-$simulationName.png")
 p = [timeStepSize, D]
 
 runShow_overlap()

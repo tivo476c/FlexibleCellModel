@@ -128,7 +128,7 @@ function createSimGif(gifPath::String,
                 u = sol.u[i]
                 time = sol.t[i]
 
-                X, Y = solutionToCells(u)
+                X, Y = solutionToXY(u)
 
                 circle = circleCell([X[1], Y[1]], radius)
                 discreteCircleCell = cellToDiscreteCell(circle, 20)
@@ -173,7 +173,7 @@ function createSimGif(gifPath::String,
             u = sol.u[i]
             time = sol.t[i]
 
-            X, Y = solutionToCells(u)               # now each cell is: [X[...], Y[...]]
+            X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
 
             timelab = "t = $(@sprintf("%.6f", time))"
             currentAngle = computeIntAngles(DiscreteCell(X[1], Y[1]))[2] / pi * 180
@@ -212,6 +212,39 @@ function createSimGif(gifPath::String,
 
     gif(animSDE, gifPath, fps=fps)
 end
+
+function createEnergyDiagram(diaPath::String,
+    sol;
+    A_d = 0,
+    E_d = 0,
+    I_d = 0,
+    title="Energy diagram",
+    xlab="time",
+    ylab="energy",
+    dpi=100)
+
+    areaVector = zeros(NumberOfSampleTimes) 
+    edgeVector = zeros(NumberOfSampleTimes) 
+    angleVector = zeros(NumberOfSampleTimes) 
+    overlapVector = zeros(NumberOfSampleTimes) 
+
+    for i = 1:NumberOfSampleTimes
+        C = solutionToCells(sol.u[i])
+        for j = 1:length(C) 
+            areaVector[i] += areaEnergyCell(C[j], A_d) 
+            edgeVector[i] += edgeEnergyCell(C[j], E_d) 
+            angleVector[i] += angleEnergyCell(C[j], I_d) 
+        end     
+        overlapVector[i] = overlapEnergy(sol.u[i]) 
+    end 
+
+    plot(sampleTimes, areaVector, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi) 
+    plot!(sampleTimes, edgeVector, label="Edge energy")
+    plot!(sampleTimes, angleVector, label="Interior angle energy")
+    plot!(sampleTimes, overlapVector, label="Overlap energy")    
+
+    savefig(diaPath)
+end 
 
 struct smallSolution
     t::Vector{Float64}
@@ -323,7 +356,7 @@ function doSimulationRuns_countLocations(currentProcss, NuSims)
         for sampleTime = 1:NumberOfSampleTimes
 
             # extract centres from solution 
-            X, Y = solutionToCells(extractedSol.u[sampleTime])
+            X, Y = solutionToXY(extractedSol.u[sampleTime])
             centresX = zeros(NumberOfCells)
             centresY = zeros(NumberOfCells)
             if NumberOfCellWallPoints == 0
@@ -497,7 +530,6 @@ function runShow_overlap()
     # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
     A_d = circleArea(0.002, N)
     E_d = circleEdgeLengths(radius, N)
-    remainingAngles = circleInteriorAngles(20)[1]
     I_d = [0, 340 / 180 * pi, 0, 0]
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
@@ -506,8 +538,9 @@ function runShow_overlap()
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol; title=simulationName)
+    # createSimGif(gifPath, extractedSol; title=simulationName)
 
+    createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
     # for overlapScaling in [1, 10, 10^2, 10^3, round(timeStepSize^(-1))]
     # forceScalings[4] = overlapScaling 
     # cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p) 

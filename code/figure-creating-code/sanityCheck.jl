@@ -36,6 +36,7 @@ println("Loading parameters")
     locationsPath = joinpath(simPath, "locations")
     heatMapsPath = joinpath(simPath, "heatmaps")
     gifPath = joinpath(simPath, string(simulationName, ".gif"))
+    gifPath = joinpath(simPath, string(simulationName, ".gif"))
     p = [timeStepSize, D]
 
 end

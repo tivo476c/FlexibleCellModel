@@ -40,7 +40,7 @@ animSDE = @animate for t = 1:length(sol)
     time = t[1]
     # time = t[1]*timeStepSize+1
     # time = t[1]*saveAtTimes+1
-    X, Y = solutionToCells(sol[time])
+    X, Y = solutionToXY(sol[time])
     x = X[1]
     y = Y[1]
 

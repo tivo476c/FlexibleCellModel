@@ -14,7 +14,7 @@ function createLocationFile(sol, sim::Int64, locationsPath)
     open(filePath, "w") do file
 
         for u in sol.u
-            X, Y = solutionToCells(u)
+            X, Y = solutionToXY(u)
             if NumberOfCellWallPoints != 0
                 for i = 1:M
                     xCentre = round(sum(X[i]) / Float64(N), digits=3)
@@ -68,7 +68,7 @@ function addSolToMatrices(solution, matrices)
     for counter=1:NumberOfSampleTimes
         
         # extract centres from solution 
-        X,Y = solutionToCells(solution[counter])
+        X,Y = solutionToXY(solution[counter])
         centresX = zeros(NumberOfCells)
         centresY = zeros(NumberOfCells)
         if NumberOfCellWallPoints == 0 

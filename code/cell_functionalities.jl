@@ -896,9 +896,14 @@ function di_interiorAngle(x::Vector{Float64}, y::Vector{Float64}, i::Int64)
     return [d_xi_interiorAngle(x, y, i), d_yi_interiorAngle(x, y, i)] 
 end
 
-function solutionToCells(sol::Vector{Float64}) 
-    # sol = [x1,x2,...,xM,y1,y2,...,yM]
-    # res = X, Y, where X[1] = x1 
+function solutionToXY(sol::Vector{Float64}) 
+    """
+    Returns for the solution of A SINGLE TIME STEP
+        sol = [x1,x2,...,xM,y1,y2,...,yM],
+
+    vectors res = X, Y such that for all cells i = 1,...,M 
+        X[i] = x_i, Y[i] = y_i.      
+    """
     if NumberOfCellWallPoints!=0
         X = Vector{Vector{Float64}}(undef, M)
         Y = Vector{Vector{Float64}}(undef, M)
@@ -915,6 +920,34 @@ function solutionToCells(sol::Vector{Float64})
         end 
     end 
     return X,Y
+end 
+
+function solutionToCells(sol::Vector{Float64}) 
+    """
+    Returns for the solution of A SINGLE TIME STEP
+        sol = [x1,x2,...,xM,y1,y2,...,yM],
+
+    a vector C = [c1, ..., cM] of all DiscreteCells,    
+    such that for all cells i = 1,...,M 
+       c[i].x = x_i, c[i].y = y_i.       
+    """
+    C = DiscreteCell[]
+    if NumberOfCellWallPoints!=0
+        for i = 1:M 
+            x = sol[1+(i-1)*N : i*N]
+            y = sol[1+(i-1)*N + N*M: i*N + N*M]
+            c = DiscreteCell(x,y)
+            push!(C,c)
+        end 
+    else
+        for i = 1:M 
+            x = sol[i]
+            y = sol[i+M]
+            c = DiscreteCell(x,y)
+            push!(C,c)
+        end 
+    end 
+    return C
 end 
 
 function getCentre(c::DiscreteCell)
