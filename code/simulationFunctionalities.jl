@@ -93,7 +93,7 @@ function createSimGif(gifPath::String,
     title="",
     xlab="x",
     ylab="y",
-    fps=1,
+    fps=3,
     dpi=100)
 
     if N == 0
@@ -175,10 +175,6 @@ function createSimGif(gifPath::String,
 
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
 
-            timelab = "t = $(@sprintf("%.6f", time))"
-            currentAngle = computeIntAngles(DiscreteCell(X[1], Y[1]))[2] / pi * 180
-            wantAngle = 20
-            xlab = "$timelab\ncurrentAngle = $currentAngle °\nwantAngle = $wantAngle °"
             plot(X[1], Y[1],
                 seriestype=:shape,
                 aspect_ratio=:equal,
@@ -189,7 +185,7 @@ function createSimGif(gifPath::String,
                 xlims=domain,
                 ylims=domain,
                 xguidefontsize=13,
-                xlabel=xlab)
+                xlabel= "t = $(@sprintf("%.6f", time))")
 
             for i = 2:NumberOfCells
 
@@ -197,13 +193,7 @@ function createSimGif(gifPath::String,
                     seriestype=:shape,
                     aspect_ratio=:equal,
                     opacity=0.25,
-                    dpi=dpi,
-                    title=title,
-                    label=false,
-                    xlims=domain,
-                    ylims=domain,
-                    xguidefontsize=13,
-                    xlabel="t = $(@sprintf("%.6f", time))")
+                )
             end
 
         end
@@ -514,23 +504,13 @@ function runShow_overlap()
     ## 1st save one simulation as gif 
     println("save one sim as gif")
 
-    # u0 = [-0.00375, 0.15, 0.0, 0.0]  # point particle initialisation 
 
-    # c1 = rectangleCell(Rectangle(-0.003, -0.001, -0.005, 0.005), NumberOfCellWallPoints)
-    # c2 = rectangleCell(Rectangle(0.001, 0.003, -0.005, 0.005), NumberOfCellWallPoints)
+    c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
 
-    # c1 = cellToDiscreteCell(circleCell([-0.004, 0.0], radius), NumberOfCellWallPoints)
-    # c2 = cellToDiscreteCell(circleCell([0.004, 0.0], radius), NumberOfCellWallPoints)
-
-    # u0 = [c1.x; c2.x; c1.y; c2.y]
-    # c1 = cellToDiscreteCell(circleCell([0.0, 0.0], radius), 20) # 
-
-    x = -6.0
-    u0 = [0, x, 0, 9, 1, 0, -1, 0]
-    # A_d = 0.4 * sin(0.1 * pi) # TODO: change back
+    u0 = [c1.x; c1.y]
     A_d = circleArea(0.002, N)
     E_d = circleEdgeLengths(radius, N)
-    I_d = [0, 340 / 180 * pi, 0, 0]
+    I_d = circleInteriorAngles(N) 
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
     @time sol = solve(cellProblem,
@@ -538,7 +518,7 @@ function runShow_overlap()
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol; title=simulationName)
+    createSimGif(gifPath, extractedSol; title=simulationName)
 
     createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
     # for overlapScaling in [1, 10, 10^2, 10^3, round(timeStepSize^(-1))]

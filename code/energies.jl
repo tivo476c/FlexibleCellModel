@@ -44,10 +44,6 @@ function energies!(du, u, p, t)
         res += forceScalings[4] * overlapForce(u)
     end
 
-    res[1] = 0
-    res[3:5] = [0, 0, 0]
-    res[7:8] = [0, 0]
-
     for i = 1:length(du)
         du[i] = res[i]
     end
@@ -363,7 +359,7 @@ function angleEnergyCell(c, I_d; k=2)
     return res
 end
 
-function interiorAngleForceCell_MT1(c, I_d)
+function interiorAngleForceCell_MT1(c, I_d; k=2)
     """
     given: 
         * 1 DF cell c 
@@ -390,17 +386,18 @@ function interiorAngleForceCell_MT1(c, I_d)
         v_curr = vertex(c, i)
         v_next = vertex(c, next)
 
+        ### I SKIPPED THE ^2 after the norm() statements, because i like this dynamic more 
         # assign x dynamic for vertex k 
-        # res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[2] - v_prev[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
-        # res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[2] - v_next[2]))
+        res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k-1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_curr[2] - v_prev[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (1.0 / norm(v_curr - v_prev, 2) * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (-1.0 / norm(v_curr - v_next, 2) * (v_next[2] - v_curr[2]))
+        res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k-1) * (1.0 / norm(v_curr - v_next, 2) * (v_curr[2] - v_next[2]))
 
         # assign y dynamic for vertex k 
-        # res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^0 * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[1] - v_curr[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^0 * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
-        # res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^0 * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k-1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_prev[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (1.0 / norm(v_curr - v_prev, 2) * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (-1.0 / norm(v_curr - v_next, 2) * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k-1) * (1.0 / norm(v_curr - v_next, 2) * (v_next[1] - v_curr[1]))
 
     end
 
@@ -420,7 +417,7 @@ function interiorAngleForce(u, I_d)
         end
     end
 
-    return res ./ 30
+    return res
 
 end
 
@@ -449,6 +446,7 @@ function overlapEnergy(u; k=1)
             
         end 
     end 
+    return overlapEnergy
 end 
     
 function collectOverlapIndices(o, c1, c2)

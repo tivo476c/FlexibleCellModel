@@ -1,9 +1,9 @@
 ## General setup:
 
 # domainL = 0.0125 # 0.5 / 40.0
-domainL = 10 # 0.5 / 40.0
+domainL = 0.008 # 0.5 / 40.0
 domain = (-domainL, domainL)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 4                  # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 20                  # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
 NumberOfCells = 1                           # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
@@ -14,15 +14,17 @@ radius = 0.005                               # cell radius
 ## Force scalings: 
 areaForceFactor = 0
 edgeForceFactor = 0
-interiorAngleForceFactor = 1e8
+interiorAngleForceFactor = 1e2*5
 overlapForceFactor = 0
 overlapForceTypes = ["bachelorThesis", "billiard", "combination", "radiusBilliard"]
 overlapForceType = overlapForceTypes[1]
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor]
 
+## desired state 
+
 ## Simulation time parameters: 
-T = 10^(-5) * 3
+T = 10^(-5) * 10
 timeInterval = (0.0, T)
 timeStepSize = 10^(-6)
 
@@ -36,7 +38,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 # currentTime = Dates.format(now(), "HH-MM")
 currentTime = "13-21"
 # simulationName = string("PP-SIM_", date, "_", currentTime)
-simulationName = "testAngleForce-nosides2-k0-x-6"
+simulationName = "testAngleForce-rectangle-to-circle-k2"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 30
