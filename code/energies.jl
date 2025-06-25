@@ -1,6 +1,6 @@
 include("cell_functionalities.jl")
 include("computeOverlap.jl")
-# include("parameters.jl")
+include("parameters.jl")
 
 using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 
@@ -31,22 +31,22 @@ function energies!(du, u, p, t)
         res = zeros(2 * M)
     end
 
-    if (forceScalings[1] != 0)
+    if (forceScalings[1] != 0 && hardness < 1)
         res += forceScalings[1] * areaForce(u, A_d; k=2)
     end
-    if (forceScalings[2] != 0)
+    if (forceScalings[2] != 0 && hardness < 1)
         res += forceScalings[2] * edgeForce(u, E_d; k=2)
     end
-    if (forceScalings[3] != 0)
+    if (forceScalings[3] != 0 && hardness < 1)
         res += forceScalings[3] * interiorAngleForce(u, I_d)
     end
     if (forceScalings[4] != 0)
-        res += forceScalings[4] * overlapForce(u)
+        res += overlapForce(u)
     end
 
-    # let cells drift into each other for 10 time steps 
-    if t <= 1*1e-6
-        println("t = $t")
+    # let cells drift into each other for 2 time steps 
+    if t <= 0*1e-6
+        println("pushing together at t = $t")
         res[1:6] .+= sqrt(2/timeStepSize) 
         res[7:12] .-= sqrt(2/timeStepSize) 
     end 
@@ -486,25 +486,40 @@ function collectOverlapIndices(o, c1, c2)
 
 end
 
-function overlapForceCells(c1, c2, overlapForceType=overlapForceType)
-    """
-    Returns the force caused by the cell overlap between the 2 given DF cells. 
-    Also selects which overlap force is selected: 
-        overlapforce ∈ {"bachelorThesis", "billiard", "combination"}
-    """
+function computeCenter(c::DiscreteCell)
 
-    if (overlapForceType == "bachelorThesis")
-        return bachelorOverlapForceCells(c1, c2)
-    elseif (overlapForceType == "billiard")
-        return billiardOverlapForceCells(c1, c2)
-    elseif (overlapForceType == "combination")
-        return combinationOverlapForceCells(c1, c2)
-    elseif (overlapForceType == "radiusBilliard")
-        return radiusOverlapForceCells(c1, c2)
-    else
-        print("error: 3rd argument overlapForceType must be in {bachelorThesis, billiard, combination}")
-        return []
+    x = sum(c.x)
+    y = sum(c.y)
+    return [x, y] / N
+
+end
+
+function radiusBilliardOverlapForce(u)
+    # currently the size of overlap is not considered 
+    res = zeros(2 * M)
+
+    for i = 1:M
+        centreI = [u[i], u[i+M]]
+        for j = i+1:M
+            centreJ = [u[j], u[j+M]]
+
+            distance = norm(centreI - centreJ)
+            if distance < 2 * radius
+
+                pushVec = (centreI - centreJ) / distance * (2 * radius - distance)  # pushVec b
+                # pushVec = (centreI - centreJ) / distance                            # pushVec c
+                # pushVec = (centreI - centreJ)                                       # pushVec d
+                res[i] += pushVec[1]
+                res[i+M] += pushVec[2]
+                res[j] -= pushVec[1]
+                res[j+M] -= pushVec[2]
+
+            end
+
+        end
     end
+
+    return res
 end
 
 function bachelorOverlapForceCells(c1, c2; k=1)
@@ -536,61 +551,76 @@ function bachelorOverlapForceCells(c1, c2; k=1)
 
         end
     end
+    return forceScalings[4]*r1x, forceScalings[4]*r1y, forceScalings[4]*r2x, forceScalings[4]*r2y
+
+end
+
+function billiardForceDFCells(c1, c2)
+    
+    println("entering billiardForceDFCells")
+
+    c_1 = computeCenter(c1)
+    c_2 = computeCenter(c2)
+    
+    dist = norm(c_1 - c_2, 2)
+
+    if dist >= 2*radius 
+        return zeros(N), zeros(N), zeros(N), zeros(N)
+    end 
+
+    pushVec = (2*radius - dist)/dist * (c_1 - c_2) 
+
+    scaling = timeStepSize^(-1) 
+
+    r1x = scaling*pushVec[1]*ones(N)
+    r1y = scaling*pushVec[2]*ones(N)
+    r2x = -r1x
+    r2y = -r1y
+    
+    println("r1x = $r1x")
+    println("r2x = $r2x")
+    println("r1y = $r1y")
+    println("r2y = $r2y")
+
     return r1x, r1y, r2x, r2y
+end 
 
-end
+function combinationOverlapForceCells(c1, c2; hardness=hardness)
+    # hardness must be in [0,1]
+    if hardness == 1 
+        return billiardForceDFCells(c1, c2)
+    elseif hardness == 0
+        return bachelorOverlapForceCells(c1, c2)
+    end 
 
-function radiusBilliardOverlapForce(u)
-    # currently the size of overlap is not considered 
-    res = zeros(2 * M)
-
-    for i = 1:M
-        centreI = [u[i], u[i+M]]
-        for j = i+1:M
-            centreJ = [u[j], u[j+M]]
-
-            distance = norm(centreI - centreJ)
-            if distance < 2 * radius
-
-                # pushVec = (centreI - centreJ) / distance * (2 * radius - distance)  # pushVec b
-                # pushVec = (centreI - centreJ) / distance                            # pushVec c
-                pushVec = (centreI - centreJ)                                       # pushVec d
-                res[i] += pushVec[1]
-                res[i+M] += pushVec[2]
-                res[j] -= pushVec[1]
-                res[j+M] -= pushVec[2]
-
-            end
-
-        end
-    end
-
-    return res
-end
-
-function computeCenter(c::DiscreteCell)
-
-    x = sum(c.x)
-    y = sum(c.y)
-    return [x, y] / N
-
-end
-
-function combinationOverlapForceCells(c1, c2, scalingBachelor=0.5)
-    # scalingBachelor must be in [0,1]
     r1xBach, r1yBach, r2xBach, r2yBach = bachelorOverlapForceCells(c1, c2)
-    r1xBill, r1yBill, r2xBill, r2yBill = billiardOverlapForceCells(c1, c2)
-    scalingBilliard = 1 - scalingBachelor
+    r1xBill, r1yBill, r2xBill, r2yBill = billiardForceDFCells(c1, c2)
 
-    r1x = scalingBachelor * r1xBach + scalingBilliard * r1xBill
-    r1y = scalingBachelor * r1yBach + scalingBilliard * r1yBill
-    r2x = scalingBachelor * r2xBach + scalingBilliard * r2xBill
-    r2y = scalingBachelor * r2yBach + scalingBilliard * r2yBill
-
-    #resBachelor = bachelorOverlapForceCells(c1,c2)
-    #resBilliard = billiardOverlapForceCells(c1,c2)
+    r1x = (1-hardness) * r1xBach + hardness * r1xBill
+    r1y = (1-hardness) * r1yBach + hardness * r1yBill
+    r2x = (1-hardness) * r2xBach + hardness * r2xBill
+    r2y = (1-hardness) * r2yBach + hardness * r2yBill
 
     return r1x, r1y, r2x, r2y
+end
+
+function overlapForceCells(c1, c2; overlapForceType=overlapForceType)
+    """
+    Returns the force caused by the cell overlap between the 2 given DF cells. 
+    Also selects which overlap force is selected: 
+        overlapforce ∈ {"bachelorThesis", "billiard", "combination"}
+    """
+
+    if (overlapForceType == "bachelorThesis")
+        return bachelorOverlapForceCells(c1, c2)
+    elseif (overlapForceType == "radiusBilliard")
+        return billiardOverlapForceCells(c1, c2)
+    elseif (overlapForceType == "combination")
+        return combinationOverlapForceCells(c1, c2)
+    else
+        print("error: 3rd argument overlapForceType must be in {bachelorThesis, billiard, combination}")
+        return []
+    end
 end
 
 function overlapForce(u)
@@ -600,10 +630,7 @@ function overlapForce(u)
         return radiusBilliardOverlapForce(u)
     end
 
-    cells = Vector{DiscreteCell}(undef, M)
-    for i = 1:M
-        cells[i] = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-    end
+    cells = getCellsFromU(u)
 
     res = zeros(2 * M * N)
 

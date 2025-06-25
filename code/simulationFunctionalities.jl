@@ -526,9 +526,11 @@ function runShow_overlap()
 
     # createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
 
-    for intAngleScale in [5e0 ,1e1, 5e1,1e2]
+    # for intAngleScale in [5e0 ,1e1, 5e1,1e2]
+    for intAngleScale in [5e0]
         forceScalings[3] = intAngleScale
-        for overlapScaling in [1e3, 1e4, 1e5]
+        # for overlapScaling in [1e3, 1e4, 1e5]
+        for overlapScaling in [1e3]
             forceScalings[4] = overlapScaling 
 
             intanglstring = @sprintf("%.1e", forceScalings[3])
@@ -551,7 +553,7 @@ function runShow_overlap()
                             )
             extractedSol = extractSolution(sol)
             createSimGif(gifPath, extractedSol; title=nameSim) 
-            createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
+            # createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
         end 
     end 
 
