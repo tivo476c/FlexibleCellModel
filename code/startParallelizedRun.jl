@@ -39,7 +39,7 @@ end
 println("Starting simulation: $simulationName")
 
 # run wanted function 
-@time runShow_overlap()
+@time runSimulation_locations()
 
 # delete workers 
 rmprocs(workers())

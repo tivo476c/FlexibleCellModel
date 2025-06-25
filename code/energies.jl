@@ -24,7 +24,7 @@ function energies!(du, u, p, t)
             I_d ... desired interior angles of a cell (in R^N)
         t  ... current time 
     """
-    _, _, A_d, E_d, I_d = p
+    # _, _, A_d, E_d, I_d = p
     if N != 0
         res = zeros(2 * N * M)
     else
@@ -45,11 +45,14 @@ function energies!(du, u, p, t)
     end
 
     # let cells drift into each other for 2 time steps 
-    if t <= 0*1e-6
-        println("pushing together at t = $t")
-        res[1:6] .+= 0.5*sqrt(2/timeStepSize) 
-        res[7:12] .-= 0.5*sqrt(2/timeStepSize) 
-    end 
+    # if t <= 0*timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5*sqrt(2/timeStepSize) 
+    #     res[7:12] .-= 0.5*sqrt(2/timeStepSize) 
+    # end 
+
+    # apply BC for DF cells 
+    res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -126,6 +129,8 @@ function reflectiveBC_overlap!(integrator)
             distance = norm(u_i - u_j)
             if distance < 2 * radius
 
+                # u[i+1] = -domainL -domainL - u[i]
+                # -> u[i+1] + u[i] = -2 domainL 
                 pushVec = (u_i - u_j) / distance * (2 * radius - distance)
                 u[i] += pushVec[1] 
                 u[i+NumberOfCells] += pushVec[2]
@@ -139,7 +144,42 @@ end
 
 CallBack_reflectiveBC_cellOverlap = DiscreteCallback(apply_BC_overlap, reflectiveBC_overlap!)
 
+function DFBoundaryConditionCell(c)
 
+    rx = zeros(N)
+    ry = zeros(N)
+
+    centre = getCentre(c)
+
+    if centre[1] < -domainL 
+        rx = -2*(domainL + centre[1]) * timeStepSize^(-1) * ones(N)
+    elseif centre[1] > domainL
+        rx = 2*(domainL - centre[1]) * timeStepSize^(-1) * ones(N)
+    end 
+
+    if centre[2] < -domainL 
+        ry = -2*(domainL + centre[2]) * timeStepSize^(-1) * ones(N)
+    elseif centre[2] > domainL
+        ry = 2*(domainL - centre[2]) * timeStepSize^(-1) * ones(N)
+    end 
+
+    return [rx;ry]
+end 
+
+function DFBoundaryCondition(u)
+    cells = getCellsFromU(u)
+    res = zeros(2*M*N)
+    for i = 1:M
+
+        bc = DFBoundaryConditionCell(cells[i])
+        for j = 1:N
+            res[N*(i-1)+j] = bc[j]
+            res[N*(i-1+M)+j] = bc[j+N]
+        end
+
+    end
+    return res
+end 
 
 
 #-------------------------------------- SET Force FUNCTIONS
@@ -589,7 +629,6 @@ function combinationOverlapForceCells(c1, c2; hardness=hardness)
     r1xBach, r1yBach, r2xBach, r2yBach = bachelorOverlapForceCells(c1, c2)
     r1xBill, r1yBill, r2xBill, r2yBill = billiardForceDFCells(c1, c2)
 
-    println("scaling bachelor overlap with $(1-hardness)")
     r1x = (1-hardness) * r1xBach + hardness * r1xBill
     r1y = (1-hardness) * r1yBach + hardness * r1yBill
     r2x = (1-hardness) * r2xBach + hardness * r2xBill
@@ -608,7 +647,7 @@ function overlapForceCells(c1, c2; overlapForceType=overlapForceType)
     if (overlapForceType == "bachelorThesis")
         return bachelorOverlapForceCells(c1, c2)
     elseif (overlapForceType == "radiusBilliard")
-        return billiardOverlapForceCells(c1, c2)
+        return billiardForceDFCells(c1, c2)
     elseif (overlapForceType == "combination")
         return combinationOverlapForceCells(c1, c2)
     else

@@ -10,25 +10,25 @@ println("Started entryPoint.jl")
 
 
 ###  OPTION 1: JUST RUN A METHOD WITHOUT PARALLELIZING
-include("parameters.jl")
-include("cell_functionalities.jl")
-include("computeOverlap.jl")
-include("energies.jl")
-include("figure-creating-code/heatmap.jl")
-include("simulationFunctionalities.jl")
+# include("parameters.jl")
+# include("cell_functionalities.jl")
+# include("computeOverlap.jl")
+# include("energies.jl")
+# include("figure-creating-code/heatmap.jl")
+# include("simulationFunctionalities.jl")
 
-tspan = timeInterval
-simPath = joinpath(homedir(), "simulations", simulationName)
-locationsPath = joinpath(simPath, "locations")
-heatMapsPath = joinpath(simPath, "heatmaps")
-gifPath = joinpath(simPath, string(simulationName, ".gif"))
-energyDiaPath = joinpath(simPath, "energies-$simulationName.png")
-p = [timeStepSize, D]
+# tspan = timeInterval
+# simPath = joinpath(homedir(), "simulations", simulationName)
+# locationsPath = joinpath(simPath, "locations")
+# heatMapsPath = joinpath(simPath, "heatmaps")
+# gifPath = joinpath(simPath, string(simulationName, ".gif"))
+# energyDiaPath = joinpath(simPath, "energies-$simulationName.png")
+# p = [timeStepSize, D]
 
  
 
-runShow_overlap()
+# runShow_overlap()
 
 ###  OPTION 2: PARALLELIZED 
 # if wanna use parallelized run, inclusions happen in startParallelizedRun.jl: 
-# include("startParallelizedRun.jl")
+include("startParallelizedRun.jl")

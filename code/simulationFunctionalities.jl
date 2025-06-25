@@ -93,7 +93,7 @@ function createSimGif(gifPath::String,
     title="",
     xlab="x",
     ylab="y",
-    fps=8,
+    fps=1,
     dpi=100)
 
     if N == 0
@@ -167,11 +167,15 @@ function createSimGif(gifPath::String,
 
         end
     else
+        println("length(sol.u) = $length(sol.u)")
+        println("sol.t = $(sol.t)")
+        
         # DF cells 
-        animSDE = @animate for i = 1:length(sol.t)
+        length(sol.u)
+        animSDE = @animate for i = 1:NumberOfSampleTimes
 
             u = sol.u[i]
-            time = sol.t[i]
+            time = sampleTimes[i]
 
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
 
@@ -316,7 +320,7 @@ function do1SimulationRun(simRun)
     cellProb = SDEProblem(energies!, brownian!, u0, tspan, p)
     @time sol = solve(cellProb,
         EM(),
-        callback=CallBack_reflectiveBC_cellOverlap,
+        # callback=CallBack_reflectiveBC_cellOverlap,
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
@@ -396,18 +400,22 @@ function runSimulation_locations()
     Runs a full simulation that results in heatmaps over NumberOfSimulations simulation runs.
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
     """
-    ### create paths 
+    ## create paths 
     println("creating paths")
     mkpath(simPath)
-    cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    mkpath(locationsPath)
+    if gethostname() == "treuesStueck"      # home pc xd 
+        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    else # laptop 
+        cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    end
     mkpath(heatMapsPath)
 
-    if N != 0
-        A_d, E_d, I_d = computeDesiredStates_circleCells()
-    end
+    # if N != 0
+    #     A_d, E_d, I_d = computeDesiredStates_circleCells()
+    #     p = timeStepSize, D, A_d, E_d, I_d 
+    # end
 
-    ### 1st save one simulation as gif 
+    # 1st save one simulation as gif 
     println("save one sim as gif")
 
     if N == 0
@@ -419,11 +427,10 @@ function runSimulation_locations()
     cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p)
     @time sol = solve(cellProblem,
         EM(),
-        callback=CallBack_reflectiveBC_cellOverlap,
+        # callback=CallBack_reflectiveBC_cellOverlap,
         dt=timeStepSize,
     )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol)
+    createSimGif(gifPath, sol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     results = pmap(do1SimulationRun, 1:NumberOfSimulations)
@@ -445,9 +452,10 @@ function runSimulation(NuProcs)
     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     mkpath(heatMapsPath)
 
-    if N != 0
-        A_d, E_d, I_d = computeDesiredStates_circleCells()
-    end
+    # if N != 0
+    #     A_d, E_d, I_d = computeDesiredStates_circleCells()
+    #     p = timeStepSize, D, A_d, E_d, I_d 
+    # end
 
     # 1st save one simulation as gif 
     println("save one sim as gif")
@@ -461,11 +469,13 @@ function runSimulation(NuProcs)
     cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p)
     @time sol = solve(cellProblem,
         EM(),
-        callback=CallBack_reflectiveBC_cellOverlap,
+        # callback=CallBack_reflectiveBC_cellOverlap,
         dt=timeStepSize,
     )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol)
+    createSimGif(gifPath, sol)
+    
+    # extractedSol = extractSolution(sol)
+    # createSimGif(gifPath, extractedSol)
 
     ## 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     @everywhere matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
@@ -508,8 +518,8 @@ function runShow_overlap()
     # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
     # u0 = [c1.x; c1.y]
     
-    c1 = cellToDiscreteCell(circleCell([-0.005, 0], radius), N)
-    c2 = cellToDiscreteCell(circleCell([0.005, 0], radius), N)
+    c1 = cellToDiscreteCell(circleCell([-domainL-0.005, 0], radius), N)
+    c2 = cellToDiscreteCell(circleCell([domainL+0.005, 0], radius), N)
     u0 = [c1.x; c2.x; c1.y; c2.y]
 
     A_d = circleArea(radius, N)
@@ -530,7 +540,7 @@ function runShow_overlap()
     for intAngleScale in [5e0]
         forceScalings[3] = intAngleScale
         # for overlapScaling in [1e3, 1e4, 1e5]
-        for overlapScaling in [2e4,4e4,8e4]
+        for overlapScaling in [2e4]
             forceScalings[4] = overlapScaling 
 
             intanglstring = @sprintf("%.1e", forceScalings[3])
