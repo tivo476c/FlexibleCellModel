@@ -47,8 +47,8 @@ function energies!(du, u, p, t)
     # let cells drift into each other for 2 time steps 
     if t <= 0*1e-6
         println("pushing together at t = $t")
-        res[1:6] .+= sqrt(2/timeStepSize) 
-        res[7:12] .-= sqrt(2/timeStepSize) 
+        res[1:6] .+= 0.5*sqrt(2/timeStepSize) 
+        res[7:12] .-= 0.5*sqrt(2/timeStepSize) 
     end 
 
     for i = 1:length(du)
@@ -557,8 +557,6 @@ end
 
 function billiardForceDFCells(c1, c2)
     
-    println("entering billiardForceDFCells")
-
     c_1 = computeCenter(c1)
     c_2 = computeCenter(c2)
     
@@ -576,11 +574,6 @@ function billiardForceDFCells(c1, c2)
     r1y = scaling*pushVec[2]*ones(N)
     r2x = -r1x
     r2y = -r1y
-    
-    println("r1x = $r1x")
-    println("r2x = $r2x")
-    println("r1y = $r1y")
-    println("r2y = $r2y")
 
     return r1x, r1y, r2x, r2y
 end 
@@ -596,6 +589,7 @@ function combinationOverlapForceCells(c1, c2; hardness=hardness)
     r1xBach, r1yBach, r2xBach, r2yBach = bachelorOverlapForceCells(c1, c2)
     r1xBill, r1yBill, r2xBill, r2yBill = billiardForceDFCells(c1, c2)
 
+    println("scaling bachelor overlap with $(1-hardness)")
     r1x = (1-hardness) * r1xBach + hardness * r1xBill
     r1y = (1-hardness) * r1yBach + hardness * r1yBill
     r2x = (1-hardness) * r2xBach + hardness * r2xBill

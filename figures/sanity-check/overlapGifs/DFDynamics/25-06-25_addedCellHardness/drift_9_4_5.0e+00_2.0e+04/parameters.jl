@@ -15,7 +15,7 @@ hardness = 0.001                                       # tells how hard the cell
 areaForceFactor = (1-hardness)*1e6 + hardness*1e10
 edgeForceFactor = (1-hardness)*1e1 + hardness*1e5
 interiorAngleForceFactor = (1-hardness)*1e0 + hardness*1e2
-overlapForceFactor = 2e4
+overlapForceFactor = 1e4
 overlapForceTypes = ["bachelorThesis", "radiusBilliard", "combination"]
 overlapForceType = overlapForceTypes[3]
 
