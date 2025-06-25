@@ -96,6 +96,9 @@ function createSimGif(gifPath::String,
     fps=1,
     dpi=100)
 
+    println("entered createSimGif")
+
+    println("N = $N")
     if N == 0
         if radius == 0
             # PP cells 
@@ -167,14 +170,16 @@ function createSimGif(gifPath::String,
 
         end
     else
-        println("length(sol.u) = $length(sol.u)")
+        println("length(sol.u) = $(length(sol.u))")
+        println("sol.u[1] = $(sol.u[1])")
         println("sol.t = $(sol.t)")
-        
+
+        println("sol.u[1] == sol.u[6] : $(sol.u[1] == sol.u[6])")
         # DF cells 
-        length(sol.u)
         animSDE = @animate for i = 1:NumberOfSampleTimes
 
             u = sol.u[i]
+
             time = sampleTimes[i]
 
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
@@ -189,7 +194,7 @@ function createSimGif(gifPath::String,
                 xlims=domain,
                 ylims=domain,
                 xguidefontsize=13,
-                xlabel= "t = $(@sprintf("%.6f", time))")
+                xlabel="t = $(@sprintf("%.6f", time))")
 
             for i = 2:NumberOfCells
 
@@ -210,36 +215,36 @@ end
 
 function createEnergyDiagram(diaPath::String,
     sol;
-    A_d = 0,
-    E_d = 0,
-    I_d = 0,
+    A_d=0,
+    E_d=0,
+    I_d=0,
     title="Energy diagram",
     xlab="time",
     ylab="energy",
     dpi=100)
 
-    areaVector = zeros(NumberOfSampleTimes) 
-    edgeVector = zeros(NumberOfSampleTimes) 
-    angleVector = zeros(NumberOfSampleTimes) 
-    overlapVector = zeros(NumberOfSampleTimes) 
+    areaVector = zeros(NumberOfSampleTimes)
+    edgeVector = zeros(NumberOfSampleTimes)
+    angleVector = zeros(NumberOfSampleTimes)
+    overlapVector = zeros(NumberOfSampleTimes)
 
     for i = 1:NumberOfSampleTimes
         C = solutionToCells(sol.u[i])
-        for j = 1:length(C) 
-            areaVector[i] += areaEnergyCell(C[j], A_d) 
-            edgeVector[i] += edgeEnergyCell(C[j], E_d) 
-            angleVector[i] += angleEnergyCell(C[j], I_d) 
-        end     
-        overlapVector[i] = overlapEnergy(sol.u[i]) 
-    end 
+        for j = 1:length(C)
+            areaVector[i] += areaEnergyCell(C[j], A_d)
+            edgeVector[i] += edgeEnergyCell(C[j], E_d)
+            angleVector[i] += angleEnergyCell(C[j], I_d)
+        end
+        overlapVector[i] = overlapEnergy(sol.u[i])
+    end
 
-    plot(sampleTimes, areaVector, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi) 
+    plot(sampleTimes, areaVector, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
     plot!(sampleTimes, edgeVector, label="Edge energy")
     plot!(sampleTimes, angleVector, label="Interior angle energy")
-    plot!(sampleTimes, overlapVector, label="Overlap energy")    
+    plot!(sampleTimes, overlapVector, label="Overlap energy")
 
     savefig(diaPath)
-end 
+end
 
 struct smallSolution
     t::Vector{Float64}
@@ -317,7 +322,7 @@ function do1SimulationRun(simRun)
         u0 = initializeCells(radius)
     end
 
-    cellProb = SDEProblem(energies!, brownian!, u0, tspan, p)
+    cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
     @time sol = solve(cellProb,
         EM(),
         # callback=CallBack_reflectiveBC_cellOverlap,
@@ -340,7 +345,7 @@ function doSimulationRuns_countLocations(currentProcss, NuSims)
             u0 = initializeCells(radius)
         end
 
-        cellProb = SDEProblem(energies!, brownian!, u0, tspan, p)
+        cellProb = SDEProblem(energies!, brownian_DF, u0, tspan, p)
         sol = solve(cellProb,
             EM(),
             callback=CallBack_reflectiveBC_cellOverlap,
@@ -409,6 +414,7 @@ function runSimulation_locations()
         cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     end
     mkpath(heatMapsPath)
+    mkpath(locationsPath)
 
     # if N != 0
     #     A_d, E_d, I_d = computeDesiredStates_circleCells()
@@ -424,13 +430,14 @@ function runSimulation_locations()
         u0 = initializeCells(radius)
     end
 
-    cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p)
+    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
     @time sol = solve(cellProblem,
         EM(),
         # callback=CallBack_reflectiveBC_cellOverlap,
         dt=timeStepSize,
     )
-    createSimGif(gifPath, sol)
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     results = pmap(do1SimulationRun, 1:NumberOfSimulations)
@@ -466,14 +473,14 @@ function runSimulation(NuProcs)
         u0 = initializeCells(radius)
     end
 
-    cellProblem = SDEProblem(energies!, brownian!, u0, timeInterval, p)
+    cellProblem = SDEProblem(energies!, brownian_DF, u0, timeInterval, p)
     @time sol = solve(cellProblem,
         EM(),
         # callback=CallBack_reflectiveBC_cellOverlap,
         dt=timeStepSize,
     )
     createSimGif(gifPath, sol)
-    
+
     # extractedSol = extractSolution(sol)
     # createSimGif(gifPath, extractedSol)
 
@@ -517,14 +524,14 @@ function runShow_overlap()
 
     # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
     # u0 = [c1.x; c1.y]
-    
-    c1 = cellToDiscreteCell(circleCell([-domainL-0.005, 0], radius), N)
-    c2 = cellToDiscreteCell(circleCell([domainL+0.005, 0], radius), N)
+
+    c1 = cellToDiscreteCell(circleCell([-domainL - 0.005, 0], radius), N)
+    c2 = cellToDiscreteCell(circleCell([domainL + 0.005, 0], radius), N)
     u0 = [c1.x; c2.x; c1.y; c2.y]
 
     A_d = circleArea(radius, N)
     E_d = circleEdgeLengths(radius, N)
-    I_d = circleInteriorAngles(N) 
+    I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     # cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
     # @time sol = solve(cellProblem,
@@ -541,7 +548,7 @@ function runShow_overlap()
         forceScalings[3] = intAngleScale
         # for overlapScaling in [1e3, 1e4, 1e5]
         for overlapScaling in [2e4]
-            forceScalings[4] = overlapScaling 
+            forceScalings[4] = overlapScaling
 
             intanglstring = @sprintf("%.1e", forceScalings[3])
             overlapstring = @sprintf("%.1e", forceScalings[4])
@@ -556,15 +563,15 @@ function runShow_overlap()
                 cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
             end
 
-            cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p) 
-            @time sol = solve(cellProblem, 
-                            EM(), 
-                            dt=timeStepSize, 
-                            )
+            cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
+            @time sol = solve(cellProblem,
+                EM(),
+                dt=timeStepSize,
+            )
             extractedSol = extractSolution(sol)
-            createSimGif(gifPath, extractedSol; title=nameSim) 
+            createSimGif(gifPath, extractedSol; title=nameSim)
             createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
-        end 
-    end 
+        end
+    end
 
 end

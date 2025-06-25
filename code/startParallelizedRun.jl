@@ -9,20 +9,20 @@ println("Started startParallelizedRun.jl")
 
 using Distributed
 
-NuProcs = 3
+NuProcs = 7
 if nprocs() == 1
     addprocs(NuProcs)
 end
 println("Using $(nprocs()) processors")
 println("Loading parameters")
 # load all parameters 
-@everywhere begin   
-    
+@everywhere begin
+
     # including cell functionalities with decreasing grade of fundamentality 
     include("parameters.jl")
-    include("cell_functionalities.jl") 
-    include("computeOverlap.jl") 
-    include("energies.jl") 
+    include("cell_functionalities.jl")
+    include("computeOverlap.jl")
+    include("energies.jl")
     include("figure-creating-code/heatmap.jl")
     include("simulationFunctionalities.jl")
 

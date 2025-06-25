@@ -63,21 +63,41 @@ function energies!(du, u, p, t)
 end
 #-------------------------------------- BROWNIAN MOTION 
 
-function brownian!(du, u, p, t)
+function brownian_pp!(du, u, p, t)
 
     Δt, D = p
-    # x = rand(Normal(0.0, 1.0), 2 * NumberOfCells)
+    du .= sqrt(2 * D)
 
-    if NumberOfCellWallPoints == 0
-        du .= sqrt(2 * D)
-    elseif NumberOfCellWallPoints != 0
-        # TODO: TO BE TESTED
-        du = zeros(2 * M * N, 2 * M)
-        for i = 1:2*M
-            lineIdx = N*(i-1)+1:i*N
-            du[lineIdx, i] .= sqrt(2 * D)
-        end
+end
+
+function brownian_DF!(du, u, p, t)
+
+    Δt, D = p
+
+    fill!(du, 0.0)
+    for i = 1:2*M
+        lineIdx = (N*(i-1)+1):(i*N)
+        du[lineIdx, i] .= sqrt(2 * D)
     end
+
+    # du = res
+    # return res
+
+    # if t <= 2 * timeStepSize
+    # print brownian of cell 1 
+    # println("printing brownian for c1 at t=$t")
+    # b = randn(2 * M) .* sqrt(timeStepSize)
+    # sol_b = du * b
+    # println("dB_c1x = sol_b[1:N]: ")
+    # for k = 1:2*M*N
+    # println("sol_b[$k] = $(sol_b[k])")
+    # end
+    # println("dB_c1y = sol_b[M*N+1:M*N+N] = ")
+    # for k = M*N+1:M*N+N
+    # println("sol_b[$k] = $(sol_b[k])")
+    # end
+
+    # end
 
 end
 
@@ -132,7 +152,7 @@ function reflectiveBC_overlap!(integrator)
                 # u[i+1] = -domainL -domainL - u[i]
                 # -> u[i+1] + u[i] = -2 domainL 
                 pushVec = (u_i - u_j) / distance * (2 * radius - distance)
-                u[i] += pushVec[1] 
+                u[i] += pushVec[1]
                 u[i+NumberOfCells] += pushVec[2]
                 u[j] -= pushVec[1]
                 u[j+NumberOfCells] -= pushVec[2]
@@ -151,24 +171,24 @@ function DFBoundaryConditionCell(c)
 
     centre = getCentre(c)
 
-    if centre[1] < -domainL 
-        rx = -2*(domainL + centre[1]) * timeStepSize^(-1) * ones(N)
+    if centre[1] < -domainL
+        rx = -2 * (domainL + centre[1]) * timeStepSize^(-1) * ones(N)
     elseif centre[1] > domainL
-        rx = 2*(domainL - centre[1]) * timeStepSize^(-1) * ones(N)
-    end 
+        rx = 2 * (domainL - centre[1]) * timeStepSize^(-1) * ones(N)
+    end
 
-    if centre[2] < -domainL 
-        ry = -2*(domainL + centre[2]) * timeStepSize^(-1) * ones(N)
+    if centre[2] < -domainL
+        ry = -2 * (domainL + centre[2]) * timeStepSize^(-1) * ones(N)
     elseif centre[2] > domainL
-        ry = 2*(domainL - centre[2]) * timeStepSize^(-1) * ones(N)
-    end 
+        ry = 2 * (domainL - centre[2]) * timeStepSize^(-1) * ones(N)
+    end
 
-    return [rx;ry]
-end 
+    return [rx; ry]
+end
 
 function DFBoundaryCondition(u)
     cells = getCellsFromU(u)
-    res = zeros(2*M*N)
+    res = zeros(2 * M * N)
     for i = 1:M
 
         bc = DFBoundaryConditionCell(cells[i])
@@ -179,7 +199,7 @@ function DFBoundaryCondition(u)
 
     end
     return res
-end 
+end
 
 
 #-------------------------------------- SET Force FUNCTIONS
@@ -388,12 +408,12 @@ function computeIntAngles(c)
 
 end
 
-function distAngles(a1, a2) 
+function distAngles(a1, a2)
     """
     Returns the distance between the two angles a1, a2 in [0, 2*pi) considering the periodicity of the interval (0 = 2*pi). 
     """
-    d = mod(a1-a2, 2*pi)
-    return minimum( [d, 2*pi - d] )
+    d = mod(a1 - a2, 2 * pi)
+    return minimum([d, 2 * pi - d])
 
 end
 
@@ -435,16 +455,16 @@ function interiorAngleForceCell_MT1(c, I_d; k=2)
 
         ### I SKIPPED THE ^2 after the norm() statements, because i like this dynamic more 
         # assign x dynamic for vertex k 
-        res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k-1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_curr[2] - v_prev[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (1.0 / norm(v_curr - v_prev, 2) * (v_prev[2] - v_curr[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (-1.0 / norm(v_curr - v_next, 2) * (v_next[2] - v_curr[2]))
-        res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k-1) * (1.0 / norm(v_curr - v_next, 2) * (v_curr[2] - v_next[2]))
+        res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_curr[2] - v_prev[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2) * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2) * (v_next[2] - v_curr[2]))
+        res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2) * (v_curr[2] - v_next[2]))
 
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k-1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_prev[1] - v_curr[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (1.0 / norm(v_curr - v_prev, 2) * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k-1) * (-1.0 / norm(v_curr - v_next, 2) * (v_curr[1] - v_next[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k-1) * (1.0 / norm(v_curr - v_next, 2) * (v_next[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_prev[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2) * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2) * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2) * (v_next[1] - v_curr[1]))
 
     end
 
@@ -472,30 +492,30 @@ end
 #------------------- OVERLAP Force (the notorious)
 # pairs the vertex indice j from the overlap with the according vertex indice i in c1(v1) / c2(v2)
 
-function overlapEnergy(u; k=1) 
+function overlapEnergy(u; k=1)
     """
     Computes bachelor overlap energy of the cell system.  
     """
-    if overlapForceFactor == 0 
-        return 0 
-    end 
+    if overlapForceFactor == 0
+        return 0
+    end
 
-    C = solutionToCells(u) 
-    overlapEnergy = 0 
-    for i = 1:length(C) 
-        for j = i+1:length(C) 
+    C = solutionToCells(u)
+    overlapEnergy = 0
+    for i = 1:length(C)
+        for j = i+1:length(C)
 
             overlaps = getOverlap(C[i], C[j])
             for o ∈ overlaps
                 area = areaPolygon(o.x, o.y)
-                overlapEnergy += overlapForceFactor/k * area ^ k 
-            end 
-            
-        end 
-    end 
+                overlapEnergy += overlapForceFactor / k * area^k
+            end
+
+        end
+    end
     return overlapEnergy
-end 
-    
+end
+
 function collectOverlapIndices(o, c1, c2)
 
     v1 = Set()
@@ -579,60 +599,60 @@ function bachelorOverlapForceCells(c1, c2; k=1)
         for ind ∈ v1
 
             i, j = ind
-            r1x[i] = -0.5 * area^(k-1) * gradO[j]
-            r1y[i] = -0.5 * area^(k-1) * gradO[j+K]
+            r1x[i] = -0.5 * area^(k - 1) * gradO[j]
+            r1y[i] = -0.5 * area^(k - 1) * gradO[j+K]
 
         end
         for ind ∈ v2
 
             i, j = ind
-            r2x[i] = -0.5 * area^(k-1) * gradO[j]
-            r2y[i] = -0.5 * area^(k-1) * gradO[j+K]
+            r2x[i] = -0.5 * area^(k - 1) * gradO[j]
+            r2y[i] = -0.5 * area^(k - 1) * gradO[j+K]
 
         end
     end
-    return forceScalings[4]*r1x, forceScalings[4]*r1y, forceScalings[4]*r2x, forceScalings[4]*r2y
+    return forceScalings[4] * r1x, forceScalings[4] * r1y, forceScalings[4] * r2x, forceScalings[4] * r2y
 
 end
 
 function billiardForceDFCells(c1, c2)
-    
+
     c_1 = computeCenter(c1)
     c_2 = computeCenter(c2)
-    
+
     dist = norm(c_1 - c_2, 2)
 
-    if dist >= 2*radius 
+    if dist >= 2 * radius
         return zeros(N), zeros(N), zeros(N), zeros(N)
-    end 
+    end
 
-    pushVec = (2*radius - dist)/dist * (c_1 - c_2) 
+    pushVec = (2 * radius - dist) / dist * (c_1 - c_2)
 
-    scaling = timeStepSize^(-1) 
+    scaling = timeStepSize^(-1)
 
-    r1x = scaling*pushVec[1]*ones(N)
-    r1y = scaling*pushVec[2]*ones(N)
+    r1x = scaling * pushVec[1] * ones(N)
+    r1y = scaling * pushVec[2] * ones(N)
     r2x = -r1x
     r2y = -r1y
 
     return r1x, r1y, r2x, r2y
-end 
+end
 
 function combinationOverlapForceCells(c1, c2; hardness=hardness)
     # hardness must be in [0,1]
-    if hardness == 1 
+    if hardness == 1
         return billiardForceDFCells(c1, c2)
     elseif hardness == 0
         return bachelorOverlapForceCells(c1, c2)
-    end 
+    end
 
     r1xBach, r1yBach, r2xBach, r2yBach = bachelorOverlapForceCells(c1, c2)
     r1xBill, r1yBill, r2xBill, r2yBill = billiardForceDFCells(c1, c2)
 
-    r1x = (1-hardness) * r1xBach + hardness * r1xBill
-    r1y = (1-hardness) * r1yBach + hardness * r1yBill
-    r2x = (1-hardness) * r2xBach + hardness * r2xBill
-    r2y = (1-hardness) * r2yBach + hardness * r2yBill
+    r1x = (1 - hardness) * r1xBach + hardness * r1xBill
+    r1y = (1 - hardness) * r1yBach + hardness * r1yBill
+    r2x = (1 - hardness) * r2xBach + hardness * r2xBill
+    r2y = (1 - hardness) * r2yBach + hardness * r2yBill
 
     return r1x, r1y, r2x, r2y
 end
