@@ -93,7 +93,7 @@ function createSimGif(gifPath::String,
     title="",
     xlab="x",
     ylab="y",
-    fps=3,
+    fps=8,
     dpi=100)
 
     if N == 0
@@ -193,6 +193,7 @@ function createSimGif(gifPath::String,
                     seriestype=:shape,
                     aspect_ratio=:equal,
                     opacity=0.25,
+                    label=false,
                 )
             end
 
@@ -504,34 +505,54 @@ function runShow_overlap()
     ## 1st save one simulation as gif 
     println("save one sim as gif")
 
+    # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
+    # u0 = [c1.x; c1.y]
+    
+    c1 = cellToDiscreteCell(circleCell([-0.005, 0], radius), N)
+    c2 = cellToDiscreteCell(circleCell([0.005, 0], radius), N)
+    u0 = [c1.x; c2.x; c1.y; c2.y]
 
-    c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
-
-    u0 = [c1.x; c1.y]
-    A_d = circleArea(0.002, N)
+    A_d = circleArea(radius, N)
     E_d = circleEdgeLengths(radius, N)
     I_d = circleInteriorAngles(N) 
     p = timeStepSize, D, A_d, E_d, I_d
-    cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
-    @time sol = solve(cellProblem,
-        EM(),
-        dt=timeStepSize,
-    )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol; title=simulationName)
-
-    createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
-    # for overlapScaling in [1, 10, 10^2, 10^3, round(timeStepSize^(-1))]
-    # forceScalings[4] = overlapScaling 
-    # cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p) 
-    # @time sol = solve(cellProblem, 
-    #                 EM(), 
-    #                 dt=timeStepSize, 
-    #                 )
+    # cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
+    # @time sol = solve(cellProblem,
+    #     EM(),
+    #     dt=timeStepSize,
+    # )
     # extractedSol = extractSolution(sol)
+    # createSimGif(gifPath, extractedSol; title=simulationName)
 
-    # gifPath = joinpath(simPath, string("$simulationName-scaling_$overlapScaling.gif"))
-    # createSimGif(gifPath, extractedSol; title="$simulationName-scaling_$overlapScaling") 
-    # end 
+    # createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
+
+    for intAngleScale in [5e0 ,1e1, 5e1,1e2]
+        forceScalings[3] = intAngleScale
+        for overlapScaling in [1e3, 1e4, 1e5]
+            forceScalings[4] = overlapScaling 
+
+            intanglstring = @sprintf("%.1e", forceScalings[3])
+            overlapstring = @sprintf("%.1e", forceScalings[4])
+            nameSim = string("drift_9_4_$(intanglstring)_$(overlapstring)")
+            simPath = joinpath(homedir(), "simulations", nameSim)
+            gifPath = joinpath(simPath, string(nameSim, ".gif"))
+            energyDiaPath = joinpath(simPath, "energies-$nameSim.png")
+            mkpath(simPath)
+            if gethostname() == "treuesStueck"      # home pc xd 
+                cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+            else # laptop 
+                cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+            end
+
+            cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p) 
+            @time sol = solve(cellProblem, 
+                            EM(), 
+                            dt=timeStepSize, 
+                            )
+            extractedSol = extractSolution(sol)
+            createSimGif(gifPath, extractedSol; title=nameSim) 
+            createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
+        end 
+    end 
 
 end

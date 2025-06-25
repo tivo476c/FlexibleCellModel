@@ -44,6 +44,13 @@ function energies!(du, u, p, t)
         res += forceScalings[4] * overlapForce(u)
     end
 
+    # let cells drift into each other for 10 time steps 
+    if t <= 1*1e-6
+        println("t = $t")
+        res[1:6] .+= sqrt(2/timeStepSize) 
+        res[7:12] .-= sqrt(2/timeStepSize) 
+    end 
+
     for i = 1:length(du)
         du[i] = res[i]
     end
@@ -65,7 +72,7 @@ function brownian!(du, u, p, t)
         du = zeros(2 * M * N, 2 * M)
         for i = 1:2*M
             lineIdx = N*(i-1)+1:i*N
-            du[lineIdx, i] = sqrt(2 * D)
+            du[lineIdx, i] .= sqrt(2 * D)
         end
     end
 
@@ -120,7 +127,7 @@ function reflectiveBC_overlap!(integrator)
             if distance < 2 * radius
 
                 pushVec = (u_i - u_j) / distance * (2 * radius - distance)
-                u[i] += pushVec[1]
+                u[i] += pushVec[1] 
                 u[i+NumberOfCells] += pushVec[2]
                 u[j] -= pushVec[1]
                 u[j+NumberOfCells] -= pushVec[2]
@@ -146,21 +153,21 @@ function areaEnergyCell(c, A_d; k=2)
     return areaForceFactor / k * abs(A_d - areaPolygon(c.x, c.y))^k
 end
 
-function areaGradientCell(c)
+function areaGradientCell(c; NVertices=NumberOfCellWallPoints)
     """
     Returns for a cell c a vector of length (R^2)^N, that holds for each vertex its area gradient.  
     First N entries are for the x coords of the N vertices and the second N entries for the y coords. 
     """
 
     #A = areaPolygon( c.x, c.y ) 
-    res = zeros(2 * N)
-    res[1] = c.y[2] - c.y[N]
-    res[N+1] = c.x[N] - c.x[2]
-    res[N] = c.y[1] - c.y[N-1]
-    res[2*N] = c.x[N-1] - c.x[1]
-    for i = 2:N-1
+    res = zeros(2 * NVertices)
+    res[1] = c.y[2] - c.y[NVertices]
+    res[NVertices+1] = c.x[NVertices] - c.x[2]
+    res[NVertices] = c.y[1] - c.y[NVertices-1]
+    res[2*NVertices] = c.x[NVertices-1] - c.x[1]
+    for i = 2:NVertices-1
         res[i] = c.y[i+1] - c.y[i-1]
-        res[i+N] = c.x[i-1] - c.x[i+1]
+        res[i+NVertices] = c.x[i-1] - c.x[i+1]
     end
 
     return res
@@ -500,7 +507,7 @@ function overlapForceCells(c1, c2, overlapForceType=overlapForceType)
     end
 end
 
-function bachelorOverlapForceCells(c1, c2)
+function bachelorOverlapForceCells(c1, c2; k=1)
 
     r1x = zeros(N)
     r1y = zeros(N)
@@ -513,23 +520,19 @@ function bachelorOverlapForceCells(c1, c2)
         # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
         v1, v2 = collectOverlapIndices(o, c1, c2)
 
-        gradO = areaGradientCell(o)
+        gradO = areaGradientCell(o; NVertices=K)
         for ind ∈ v1
 
             i, j = ind
-            r1x[i] = -0.5 * 2 * gradO[j]
-            r1y[i] = -0.5 * 2 * gradO[j+K]
-            # r1x[i] = -0.5 * area * gradO[j]
-            # r1y[i] = -0.5 * area * gradO[j+K]
+            r1x[i] = -0.5 * area^(k-1) * gradO[j]
+            r1y[i] = -0.5 * area^(k-1) * gradO[j+K]
 
         end
         for ind ∈ v2
 
             i, j = ind
-            r2x[i] = -0.5 * 2 * gradO[j]
-            r2y[i] = -0.5 * 2 * gradO[j+K]
-            # r2x[i] = -0.5 * area * gradO[j]
-            # r2y[i] = -0.5 * area * gradO[j+K]
+            r2x[i] = -0.5 * area^(k-1) * gradO[j]
+            r2y[i] = -0.5 * area^(k-1) * gradO[j+K]
 
         end
     end
