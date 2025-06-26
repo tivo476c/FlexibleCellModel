@@ -35,6 +35,79 @@ function createLocationFile(sol, sim::Int64, locationsPath)
 
 end
 
+
+function mirrowhorizontal!(matrix)
+
+    secondMatrix = reverse(matrix, dims=2)
+    matrix = matrix + secondMatrix
+    matrix .*= 0.5 
+    
+end 
+
+function mirrowvertical!(matrix)
+
+    secondMatrix = reverse(matrix, dims=1)
+    matrix = matrix + secondMatrix
+    matrix .*= 0.5 
+    
+end 
+
+function mirrowboth!(matrix)
+
+    secondMatrix = reverse(reverse(matrix, dims=2), dims=1)
+    matrix = matrix + secondMatrix
+    matrix .*= 0.5 
+    
+end 
+
+function rotateleft!(matrix)
+
+    secondMatrix = permutedims(matrix, (2,1)) |> reverse(dims=1)
+    matrix = matrix + secondMatrix
+    matrix .*= 0.5 
+    
+end 
+
+
+
+function smoothenMatrix!(matrices, Factor)
+    """
+    this function enhances the number of sims by copying matrices in different ways. 
+    """
+    
+    fac = 1 
+    for i=eachindex(matrices)
+        while fac < Factor 
+
+            mirrowhorizontal!(matrices[i])
+            fac *= 2 
+            if fac >= Factor
+                break 
+            end 
+
+            mirrowvertical!(matrices[i])
+            fac *= 2 
+            if fac >= Factor
+                break 
+            end 
+
+            mirrowboth!(matrices[i]) 
+            fac *= 2 
+            if fac >= Factor
+                break 
+            end 
+
+            for _=1:3
+                rotateleft!(matrices[i])
+                fac *= 2 
+                if fac >= Factor
+                    break 
+                end 
+            end 
+        end 
+    end 
+end 
+
 function makeMatrices()
     # ONE MATRIX STORES THE ENTRIES FOR ONE SAMPLE TIME AT ALL SIMULATION ITERATIONS 
 

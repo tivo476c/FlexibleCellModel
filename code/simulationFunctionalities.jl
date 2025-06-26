@@ -406,15 +406,15 @@ function runSimulation_locations()
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
     """
     ## create paths 
-    println("creating paths")
-    mkpath(simPath)
-    if gethostname() == "treuesStueck"      # home pc xd 
-        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    else # laptop 
-        cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    end
-    mkpath(heatMapsPath)
-    mkpath(locationsPath)
+    # println("creating paths")
+    # mkpath(simPath)
+    # if gethostname() == "treuesStueck"      # home pc xd 
+    #     cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    # else # laptop 
+    #     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    # end
+    # mkpath(heatMapsPath)
+    # mkpath(locationsPath)
 
     # if N != 0
     #     A_d, E_d, I_d = computeDesiredStates_circleCells()
@@ -440,11 +440,13 @@ function runSimulation_locations()
     # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(do1SimulationRun, 13:NumberOfSimulations)
+    # results = pmap(do1SimulationRun, 13:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()
+    smoothenMatrix!(heatmatrices, 30)
     createHeatmaps(heatmatrices)
+
 end
 
 function runSimulation(NuProcs)
