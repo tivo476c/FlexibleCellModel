@@ -25,7 +25,7 @@ println("Started entryPoint.jl")
 # energyDiaPath = joinpath(simPath, "energies-$simulationName.png")
 # p = [timeStepSize, D]
 
- 
+
 
 # runShow_overlap()
 

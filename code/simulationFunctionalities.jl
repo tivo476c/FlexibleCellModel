@@ -422,25 +422,25 @@ function runSimulation_locations()
     # end
 
     # 1st save one simulation as gif 
-    println("save one sim as gif")
+    # println("save one sim as gif")
 
-    if N == 0
-        u0 = InitializePointParticles(radius)
-    else
-        u0 = initializeCells(radius)
-    end
+    # if N == 0
+    #     u0 = InitializePointParticles(radius)
+    # else
+    #     u0 = initializeCells(radius)
+    # end
 
-    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    @time sol = solve(cellProblem,
-        EM(),
-        # callback=CallBack_reflectiveBC_cellOverlap,
-        dt=timeStepSize,
-    )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol)
+    # cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    # @time sol = solve(cellProblem,
+    #     EM(),
+    #     # callback=CallBack_reflectiveBC_cellOverlap,
+    #     dt=timeStepSize,
+    # )
+    # extractedSol = extractSolution(sol)
+    # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(do1SimulationRun, 1:NumberOfSimulations)
+    results = pmap(do1SimulationRun, 13:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()
