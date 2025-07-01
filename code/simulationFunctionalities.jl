@@ -88,17 +88,92 @@ function InitializePointParticles(radius)
     return vcat(xCoords, yCoords)
 end
 
+mutable struct forceArrows
+    label::String
+    vectors::Vector{Float64}
+end
+
+function getForces(u; A_d=[], E_d=[], I_d=[], overlap=false)
+    # println("timeStepSize = $timeStepSize")
+    # println("forceScalings = $forceScalings")
+    res = forceArrows[]
+    if A_d != []
+        areaForceArr = forceArrows("area force", timeStepSize * forceScalings[1] * areaForce(u, A_d))
+        # areaForceArr = forceArrows("area force", timeStepSize * areaForce(u, A_d))
+        push!(res, areaForceArr)
+    end
+    if E_d != []
+        edgeForceArr = forceArrows("edge force", timeStepSize * forceScalings[2] * edgeForce(u, E_d))
+        # edgeForceArr = forceArrows("edge force", timeStepSize * edgeForce(u, E_d))
+        push!(res, edgeForceArr)
+    end
+    if I_d != []
+        angleForceArr = forceArrows("angle force", timeStepSize * forceScalings[3] * interiorAngleForce(u, I_d))
+        # angleForceArr = forceArrows("angle force", timeStepSize * interiorAngleForce(u, I_d))
+        push!(res, angleForceArr)
+    end
+    if overlap
+        overlapForceArr = forceArrows("overlap force", timeStepSize * forceScalings[4] * overlapForce(u))
+        # overlapForceArr = forceArrows("overlap force", timeStepSize * overlapForce(u))
+        push!(res, overlapForceArr)
+    end
+
+    overallVecs = zeros(2 * M * N)
+    for u in res
+        overallVecs .+= u.vectors
+    end
+
+    overallForceArr = forceArrows("overall force", 1e-4 * overallVecs)
+    push!(res, overallForceArr)
+
+    return res
+end
+
+function addEnergyForces(plt, u;
+    A_d=[],
+    E_d=[],
+    I_d=[],
+    overlap=false)
+
+    forceArrows = getForces(u; A_d=A_d, E_d=E_d, I_d=I_d, overlap=true)
+
+    x_starts = u[1:N*M]
+    y_starts = u[N*M+1:2*M*N]
+
+    colors = Dict("area force" => 1, "edge force" => 2, "angle force" => 3, "overlap force" => 4, "overall force" => 5)
+
+    for force in [forceArrows[5]]
+
+        # compute ends of area force vectors 
+        force_x_ends = x_starts + force.vectors[1:N*M]
+        force_y_ends = y_starts + force.vectors[N*M+1:2*N*M]
+
+        # x_vec = force_x_ends .- x_starts
+        # y_vec = force_y_ends .- y_starts
+
+        # quiver!(plt, x_starts, y_starts, quiver=(x_vec, y_vec), arrow=false, color=colors[force.label])
+        scatter!(plt, [NaN], [NaN], label=force.label, color=colors[force.label])    # needed for label 
+        for i in eachindex(x_starts)
+            plot!(plt, [x_starts[i], force_x_ends[i]], [y_starts[i], force_y_ends[i]], lw=1, label=false)
+        end
+    end
+end
+
+
+
 function createSimGif(gifPath::String,
     sol;
+    A_d=[],
+    E_d=[],
+    I_d=[],
     title="",
     xlab="x",
     ylab="y",
     fps=1,
-    dpi=100)
+    dpi=200)
 
     println("entered createSimGif")
 
-    println("N = $N")
     if N == 0
         if radius == 0
             # PP cells 
@@ -170,21 +245,14 @@ function createSimGif(gifPath::String,
 
         end
     else
-        println("length(sol.u) = $(length(sol.u))")
-        println("sol.u[1] = $(sol.u[1])")
-        println("sol.t = $(sol.t)")
-
-        println("sol.u[1] == sol.u[6] : $(sol.u[1] == sol.u[6])")
         # DF cells 
         animSDE = @animate for i = 1:NumberOfSampleTimes
 
             u = sol.u[i]
-
             time = sampleTimes[i]
-
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
 
-            plot(X[1], Y[1],
+            plt = plot(X[1], Y[1],
                 seriestype=:shape,
                 aspect_ratio=:equal,
                 opacity=0.25,
@@ -198,13 +266,15 @@ function createSimGif(gifPath::String,
 
             for i = 2:NumberOfCells
 
-                plot!(X[i], Y[i],
+                plot!(plt, X[i], Y[i],
                     seriestype=:shape,
                     aspect_ratio=:equal,
                     opacity=0.25,
                     label=false,
                 )
             end
+
+            # addEnergyForces(plt, u; A_d=A_d, E_d=E_d, I_d=I_d, overlap=true)
 
         end
 
@@ -527,53 +597,51 @@ function runShow_overlap()
     # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
     # u0 = [c1.x; c1.y]
 
-    c1 = cellToDiscreteCell(circleCell([-domainL - 0.005, 0], radius), N)
-    c2 = cellToDiscreteCell(circleCell([domainL + 0.005, 0], radius), N)
+    c1 = cellToDiscreteCell(circleCell([-(radius + 0.0005), 0], radius), N)
+    c2 = cellToDiscreteCell(circleCell([radius + 0.0005, 0], radius), N)
     u0 = [c1.x; c2.x; c1.y; c2.y]
 
     A_d = circleArea(radius, N)
     E_d = circleEdgeLengths(radius, N)
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
-    # cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
-    # @time sol = solve(cellProblem,
-    #     EM(),
-    #     dt=timeStepSize,
-    # )
-    # extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol; title=simulationName)
-
-    # createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
+    cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
+    @time sol = solve(cellProblem,
+        EM(),
+        dt=timeStepSize,
+    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title=simulationName)
+    createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
 
     # for intAngleScale in [5e0 ,1e1, 5e1,1e2]
-    for intAngleScale in [5e0]
-        forceScalings[3] = intAngleScale
-        # for overlapScaling in [1e3, 1e4, 1e5]
-        for overlapScaling in [2e4]
-            forceScalings[4] = overlapScaling
 
-            intanglstring = @sprintf("%.1e", forceScalings[3])
-            overlapstring = @sprintf("%.1e", forceScalings[4])
-            nameSim = string("drift_9_4_$(intanglstring)_$(overlapstring)")
-            simPath = joinpath(homedir(), "simulations", nameSim)
-            gifPath = joinpath(simPath, string(nameSim, ".gif"))
-            energyDiaPath = joinpath(simPath, "energies-$nameSim.png")
-            mkpath(simPath)
-            if gethostname() == "treuesStueck"      # home pc xd 
-                cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-            else # laptop 
-                cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-            end
+    # for overlapScaling in [1e3, 1e4, 1e5]
+    #     for overlapScaling in [2e4]
+    #         forceScalings[4] = overlapScaling
 
-            cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
-            @time sol = solve(cellProblem,
-                EM(),
-                dt=timeStepSize,
-            )
-            extractedSol = extractSolution(sol)
-            createSimGif(gifPath, extractedSol; title=nameSim)
-            createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
-        end
-    end
+    #         intanglstring = @sprintf("%.1e", forceScalings[3])
+    #         overlapstring = @sprintf("%.1e", forceScalings[4])
+    #         nameSim = string("drift_9_4_$(intanglstring)_$(overlapstring)")
+    #         simPath = joinpath(homedir(), "simulations", nameSim)
+    #         gifPath = joinpath(simPath, string(nameSim, ".gif"))
+    #         energyDiaPath = joinpath(simPath, "energies-$nameSim.png")
+    #         mkpath(simPath)
+    #         if gethostname() == "treuesStueck"      # home pc xd 
+    #             cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    #         else # laptop 
+    #             cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    #         end
+
+    #         cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
+    #         @time sol = solve(cellProblem,
+    #             EM(),
+    #             dt=timeStepSize,
+    #         )
+    #         extractedSol = extractSolution(sol)
+    #         createSimGif(gifPath, extractedSol; title=nameSim)
+    #         createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
+    #     end
+    # end
 
 end

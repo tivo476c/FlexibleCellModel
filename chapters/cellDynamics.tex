@@ -316,7 +316,8 @@ With that, we can define our interior angle energy.
 We continue by computing the resulting force. 
 The $\atanxy$ function is partly defined and not truly differentiable. 
 We still want to compute a gradient to use it for our interior angle force. 
-Since $$\atanxy(x,y) = \arctan\left(\frac{y}{x} \right) + \text{constant}$$ almost everywhere, we just compute the gradient of $\arctan(\frac{y}{x})$ instead. \\
+It is $$\atanxy(x,y) = \arctan\left(\frac{y}{x} \right) + \text{constant}$$ almost everywhere, just not on areas with measure zero. 
+We just compute the gradient of $\arctan(\frac{y}{x})$ instead. \\
 Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
 However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
 

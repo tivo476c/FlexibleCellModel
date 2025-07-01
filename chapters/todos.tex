@@ -1,0 +1,12 @@
+\section{TODOs}
+
+\begin{itemize}
+    \item add left(, right) where it is necessary 
+    \item be consistent in the notation $\vec{v} = (v^1, v^2)$, dont use $(v_x, v_y)$ or something like that. Look at definition of $arctan(x,y) -> arctan(v^1,v^2)$
+    \item introduce the energies with the $k$: $E = 1/k |...|^k$ and also adapt the forces accordingly 
+    \item watch out to use only the needed indices in the notation of energies and forces (a force function should get the considered cell as an argument, but itself should be independent on the according index)
+    \item add computations of the 'neighboring terms' in the proofs of the forces  
+    \item write down nicely, what the SDE is, that we would like to solve. Is it $\frac{\dequ \vec{C}}{\dequ t} = ... $, or $\frac{\dequ \vec{v}_j^i}{\dequ t} = ... $ for $ 1 \leq i \leq N_C$ and $1 \leq j \leq N_V$? Maybe introduce both. Biggest Issue: What is the deterministic part $\textbf(F)$. Always write down the dimensions of the arguments and where F maps into. Write down the force functions accordingly, so we can just say: $\textbf(F) = a_{area} F_{aray} + a_{edge} F_{edge} + ...$. Do we need $\textbf(F)(\vec{C}, C_i)$ or how is it correct?
+    \item Introduce new billiardBounceOverlapDegeneration.
+    \item Introduce hardness parameter. 
+\end{itemize}

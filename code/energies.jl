@@ -24,7 +24,7 @@ function energies!(du, u, p, t)
             I_d ... desired interior angles of a cell (in R^N)
         t  ... current time 
     """
-    # _, _, A_d, E_d, I_d = p
+    _, _, A_d, E_d, I_d = p
     if N != 0
         res = zeros(2 * N * M)
     else
@@ -40,19 +40,18 @@ function energies!(du, u, p, t)
     if (forceScalings[3] != 0 && hardness < 1)
         res += forceScalings[3] * interiorAngleForce(u, I_d)
     end
-    if (forceScalings[4] != 0)
-        res += overlapForce(u)
-    end
+
+    res += overlapForce(u)
 
     # let cells drift into each other for 2 time steps 
-    # if t <= 0*timeStepSize
-    #     println("pushing together at t = $t")
-    #     res[1:6] .+= 0.5*sqrt(2/timeStepSize) 
-    #     res[7:12] .-= 0.5*sqrt(2/timeStepSize) 
-    # end 
+    if t <= 0 * timeStepSize
+        println("pushing together at t = $t")
+        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    end
 
     # apply BC for DF cells 
-    res += DFBoundaryCondition(u)
+    # res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -636,6 +635,7 @@ function billiardForceDFCells(c1, c2)
     r2y = -r1y
 
     return r1x, r1y, r2x, r2y
+
 end
 
 function combinationOverlapForceCells(c1, c2; hardness=hardness)
