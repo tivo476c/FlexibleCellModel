@@ -29,10 +29,10 @@ The area force is designed to maintain each cell's area close to a preferred tar
 In order to compute a cells area, which is the area of a positively orientated polygon, we can use the Shoelace formula from~\cite{Shoelace2014}. 
 
 \begin{proposition}  \textbf{Shoelace formula for DF cells} \label{prop:Shoelace}\\ 
-	Let $C = (\vec{v}_1, \ldots, \vec{v}_N)$ be a DF cell with $\vec{v}_j = (v_j^1, v_j^2)^T$ for $j=1,\ldots,N$.
+	Let $C = (\vec{v}_1, \ldots, \vec{v}_N)$ be a DF cell with $\vec{v}_j = (v_j^{x}, v_j^{y})^T$ for $j=1,\ldots,N$.
 	We determine the area $A_C$ of $C$ by applying the Shoelace formula
 	\begin{center}
-		$A_C = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^1 v_{j+1}^2 - v_{j+1}^1 v_j^2)$,
+		$A_C = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^{x} v_{j+1}^{y} - v_{j+1}^{x} v_j^{y})$,
 	\end{center} 
 	where $\vec{v}_{N + 1} = \vec{v}_1$. \\
 	Proof. 	\\
@@ -42,13 +42,13 @@ In order to compute a cells area, which is the area of a positively orientated p
 	For each $1 \leq j \leq N$ the edge $\overline{ \vec{v}_j \: \vec{v}_{j+1}}$ is associated with the area $T_j$ of the trapeze that arises when connecting the line segment vertically with the $x$ axis. 
 	The signed trapeze area of $T_j$ can be computed with 
 	\begin{center}
-		$T_j = \frac{1}{2} (v_j^2 + v_{j+1}^2)(v_j^1 - v_{j+1}^1)$.
+		$T_j = \frac{1}{2} (v_j^{y} + v_{j+1}^{y})(v_j^{x} - v_{j+1}^{x})$.
 	\end{center}
-	The area $T_j$ has a positive sign if $v_j^1 \geq v_{j+1}^1$ (green arrow in Figure \ref{fig:shoelace}) and a negative sign otherwise (red arrow). 
+	The area $T_j$ has a positive sign if $v_j^{x} \geq v_{j+1}^{x}$ (green arrow in Figure \ref{fig:shoelace}) and a negative sign otherwise (red arrow). 
 	As depicted in the figure, the negatively signed areas precisely cancel the excess portions that would result from summing only the positively signed trapezoids.
 	Thus the total polygon's area is equal to the sum of all trapezes
 	\begin{center}
-		$A_C = \sum\limits_{j = 1}^{N} T_j = \frac{1}{2} \sum\limits_{j = 1}^{N} (v_j^2 + v_{j+1}^2)(v_j^1 - v_{j+1}^1) = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^1 v_{j+1}^2 - v_{j+1}^1 v_j^2) $.
+		$A_C = \sum\limits_{j = 1}^{N} T_j = \frac{1}{2} \sum\limits_{j = 1}^{N} (v_j^{y} + v_{j+1}^{y})(v_j^{x} - v_{j+1}^{x}) = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^{x} v_{j+1}^{y} - v_{j+1}^{x} v_j^{y}) $.
 	\end{center} 
 	\begin{figure}
 		\begin{center}
@@ -85,15 +85,15 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 \begin{proposition} \textbf{Area force} \label{force:area}\\
 	The gradient $\nabla_{\vec{v}_j} A(C)$ with respect to the $j$th vertex of cell $C$ is given by 
 	\begin{center}
-		$\nabla_{\vec{v}_j} A(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{2} - v_{j-1}^{2} \\[0.5em]  v_{j-1}^{1} - v_{j+1}^{1} \end{pmatrix}$, 
+		$\nabla_{\vec{v}_j} A(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}$, 
 	\end{center}
-	where $\vec{v}_j = (v_{j}^{1}, v_{j}^{2})^T$. \\
+	where $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$. \\
 
 	Thus, the area force $F_{j}^{(A)}: (\R^2)^{N_V} \rightarrow \R^2$ that gets applied on $\vec{v}_j$ is given by 
 	\begin{align}
 		F_{j}^{(A)}(C) 
 		= - \nabla_{\vec{v}_j} A(C) 
-		= \frac{1}{2}(A_d - A_{C}) \begin{pmatrix} v_{j+1}^{2} - v_{j-1}^{2} \\[0.5em]  v_{j-1}^{1} - v_{j+1}^{1} \end{pmatrix}.
+		= \frac{1}{2}(A_d - A_{C}) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}.
 	\end{align}
 
 
@@ -105,14 +105,14 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 		\nabla_{\vec{v}_j} A(C) &= \nabla_{\vec{v}_j} \frac{1}{2} | A_d - A_{C} |^2  \\ 
 		&=  (A_d - A_{C}) \nabla_{\vec{v}_j} (A_d - A_{C}) \\
 		&=   (A_d - A_{C}) \nabla_{\vec{v}_j} ( - A_{C}) \\ 
-		&=   (A_d - A_{C}) \nabla_{\vec{v}_j} ( - \frac{1}{2} \sum\limits_{k = 1}^{N} (v_k^1 v_{k+1}^2 - v_{k+1}^1 v_k^2)) \\[0.5em]  
+		&=   (A_d - A_{C}) \nabla_{\vec{v}_j} ( - \frac{1}{2} \sum\limits_{k = 1}^{N} (v_k^{x} v_{k+1}^{y} - v_{k+1}^{x} v_k^{y})) \\[0.5em]  
 		&=   - \frac{1}{2} (A_d - A_{C}) \begin{pmatrix}
-			\partial_{v_j^1} (v_j^1 v_{j+1}^2 - v_j^1 v_{j-1}^2)  \\[0.5em]
-			\partial_{v_j^2} (v_{j-1}^1 v_j^2 - v_{j+1}^1 v_j^2)
+			\partial_{v_j^{x}} (v_j^{x} v_{j+1}^{y} - v_j^{x} v_{j-1}^{y})  \\[0.5em]
+			\partial_{v_j^{y}} (v_{j-1}^{x} v_j^{y} - v_{j+1}^{x} v_j^{y})
 		\end{pmatrix} \\[0.5em] 
 		&=   \frac{1}{2} (A_{C} - A_d) \begin{pmatrix}
-			  v_{j+1}^2 - v_{j-1}^2  \\
-			 v_{j-1}^1  - v_{j+1}^1 
+			  v_{j+1}^{y} - v_{j-1}^{y}  \\
+			 v_{j-1}^{x}  - v_{j+1}^{x} 
 		\end{pmatrix} 
 	\end{align*}
 
@@ -185,8 +185,8 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	\begin{align}
 		\begin{split}
 			F^{(E)}_j(C) &= - \nabla_{\vec{v}_j} E(C) \\
-				&= \dfrac{E_d^{j-1} - E^{j-1}_{C}}{E^{j-1}_{C}}  \begin{pmatrix} v_{j}^{1} - v_{j-1}^{1} \\[0.5em]  v_{j}^{2} - v_{j-1}^{2}  \end{pmatrix}
-				+ \dfrac{E_d^{j} - E^j_{C}}{E^j_{C}}  \begin{pmatrix} v_{j}^{1} - v_{j+1}^{1} \\[0.5em]  v_{j}^{2} - v_{j+1}^{2} 
+				&= \dfrac{E_d^{j-1} - E^{j-1}_{C}}{E^{j-1}_{C}}  \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix}
+				+ \dfrac{E_d^{j} - E^j_{C}}{E^j_{C}}  \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} 
 			\end{pmatrix}
 		\end{split}
 		\label{force:edge}
@@ -202,20 +202,20 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	\begin{align*}
 		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j-1}_d - E^{j-1}_{C_i}|^2 &= (E^{j-1}_d - E^{j-1}_C) \nabla_{\vec{v}_j} (E^{j-1}_d - E^{j-1}_C) \\
 		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_{j}} \norm[\vec{v}_{j-1} - \vec{v}_{j}] ) \\
-		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_j} [(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2]^{\frac{1}{2}} ) \\
+		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}} ) \\
 		&= (E^{j-1}_d - E^{j-1}_C) \nabla_{\vec{v}_j} ( - E^{j-1}_C) \\
-		&= (E^{j-1}_d - E^{j-1}_C) (- \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \nabla_{\vec{v}_j} [(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)]) \\[0.5em] 
+		&= (E^{j-1}_d - E^{j-1}_C) (- \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]) \\[0.5em] 
 		&= (E^{j-1}_d - E^{j-1}_C) \left(- \frac{1}{2 E^{j-1}_C} \begin{pmatrix}
-			\partial_{v_{j}^1} (v_{j-1}^1 - v_{j}^1)^2 \\[0.5em]
-			\partial_{v_{j}^2} (v_{j-1}^2 - v_{j}^2)^2
+			\partial_{v_{j}^{x}} (v_{j-1}^{x} - v_{j}^{x})^2 \\[0.5em]
+			\partial_{v_{j}^{y}} (v_{j-1}^{y} - v_{j}^{y})^2
 		\end{pmatrix}\right) \\[0.5em]
 		&= (E^{j-1}_d - E^{j-1}_C)  \left( - \frac{1}{2 E^{j-1}_C} \begin{pmatrix}
-			 -2(v_{j-1}^1 - v_{j}^1) \\[0.5em]
-			 -2(v_{j-1}^2 - v_{j}^2)
+			 -2(v_{j-1}^{x} - v_{j}^{x}) \\[0.5em]
+			 -2(v_{j-1}^{y} - v_{j}^{y})
 		\end{pmatrix}\right) \\[0.5em] 
 		&= \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \begin{pmatrix}
-			v_{j}^1 - v_{j-1}^1 \\[0.5em]
-			v_{j}^2 - v_{j-1}^2
+			v_{j}^{x} - v_{j-1}^{x} \\[0.5em]
+			v_{j}^{y} - v_{j-1}^{y}
 	   \end{pmatrix} 
 	\end{align*}
 
@@ -223,20 +223,20 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	\begin{align*}
 		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
 		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
-		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)^2]^{\frac{1}{2}} ) \\
+		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^{y} + (v_j^{y} - v_{j+1}^{y})^2]^{\frac{1}{2}} ) \\
 		% &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
-		&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^1 - v_{j+1}^1)^2 + (v_j^2 - v_{j+1}^2)]) \\[0.5em] 
+		&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^2 + (v_j^{y} - v_{j+1}^{y})^2]) \\[0.5em] 
 		&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
-			\partial_{v_j^1} (v_j^1 - v_{j+1}^1)^2 \\[0.5em]
-			\partial_{v_j^2} (v_j^2 - v_{j+1}^2)^2
+			\partial_{v_j^{x}} (v_j^{x} - v_{j+1}^{x})^2 \\[0.5em]
+			\partial_{v_j^{y}} (v_j^{y} - v_{j+1}^{y})^2
 		\end{pmatrix}\right) \\[0.5em]
 		&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
-			 2(v_j^1 - v_{j+1}^1) \\[0.5em]
-			 2(v_j^2 - v_{j+1}^2)
+			 2(v_j^{x} - v_{j+1}^{x}) \\[0.5em]
+			 2(v_j^{y} - v_{j+1}^{y})
 		\end{pmatrix}\right) \\[0.5em] 
 		&= \frac{E^j_C - E^j_d}{E^j_C} \begin{pmatrix}
-			v_j^1 - v_{j+1}^1 \\[0.5em]
-			v_j^2 - v_{j+1}^2
+			v_j^{x} - v_{j+1}^{x} \\[0.5em]
+			v_j^{y} - v_{j+1}^{y}
 	   \end{pmatrix} 
 	\end{align*}
 	
@@ -273,19 +273,19 @@ A better alternative is to use the $\atanxy$ function, as it remains reliably st
 \begin{definition} \textbf{arctan2} \\
 	The function $$\atanxy:\R^2/\{0\} \rightarrow (-\pi, \pi]$$ is defined by:
 	\begin{center}
-		$ \atanxy(x,y) = 
+		$ \atanxy(\vec{v}) = 
 		\begin{cases}
-			\arctan(\frac{y}{x}) & x > 0 \\
-			\arctan(\frac{y}{x}) + \pi & x < 0, y > 0 \\
-			\arctan(\frac{y}{x}) - \pi & x < 0, y < 0 \\
-			\pi & x < 0, y = 0 \\
-			\dfrac{\pi}{2} & x = 0, y > 0 \\ 		
-			- \dfrac{\pi}{2} & x = 0, y < 0 \\ 
+			\arctan(\frac{v^{y}}{v^{x}}) & v^{x} > 0 \\
+			\arctan(\frac{v^{y}}{v^{x}}) + \pi & v^{x} < 0, v^{y} > 0 \\
+			\arctan(\frac{v^{y}}{v^{x}}) - \pi & v^{x} < 0, v^{y} < 0 \\
+			\pi & v^{x} < 0, v^{y} = 0 \\
+			\dfrac{\pi}{2} & v^{x} = 0, v^{y} > 0 \\ 		
+			- \dfrac{\pi}{2} & v^{x} = 0, v^{y} < 0 \\ 
 		\end{cases}. $
 	\end{center}
 \end{definition}
 
-The $\atanxy(x,y)$ function computes the angle of a vector $(x,y)^T$ with respect to the positive $x$ axis. \\
+The $\atanxy(\vec{v})$ function computes the angle of a vector $\vec{v}$ with respect to the positive $x$ axis. \\
 With this, we can compute the angles 
 \begin{center}
 	
@@ -316,8 +316,8 @@ With that, we can define our interior angle energy.
 We continue by computing the resulting force. 
 The $\atanxy$ function is partly defined and not truly differentiable. 
 We still want to compute a gradient to use it for our interior angle force. 
-It is $$\atanxy(x,y) = \arctan\left(\frac{y}{x} \right) + \text{constant}$$ almost everywhere, just not on areas with measure zero. 
-We just compute the gradient of $\arctan(\frac{y}{x})$ instead. \\
+It is $$\atanxy(\vec{v}) = \arctan\left(\frac{v^{y}}{v^{x}} \right) + \text{constant}$$ almost everywhere, just not on areas with measure zero. 
+We just compute the gradient of $\arctan(\frac{v^{y}}{v^{x}})$ instead. \\
 Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
 However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
 
@@ -328,25 +328,25 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		\begin{split}
 			F^{(I)}_j(C) &= - \nabla_{\vec{v}_j} I(C)  \\
 				&= (I^{j-1}_d - I^{j-1}_{C}) \left( 
-					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
-						v_{j}^2 - v_{j-1}^2 \\[0.5em]
-						v_{j-1}^1 - v_{j}^1
+					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{y}} \begin{pmatrix}
+						v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
+						v_{j-1}^{x} - v_{j}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
 			&+ (I^{j}_d - I^{j}_{C}) \left( 
-				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
-				v_{j-1}^2 - v_{j}^2 \\[0.5em]
-				v_{j}^1 - v_{j-1}^1
+				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
+				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+				v_{j}^{x} - v_{j-1}^{x}
 				\end{pmatrix} 
 				- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
-				v_{j+1}^2 - v_{j}^2 \\[0.5em]
-				v_{j}^1 - v_{j+1}^1
+				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
 				\right) \\[0.5em] 
 			&+ (I^{j+1}_d - I^{j+1}_{C}) \left( 
 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-				v_{j}^2 - v_{j+1}^2 \\[0.5em]
-				v_{j+1}^1 - v_{j}^1
+				v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
+				v_{j+1}^{x} - v_{j}^{x}
 				\end{pmatrix} 
 				\right) %\\[0.5em] 
 		\end{split}
@@ -378,87 +378,86 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j}  I^j_{C}   \\
 		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
 	\end{align*}
-	At this point, the previously mentioned simplifications come into play and we use $\arctan \left(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1} \right)$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator. \\
+	At this point, the previously mentioned simplifications come into play and we use $\arctan \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right)$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator. \\
 	In the next step, we need to compute the gradient 
 	\begin{center}
 		$
-		\nabla_{\vec{v}_j} \arctan \left(\dfrac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1} \right).
+		\nabla_{\vec{v}_j} \arctan \left(\dfrac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right).
 		$
 	\end{center}
 	
 	Therefore, we define helper functions 
-	$$ f(x,y) = \arctan \left( \frac{y}{x} \right)$$ 
+	$$ f(\vec{v}) = \arctan\left( \frac{v^{y}}{v^{x}} \right)$$ 
 	and 
 	$$g(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
-		v_{j-1}^1 - v_{j}^1 \\[0.5em] 
-		v_{j-1}^2 - v_{j}^2
+		v_{j-1}^{x} - v_{j}^{x} \\[0.5em] 
+		v_{j-1}^{y} - v_{j}^{y}
 	\end{pmatrix}.$$
 	With these helper functions, we can write 
-	$$ \arctan\left(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}) $$
+	$$ \arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}) $$
 	and use the two dimensional chain rule to stepwise compute the searched gradient. 
  
 	\begin{center}
 		
-		$\dfrac{\partial f(x,y)}{\partial x} = \dfrac{1}{1 + \left(\dfrac{y}{x}\right)^2} \left(- \dfrac{y}{x}\right) = - \dfrac{y}{x^2 + y^2}$ \\
-		$\dfrac{\partial f(x,y)}{\partial y} = \dfrac{1}{1 + \left(\dfrac{y}{x}\right)^2}  \dfrac{1}{x} =  \dfrac{x}{x^2 + y^2}$ \\ [0.5em]
-
-		$ \nabla_{v_j^1} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\
-		$ \nabla_{v_j^2} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$ 
+		$\dfrac{\partial f(\vec{v})}{\partial v^{x}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2} \left(- \dfrac{v^{y}}{v^{x}}\right) = - \dfrac{v^{y}}{(v^{x})^2 + (v^{y})^2}$ \\
+		$\dfrac{\partial f(\vec{v})}{\partial v^{y}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2}  \dfrac{1}{v^{x}} =  \dfrac{v^{x}}{(v^{x})^2 + (v^{y})^2}$ \\ [0.5em]
+		$ \nabla_{v_j^{x}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\
+		$ \nabla_{v_j^{y}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$ 
 	
 	\end{center}
 
 	With that, we can compute:
 	\begin{align*}
-		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^1} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^1} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^{x}} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{x}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
-			- \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[1.0em]
-			\frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2}
+			- \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[1.0em]
+			\frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2}
 		\end{pmatrix}^T
 		\cdot 
 		\begin{pmatrix}
 			-1 \\
 			0
 		\end{pmatrix} \\[0.5em]
-		&= \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[0.5em]
-		&= \frac{v_{j-1}^2 - v_{j}^2}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2}
+		&= \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[0.5em]
+		&= \frac{v_{j-1}^{y} - v_{j}^{y}}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2}
 	\end{align*}
 
 	And similarly:
 	\begin{align*}
-		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^2} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^2} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^{y}} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{y}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
-			- \frac{v_{j-1}^2 - v_{j}^2}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[1.0em]
-			\frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2}
+			- \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[1.0em]
+			\frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2}
 		\end{pmatrix}^T
 		\cdot 
 		\begin{pmatrix}
 			0 \\
 			-1
 		\end{pmatrix} \\[0.5em]
-		&= - \frac{v_{j-1}^1 - v_{j}^1}{(v_{j-1}^1 - v_{j}^1)^2 + (v_{j-1}^2 - v_{j}^2)^2} \\[0.5em]
-		&= \frac{v_{j}^1 - v_{j-1}^1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \\[0.5em]
+		&= - \frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[0.5em]
+		&= \frac{v_{j}^{x} - v_{j-1}^{x}}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \\[0.5em]
 	\end{align*}
 
 	Overall, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \arctan \left(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1} \right) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
-			v_{j-1}^2 - v_{j}^2 \\[0.5em]
-			v_{j}^1 - v_{j-1}^1
+		\nabla_{\vec{v}_j} \arctan \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+			v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+			v_{j}^{x} - v_{j-1}^{x}
 		\end{pmatrix}.
 	\end{align*}
 	
 	Thus, we can come back to: 
 	\begin{align*}
 		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
-		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} (\arctan(\frac{v_{j-1}^2 - v_{j}^2}{v_{j-1}^1 - v_{j}^1}) - \arctan(\frac{v_{j+1}^2 - v_{j}^2}{v_{j+1}^1 - v_{j}^1})) \\
+		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} (\arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)) \\
 		&= (I^j_{C} - I^{j}_d) \left( 
 		  \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
-			v_{j-1}^2 - v_{j}^2 \\[0.5em]
-			v_{j}^1 - v_{j-1}^1
+			v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+			v_{j}^{x} - v_{j-1}^{x}
 		\end{pmatrix} 
 		- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
-			v_{j+1}^2 - v_{j}^2 \\[0.5em]
-			v_{j}^1 - v_{j+1}^1
+			v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+			v_{j}^{x} - v_{j+1}^{x}
 		\end{pmatrix} \right).
 	\end{align*}
 
@@ -466,23 +465,23 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 	\begin{align*}
 		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
-		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(\arctan(\frac{v_{j-2}^2 - v_{j-1}^2}{v_{j-2}^1 - v_{j-1}^1}) - \arctan(\frac{v_{j}^2 - v_{j-1}^2}{v_{j}^1 - v_{j-1}^1})\right) \\
-		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(- \arctan(\frac{v_{j}^2 - v_{j-1}^2}{v_{j}^1 - v_{j-1}^1})\right) \\
+		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j-2}^{y} - v_{j-1}^{y}}{v_{j-2}^{x} - v_{j-1}^{x}}\right) - \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\
+		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(- \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\
 		&= (I^{j-1}_{C} - I^{j-1}_d) \left( 
 		 - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
-			v_{j}^2 - v_{j-1}^2 \\[0.5em]
-			v_{j-1}^1 - v_{j}^1
+			v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
+			v_{j-1}^{x} - v_{j}^{x}
 		\end{pmatrix} \right),
 	\end{align*}
 
 	\begin{align*}
 		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2 
-		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left(\arctan(\frac{v_{j}^2 - v_{j+1}^2}{v_{j}^1 - v_{j+1}^1}) - \arctan(\frac{v_{j+2}^2 - v_{j+1}^2}{v_{j+2}^1 - v_{j+1}^1})\right) \\
-		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left( \arctan(\frac{v_{j}^2 - v_{j+1}^2}{v_{j}^1 - v_{j+1}^1}) \right) \\
+		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) - \arctan\left(\frac{v_{j+2}^{y} - v_{j+1}^{y}}{v_{j+2}^{x} - v_{j+1}^{x}}\right)\right) \\
+		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left( \arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) \right) \\
 		&= (I^{j+1}_{C} - I^{j+1}_d) \left( 
 		 \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-			v_{j}^2 - v_{j+1}^2 \\[0.5em]
-			v_{j+1}^1 - v_{j}^1
+			v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
+			v_{j+1}^{x} - v_{j}^{x}
 		\end{pmatrix} \right).
 	\end{align*}
 	\qed
