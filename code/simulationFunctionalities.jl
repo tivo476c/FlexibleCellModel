@@ -483,7 +483,7 @@ function runSimulation_locations()
     # else # laptop 
     #     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     # end
-    # mkpath(heatMapsPath)
+    mkpath(heatMapsPath)
     # mkpath(locationsPath)
 
     # if N != 0
@@ -514,7 +514,7 @@ function runSimulation_locations()
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()
-    smoothenMatrix!(heatmatrices, 30)
+    # smoothenMatrix!(heatmatrices, 30)
     createHeatmaps(heatmatrices)
 
 end

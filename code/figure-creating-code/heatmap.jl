@@ -36,76 +36,47 @@ function createLocationFile(sol, sim::Int64, locationsPath)
 end
 
 
-function mirrowhorizontal!(matrix)
+function mirrowhorizontal!(matrices)
 
-    secondMatrix = reverse(matrix, dims=2)
-    matrix = matrix + secondMatrix
-    matrix .*= 0.5 
+    for i in eachindex(matrices)
+        secondMatrix = reverse(matrices[i], dims=2)
+        matrices[i] += secondMatrix
+        matrices[i] .*= 0.5 
+    end 
     
 end 
 
-function mirrowvertical!(matrix)
+function mirrowvertical!(matrices)
 
-    secondMatrix = reverse(matrix, dims=1)
-    matrix = matrix + secondMatrix
-    matrix .*= 0.5 
+    for i in eachindex(matrices)
+        secondMatrix = reverse(matrices[i], dims=1)
+        matrices[i] += secondMatrix
+        matrices[i] .*= 0.5 
+    end 
     
 end 
 
-function mirrowboth!(matrix)
+function addTransposed!(matrices)
 
-    secondMatrix = reverse(reverse(matrix, dims=2), dims=1)
-    matrix = matrix + secondMatrix
-    matrix .*= 0.5 
-    
-end 
-
-function rotateleft!(matrix)
-
-    secondMatrix = permutedims(matrix, (2,1)) |> reverse(dims=1)
-    matrix = matrix + secondMatrix
-    matrix .*= 0.5 
+    for i in eachindex(matrices)
+        secondMatrix = transpose(matrices[i])
+        matrices[i] += secondMatrix
+        matrices[i] .*= 0.5 
+    end 
     
 end 
 
 
 
-function smoothenMatrix!(matrices, Factor)
+function smoothenMatrix!(matrices)
     """
     this function enhances the number of sims by copying matrices in different ways. 
     """
-    
-    fac = 1 
-    for i=eachindex(matrices)
-        while fac < Factor 
 
-            mirrowhorizontal!(matrices[i])
-            fac *= 2 
-            if fac >= Factor
-                break 
-            end 
+    mirrowhorizontal!(matrices)
+    mirrowvertical!(matrices)
+    addTransposed!(matrices)
 
-            mirrowvertical!(matrices[i])
-            fac *= 2 
-            if fac >= Factor
-                break 
-            end 
-
-            mirrowboth!(matrices[i]) 
-            fac *= 2 
-            if fac >= Factor
-                break 
-            end 
-
-            for _=1:3
-                rotateleft!(matrices[i])
-                fac *= 2 
-                if fac >= Factor
-                    break 
-                end 
-            end 
-        end 
-    end 
 end 
 
 function makeMatrices()
@@ -193,7 +164,9 @@ function createHeatmaps(matrices)
 
     matrices .= [Float64.(M) for M in matrices]
     matrices = [matrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]
-    print
+    oldMatrices = copy(matrices)
+    smoothenMatrix!(matrices)
+    println("oldMatrices == matrices = $(oldMatrices == matrices)") 
     maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
     minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
     println("NumberOfSimulations = $NumberOfSimulations \nNumberOfCells = $NumberOfCells \nHeatStepSize = $HeatStepSize")
