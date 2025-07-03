@@ -22,7 +22,27 @@ Interactions between different cells just arise from the overlap force, which ac
 In the process of resolving overlaps, the shape of the cells will change.  
 Once the overlap is resolved, the first three forces act to restore the cell's original shape. \\
 The central question we aim to investigate in this thesis is how the deformability of individual cells influences the overall diffusivity of the cell system.
-But first, let us introduce each of the mentioned forces. 
+But first, let us introduce each of the mentioned forces. \\
+We define our energies as
+\[E_k(x) = \frac{1}{k} |x_{\text{desired}} - x_{\text{current}}|^k, \]
+where $k \in \N_{\geq 1}$ is a positive integer parameter specific to each energy term. 
+Using different values of $k$ allows us to model various types of energies and their corresponding forces, resulting in distinct dynamical behaviors that reflect different aspects of cell physics. \\
+In order to compute the forces arising from these energy functions, we require the gradient $\nabla E$. 
+This leads us to compute derivatives of the form 
+\[ \frac{\dequ}{\dequ x} |x|^k. \]
+While $|x|^k$ is not classically differentiable at $x=0$, it is weakly differentiable for all $k \in \N_{\geq 1}$.
+There exists a locally integrable function 
+\[ x \mapsto k \sgn(x)|x|^{k-1} \in L^1_{loc}(\R),\] 
+such that for all $\phi \in C_C^{\infty}(\R)$:
+\begin{align*}
+	\int_{\R} |x|^k \phi'(x) \dequ x  
+	&= \int_{\R_{\geq 0}} x^k \phi'(x) \dequ x + \int_{\R_{< 0}} (-x)^k \phi'(x) \dequ x \\
+	&= [x^k \phi(x)]_{0}^{\infty} - \int_{\R_{\geq 0}} k x^{k-1} \phi(x) \dequ x + [(-x)^k \phi(x)]_{0}^{\infty} - \int_{\R_{< 0}} k (-x)^{k-1} \phi(x) \dequ x \\
+	&= - \int_{\R_{\geq 0}} k x^{k-1} \phi(x) \dequ x - \int_{\R_{< 0}} k (-x)^{k-1} \phi(x) \dequ x \\
+	&= - \int_{\R} k \sgn(x)|x|^{k-1} \phi(x) \dequ x.
+\end{align*}
+Thus, $x \mapsto k \sgn(x)|x|^{k-1}$ is the weak derivative of $x \mapsto |x|^k$. 
+We will use this weak derivative for all of our force computations. 
 
 \subsection{Area force}
 The area force is designed to maintain each cell's area close to a preferred target value. 
@@ -73,9 +93,9 @@ With the Shoelace formula we are able to easily compute all cell areas at all ti
 This enables us to implement the gradient flow over the area energy. 
 
 \begin{definition} \textbf{Area energy} \\
-	The energy $A: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$, used to keep the cells at a constant volume, reads 
+The energy $A_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ for $k \in \N_{\geq 1}$, used to keep the cells at a constant volume, reads 
 	\begin{align}
-		A(C_i) = \frac{1}{2} | A_d - A_{C_i}|^2, \label{eq:areaEnergy} 
+		A_k(C_i) = \frac{1}{k} | A_d - A_{C_i}|^k, \label{eq:areaEnergy} 
 	\end{align}
 	where $A_d$ is the desired cell area of all cells and $A_{C_i}$ is the current area of cell $i$. 
 \end{definition}
@@ -83,21 +103,19 @@ This enables us to implement the gradient flow over the area energy.
 To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
 
 \begin{proposition} \textbf{Area force} \label{force:area}\\
-	The gradient $\nabla_{\vec{v}_j} A(C)$ with respect to the $j$th vertex of cell $C$ is given by 
+	The gradient $\nabla_{\vec{v}_j} A_k(C)$ with respect to the $j$th vertex of cell $C$ is given by 
 	\begin{center}
-		$\nabla_{\vec{v}_j} A(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}$, 
+		$\nabla_{\vec{v}_j} A_k(C) = \dfrac{1}{2} (A_{C} - A_d)^{k-1} \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}$, 
 	\end{center}
 	where $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$. \\
 
-	Thus, the area force $F_{j}^{(A)}: (\R^2)^{N_V} \rightarrow \R^2$ that gets applied on $\vec{v}_j$ is given by 
+	Thus, the area force $F_{k}^{(A)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on $\vec{v}_j$ is given by 
 	\begin{align}
 		F_{j}^{(A)}(C) 
 		= - \nabla_{\vec{v}_j} A(C) 
 		= \frac{1}{2}(A_d - A_{C}) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}.
 	\end{align}
-
-
-
+ 
 	Proof.\\
 	Choose $1 \leq j \leq N_V$.  
  
