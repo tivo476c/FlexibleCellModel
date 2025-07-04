@@ -2,9 +2,9 @@
 
 domainL = 0.5                               # 0.5 / 40.0
 domain = (-domainL, domainL)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 3                  # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 0                  # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
-NumberOfCells = 400                        # number of cells [OLD NAME: "M"] TODO: change to 400
+NumberOfCells = 200                        # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 1                                       # diffusitivity constant 
 radius = 0.005                              # cell radius 
@@ -26,8 +26,8 @@ timeStepSize = 10^(-5)
 T = 0.05
 timeInterval = (0.0, T)
 
-NumberOfSimulations = 1669
-NumberOfSampleTimes = 6          # must be 2 at least
+NumberOfSimulations = 1
+NumberOfSampleTimes = 1          # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
@@ -35,10 +35,10 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 # date = today()
 # currentTime = Dates.format(now(), "HH-MM")
 # currentTime = "13-21"
-simulationName = "test3-hard-DF-FIRSTWORKING"
+simulationName = "muPlot1_N$NumberOfCells"
 
 ## Space Discretisation for heatmap 
-NumberOfHeatGridPoints = 30
+NumberOfHeatGridPoints = 50
 HeatStepSize = 2 * domainL / NumberOfHeatGridPoints
 # [-L, -L + HeatStepSize, -L + 2*HeatStepSize, ..., -L + NumberOfHeatGridPoints*HeatStepSize]
 HeatGrid = [-domainL + k * HeatStepSize for k in 0:NumberOfHeatGridPoints]

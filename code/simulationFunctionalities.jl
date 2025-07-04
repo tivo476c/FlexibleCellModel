@@ -392,14 +392,16 @@ function do1SimulationRun(simRun)
         u0 = initializeCells(radius)
     end
 
-    cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    @time sol = solve(cellProb,
-        EM(),
-        # callback=CallBack_reflectiveBC_cellOverlap,
-        dt=timeStepSize,
-    )
-    extractedSol = extractSolution(sol)
-    createLocationFile(extractedSol, simRun, locationsPath)
+    # cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    # @time sol = solve(cellProb,
+    #     EM(),
+    #     # callback=CallBack_reflectiveBC_cellOverlap,
+    #     dt=timeStepSize,
+    # )
+    fakeSol = smallSolution([0.0], [u0])
+    # extractedSol = extractSolution(sol)
+    # createLocationFile(extractedSol, simRun, locationsPath)
+    createLocationFile(fakeSol, 1, locationsPath)
 end
 
 function doSimulationRuns_countLocations(currentProcss, NuSims)
@@ -476,15 +478,15 @@ function runSimulation_locations()
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
     """
     ## create paths 
-    # println("creating paths")
-    # mkpath(simPath)
-    # if gethostname() == "treuesStueck"      # home pc xd 
-    #     cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    # else # laptop 
-    #     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    # end
+    println("creating paths")
+    mkpath(simPath)
+    if gethostname() == "treuesStueck"      # home pc xd 
+        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    else # laptop 
+        cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    end
     mkpath(heatMapsPath)
-    # mkpath(locationsPath)
+    mkpath(locationsPath)
 
     # if N != 0
     #     A_d, E_d, I_d = computeDesiredStates_circleCells()
@@ -510,7 +512,7 @@ function runSimulation_locations()
     # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    # results = pmap(do1SimulationRun, 13:NumberOfSimulations)
+    results = pmap(do1SimulationRun, 1:1)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()

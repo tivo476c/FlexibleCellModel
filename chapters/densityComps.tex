@@ -15,15 +15,30 @@ As we increase the number of particles, $\mu^{N}$ will spread out \,-\, having m
 This process is quite simular to the transition from a sum to an according integral:
 \[ \sum\limits_{i=1}^{N} \frac{1}{N} f(x_i) \xrightarrow{N \to \infty} \int f(x) \dequ x,  \]
 where we can also see a transition from a discrete starting problem, having discrete points ${x_i}$, to a continious integral where $x \in (a,b)$. 
-As $\my^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot directly plot it as a function. 
+As $\mu^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot directly plot it as a function. 
 Instead, we try to visualise it meaningfully by using histograms as approximations.
 This is also a good connection from the previus section, where we also used histograms to show the results of the monte carlo simulations. 
-  
+
 % TODO: add a figure that tries to visualise the transition as N -> infty (just use my heatmaps with 1 simulation and different amounts of particles, colorschale) 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=15cm]{density/muplot_combined.png}
+		\caption{
+            Visualisation of empirical measures $\mu^N$ for increasing numbers of cells, alongside the corresponding theoretical density. 
+            This visualisation illustrates the transition \( \mu^N \xrightarrow{N \to \infty} \mu\). \\
+            All cell configurations are sampled from the same initial condition described in the previous chapter: a two-dimensional normal distribution \( \mathcal{N}_2((0,0), \sigma^2 I_2) \) with \( \sigma = 0.09 \). 
+            In the first three subplots, the domain \([-0.5, 0.5]^2\) is discretised into square bins of side length \(\frac{1}{50}\). 
+            Each bin \( A \) corresponds to a measurable set in the definition of the empirical measure \( \mu^N(A) = \frac{1}{N} \sum_{i=1}^N \delta_{x_i}(A) \), where the color intensity encodes the number of cells in that bin. \\
+            The first subplot shows a realisation with \( N = 20 \) cells, the second with \( N = 200 \), and the third with \( N = 20{.}000 \). 
+            We observe that as \( N \) increases, the empirical measure \( \mu^N \) becomes a smoother approximation of the underlying density. 
+            The color scale is fixed across all subplots to allow direct visual comparison.
+            The fourth panel displays the exact density function of the initial distribution, \( \rho(x) = \frac{1}{2\pi\sigma^2} \exp\left( -\frac{\|x\|^2}{2\sigma^2} \right) \), with \( \sigma = 0.09 \). 
+         }
+		\label{fig:muTransition}
+	\end{center}
+\end{figure}
 
-
-
-
+The distribution from the fourth subplot in Figure~\ref{fig:muTransition} is aimed to be computed for the dynamics of our DF cell model. 
 
 In the end, we want to achieve:
 \[ \mu^N \xrightarrow{N \to \infty} \mu\]
