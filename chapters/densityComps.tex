@@ -1,15 +1,29 @@
 \section{Density computations}
-* now we choose a different ansatz \\
-* instead of obtaining a density field in the form of heatmaps from monte carlo simulations, we aim to compute the density distribution function that holds the particle distribution for $N \rightarrow \infty$ particles \\
-* explain what is $\mu^N$, define it \\
-The empirical measure $\mu^N$ is the starting point of this computation. 
+In the previous chapter, we studied Monte Carlo simulations of our DF model and visualised the resulting particle distributions as heatmaps at different time points. 
+These simulations provided valuable insight into the statistical behavior of the system for finite numbers of cells. \\
+In this chapter, we pursue a different approach: instead of extracting approximate density fields from stochastic simulations, we aim to compute the underlying density distribution function \( \rho(x) \) that describes the limiting behavior of the system as the number of cells \( N \to \infty \). 
+More precisely, we seek the density \( \rho \) such that the limiting measure \( \mu \) satisfies \( \dequ \mu = \rho(x) \dequ x \). 
+Of course, this density will depent on the desired cell state, i.e. the number of vertices and its shape, as well as on the forces we apply on the vertices as the dynamic and their scalings. \\ 
+As a starting point for this analytical treatment, we consider the empirical measure \( \mu^N \), which encodes the particle configuration at finite \( N \), and study its convergence to the continuous measure \( \mu \). \\
+The empirical measure $\mu^N \in \mathcal{P}(\R^{2})$ is the starting point of this computation. 
 We define it as:  
 \begin{align*}
-    \mu^{N}: \mathcal{B}(\R^d) \rightarrow [0,1] \in \mathcal{P}(\R^{dN}) \\
-    \mu^{N}(\vec{X}) = \frac{1}{N} \sum\limits_{i=1}^{N} \delta_{\vec{x}_i(t)}.
+    \mu^{N}: \mathcal{B}(\R^2) \rightarrow [0,1]  \\
+    \mu^{N}(A) = \frac{1}{N} \sum\limits_{i=1}^{N} \delta_{\vec{x}_i(t)}(A),
 \end{align*}
-% explain dirac, what it does in integrals 
-In other words, for a set $A \in \mathcal{B}(\R^d)$, that is a subset of our operating domain, $mu^{N}(A)$ is the relative number of the $N$ particles that are located in $A$. 
+where \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
+\begin{align*}
+    \delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \rightarrow {0,1}  \\
+    \delta_{\vec{x}_i(t)}(A) = \begin{cases}
+        1 & \text{if } \vec{x}_i(t) \in A, \\
+        0 & \text{if } \vec{x}_i(t) \notin A.
+   \end{cases}
+\end{align*}
+Equivalently, for any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfies
+\[
+\int_{\R^2} \phi(x) \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
+\]
+For a set $A \in \mathcal{B}(\R^2)$, $\mu^{N}(A)$ is the relative proportion of the $N$ particles that are located in $A$. \\
 For an finite $N \in \N$, $\mu^{N}$ is a discrete measure that only has its mass divided on the exact particle locations. 
 As we increase the number of particles, $\mu^{N}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N}$ as we divide through $N$.
 This process is quite simular to the transition from a sum to an according integral:
