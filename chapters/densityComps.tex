@@ -1,36 +1,38 @@
 \section{Density computations}
 In the previous chapter, we studied Monte Carlo simulations of our DF model and visualised the resulting particle distributions as heatmaps at different time points. 
 These simulations provided valuable insight into the statistical behavior of the system for finite numbers of cells. \\
-In this chapter, we pursue a different approach: instead of extracting approximate density fields from stochastic simulations, we aim to compute the underlying density distribution function \( \rho(x) \) that describes the limiting behavior of the system as the number of cells \( N \to \infty \). 
+In this chapter, we pursue a different approach: instead of extracting approximate density fields from stochastic simulations, we aim to compute the underlying density distribution function \( \rho \) that describes the limiting behavior of the system as the number of cells \( N_C \to \infty \). 
 More precisely, we seek the density \( \rho \) such that the limiting measure \( \mu \) satisfies \( \dequ \mu = \rho(x) \dequ x \). 
 Of course, this density will depent on the desired cell state, i.e. the number of vertices and its shape, as well as on the forces we apply on the vertices as the dynamic and their scalings. \\ 
-As a starting point for this analytical treatment, we consider the empirical measure \( \mu^N \), which encodes the particle configuration at finite \( N \), and study its convergence to the continuous measure \( \mu \). \\
-The empirical measure $\mu^N \in \mathcal{P}(\R^{2})$ is the starting point of this computation. 
-We define it as:  
+As a starting point for this analytical treatment, we consider the empirical measure \( \mu^{N_C} \), which encodes the particle configuration at finite \( N_C \), and study its convergence to the continuous measure \( \mu \). \\
+The empirical measure $\mu^{N_C} \in \mathcal{P}(\R^{2})$ is the starting point of this computation. \\
+% TODO: reconsider: arent we using the cell vertices instead of the cells' centre points? 
+Let $\{\vec{x}_i\}_{i=1}^{N_C} \subset \R^2$ be the set of all cells' centre points. 
+We define $\mu^{N_C}$ as:  
 \begin{align*}
-    \mu^{N}: \mathcal{B}(\R^2) \rightarrow [0,1]  \\
-    \mu^{N}(A) = \frac{1}{N} \sum\limits_{i=1}^{N} \delta_{\vec{x}_i(t)}(A),
+    \mu^{N_C}: \mathcal{B}(\R^2) \rightarrow [0,1]  \\
+    \mu^{N_C}(A) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A),
 \end{align*}
-where \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
+where $\mathcal{B}(\R^2)$ is the Borel sigma-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
 \begin{align*}
-    \delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \rightarrow {0,1}  \\
+    \delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \rightarrow \{0,1\}  \\
     \delta_{\vec{x}_i(t)}(A) = \begin{cases}
         1 & \text{if } \vec{x}_i(t) \in A, \\
         0 & \text{if } \vec{x}_i(t) \notin A.
    \end{cases}
 \end{align*}
-Equivalently, for any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfies
+For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfies
 \[
 \int_{\R^2} \phi(x) \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
 \]
-For a set $A \in \mathcal{B}(\R^2)$, $\mu^{N}(A)$ is the relative proportion of the $N$ particles that are located in $A$. \\
-For an finite $N \in \N$, $\mu^{N}$ is a discrete measure that only has its mass divided on the exact particle locations. 
-As we increase the number of particles, $\mu^{N}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N}$ as we divide through $N$.
+For a set $A \in \mathcal{B}(\R^2)$, $\mu^{N_C}(A)$ is the relative proportion of the $N_C$ particles that are located in $A$. \\
+For a finite $N_C \in \N$, $\mu^{N_C}$ is a discrete measure that only has its mass divided on the exact particle locations. 
+As we increase the number of particles, $\mu^{N_C}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N_C}$ as we divide through $N_C$.
 This process is quite simular to the transition from a sum to an according integral:
-\[ \sum\limits_{i=1}^{N} \frac{1}{N} f(x_i) \xrightarrow{N \to \infty} \int f(x) \dequ x,  \]
+\[ \sum\limits_{i=1}^{N_C} \frac{1}{N_C} f(x_i) \xrightarrow{N \to \infty} \int f(x) \dequ x,  \]
 where we can also see a transition from a discrete starting problem, having discrete points ${x_i}$, to a continious integral where $x \in (a,b)$. 
 As $\mu^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot directly plot it as a function. 
-Instead, we try to visualise it meaningfully by using histograms as approximations.
+Instead, we try to visualise it meaningfully by using histograms as approximations in Figure~\ref{fig:muTransition}.
 This is also a good connection from the previus section, where we also used histograms to show the results of the monte carlo simulations. 
 
 % TODO: add a figure that tries to visualise the transition as N -> infty (just use my heatmaps with 1 simulation and different amounts of particles, colorschale) 
@@ -38,13 +40,13 @@ This is also a good connection from the previus section, where we also used hist
 	\begin{center}
 		\includegraphics[width=15cm]{density/muplot_combined.png}
 		\caption{
-            Visualisation of empirical measures $\mu^N$ for increasing numbers of cells, alongside the corresponding theoretical density. 
-            This visualisation illustrates the transition \( \mu^N \xrightarrow{N \to \infty} \mu\). \\
+            Visualisation of empirical measures $\mu^{N_C}$ for increasing numbers of cells, alongside the corresponding theoretical density. 
+            This visualisation illustrates the transition \( \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\). \\
             All cell configurations are sampled from the same initial condition described in the previous chapter: a two-dimensional normal distribution \( \mathcal{N}_2((0,0), \sigma^2 I_2) \) with \( \sigma = 0.09 \). 
             In the first three subplots, the domain \([-0.5, 0.5]^2\) is discretised into square bins of side length \(\frac{1}{50}\). 
-            Each bin \( A \) corresponds to a measurable set in the definition of the empirical measure \( \mu^N(A) = \frac{1}{N} \sum_{i=1}^N \delta_{x_i}(A) \), where the color intensity encodes the number of cells in that bin. \\
-            The first subplot shows a realisation with \( N = 20 \) cells, the second with \( N = 200 \), and the third with \( N = 20{.}000 \). 
-            We observe that as \( N \) increases, the empirical measure \( \mu^N \) becomes a smoother approximation of the underlying density. 
+            Each bin \( A \) corresponds to a measurable set in the definition of the empirical measure \( \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{x_i}(A) \), where the color intensity encodes the number of cells in that bin. \\
+            The first subplot shows a realisation with \( N_C = 20 \) cells, the second with \( N_C = 200 \), and the third with \( N_C = 20{.}000 \). 
+            We observe that as \( N_C \) increases, the empirical measure \( \mu^{N_C} \) becomes a smoother approximation of the underlying density. 
             The color scale is fixed across all subplots to allow direct visual comparison.
             The fourth panel displays the exact density function of the initial distribution, \( \rho(x) = \frac{1}{2\pi\sigma^2} \exp\left( -\frac{\|x\|^2}{2\sigma^2} \right) \), with \( \sigma = 0.09 \). 
          }
@@ -55,47 +57,53 @@ This is also a good connection from the previus section, where we also used hist
 The distribution from the fourth subplot in Figure~\ref{fig:muTransition} is aimed to be computed for the dynamics of our DF cell model. 
 
 In the end, we want to achieve:
-\[ \mu^N \xrightarrow{N \to \infty} \mu\]
+\[ \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\]
 by letting the number of cells go to infinity. \\
 
-\subsection{Transition $\mu^N \xrightarrow{N \to \infty} \mu$ }
+\subsection{Transition $\mu^{N_C} \xrightarrow{N_C \to \infty} \mu$ }
 
 
 \subsection{General energy computation}
 
-Let:
+Lets define our cell centres with:
 \begin{gather*}
-    \vec{X} = (\vec{x}_1, \ldots, \vec{x}_d) \in \R^{dN} \\
-    \text{for } \vec{x}_i \in \R^d, \; 1 \leq i \leq N, \\
-    E: \R^d \rightarrow \R \\ 
-    E(\vec{x}_i) = \frac{1}{2} |\vec{x}_i|^2.
-    \nabla_{(\vec{x}_i)} E(\vec{x}_i): \R^d \rightarrow \R^d
+    \vec{X} = (\vec{x}_1, \ldots, \vec{x}_N) \in \R^{2N} \text{(vector of all cell centres)}, \\
+    \text{for } \vec{x}_i \in \R^2, \; 1 \leq i \leq N. \\
+\end{gather*}
+
+The energy that gets used for our cell dynamic shall be: 
+\begin{gather*}
+    E: \R^2 \rightarrow \R \\ 
+    E(\vec{x}_i) = \frac{1}{2} |\vec{x}_i|^2. \\
+    \nabla_{(\vec{x}_i)} E(\vec{x}_i): \R^2 \rightarrow \R^2 \\
+    \nabla_{(\vec{x}_i)} E(\vec{x}_i) = |\vec{x}_i| . \\
 \end{gather*}
 
 We define the dynamic of a particle $\vec{x}_i$ via: \\
-\[ \dfrac{\dequ \vec{x}_i}{\dequ t} = - \nabla_{\vec{x}_i} E(\vec{x}_i) \in \R^{d}. \]
+\[ \dfrac{\dequ \vec{x}_i}{\dequ t} = - \nabla_{\vec{x}_i} E(\vec{x}_i) \in \R^{2}. \]
 
 We define the probability measure:\\
-(question: is $\mu$ defined on a single particle [$\mu^{N} \in \mathcal{P}(\R^d)$] or on the whole particle system [$\mu^{N} \in \mathcal{P}(\R^{dN})$]) \\
+(question: is $\mu$ defined on a single particle [$\mu^{N_C} \in \mathcal{P}(\R^2)$] or on the whole particle system [$\mu^{N_C} \in \mathcal{P}(\R^{2N})$]) \\
 (question: what does $\mu$ say? \\
 Its 1 when the particle is at a given location? vs Its 1 when the particle system is at a given configuration?)
 
-\[ \mu: \R^d \rightarrow [0,\infty)  \]
+
+\[ \mu: \R^2 \rightarrow [0,\infty)  \]
 $\mu$ is the density of cell system.
 $\mu^N$ is the empirical measure. 
-It takes a subset $A \subset \R^d$ as an argument and gives the relative number of particles that are inside of $A$. 
+It takes a subset $A \subset \R^2$ as an argument and gives the relative number of particles that are inside of $A$. 
 
-Let $\phi \in C_c^{\infty}(\R^{d}, \R)$ (??) be a test function. 
-Its gradient field is $ \nabla \phi : \R^d \rightarrow \R^d$. 
+Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ (??) be a test function. 
+Its gradient field is $ \nabla \phi : \R^2 \rightarrow \R^2$. 
 We compute: 
 \begin{align*}
     \frac{\dequ}{\dequ t} \int \phi \dequ \mu^N 
-    &= \frac{\dequ}{\dequ t} (\frac{1}{N} \sum\limits_{i=1}^{N} \phi(\vec{x}_i)) \\
-    &= - \frac{1}{N} \sum\limits_{i=1}^{N} \nabla \phi(\vec{x}_i) \cdot \nabla E(\vec{x}_i) \\
-    &= - \frac{1}{N} \sum\limits_{i=1}^{N} \int \nabla \phi(x) \cdot \nabla E(x) \dequ \delta_{\vec{x}_i} \\
+    &= \frac{\dequ}{\dequ t} (\frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(\vec{x}_i)) \\
+    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i) \cdot \nabla E(\vec{x}_i) \\
+    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \int \nabla \phi(x) \cdot \nabla E(x) \dequ \delta_{\vec{x}_i} \\
     &= - \int \nabla \phi(x) \cdot \nabla E(x) \dequ \mu^N \dequ x \\
     &= \int \phi(x)  \nabla \cdot ( \mu^N(\nabla E(x))) \dequ x \\
 \end{align*}
 \[ \Rightarrow  0 = \partial_t \rho - \nabla(\rho_v),\]
 where $\rho$ is the density function of $\mu$ such that \[ \mu(dx) = \rho(x) dx. \]
-question: what is the space we integrate above? (i gues $\R^{dN}$)
+question: what is the space we integrate above? (i gues $\R^{2N}$)

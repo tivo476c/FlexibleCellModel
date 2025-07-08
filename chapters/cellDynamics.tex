@@ -95,7 +95,7 @@ This enables us to implement the gradient flow over the area energy.
 \begin{definition} \textbf{Area energy} \\
 The energy $A_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ for $k \in \N_{\geq 1}$, used to keep the cells at a constant volume, reads 
 	\begin{align}
-		A_k(C_i) = \frac{1}{k} | A_d - A_{C_i}|^k, \label{eq:areaEnergy} 
+		A_k(C_i) = \frac{1}{k} |A_{C_i} - A_d|^k, \label{eq:areaEnergy} 
 	\end{align}
 	where $A_d$ is the desired cell area of all cells and $A_{C_i}$ is the current area of cell $i$. 
 \end{definition}
@@ -103,35 +103,35 @@ The energy $A_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ for $k \in \N_{\geq 1}$, 
 To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
 
 \begin{proposition} \textbf{Area force} \label{force:area}\\
-	The gradient $\nabla_{\vec{v}_j} A_k(C)$ with respect to the $j$th vertex of cell $C$ is given by 
-	\begin{center}
-		$\nabla_{\vec{v}_j} A_k(C) = \dfrac{1}{2} (A_{C} - A_d)^{k-1} \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}$, 
-	\end{center}
-	where $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$. \\
-
-	Thus, the area force $F_{k}^{(A)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on $\vec{v}_j$ is given by 
+	The area force $F_{k}^{(A)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
+	\begin{align*}
+		F_{k}^{(A)}(C) 
+		= - (\nabla_{\vec{v}_1} A_k(C), \ldots, \nabla_{\vec{v}_{N_V}} A_k(C))^T,
+	\end{align*}
+	where the gradient $\nabla_{\vec{v}_j} A_k(C)$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
 	\begin{align}
-		F_{j}^{(A)}(C) 
-		= - \nabla_{\vec{v}_j} A(C) 
-		= \frac{1}{2}(A_d - A_{C}) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}.
+		\nabla_{\vec{v}_j} A_k(C) = \dfrac{1}{2} \sgn(A_{C} - A_d) |A_{C} - A_d|^{k-1} \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
+		\label{gradient:area}
 	\end{align}
- 
+	for all $1 \leq j \leq N_V$.\\
+
+
 	Proof.\\
 	Choose $1 \leq j \leq N_V$.  
  
 	\begin{align*}
-		\nabla_{\vec{v}_j} A(C) &= \nabla_{\vec{v}_j} \frac{1}{2} | A_d - A_{C} |^2  \\ 
-		&=  (A_d - A_{C}) \nabla_{\vec{v}_j} (A_d - A_{C}) \\
-		&=   (A_d - A_{C}) \nabla_{\vec{v}_j} ( - A_{C}) \\ 
-		&=   (A_d - A_{C}) \nabla_{\vec{v}_j} ( - \frac{1}{2} \sum\limits_{k = 1}^{N} (v_k^{x} v_{k+1}^{y} - v_{k+1}^{x} v_k^{y})) \\[0.5em]  
-		&=   - \frac{1}{2} (A_d - A_{C}) \begin{pmatrix}
-			\partial_{v_j^{x}} (v_j^{x} v_{j+1}^{y} - v_j^{x} v_{j-1}^{y})  \\[0.5em]
-			\partial_{v_j^{y}} (v_{j-1}^{x} v_j^{y} - v_{j+1}^{x} v_j^{y})
-		\end{pmatrix} \\[0.5em] 
-		&=   \frac{1}{2} (A_{C} - A_d) \begin{pmatrix}
-			  v_{j+1}^{y} - v_{j-1}^{y}  \\
-			 v_{j-1}^{x}  - v_{j+1}^{x} 
-		\end{pmatrix} 
+		\nabla_{\vec{v}_j} A_k(C) &= \frac{1}{k} \nabla_{\vec{v}_j} | A_{C} - A_d |^k  \\ 
+		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} (A_{C} - A_d) \\
+		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} A_{C} \\
+		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} (\frac{1}{2} \sum\limits_{k = 1}^{N} (v_k^{x} v_{k+1}^{y} - v_{k+1}^{x} v_k^{y})) \\[0.5em]  
+		&= \frac{1}{2} \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \begin{pmatrix}
+				\partial_{v_j^{x}} (v_j^{x} v_{j+1}^{y} - v_j^{x} v_{j-1}^{y})  \\[0.5em]
+				\partial_{v_j^{y}} (v_{j-1}^{x} v_j^{y} - v_{j+1}^{x} v_j^{y})
+			\end{pmatrix} \\[0.5em] 
+		&= \frac{1}{2} \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \begin{pmatrix}
+				v_{j+1}^{y} - v_{j-1}^{y}  \\
+				v_{j-1}^{x}  - v_{j+1}^{x} 
+			\end{pmatrix} 
 	\end{align*}
 
 	Remember that $A_d$ is just an independent constant. 
@@ -188,27 +188,34 @@ to compute the length of the edge.
 
 The according energy for this edge is:
 \begin{definition} \textbf{Edge energy} \\
-	The energy $E: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$, used to keep the edges at a constant length, reads 
+	The energy $E_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$, used to keep the edges at a constant length, reads 
 	\begin{align}
-		E(C) =  \sum\limits_{j=1}^{N_V} \frac{1}{2} | E^{j}_d - E^j_{C}|^2, \label{eq:edgeEnergy} 
+		E_k(C) =  \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C} - E^{j}_d|^k, \label{eq:edgeEnergy} 
 	\end{align}
-	where $E^{j}_d$ is the desired edge length of edge $j$ and $E^j_{C}$ is the current edge length. 
+	where $E^j_{C}$ is the current edge length and $E^{j}_d$ is the desired edge length of edge $j$. 
 \end{definition}
 
 Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $e_{j}$ and $e_{j-1}$, we get the total edge force on $\vec{v}_j$ with: 
 
 \begin{proposition} \textbf{Edge force} \\
 
-	The edge force $F^{(E)}_j: (\R^2)^{N_V} \rightarrow \R^2$ acting on $\vec{v}_j$ of the given cell is described by the formula
+	The edge force $F_{k}^{(E)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
+	\begin{align*}
+		F_{k}^{(E)}(C) 
+		= - (\nabla_{\vec{v}_1} E_k(C), \ldots, \nabla_{\vec{v}_{N_V}} E_k(C))^T,
+	\end{align*}
+	where the gradient $\nabla_{\vec{v}_j} E_k(C)$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
 	\begin{align}
 		\begin{split}
-			F^{(E)}_j(C) &= - \nabla_{\vec{v}_j} E(C) \\
-				&= \dfrac{E_d^{j-1} - E^{j-1}_{C}}{E^{j-1}_{C}}  \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix}
-				+ \dfrac{E_d^{j} - E^j_{C}}{E^j_{C}}  \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} 
-			\end{pmatrix}
+			\nabla_{\vec{v}_j} E_k(C) &= \sgn(E^{j-1}_{C}- E_d^{j-1}) \dfrac{|E^{j-1}_{C}- E_d^{j-1}|^{k-1}}{E^{j-1}_{C}}  
+			\begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} \\[0.5em]
+			&+ \sgn(E^j_{C} - E_d^{j}) \dfrac{|E^j_{C} - E_d^{j}|^{k-1}}{E^j_{C}}  
+			\begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix}
 		\end{split}
-		\label{force:edge}
+		\label{gradient:edge}
 	\end{align}
+	for all $1 \leq j \leq N_V$.\\
+
 	Proof. \\
 
 	\begin{align*}
@@ -325,7 +332,7 @@ With that, we can define our interior angle energy.
 \begin{definition} \textbf{Interior angle energy} \\
 	The energy $I: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ associated with preserving the cell interior angles is given by
 	\begin{align}
-		I(C) = \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C} |^2, 
+		I_k(C) = \sum\limits_{j=1}^{N_V} \frac{1}{k}| I^j_{C} - I^{j}_d |^k, 
 	\end{align}
 	where $I^{j}_d$ is the desired interior angle at vertex $j$ and $I^j_{C}$ is the current interior angle at vertex $j$ of the considered cell. 
 \end{definition}
@@ -341,17 +348,50 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 \begin{proposition} \textbf{Interior angle force} \\
 
-	The interior angle force $F^{(I)}_j(C): (\R^2)^{N_V} \rightarrow \R^2$ that gets applied on vertex $\vec{v}_j$ of cell $C$ is given by 
+	% The interior angle force $F^{(I)}_j(C): (\R^2)^{N_V} \rightarrow \R^2$ that gets applied on vertex $\vec{v}_j$ of cell $C$ is given by 
+	% \begin{align}
+	% 	\begin{split}
+	% 		F^{(I)}_j(C) &= - \nabla_{\vec{v}_j} I(C)  \\
+	% 			&= (I^{j-1}_d - I^{j-1}_{C}) \left( 
+	% 				- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{y}} \begin{pmatrix}
+	% 					v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
+	% 					v_{j-1}^{x} - v_{j}^{x}
+	% 				\end{pmatrix} 
+	% 			\right) \\[0.5em] 
+	% 		&+ (I^{j}_d - I^{j}_{C}) \left( 
+	% 			\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
+	% 			v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+	% 			v_{j}^{x} - v_{j-1}^{x}
+	% 			\end{pmatrix} 
+	% 			- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+	% 			v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+	% 			v_{j}^{x} - v_{j+1}^{x}
+	% 			\end{pmatrix} 
+	% 			\right) \\[0.5em] 
+	% 		&+ (I^{j+1}_d - I^{j+1}_{C}) \left( 
+	% 			\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+	% 			v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
+	% 			v_{j+1}^{x} - v_{j}^{x}
+	% 			\end{pmatrix} 
+	% 			\right) %\\[0.5em] 
+	% 	\end{split}
+	% \end{align}
+
+	The interior angle force $F_{k}^{(I)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
+	\begin{align*}
+		F_{k}^{(I)}(C) 
+		= - (\nabla_{\vec{v}_1} I_k(C), \ldots, \nabla_{\vec{v}_{N_V}} I_k(C))^T,
+	\end{align*}
+	where the gradient $\nabla_{\vec{v}_j} I_k(C)$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
 	\begin{align}
 		\begin{split}
-			F^{(I)}_j(C) &= - \nabla_{\vec{v}_j} I(C)  \\
-				&= (I^{j-1}_d - I^{j-1}_{C}) \left( 
+			\nabla_{\vec{v}_j} I_k(C) &= \sgn(I^{j-1}_{C} - I^{j-1}_d) |I^{j-1}_{C} - I^{j-1}_d|^{k-1} \left( 
 					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{y}} \begin{pmatrix}
 						v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
 						v_{j-1}^{x} - v_{j}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
-			&+ (I^{j}_d - I^{j}_{C}) \left( 
+			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \left( 
 				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
 				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j-1}^{x}
@@ -361,15 +401,16 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
 				\right) \\[0.5em] 
-			&+ (I^{j+1}_d - I^{j+1}_{C}) \left( 
+			&+ \sgn(I^{j+1}_{C} - I^{j+1}_d) |I^{j+1}_{C} - I^{j+1}_d|^{k-1} \left( 
 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
 				v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
 				v_{j+1}^{x} - v_{j}^{x}
 				\end{pmatrix} 
 				\right) %\\[0.5em] 
 		\end{split}
+		\label{gradient:angle}
 	\end{align}
-
+	for all $1 \leq j \leq N_V$.\\
 
 	Proof. \\
 	% TODO: check this force and the computations in the proof, especially the neighboring vertices part 
@@ -613,7 +654,7 @@ This force is first computed based on the geometry of the overlap and then distr
 \begin{definition} \textbf{Overlap energy} \\
 	Let $C_i$ and $C_k$ be two cells from the system $\vec{C}$ and $\Omega_{i,k}$ be the set of all overlaps that appear between $C_i$ and $C_k$, like explained above. Then, the total overlap energy of the cell system is given by the formula 
 	\begin{align}
-		O(\vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{k=i+1}^{N_C} (\sum\limits_{D_l \in \Omega_{i,k}} \frac{1}{2}|A_{D_l}|^2) \right),		
+		O_k(C, \vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{k=i+1}^{N_C} (\sum\limits_{D_l \in \Omega_{i,k}} \frac{1}{k}|A_{D_l}|^k) \right),		
 	\end{align} 
 	where $A_{D_l}$ is the area of the overlap $D_l$.  \\
 \end{definition}
@@ -621,13 +662,22 @@ This force is first computed based on the geometry of the overlap and then distr
 To decrease the overlap areas during the simulation, we evaluate the gradient flow of the area energy with a desired area of zero which indicates the direction of motion for each vertex for reducing the overlap areas.
 
 \begin{proposition} \textbf{Overlap force} \\
-	The overlap force that acts on the vertex $\vec{v}_j$ of cell $i$ is given by 
-
+	The overlap force $F_{k}^{(O)}: (\R^2)^{N_V} \times (\R^2)^{N_V N_C} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C = (\vec{v}_1, \ldots, \vec{v}_{N_V})$ is given by  
+	\begin{align*}
+		F_{k}^{(O)}(C, \vec{C}) 
+		= - (\nabla_{\vec{v}_1} O_k(C, \vec{C}), \ldots, \nabla_{\vec{v}_{N_V}} O_k(C, \vec{C}))^T,
+	\end{align*}
+	where the gradient $\nabla_{\vec{v}_j} O_k(C, \vec{C})$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
 	\begin{align}
-		F_{i,j}^{(O)}(\vec{C}) = \sum\limits_{k=1, k \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,k}} -\dfrac{1}{2} A_{D_l} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right),
+		\begin{split}
+			\nabla_{\vec{v}_j} O_k(C, \vec{C}) &= \sum\limits_{k=1, k \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,k}} \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right)
+		\end{split}
+		\label{gradient:overlap}
 	\end{align}
-	where $\Omega_{i,k}$ is the set of all overlaps that arise between the cells $i$ and $k$, $\vec{d}_{j-1}^{\: D_l} = (d_{j-1}^{D_l, 1}, d_{j-1}^{D_l, 2})^T$ and $\vec{d}_{j+1}^{\: D_l} = (d_{j+1}^{D_l, 1}, d_{j+1}^{D_l, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D_l$ and $A_{D_l}$ is the area of the overlap $D_l$. \\
-
+	for all $1 \leq j \leq N_V$, where $\Omega_{i,k}$ is the set of all overlaps that arise between the cells $i$ and $k$, $\vec{d}_{j-1}^{\: D_l} = (d_{j-1}^{D_l, 1}, d_{j-1}^{D_l, 2})^T$ and $\vec{d}_{j+1}^{\: D_l} = (d_{j+1}^{D_l, 1}, d_{j+1}^{D_l, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D_l$ and $A_{D_l}$ is the area of the overlap $D_l$.\\
+	The dirac $\delta_{\vec{v}_j}(D_l)$ equals one, if $\vec{v}_j$ is a vertex of the overlap $D_l$ and zero otherwise. \\
+	Since we always aim to decrease the overlap area, we do not need a $\sgn()$ term in this force. \\
+	
 	Proof. \\
 	The formula arises from the sums from the overlap energy and the gradient from the area force in Proposition \ref{force:area}, where the desired area is set to zero. 
 \end{proposition}
