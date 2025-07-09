@@ -27,7 +27,7 @@ end
 
 # structure for CRF cells 
 mutable struct Cell
-    centre::Vector{Float64}
+    centre::Vector{}
     r::Function
 end
 
@@ -112,7 +112,7 @@ function DiscreteCellToXY(c::DiscreteCell)
 end
 
 #erstellt Zelle mit konstantem Radius r > 0 und Mittelpunkt M
-function circleCell(M:: Vector{Float64}, r:: Float64) :: Cell 
+function circleCell(M, r:: Float64) :: Cell 
     return Cell(M, x -> r )
 end 
 

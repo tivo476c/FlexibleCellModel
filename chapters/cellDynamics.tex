@@ -219,30 +219,32 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	Proof. \\
 
 	\begin{align*}
-		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 \\
-		&= \nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j-1}_d - E^{j-1}_{C_i}|^2 + \nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 
+		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C_i} - E^{j}_d|^k \\
+		&= \frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j-1}_{C} - E^{j-1}_d|^k + \frac{1}{k}\nabla_{\vec{v}_{j}} |E^j_{C} - E^{j}_d|^k 
 	\end{align*}
 
 	For the first summand, we can compute 
 	\begin{align*}
-		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j-1}_d - E^{j-1}_{C_i}|^2 &= (E^{j-1}_d - E^{j-1}_C) \nabla_{\vec{v}_j} (E^{j-1}_d - E^{j-1}_C) \\
-		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_{j}} \norm[\vec{v}_{j-1} - \vec{v}_{j}] ) \\
-		&= (E^{j-1}_d - E^{j-1}_C) (- \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}} ) \\
-		&= (E^{j-1}_d - E^{j-1}_C) \nabla_{\vec{v}_j} ( - E^{j-1}_C) \\
-		&= (E^{j-1}_d - E^{j-1}_C) (- \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]) \\[0.5em] 
-		&= (E^{j-1}_d - E^{j-1}_C) \left(- \frac{1}{2 E^{j-1}_C} \begin{pmatrix}
+		\frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j-1}_{C} - E^{j-1}_d|^k 
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} (E^{j-1}_C - E^{j-1}_d) \\
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} E^{j-1}_C \\
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}}\\
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1}    \\
+		&\left(\frac{1}{2 E^{j-1}_C} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]\right) \\[0.5em] 
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) \frac{|E^{j-1}_C - E^{j-1}_d|^{k-1}}{2 E^{j-1}_C} \begin{pmatrix}
 			\partial_{v_{j}^{x}} (v_{j-1}^{x} - v_{j}^{x})^2 \\[0.5em]
 			\partial_{v_{j}^{y}} (v_{j-1}^{y} - v_{j}^{y})^2
-		\end{pmatrix}\right) \\[0.5em]
-		&= (E^{j-1}_d - E^{j-1}_C)  \left( - \frac{1}{2 E^{j-1}_C} \begin{pmatrix}
+		\end{pmatrix} \\[0.5em]
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) \frac{|E^{j-1}_C - E^{j-1}_d|^{k-1}}{2 E^{j-1}_C} \begin{pmatrix}
 			 -2(v_{j-1}^{x} - v_{j}^{x}) \\[0.5em]
 			 -2(v_{j-1}^{y} - v_{j}^{y})
-		\end{pmatrix}\right) \\[0.5em] 
-		&= \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \begin{pmatrix}
-			v_{j}^{x} - v_{j-1}^{x} \\[0.5em]
-			v_{j}^{y} - v_{j-1}^{y}
-	   \end{pmatrix} 
+		\end{pmatrix} \\[0.5em] 
+		&= - \sgn(E^{j-1}_C - E^{j-1}_d) \frac{ |E^{j-1}_C - E^{j-1}_d|^{k-1}}{E^{j-1}_C} \begin{pmatrix}
+				v_{j-1}^{x} - v_{j}^{x} \\[0.5em]
+				v_{j-1}^{y} - v_{j}^{y}
+		\end{pmatrix}
 	\end{align*}
+
 
 	For the second summand we get:
 	\begin{align*}
@@ -677,7 +679,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	for all $1 \leq j \leq N_V$, where $\Omega_{i,k}$ is the set of all overlaps that arise between the cells $i$ and $k$, $\vec{d}_{j-1}^{\: D_l} = (d_{j-1}^{D_l, 1}, d_{j-1}^{D_l, 2})^T$ and $\vec{d}_{j+1}^{\: D_l} = (d_{j+1}^{D_l, 1}, d_{j+1}^{D_l, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D_l$ and $A_{D_l}$ is the area of the overlap $D_l$.\\
 	The dirac $\delta_{\vec{v}_j}(D_l)$ equals one, if $\vec{v}_j$ is a vertex of the overlap $D_l$ and zero otherwise. \\
 	Since we always aim to decrease the overlap area, we do not need a $\sgn()$ term in this force. \\
-	
+
 	Proof. \\
 	The formula arises from the sums from the overlap energy and the gradient from the area force in Proposition \ref{force:area}, where the desired area is set to zero. 
 \end{proposition}

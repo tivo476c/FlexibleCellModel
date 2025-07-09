@@ -264,6 +264,8 @@ function createSimGif(gifPath::String,
                 xguidefontsize=13,
                 xlabel="t = $(@sprintf("%.6f", time))")
 
+            scatter!(plt, X[1], Y[1])
+
             for i = 2:NumberOfCells
 
                 plot!(plt, X[i], Y[i],
@@ -599,12 +601,12 @@ function runShow_overlap()
     # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
     # u0 = [c1.x; c1.y]
 
-    c1 = cellToDiscreteCell(circleCell([-(radius + 0.0005), 0], radius), N)
-    c2 = cellToDiscreteCell(circleCell([radius + 0.0005, 0], radius), N)
-    u0 = [c1.x; c2.x; c1.y; c2.y]
+    c1 = cellToDiscreteCell(circleCell([0, 0], radius), N)
+    u0 = [c1.x; c1.y]
 
     A_d = circleArea(radius, N)
-    E_d = circleEdgeLengths(radius, N)
+    E_d = circleEdgeLengths(radius, N) * 0.5
+    println("E_d = $E_d")
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)

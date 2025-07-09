@@ -305,6 +305,14 @@ function edgeForceCell(c, E_d; k=2)
     """
     res = zeros(2 * N)
     E = computeEdgeLengths(c)
+    sameLength = true 
+    for i=2:length(E)
+        if E[i] != E[1]
+            println("different edge lengths for E_1 = $(E[1]) and E_$i = $(E[i])")
+            sameLength = false 
+        end 
+    end 
+    println("all edges same length = $sameLength")
     # print("edges: E = $E, desired edges: E_d = $E_d")
     # all remaining values 
     for i = 1:N
