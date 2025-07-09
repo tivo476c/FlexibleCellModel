@@ -228,9 +228,10 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 		\frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j-1}_{C} - E^{j-1}_d|^k 
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} (E^{j-1}_C - E^{j-1}_d) \\
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} E^{j-1}_C \\
-		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}}\\
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \\
+		& \cdot \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}}\\
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1}    \\
-		&\left(\frac{1}{2 E^{j-1}_C} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]\right) \\[0.5em] 
+		& \cdot \left(\frac{1}{2 E^{j-1}_C} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]\right) \\[0.5em] 
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) \frac{|E^{j-1}_C - E^{j-1}_d|^{k-1}}{2 E^{j-1}_C} \begin{pmatrix}
 			\partial_{v_{j}^{x}} (v_{j-1}^{x} - v_{j}^{x})^2 \\[0.5em]
 			\partial_{v_{j}^{y}} (v_{j-1}^{y} - v_{j}^{y})^2
@@ -239,32 +240,50 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 			 -2(v_{j-1}^{x} - v_{j}^{x}) \\[0.5em]
 			 -2(v_{j-1}^{y} - v_{j}^{y})
 		\end{pmatrix} \\[0.5em] 
-		&= - \sgn(E^{j-1}_C - E^{j-1}_d) \frac{ |E^{j-1}_C - E^{j-1}_d|^{k-1}}{E^{j-1}_C} \begin{pmatrix}
-				v_{j-1}^{x} - v_{j}^{x} \\[0.5em]
-				v_{j-1}^{y} - v_{j}^{y}
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) \frac{ |E^{j-1}_C - E^{j-1}_d|^{k-1}}{E^{j-1}_C} \begin{pmatrix}
+				v_{j}^{x} - v_{j-1}^{x} \\[0.5em]
+				v_{j}^{y} - v_{j-1}^{y}
 		\end{pmatrix}
 	\end{align*}
 
 
-	For the second summand we get:
+	For the second summand, we get:
+	% \begin{align*}
+	% 	\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
+	% 	% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
+	% 	% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^{y} + (v_j^{y} - v_{j+1}^{y})^2]^{\frac{1}{2}} ) \\
+	% 	% &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
+	% 	&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^2 + (v_j^{y} - v_{j+1}^{y})^2]) \\[0.5em] 
+	% 	&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
+	% 		\partial_{v_j^{x}} (v_j^{x} - v_{j+1}^{x})^2 \\[0.5em]
+	% 		\partial_{v_j^{y}} (v_j^{y} - v_{j+1}^{y})^2
+	% 	\end{pmatrix}\right) \\[0.5em]
+	% 	&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
+	% 		 2(v_j^{x} - v_{j+1}^{x}) \\[0.5em]
+	% 		 2(v_j^{y} - v_{j+1}^{y})
+	% 	\end{pmatrix}\right) \\[0.5em] 
+	% 	&= \frac{E^j_C - E^j_d}{E^j_C} \begin{pmatrix}
+	% 		v_j^{x} - v_{j+1}^{x} \\[0.5em]
+	% 		v_j^{y} - v_{j+1}^{y}
+	%    \end{pmatrix} 
+	% \end{align*}
 	\begin{align*}
-		\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
-		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
-		% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^{y} + (v_j^{y} - v_{j+1}^{y})^2]^{\frac{1}{2}} ) \\
-		% &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
-		&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^2 + (v_j^{y} - v_{j+1}^{y})^2]) \\[0.5em] 
-		&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
-			\partial_{v_j^{x}} (v_j^{x} - v_{j+1}^{x})^2 \\[0.5em]
-			\partial_{v_j^{y}} (v_j^{y} - v_{j+1}^{y})^2
-		\end{pmatrix}\right) \\[0.5em]
-		&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
-			 2(v_j^{x} - v_{j+1}^{x}) \\[0.5em]
-			 2(v_j^{y} - v_{j+1}^{y})
-		\end{pmatrix}\right) \\[0.5em] 
-		&= \frac{E^j_C - E^j_d}{E^j_C} \begin{pmatrix}
-			v_j^{x} - v_{j+1}^{x} \\[0.5em]
-			v_j^{y} - v_{j+1}^{y}
-	   \end{pmatrix} 
+		\frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j}_{C} - E^{j}_d|^k 
+		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1} \nabla_{\vec{v}_j} E^{j}_C \\
+		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1}    \\
+		& \cdot \left(\frac{1}{2 E^{j}_C} \nabla_{\vec{v}_j} [(v_{j}^{x} - v_{j+1}^{x})^2 + (v_{j}^{y} - v_{j+1}^{y})^2]\right) \\[0.5em] 
+		&= \sgn(E^{j}_C - E^{j}_d) \frac{|E^{j}_C - E^{j}_d|^{k-1}}{2 E^{j}_C} \begin{pmatrix}
+			\partial_{v_{j}^{x}} (v_{j}^{x} - v_{j+1}^{x})^2 \\[0.5em]
+			\partial_{v_{j}^{y}} (v_{j}^{y} - v_{j+1}^{y})^2
+		\end{pmatrix} \\[0.5em]
+		&= \sgn(E^{j}_C - E^{j}_d) \frac{|E^{j}_C - E^{j}_d|^{k-1}}{2 E^{j}_C} \begin{pmatrix}
+			2(v_{j}^{x} - v_{j+1}^{x}) \\[0.5em]
+			2(v_{j}^{y} - v_{j+1}^{y})
+		\end{pmatrix} \\[0.5em]
+		&= \sgn(E^{j}_C - E^{j}_d) \frac{ |E^{j}_C - E^{j}_d|^{k-1}}{E^{j}_C} \begin{pmatrix}
+				v_{j}^{x} - v_{j-1}^{x} \\[0.5em]
+				v_{j}^{y} - v_{j-1}^{y}
+		\end{pmatrix}
 	\end{align*}
 	
 	

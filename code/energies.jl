@@ -44,11 +44,11 @@ function energies!(du, u, p, t)
     res += overlapForce(u)
 
     # let cells drift into each other for 2 time steps 
-    if t <= 0 * timeStepSize
-        println("pushing together at t = $t")
-        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    end
+    # if t <= 0 * timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    # end
 
     # apply BC for DF cells 
     # res += DFBoundaryCondition(u)
@@ -305,13 +305,13 @@ function edgeForceCell(c, E_d; k=2)
     """
     res = zeros(2 * N)
     E = computeEdgeLengths(c)
-    sameLength = true 
-    for i=2:length(E)
+    sameLength = true
+    for i = 2:length(E)
         if E[i] != E[1]
             println("different edge lengths for E_1 = $(E[1]) and E_$i = $(E[i])")
-            sameLength = false 
-        end 
-    end 
+            sameLength = false
+        end
+    end
     println("all edges same length = $sameLength")
     # print("edges: E = $E, desired edges: E_d = $E_d")
     # all remaining values 
