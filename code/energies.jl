@@ -307,16 +307,7 @@ function edgeForceCell(c, E_d; k=2)
     """
     res = zeros(2 * N)
     E = computeEdgeLengths(c)
-    sameLength = true
-    for i = 2:length(E)
-        if E[i] != E[1]
-            println("different edge lengths for E_1 = $(E[1]) and E_$i = $(E[i])")
-            sameLength = false
-        end
-    end
-    println("all edges same length = $sameLength")
-    # print("edges: E = $E, desired edges: E_d = $E_d")
-    # all remaining values 
+
     for i = 1:N
 
         if i == 1
@@ -330,25 +321,13 @@ function edgeForceCell(c, E_d; k=2)
             prev = i - 1
         end
 
-        res[i] =   sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1))/E[prev] * (c.x[i] - c.x[prev])
-                  +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1))/ E[i] * (c.x[i] - c.x[next])
-        if i == 2
-            println("i=2, considering vertex_2")
-            println("E_d[prev] = $(E_d[prev])")
-            println("E[prev] = $(E[prev])")
-            println("E_d[i] = $(E_d[i])")
-            println("E[i] = $(E[i])")
-            println("c.x[prev] = $(c.x[prev])")
-            println("c.x[i] = $(c.x[i])")
-            println("c.x[next] = $(c.x[next])")
-            println("c.y[prev] = $(c.y[prev])")
-            println("c.y[i] = $(c.y[i])")
-            println("c.y[next] = $(c.y[next])")
-            println("res[2] = $(res[2])") 
-        end 
-        res[i+N] = sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1))/E[prev] * (c.y[i] - c.y[prev])
-                  +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1))/ E[i] * (c.y[i] - c.y[next])
+        res[i] = sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1)) / E[prev] * (c.x[i] - c.x[prev]) +
+                 +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1)) / E[i] * (c.x[i] - c.x[next])
+
+        res[i+N] = sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1)) / E[prev] * (c.y[i] - c.y[prev]) +
+                   +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1)) / E[i] * (c.y[i] - c.y[next])
     end
+
 
     return res
 
