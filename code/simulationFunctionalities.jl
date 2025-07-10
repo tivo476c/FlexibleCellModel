@@ -601,7 +601,8 @@ function runShow_overlap()
     # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
     # u0 = [c1.x; c1.y]
 
-    c1 = cellToDiscreteCell(circleCell([0, 0], radius), N)
+    # c1 = cellToDiscreteCell(circleCell([0, 0], radius), N)
+    c1 = DiscreteCell([1.0,0.0,-1.0,0.0],[0.0,1.0,0.0,-1.0])
     u0 = [c1.x; c1.y]
 
     A_d = circleArea(radius, N)

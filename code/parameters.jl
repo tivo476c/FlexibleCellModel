@@ -1,13 +1,13 @@
 ## General setup:
 
-domainL = 0.5                               # 0.5 / 40.0
+domainL = 2.0                               # 0.5 / 40.0
 domain = (-domainL, domainL)                # domain where cells can move: [-5.0, 5.0]^2 
-NumberOfCellWallPoints = 6                  # number of wall points per cell [OLD NAME: "N"]
+NumberOfCellWallPoints = 4                  # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
 NumberOfCells = 1                        # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 1                                       # diffusitivity constant 
-radius = 0.1                              # cell radius 
+radius = 1.0                              # cell radius 
 
 ## Force scalings: 
 hardness = 0.5                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 

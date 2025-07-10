@@ -35,7 +35,9 @@ function energies!(du, u, p, t)
         res += forceScalings[1] * areaForce(u, A_d; k=2)
     end
     if (forceScalings[2] != 0 && hardness < 1)
+        println("resOld = $res")
         res += forceScalings[2] * edgeForce(u, E_d; k=2)
+        println("resNew = $res")
     end
     if (forceScalings[3] != 0 && hardness < 1)
         res += forceScalings[3] * interiorAngleForce(u, I_d)
@@ -328,10 +330,24 @@ function edgeForceCell(c, E_d; k=2)
             prev = i - 1
         end
 
-        res[i] = sign(E_d[prev] - E[prev]) / E[prev] * abs(E_d[prev] - E[prev])^(k - 1) * (c.x[i] - c.x[prev])
-        +sign(E_d[i] - E[i]) / E[i] * abs(E_d[i] - E[i])^(k - 1) * (c.x[i] - c.x[next])
-        res[i+N] = sign(E_d[prev] - E[prev]) / E[prev] * abs(E_d[prev] - E[prev])^(k - 1) * (c.y[i] - c.y[prev])
-        +sign(E_d[i] - E[i]) / E[i] * abs(E_d[i] - E[i])^(k - 1) * (c.y[i] - c.y[next])
+        res[i] =   sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1))/E[prev] * (c.x[i] - c.x[prev])
+                  +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1))/ E[i] * (c.x[i] - c.x[next])
+        if i == 2
+            println("i=2, considering vertex_2")
+            println("E_d[prev] = $(E_d[prev])")
+            println("E[prev] = $(E[prev])")
+            println("E_d[i] = $(E_d[i])")
+            println("E[i] = $(E[i])")
+            println("c.x[prev] = $(c.x[prev])")
+            println("c.x[i] = $(c.x[i])")
+            println("c.x[next] = $(c.x[next])")
+            println("c.y[prev] = $(c.y[prev])")
+            println("c.y[i] = $(c.y[i])")
+            println("c.y[next] = $(c.y[next])")
+            println("res[2] = $(res[2])") 
+        end 
+        res[i+N] = sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1))/E[prev] * (c.y[i] - c.y[prev])
+                  +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1))/ E[i] * (c.y[i] - c.y[next])
     end
 
     return res
