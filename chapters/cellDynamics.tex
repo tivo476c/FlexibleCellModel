@@ -95,9 +95,9 @@ This enables us to implement the gradient flow over the area energy.
 \begin{definition} \textbf{Area energy} \\
 The energy $A_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ for $k \in \N_{\geq 1}$, used to keep the cells at a constant volume, reads 
 	\begin{align}
-		A_k(C_i) = \frac{1}{k} |A_{C_i} - A_d|^k, \label{eq:areaEnergy} 
+		A_k(C) = \frac{1}{k} |A_{C} - A_d|^k, \label{eq:areaEnergy} 
 	\end{align}
-	where $A_d$ is the desired cell area of all cells and $A_{C_i}$ is the current area of cell $i$. 
+	where $A_d$ is the desired cell area of all cells and $A_{C}$ is the current area of cell $i$. 
 \end{definition}
 
 To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
@@ -219,7 +219,7 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	Proof. \\
 
 	\begin{align*}
-		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C_i} - E^{j}_d|^k \\
+		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C} - E^{j}_d|^k \\
 		&= \frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j-1}_{C} - E^{j-1}_d|^k + \frac{1}{k}\nabla_{\vec{v}_{j}} |E^j_{C} - E^{j}_d|^k 
 	\end{align*}
 
@@ -228,10 +228,10 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 		\frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j-1}_{C} - E^{j-1}_d|^k 
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} (E^{j-1}_C - E^{j-1}_d) \\
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \nabla_{\vec{v}_j} E^{j-1}_C \\
-		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \\
-		& \cdot \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}}\\
-		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1}    \\
-		& \cdot \left(\frac{1}{2 E^{j-1}_C} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]\right) \\[0.5em] 
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \cdot\\
+		& \hspace{1cm} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]^{\frac{1}{2}}\\
+		&= \sgn(E^{j-1}_C - E^{j-1}_d) |E^{j-1}_C - E^{j-1}_d|^{k-1} \cdot    \\
+		& \hspace{1cm} \left(\frac{1}{2 E^{j-1}_C} \nabla_{\vec{v}_j} [(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2]\right) \\[0.5em] 
 		&= \sgn(E^{j-1}_C - E^{j-1}_d) \frac{|E^{j-1}_C - E^{j-1}_d|^{k-1}}{2 E^{j-1}_C} \begin{pmatrix}
 			\partial_{v_{j}^{x}} (v_{j-1}^{x} - v_{j}^{x})^2 \\[0.5em]
 			\partial_{v_{j}^{y}} (v_{j-1}^{y} - v_{j}^{y})^2
@@ -249,7 +249,7 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 
 	For the second summand, we get:
 	% \begin{align*}
-	% 	\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C_i}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
+	% 	\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
 	% 	% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
 	% 	% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^{y} + (v_j^{y} - v_{j+1}^{y})^2]^{\frac{1}{2}} ) \\
 	% 	% &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
@@ -270,8 +270,8 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	\begin{align*}
 		\frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j}_{C} - E^{j}_d|^k 
 		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1} \nabla_{\vec{v}_j} E^{j}_C \\
-		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1}    \\
-		& \cdot \left(\frac{1}{2 E^{j}_C} \nabla_{\vec{v}_j} [(v_{j}^{x} - v_{j+1}^{x})^2 + (v_{j}^{y} - v_{j+1}^{y})^2]\right) \\[0.5em] 
+		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1} \cdot   \\
+		& \hspace{1cm} \left(\frac{1}{2 E^{j}_C} \nabla_{\vec{v}_j} [(v_{j}^{x} - v_{j+1}^{x})^2 + (v_{j}^{y} - v_{j+1}^{y})^2]\right) \\[0.5em] 
 		&= \sgn(E^{j}_C - E^{j}_d) \frac{|E^{j}_C - E^{j}_d|^{k-1}}{2 E^{j}_C} \begin{pmatrix}
 			\partial_{v_{j}^{x}} (v_{j}^{x} - v_{j+1}^{x})^2 \\[0.5em]
 			\partial_{v_{j}^{y}} (v_{j}^{y} - v_{j+1}^{y})^2
@@ -409,19 +409,19 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 			\nabla_{\vec{v}_j} I_k(C) &= \sgn(I^{j-1}_{C} - I^{j-1}_d) |I^{j-1}_{C} - I^{j-1}_d|^{k-1} \left( 
 					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{y}} \begin{pmatrix}
 						v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
-						v_{j-1}^{x} - v_{j}^{x}
+						v_{j-1}^{x}  - v_{j}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
-			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \left( 
+			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \Biggl( 
 				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
 				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j-1}^{x}
-				\end{pmatrix} 
-				- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+				\end{pmatrix} \\
+			&\hspace{1cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
 				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
-				\right) \\[0.5em] 
+				\Biggr) \\[0.5em] 
 			&+ \sgn(I^{j+1}_{C} - I^{j+1}_d) |I^{j+1}_{C} - I^{j+1}_d|^{k-1} \left( 
 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
 				v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
@@ -445,18 +445,19 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	Vertex $\vec{v}_j$ impacts the interior angles at $\vec{v}_{j-1}$, $\vec{v}_j$ and $\vec{v}_{j+1}$. 
 	Thus, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{j}(C) &=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C_i} |^2 \\
-		&= \nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
-		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
-		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2
+		\nabla_{\vec{v}_j}  I_{k}(C) 
+		&=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{k}| I^j_{C} - I^{j}_d |^k \\
+		&= \nabla_{\vec{v}_j} \frac{1}{k}| I^{j-1}_{C} - I^{j-1}_d |^k
+		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k
+		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k
 	\end{align*}
-	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2$. 
+	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} -  I^{j}_d |^k$. 
 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
-		&= (I^{j}_d - I^j_{C}) \nabla_{\vec{v}_j} (- I^j_{C})\\
-		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j}  I^j_{C}   \\
-		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k 
+		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \nabla_{\vec{v}_j}  I^j_{C}   \\
+		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\[0.2em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
 	\end{align*}
 	At this point, the previously mentioned simplifications come into play and we use $\arctan \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right)$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator. \\
 	In the next step, we need to compute the gradient 
@@ -481,14 +482,15 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		
 		$\dfrac{\partial f(\vec{v})}{\partial v^{x}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2} \left(- \dfrac{v^{y}}{v^{x}}\right) = - \dfrac{v^{y}}{(v^{x})^2 + (v^{y})^2}$ \\
 		$\dfrac{\partial f(\vec{v})}{\partial v^{y}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2}  \dfrac{1}{v^{x}} =  \dfrac{v^{x}}{(v^{x})^2 + (v^{y})^2}$ \\ [0.5em]
-		$ \nabla_{v_j^{x}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\
+		$ \nabla_{v_j^{x}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\[0.3em]
 		$ \nabla_{v_j^{y}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$ 
 	
 	\end{center}
 
 	With that, we can compute:
 	\begin{align*}
-		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^{x}} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{x}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g) (\vec{v}_{j-1}, \vec{v}_j)}{\partial v_j^{x}} 
+		&= ((\nabla f) \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{x}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
 			- \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[1.0em]
 			\frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2}
@@ -504,7 +506,8 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 	And similarly:
 	\begin{align*}
-		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^{y}} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{y}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g) (\vec{v}_{j-1}, \vec{v}_j)}{\partial v_j^{y}} 
+		&= ((\nabla f) \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{y}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
 			- \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[1.0em]
 			\frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2}
@@ -528,41 +531,71 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	
 	Thus, we can come back to: 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
-		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} (\arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)) \\
-		&= (I^j_{C} - I^{j}_d) \left( 
-		  \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k 
+		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \nabla_{\vec{v}_j} I^j_{C} \\
+		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\
+		&\hspace{1cm}  \Biggl( \arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)\Biggr) \\
+		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\
+		& \hspace{1cm} \Biggl( \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 			v_{j}^{x} - v_{j-1}^{x}
-		\end{pmatrix} 
-		- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+		\end{pmatrix} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
 			v_{j}^{x} - v_{j+1}^{x}
-		\end{pmatrix} \right).
+		\end{pmatrix} \Biggr).
 	\end{align*}
 
-	For the neighboring vertices, we compute 
-
+	For the neighboring vertices, we need:
+	\begin{gather*}
+		\nabla_{\vec{v}_j} \arctan\left( \frac{v_j^y - v_{j-1}^y}{v_j^x - v_{j-1}^x} \right) \text{ and  } \; \nabla_{\vec{v}_j} \arctan\left( \frac{v_j^y - v_{j+1}^y}{v_j^x - v_{j+1}^x} \right).
+	\end{gather*}
+	Therefore, we can use the same helper function \[f(\vec{v}) = \arctan\left( \frac{v^{y}}{v^{x}} \right),\]
+	but we need different functions for $g$, as the arrangement of the vertex coordinates differs a bit. 
+	We introduce \[g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
+		v_{j}^{x} - v_{j-1}^{x} \\[0.5em] 
+		v_{j}^{y} - v_{j-1}^{y}
+	\end{pmatrix} = - g(\vec{v}_{j-1}, \vec{v}_{j}).\] 
+	and
+	\[g_{+}(\vec{v}_{j}, \vec{v}_{j+1}) = \begin{pmatrix}
+		v_{j}^{x} - v_{j+1}^{x} \\[0.5em] 
+		v_{j}^{y} - v_{j+1}^{y}
+	\end{pmatrix}.
+	\] 
+	The gradients are 
+	\[
+		\nabla_{v_j^x} g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = (1,0)^T, \nabla_{v_j^y} g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = (0,1)^T,
+	\]
+	\[
+	\nabla_{v_j^x} g_{+}(\vec{v}_{j-1}, \vec{v}_{j}) = (1,0)^T, \nabla_{v_j^y} g_{+}(\vec{v}_{j-1}, \vec{v}_{j}) = (0,1)^T.
+	\]
+	Thus, the Jacobian of both $g_{-}$ and $g_{+}$ is the identity matrix and we can just neglect it in the following chain rules. 
+	For the previous vertex, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
-		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j-2}^{y} - v_{j-1}^{y}}{v_{j-2}^{x} - v_{j-1}^{x}}\right) - \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\
-		&= (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \left(- \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\
-		&= (I^{j-1}_{C} - I^{j-1}_d) \left( 
-		 - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^2} \begin{pmatrix}
-			v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
-			v_{j-1}^{x} - v_{j}^{x}
-		\end{pmatrix} \right),
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k 
+		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\[0.5em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j-2}^{y} - v_{j-1}^{y}}{v_{j-2}^{x} - v_{j-1}^{x}}\right) - \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
+		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(- \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
+		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} - \nabla_{\vec{v}_j} \left( f \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right) \\[0.5em]
+		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} - (\nabla f) \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
+		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_j - \vec{v}_{j-1}]^2} (v_j^y - v_{j-1}^y, v_{j-1}^x - v_j^x)^T.		
 	\end{align*}
-
+	Finally, for the successor vertex, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2 
-		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) - \arctan\left(\frac{v_{j+2}^{y} - v_{j+1}^{y}}{v_{j+2}^{x} - v_{j+1}^{x}}\right)\right) \\
-		&= (I^{j+1}_{C} - I^{j+1}_d) \nabla_{\vec{v}_j} \left( \arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) \right) \\
-		&= (I^{j+1}_{C} - I^{j+1}_d) \left( 
-		 \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-			v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
-			v_{j+1}^{x} - v_{j}^{x}
-		\end{pmatrix} \right).
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k 
+		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\[0.5em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) - \arctan\left(\frac{v_{j+2}^{y} - v_{j+1}^{y}}{v_{j+2}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
+		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
+		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left( f \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right) \\[0.5em]
+		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} (\nabla f) \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
+		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
+		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_j - \vec{v}_{j+1}]^2} (v_j^y - v_{j+1}^y, v_{j+1}^x - v_j^x)^T.	
 	\end{align*}
 	\qed
 \end{proposition}
