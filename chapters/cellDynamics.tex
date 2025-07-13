@@ -409,7 +409,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 			\nabla_{\vec{v}_j} I_k(C) &= \sgn(I^{j-1}_{C} - I^{j-1}_d) |I^{j-1}_{C} - I^{j-1}_d|^{k-1} \left( 
 					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{y}} \begin{pmatrix}
 						v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
-						v_{j-1}^{x}  - v_{j}^{x}
+						v_{j-1}^{x} - v_{j}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
 			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \Biggl( 
@@ -708,7 +708,7 @@ This force is first computed based on the geometry of the overlap and then distr
 \begin{definition} \textbf{Overlap energy} \\
 	Let $C_i$ and $C_k$ be two cells from the system $\vec{C}$ and $\Omega_{i,k}$ be the set of all overlaps that appear between $C_i$ and $C_k$, like explained above. Then, the total overlap energy of the cell system is given by the formula 
 	\begin{align}
-		O_k(C, \vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{k=i+1}^{N_C} (\sum\limits_{D_l \in \Omega_{i,k}} \frac{1}{k}|A_{D_l}|^k) \right),		
+		O_k(C, \vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D_l \in \Omega_{i,m}} \frac{1}{k}|A_{D_l}|^k\right) \right),		
 	\end{align} 
 	where $A_{D_l}$ is the area of the overlap $D_l$.  \\
 \end{definition}
@@ -724,16 +724,43 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	where the gradient $\nabla_{\vec{v}_j} O_k(C, \vec{C})$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j} O_k(C, \vec{C}) &= \sum\limits_{k=1, k \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,k}} \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right)
+			\nabla_{\vec{v}_j} O_k(C, \vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right)
 		\end{split}
 		\label{gradient:overlap}
 	\end{align}
 	for all $1 \leq j \leq N_V$, where $\Omega_{i,k}$ is the set of all overlaps that arise between the cells $i$ and $k$, $\vec{d}_{j-1}^{\: D_l} = (d_{j-1}^{D_l, 1}, d_{j-1}^{D_l, 2})^T$ and $\vec{d}_{j+1}^{\: D_l} = (d_{j+1}^{D_l, 1}, d_{j+1}^{D_l, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D_l$ and $A_{D_l}$ is the area of the overlap $D_l$.\\
 	The dirac $\delta_{\vec{v}_j}(D_l)$ equals one, if $\vec{v}_j$ is a vertex of the overlap $D_l$ and zero otherwise. \\
-	Since we always aim to decrease the overlap area, we do not need a $\sgn()$ term in this force. \\
 
 	Proof. \\
-	The formula arises from the sums from the overlap energy and the gradient from the area force in Proposition \ref{force:area}, where the desired area is set to zero. 
+	
+	Let us begin with the computation:
+	\begin{align*}
+		\nabla_{\vec{v}_j} \frac{1}{k}|A_{D_l}|^k
+		&= \begin{cases}
+			\nabla_{\vec{v}_j} \frac{1}{k} |A_{D_l}|^k &\text{ if } \vec{v}_j \in D_l \\
+			0 &\text{ if } \vec{v}_j \notin D_l
+		\end{cases} \\
+		&= \delta_{\vec{v}_j}(D_l)  \nabla_{\vec{v}_j} \frac{1}{k}|A_{D_l} - 0|^k \\
+		&= \delta_{\vec{v}_j}(D_l)  \nabla_{\vec{v}_j} A_k(D_l) \\
+		&= \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} \sgn(A_{D_l} - 0) |A_{D_l} - 0|^{k-1} 
+		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \\
+		&= \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} 
+		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix}, \\
+	\end{align*}
+	where we obeserved the presence of the area energy $A_k(D_l) = \frac{1}{k}|A_{D_l} - 0|^k$ and used the area gradient from Formula \ref{gradient:area}. 
+	The desired cell area of the overlap is always zero, as we want to achieve a setting without overlaps. 
+	The vertices $\vec{d}_{j-1}^{\: D_l}$ and $\vec{d}_{j+1}^{\: D_l}$ represent the neighboring vertices of $\vec{v}_j$ in the overlap cell. \\
+	Overall, we get:
+	\begin{align*}
+		\nabla_{\vec{v}_j^{\: i}} O_k(C_i, \vec{C}) 
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{n=1}^{N_C} \left( \sum\limits_{m=n+1}^{N_C}  \left(\sum\limits_{D_l \in \Omega_{n,m}} \frac{1}{k}|A_{D_l}|^k\right) \right) \\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \frac{1}{k}|A_{D_l}|^k\right)\\
+		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D_l}|^k\right)\\
+		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \delta_{\vec{v}_j^{\: i}}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} 
+		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix}\right)\\
+	\end{align*}
+
+	\qed
 \end{proposition}
 
 Figure \ref{fig:overlapForce} illustrates the interaction between two overlapping cells, highlighting the effect of the overlap force on their vertices.
