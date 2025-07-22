@@ -623,6 +623,10 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 \subsection{Overlap force}
 % explain the algorithm
 Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. \\
+
+\subsubsection*{Shape deforming overlap force}
+The first overlap force, that we want to introduce, is similar to the overlap force introduced in~\cite{Vogel2023}. 
+It degenerates a cell overlap by influencing that cell shapes of the affected cells. \\
 The challenging aspect of computing the overlap force lies in detecting overlaps within the cell system. 
 An overlap is treated as a DF cell in its own right, composed of the vertices from each of the two overlapping cells that lie inside the other, along with the two intersection points where the cell boundaries intersect. \\ 
 Once all overlaps have been identified, we apply a dynamic similar to that of the area force, but with a desired area of zero. 
@@ -775,6 +779,23 @@ Figure \ref{fig:overlapForce} illustrates the interaction between two overlappin
 	\end{center}
 \end{figure}
 
+\subsubsection*{Bounce off overlap force} 
+While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially—leaving cells temporarily `stuck' together, relying on random Brownian motion to diffuse apart. 
+With just that force, it is hard to compare the DF cell model to the hard sphere cell model, where overlaps are solved by transporting them away from each other, resulting in a real distance that both cells have after a really small amount of time. \\  
+To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
+This additional force, which we refer to as the bounce off overlap force, acts not by changing cell shape but by actively transporting overlapping cells away from each other. 
+This mechanism captures the spatial repulsion characteristic of rigid body interactions while complementing the shape based degeneration of overlaps in deformable cells. 
+In the end, we will use a combination of both overlap forces to get a nice transition from the HCSM to the DF cell model. \\ 
+In~\cite{Bruna2012} overlapping cells with a radius of $r$ that have a center-to-center distance of $2r - a$ will be reflective apart in one time step (that is $10^{-5}$), resulting in a distance of $2r + a$ afterwards. \\
+The following force does the exact same for our DF cells. 
+But we need the following assumptions:
+\begin{enumerate}
+	\item Our DF cells model circular discs. 
+	\item The cells have a radius of $r \in \R_{>0}$.
+	\item We can compute the cell centre $\vec{x} = \frac{1}{N_V}\sum\limits_{j = 1}^{N_v} \vec{v}_j$ which will be used to determine the distance between two cells. 
+\end{enumerate}
+
+\subsection{The DF ODE}
 
 \subsection{A simulation run}
 % state the force system

@@ -102,7 +102,7 @@ We compute:
     &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i) \cdot \nabla E(\vec{x}_i) \\
     &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \int \nabla \phi(x) \cdot \nabla E(x) \dequ \delta_{\vec{x}_i} \\
     &= - \int \nabla \phi(x) \cdot \nabla E(x) \dequ \mu^N \dequ x \\
-    &= \int \phi(x)  \nabla \cdot ( \mu^N(\nabla E(x))) \dequ x \\
+    &= \int \phi(x)  \nabla \cdot ( \mu^N(x) \nabla E(x)) \dequ x \\
 \end{align*}
 \[ \Rightarrow  0 = \partial_t \rho - \nabla(\rho_v),\]
 where $\rho$ is the density function of $\mu$ such that \[ \mu(dx) = \rho(x) dx. \]
