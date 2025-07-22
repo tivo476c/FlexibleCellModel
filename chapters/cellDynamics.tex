@@ -412,16 +412,16 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 						v_{j-1}^{x} - v_{j}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
-			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \left( 
+			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} ( 
 				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
 				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j-1}^{x}
-				\end{pmatrix} 
-				- \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+				\end{pmatrix} \\
+			&\hspace{1cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
 				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
-				\right) \\[0.5em] 
+				) \\[0.5em] 
 			&+ \sgn(I^{j+1}_{C} - I^{j+1}_d) |I^{j+1}_{C} - I^{j+1}_d|^{k-1} \left( 
 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
 				v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
