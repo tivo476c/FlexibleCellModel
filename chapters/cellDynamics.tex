@@ -96,7 +96,6 @@ This enables us to implement the gradient flow over the area energy.
 The energy $A_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ for $k \in \N_{\geq 1}$, used to keep the cells at a constant volume, reads 
 	\begin{align}
 		A_k(C) = \frac{1}{k} |A_{C} - A_d|^k, \label{eq:areaEnergy} 
-		A_k(C) = \frac{1}{k} |A_{C} - A_d|^k, \label{eq:areaEnergy} 
 	\end{align}
 	where $A_d$ is the desired cell area of all cells and $A_{C}$ is the current area of cell $C$. 
 \end{definition}
@@ -124,7 +123,7 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 		\nabla_{\vec{v}_j} A_k(C) &= \frac{1}{k} \nabla_{\vec{v}_j} | A_{C} - A_d |^k  \\ 
 		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} (A_{C} - A_d) \\
 		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} A_{C} \\
-		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} (\frac{1}{2} \sum\limits_{k = 1}^{N} (v_k^{x} v_{k+1}^{y} - v_{k+1}^{x} v_k^{y})) \\[0.5em]  
+		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} \left(\frac{1}{2} \sum\limits_{k = 1}^{N} (v_k^{x} v_{k+1}^{y} - v_{k+1}^{x} v_k^{y})\right) \\[0.5em]  
 		&= \frac{1}{2} \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \begin{pmatrix}
 				\partial_{v_j^{x}} (v_j^{x} v_{j+1}^{y} - v_j^{x} v_{j-1}^{y})  \\[0.5em]
 				\partial_{v_j^{y}} (v_{j-1}^{x} v_j^{y} - v_{j+1}^{x} v_j^{y})
@@ -371,7 +370,7 @@ With that, we can define our interior angle energy.
 We continue by computing the resulting force. 
 The $\atanxy$ function is partly defined and not truly differentiable. 
 We still want to compute a gradient to use it for our interior angle force. 
-It is $$\atanxy(\vec{v}) = \arctan\left(\frac{v^{y}}{v^{x}} \right) + \text{constant}$$ almost everywhere, just not on areas with measure zero. 
+It is $$\atanxy(\vec{v}) = \arctan\!\left(\frac{v^{y}}{v^{x}} \right) + \text{constant}$$ almost everywhere, just not on areas with measure zero. 
 We just compute the gradient of $\arctan(\frac{v^{y}}{v^{x}})$ instead. \\
 Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
 However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
@@ -421,20 +420,16 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 						v_{j-1}^{x} - v_{j}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
-			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \Biggl( 
-			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \Biggl( 
+			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} ( 
 				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
 				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j-1}^{x}
 				\end{pmatrix} \\
 			&\hspace{1cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
-				\end{pmatrix} \\
-			&\hspace{1cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
 				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
-				\Biggr) \\[0.5em] 
-				\Biggr) \\[0.5em] 
+				) \\[0.5em] 
 			&+ \sgn(I^{j+1}_{C} - I^{j+1}_d) |I^{j+1}_{C} - I^{j+1}_d|^{k-1} \left( 
 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
 				v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
@@ -458,65 +453,50 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	Vertex $\vec{v}_j$ impacts the interior angles at $\vec{v}_{j-1}$, $\vec{v}_j$ and $\vec{v}_{j+1}$. 
 	Thus, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{k}(C) 
-		&=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{k}| I^j_{C} - I^{j}_d |^k \\
-		&= \nabla_{\vec{v}_j} \frac{1}{k}| I^{j-1}_{C} - I^{j-1}_d |^k
-		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k
-		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k
-		\nabla_{\vec{v}_j}  I_{k}(C) 
-		&=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{k}| I^j_{C} - I^{j}_d |^k \\
-		&= \nabla_{\vec{v}_j} \frac{1}{k}| I^{j-1}_{C} - I^{j-1}_d |^k
-		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k
-		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k
+		\nabla_{\vec{v}_j}  I_{j}(C) &=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C_i} |^2 \\
+		&= \nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
+		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
+		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2
 	\end{align*}
-	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} -  I^{j}_d |^k$. 
-	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} -  I^{j}_d |^k$. 
+	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2$. 
 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k 
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \nabla_{\vec{v}_j}  I^j_{C}   \\
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\[0.2em]
-		&\hspace{1cm} \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k 
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \nabla_{\vec{v}_j}  I^j_{C}   \\
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\[0.2em]
-		&\hspace{1cm} \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
+		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
+		&= (I^{j}_d - I^j_{C}) \nabla_{\vec{v}_j} (- I^j_{C})\\
+		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j}  I^j_{C}   \\
+		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
 	\end{align*}
-	At this point, the previously mentioned simplifications come into play and we use $\arctan \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right)$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator. \\
+	At this point, the previously mentioned simplifications come into play and we use $\arctan\! \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right)$ instead of $\atanxy(\vec{v}_{j-1} - \vec{v_j})$ and neglect the modulo operator. \\
 	In the next step, we need to compute the gradient 
 	\begin{center}
 		$
-		\nabla_{\vec{v}_j} \arctan \left(\dfrac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right).
+		\nabla_{\vec{v}_j} \arctan\! \left(\dfrac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right).
 		$
 	\end{center}
 	
 	Therefore, we define helper functions 
-	$$ f(\vec{v}) = \arctan\left( \frac{v^{y}}{v^{x}} \right)$$ 
+	$$ f(\vec{v}) = \arctan\!\left( \frac{v^{y}}{v^{x}} \right)$$ 
 	and 
 	$$g(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
 		v_{j-1}^{x} - v_{j}^{x} \\[0.5em] 
 		v_{j-1}^{y} - v_{j}^{y}
 	\end{pmatrix}.$$
 	With these helper functions, we can write 
-	$$ \arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}) $$
+	$$ \arctan\!\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}) $$
 	and use the two dimensional chain rule to stepwise compute the searched gradient. 
  
 	\begin{center}
 		
-		$\dfrac{\partial f(\vec{v})}{\partial v^{x}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2} \left(- \dfrac{v^{y}}{v^{x}}\right) = - \dfrac{v^{y}}{(v^{x})^2 + (v^{y})^2}$ \\
+		$\dfrac{\partial f(\vec{v})}{\partial v^{x}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2} \left(- \dfrac{v^{y}}{(v^{x})^2}\right) = - \dfrac{v^{y}}{(v^{x})^2 + (v^{y})^2}$ \\
 		$\dfrac{\partial f(\vec{v})}{\partial v^{y}} = \dfrac{1}{1 + \left(\dfrac{v^{y}}{v^{x}}\right)^2}  \dfrac{1}{v^{x}} =  \dfrac{v^{x}}{(v^{x})^2 + (v^{y})^2}$ \\ [0.5em]
-		$ \nabla_{v_j^{x}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\[0.3em]
-		$ \nabla_{v_j^{x}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\[0.3em]
+		$ \nabla_{v_j^{x}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (-1, 0)^T$ \\
 		$ \nabla_{v_j^{y}} g(\vec{v}_{j-1}, \vec{v}_{j}) = (0, -1)^T$ 
 	
 	\end{center}
 
 	With that, we can compute:
 	\begin{align*}
-		\frac{\partial (f \circ g) (\vec{v}_{j-1}, \vec{v}_j)}{\partial v_j^{x}} 
-		&= ((\nabla f) \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{x}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
-		\frac{\partial (f \circ g) (\vec{v}_{j-1}, \vec{v}_j)}{\partial v_j^{x}} 
-		&= ((\nabla f) \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{x}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^{x}} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{x}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
 			- \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[1.0em]
 			\frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2}
@@ -532,10 +512,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 	And similarly:
 	\begin{align*}
-		\frac{\partial (f \circ g) (\vec{v}_{j-1}, \vec{v}_j)}{\partial v_j^{y}} 
-		&= ((\nabla f) \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{y}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
-		\frac{\partial (f \circ g) (\vec{v}_{j-1}, \vec{v}_j)}{\partial v_j^{y}} 
-		&= ((\nabla f) \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{y}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
+		\frac{\partial (f \circ g (\vec{v}_{j-1}, \vec{v}_j))}{\partial v_j^{y}} &= (\nabla f \circ g (\vec{v}_{j-1}, \vec{v}_j))^T \cdot \nabla_{v_j^{y}} g (\vec{v}_{j-1}, \vec{v}_j) \\[0.5em]
 		&= \begin{pmatrix}
 			- \frac{v_{j-1}^{y} - v_{j}^{y}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2} \\[1.0em]
 			\frac{v_{j-1}^{x} - v_{j}^{x}}{(v_{j-1}^{x} - v_{j}^{x})^2 + (v_{j-1}^{y} - v_{j}^{y})^2}
@@ -551,7 +528,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 	Overall, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \arctan \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+		\nabla_{\vec{v}_j} \arctan\! \left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}} \right) = \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 			v_{j}^{x} - v_{j-1}^{x}
 		\end{pmatrix}.
@@ -559,58 +536,24 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	
 	Thus, we can come back to: 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k 
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \nabla_{\vec{v}_j} I^j_{C} \\
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\
-		&\hspace{1cm}  \Biggl( \arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)\Biggr) \\
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\
-		& \hspace{1cm} \Biggl( \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_{C} - I^{j}_d |^k 
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \nabla_{\vec{v}_j} I^j_{C} \\
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\
-		&\hspace{1cm}  \Biggl( \arctan\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)\Biggr) \\
-		&= \sgn(I^j_{C} - I^{j}_d)|I^j_{C} - I^{j}_d|^{k-1} \cdot \\
-		& \hspace{1cm} \Biggl( \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
+		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
+		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} \left(\arctan\!\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\!\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)\right) \\
+		&= (I^j_{C} - I^{j}_d) \Biggl( 
+		  \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 			v_{j}^{x} - v_{j-1}^{x}
-		\end{pmatrix} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
-		\end{pmatrix} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+		\end{pmatrix} \\
+		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
 			v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
 			v_{j}^{x} - v_{j+1}^{x}
-		\end{pmatrix} \Biggr).
 		\end{pmatrix} \Biggr).
 	\end{align*}
 
 	For the neighboring vertices, we need:
 	\begin{gather*}
-		\nabla_{\vec{v}_j} \arctan\left( \frac{v_j^y - v_{j-1}^y}{v_j^x - v_{j-1}^x} \right) \text{ and  } \; \nabla_{\vec{v}_j} \arctan\left( \frac{v_j^y - v_{j+1}^y}{v_j^x - v_{j+1}^x} \right).
+		\nabla_{\vec{v}_j} \arctan\!\left( \frac{v_j^y - v_{j-1}^y}{v_j^x - v_{j-1}^x} \right) \text{ and  } \; \nabla_{\vec{v}_j} \arctan\!\left( \frac{v_j^y - v_{j+1}^y}{v_j^x - v_{j+1}^x} \right).
 	\end{gather*}
-	Therefore, we can use the same helper function \[f(\vec{v}) = \arctan\left( \frac{v^{y}}{v^{x}} \right),\]
-	but we need different functions for $g$, as the arrangement of the vertex coordinates differs a bit. 
-	We introduce \[g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
-		v_{j}^{x} - v_{j-1}^{x} \\[0.5em] 
-		v_{j}^{y} - v_{j-1}^{y}
-	\end{pmatrix} = - g(\vec{v}_{j-1}, \vec{v}_{j}).\] 
-	and
-	\[g_{+}(\vec{v}_{j}, \vec{v}_{j+1}) = \begin{pmatrix}
-		v_{j}^{x} - v_{j+1}^{x} \\[0.5em] 
-		v_{j}^{y} - v_{j+1}^{y}
-	\end{pmatrix}.
-	\] 
-	The gradients are 
-	\[
-		\nabla_{v_j^x} g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = (1,0)^T, \nabla_{v_j^y} g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = (0,1)^T,
-	\]
-	\[
-	\nabla_{v_j^x} g_{+}(\vec{v}_{j-1}, \vec{v}_{j}) = (1,0)^T, \nabla_{v_j^y} g_{+}(\vec{v}_{j-1}, \vec{v}_{j}) = (0,1)^T.
-	\]
-	Thus, the Jacobian of both $g_{-}$ and $g_{+}$ is the identity matrix and we can just neglect it in the following chain rules. 
-	For the previous vertex, we get 
-	For the neighboring vertices, we need:
-	\begin{gather*}
-		\nabla_{\vec{v}_j} \arctan\left( \frac{v_j^y - v_{j-1}^y}{v_j^x - v_{j-1}^x} \right) \text{ and  } \; \nabla_{\vec{v}_j} \arctan\left( \frac{v_j^y - v_{j+1}^y}{v_j^x - v_{j+1}^x} \right).
-	\end{gather*}
-	Therefore, we can use the same helper function \[f(\vec{v}) = \arctan\left( \frac{v^{y}}{v^{x}} \right),\]
+	Therefore, we can use the same helper function \[f(\vec{v}) = \arctan\!\left( \frac{v^{y}}{v^{x}} \right),\]
 	but we need different functions for $g$, as the arrangement of the vertex coordinates differs a bit. 
 	We introduce \[g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
 		v_{j}^{x} - v_{j-1}^{x} \\[0.5em] 
@@ -632,54 +575,31 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	Thus, the Jacobian of both $g_{-}$ and $g_{+}$ is the identity matrix and we can just neglect it in the following chain rules. 
 	For the previous vertex, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k 
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j-1}_{C} - I^{j-1}_d |^k 
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\[0.5em]
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j-2}^{y} - v_{j-1}^{y}}{v_{j-2}^{x} - v_{j-1}^{x}}\right) - \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\!\left(\frac{v_{j-2}^{y} - v_{j-1}^{y}}{v_{j-2}^{x} - v_{j-1}^{x}}\right) - \arctan\!\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(- \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(- \arctan\!\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - \nabla_{\vec{v}_j} \left( f \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right) \\[0.5em]
+		&\hspace{1cm} (- \nabla_{\vec{v}_j} \left( f \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right)) \\[0.5em]
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - (\nabla f) \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
+		&\hspace{1cm} (- (\nabla f) \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1})) \\[0.5em]
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_j - \vec{v}_{j-1}]^2} (v_j^y - v_{j-1}^y, v_{j-1}^x - v_j^x)^T.		
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k 
-		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\[0.5em]
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j-2}^{y} - v_{j-1}^{y}}{v_{j-2}^{x} - v_{j-1}^{x}}\right) - \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
-		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(- \arctan\left(\frac{v_{j}^{y} - v_{j-1}^{y}}{v_{j}^{x} - v_{j-1}^{x}}\right)\right) \\[0.5em]
-		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - \nabla_{\vec{v}_j} \left( f \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right) \\[0.5em]
-		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - (\nabla f) \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
-		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_j - \vec{v}_{j-1}]^2} (v_j^y - v_{j-1}^y, v_{j-1}^x - v_j^x)^T.		
+		&\hspace{1cm} \left(- \frac{1}{\norm[\vec{v}_j - \vec{v}_{j-1}]^2} (v_j^y - v_{j-1}^y, v_{j-1}^x - v_j^x \right)^T).		
 	\end{align*}
 	Finally, for the successor vertex, we get 
-	Finally, for the successor vertex, we get 
 	\begin{align*}
 		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k 
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\[0.5em]
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) - \arctan\left(\frac{v_{j+2}^{y} - v_{j+1}^{y}}{v_{j+2}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\!\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) - \arctan\!\left(\frac{v_{j+2}^{y} - v_{j+1}^{y}}{v_{j+2}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
-		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left( f \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right) \\[0.5em]
-		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} (\nabla f) \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
-		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_j - \vec{v}_{j+1}]^2} (v_j^y - v_{j+1}^y, v_{j+1}^x - v_j^x)^T.	
-		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_{C} - I^{j+1}_d |^k 
-		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\[0.5em]
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right) - \arctan\left(\frac{v_{j+2}^{y} - v_{j+1}^{y}}{v_{j+2}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
-		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
+		&\hspace{1cm} \nabla_{\vec{v}_j} \left(\arctan\!\left(\frac{v_{j}^{y} - v_{j+1}^{y}}{v_{j}^{x} - v_{j+1}^{x}}\right)\right) \\[0.5em]
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
 		&\hspace{1cm} \nabla_{\vec{v}_j} \left( f \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \right) \\[0.5em]
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
 		&\hspace{1cm} (\nabla f) \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} - \frac{1}{\norm[\vec{v}_j - \vec{v}_{j+1}]^2} (v_j^y - v_{j+1}^y, v_{j+1}^x - v_j^x)^T.	
+		&\hspace{1cm} \left(- \frac{1}{\norm[\vec{v}_j - \vec{v}_{j+1}]^2} (v_j^y - v_{j+1}^y, v_{j+1}^x - v_j^x)^T \right).	
 	\end{align*}
 	\qed
 \end{proposition}
@@ -707,10 +627,6 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 \subsection{Overlap force}
 % explain the algorithm
 Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. \\
-
-\subsubsection*{Shape deforming overlap force}
-The first overlap force, that we want to introduce, is similar to the overlap force introduced in~\cite{Vogel2023}. 
-It degenerates a cell overlap by influencing that cell shapes of the affected cells. \\
 
 \subsubsection*{Shape deforming overlap force}
 The first overlap force, that we want to introduce, is similar to the overlap force introduced in~\cite{Vogel2023}. 
@@ -798,89 +714,64 @@ After introducing the method for detecting overlaps, we can now define the overl
 This force is first computed based on the geometry of the overlap and then distributed to the corresponding vertices of the original cells. 
 
 \begin{definition} \textbf{Overlap energy} \\
-	Let $C_i$ and $C_k$ be two cells from the system $\vec{C}$ and $\Omega_{i,k}$ be the set of all overlaps that appear between $C_i$ and $C_k$, like explained above. Then, the total overlap energy of the cell system is given by the formula 
+	Let $C_i$ and $C_m$ be two cells from the system $\vec{C}$ and $\Omega_{i,m}$ be the set of all overlaps that appear between $C_i$ and $C_m$, like explained above. Then, the total overlap energy $O_k : (\R^{2N_V})^{N_C} \rightarrow \R$ of the cell system is given by the formula 
 	\begin{align}
-		O_k(C, \vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D_l \in \Omega_{i,m}} \frac{1}{k}|A_{D_l}|^k\right) \right),		
-		O_k(C, \vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D_l \in \Omega_{i,m}} \frac{1}{k}|A_{D_l}|^k\right) \right),		
+		O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right) \right),		
 	\end{align} 
-	where $A_{D_l}$ is the area of the overlap $D_l$.  \\
+	where $A_{D}$ is the area of the overlap $D$.  \\
 \end{definition}
 
 To decrease the overlap areas during the simulation, we evaluate the gradient flow of the area energy with a desired area of zero which indicates the direction of motion for each vertex for reducing the overlap areas.
 
 \begin{proposition} \textbf{Overlap force} \\
-	The overlap force $F_{k}^{(O)}: (\R^2)^{N_V} \times (\R^2)^{N_V N_C} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C = (\vec{v}_1, \ldots, \vec{v}_{N_V})$ is given by  
+	The overlap force $F_{k}^{(O)}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is given by  
 	\begin{align*}
-		F_{k}^{(O)}(C, \vec{C}) 
-		= - (\nabla_{\vec{v}_1} O_k(C, \vec{C}), \ldots, \nabla_{\vec{v}_{N_V}} O_k(C, \vec{C}))^T,
+		F_{k}^{(O)}(\vec{C}) 
+		= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \vec{v}_1^{\:N_C} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T,
 	\end{align*}
-	where the gradient $\nabla_{\vec{v}_j} O_k(C, \vec{C})$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
+	where the gradient $\nabla_{\vec{v}_j} O_k(\vec{C})$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j} O_k(C, \vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right)
-			\nabla_{\vec{v}_j} O_k(C, \vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} \begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \right)
+			\nabla_{\vec{v}_j} O_k(\vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}_j}(D)  \dfrac{1}{2} |A_{D}|^{k-1} \begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix} \right)
 		\end{split}
 		\label{gradient:overlap}
 	\end{align}
-	for all $1 \leq j \leq N_V$, where $\Omega_{i,k}$ is the set of all overlaps that arise between the cells $i$ and $k$, $\vec{d}_{j-1}^{\: D_l} = (d_{j-1}^{D_l, 1}, d_{j-1}^{D_l, 2})^T$ and $\vec{d}_{j+1}^{\: D_l} = (d_{j+1}^{D_l, 1}, d_{j+1}^{D_l, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D_l$ and $A_{D_l}$ is the area of the overlap $D_l$.\\
-	The dirac $\delta_{\vec{v}_j}(D_l)$ equals one, if $\vec{v}_j$ is a vertex of the overlap $D_l$ and zero otherwise. \\
+	for all $1 \leq j \leq N_V$, where $\Omega_{i,m}$ is the set of all overlaps that arise between the cells $i$ and $m$, $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{D, 1}, d_{j-1}^{D, 2})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{D, 1}, d_{j+1}^{D, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
+	The dirac $\delta_{\vec{v}_j}(D)$ equals one, if $\vec{v}_j$ is a vertex of the overlap $D$ and zero otherwise. \\
+	For addressing the overlap force that acts on cell $1 \leq i \leq N_C$, we define 
+	\begin{center}
+		$F_{k, i}^{(O)}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
+		$F_{k, i}^{(O)}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))$. 
+	\end{center}
+	
 
 	Proof. \\
 	
 	Let us begin with the computation:
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{k}|A_{D_l}|^k
+		\nabla_{\vec{v}_j} \frac{1}{k}|A_{D}|^k
 		&= \begin{cases}
-			\nabla_{\vec{v}_j} \frac{1}{k} |A_{D_l}|^k &\text{ if } \vec{v}_j \in D_l \\
-			0 &\text{ if } \vec{v}_j \notin D_l
+			\nabla_{\vec{v}_j} \frac{1}{k} |A_{D}|^k &\text{ if } \vec{v}_j \in D \\
+			0 &\text{ if } \vec{v}_j \notin D
 		\end{cases} \\
-		&= \delta_{\vec{v}_j}(D_l)  \nabla_{\vec{v}_j} \frac{1}{k}|A_{D_l} - 0|^k \\
-		&= \delta_{\vec{v}_j}(D_l)  \nabla_{\vec{v}_j} A_k(D_l) \\
-		&= \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} \sgn(A_{D_l} - 0) |A_{D_l} - 0|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \\
-		&= \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix}, \\
+		&= \delta_{\vec{v}_j}(D)  \nabla_{\vec{v}_j} \frac{1}{k}|A_{D} - 0|^k \\
+		&= \delta_{\vec{v}_j}(D)  \nabla_{\vec{v}_j} A_k(D) \\
+		&= \delta_{\vec{v}_j}(D)  \dfrac{1}{2} \sgn(A_{D} - 0) |A_{D} - 0|^{k-1} 
+		\begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix} \\
+		&= \delta_{\vec{v}_j}(D)  \dfrac{1}{2} |A_{D}|^{k-1} 
+		\begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix}, \\
 	\end{align*}
-	where we obeserved the presence of the area energy $A_k(D_l) = \frac{1}{k}|A_{D_l} - 0|^k$ and used the area gradient from Formula \ref{gradient:area}. 
+	where we obeserved the presence of the area energy $A_k(D) = \frac{1}{k}|A_{D} - 0|^k$ and used the area gradient from Formula \ref{gradient:area}. 
 	The desired cell area of the overlap is always zero, as we want to achieve a setting without overlaps. 
-	The vertices $\vec{d}_{j-1}^{\: D_l}$ and $\vec{d}_{j+1}^{\: D_l}$ represent the neighboring vertices of $\vec{v}_j$ in the overlap cell. \\
+	The vertices $\vec{d}_{j-1}^{\: D}$ and $\vec{d}_{j+1}^{\: D}$ represent the neighboring vertices of $\vec{v}_j$ in the overlap cell. \\
 	Overall, we get:
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} O_k(C_i, \vec{C}) 
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{n=1}^{N_C} \left( \sum\limits_{m=n+1}^{N_C}  \left(\sum\limits_{D_l \in \Omega_{n,m}} \frac{1}{k}|A_{D_l}|^k\right) \right) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \frac{1}{k}|A_{D_l}|^k\right)\\
-		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D_l}|^k\right)\\
-		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \delta_{\vec{v}_j^{\: i}}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix}\right)\\
-	\end{align*}
-
-	\qed
-	
-	Let us begin with the computation:
-	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{k}|A_{D_l}|^k
-		&= \begin{cases}
-			\nabla_{\vec{v}_j} \frac{1}{k} |A_{D_l}|^k &\text{ if } \vec{v}_j \in D_l \\
-			0 &\text{ if } \vec{v}_j \notin D_l
-		\end{cases} \\
-		&= \delta_{\vec{v}_j}(D_l)  \nabla_{\vec{v}_j} \frac{1}{k}|A_{D_l} - 0|^k \\
-		&= \delta_{\vec{v}_j}(D_l)  \nabla_{\vec{v}_j} A_k(D_l) \\
-		&= \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} \sgn(A_{D_l} - 0) |A_{D_l} - 0|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix} \\
-		&= \delta_{\vec{v}_j}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix}, \\
-	\end{align*}
-	where we obeserved the presence of the area energy $A_k(D_l) = \frac{1}{k}|A_{D_l} - 0|^k$ and used the area gradient from Formula \ref{gradient:area}. 
-	The desired cell area of the overlap is always zero, as we want to achieve a setting without overlaps. 
-	The vertices $\vec{d}_{j-1}^{\: D_l}$ and $\vec{d}_{j+1}^{\: D_l}$ represent the neighboring vertices of $\vec{v}_j$ in the overlap cell. \\
-	Overall, we get:
-	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} O_k(C_i, \vec{C}) 
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{n=1}^{N_C} \left( \sum\limits_{m=n+1}^{N_C}  \left(\sum\limits_{D_l \in \Omega_{n,m}} \frac{1}{k}|A_{D_l}|^k\right) \right) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \frac{1}{k}|A_{D_l}|^k\right)\\
-		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D_l}|^k\right)\\
-		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D_l \in \Omega_{i,m}} \delta_{\vec{v}_j^{\: i}}(D_l)  \dfrac{1}{2} |A_{D_l}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D_l, 2} - d_{j-1}^{D_l, 2} \\[0.5em]  d_{j-1}^{D_l, 1} - d_{j+1}^{D_l, 1} \end{pmatrix}\right)\\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{n=1}^{N_C} \left( \sum\limits_{m=n+1}^{N_C}  \left(\sum\limits_{D \in \Omega_{n,m}} \frac{1}{k}|A_{D}|^k\right) \right) \\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right)\\
+		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D}|^k\right)\\
+		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}_j^{\: i}}(D)  \dfrac{1}{2} |A_{D}|^{k-1} 
+		\begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix}\right)\\
 	\end{align*}
 
 	\qed
@@ -915,23 +806,7 @@ But we need the following assumptions:
 \end{enumerate}
 
 \subsection{The DF ODE}
-\subsubsection*{Bounce off overlap force} 
-While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially—leaving cells temporarily `stuck' together, relying on random Brownian motion to diffuse apart. 
-With just that force, it is hard to compare the DF cell model to the hard sphere cell model, where overlaps are solved by transporting them away from each other, resulting in a real distance that both cells have after a really small amount of time. \\  
-To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
-This additional force, which we refer to as the bounce off overlap force, acts not by changing cell shape but by actively transporting overlapping cells away from each other. 
-This mechanism captures the spatial repulsion characteristic of rigid body interactions while complementing the shape based degeneration of overlaps in deformable cells. 
-In the end, we will use a combination of both overlap forces to get a nice transition from the HCSM to the DF cell model. \\ 
-In~\cite{Bruna2012} overlapping cells with a radius of $r$ that have a center-to-center distance of $2r - a$ will be reflective apart in one time step (that is $10^{-5}$), resulting in a distance of $2r + a$ afterwards. \\
-The following force does the exact same for our DF cells. 
-But we need the following assumptions:
-\begin{enumerate}
-	\item Our DF cells model circular discs. 
-	\item The cells have a radius of $r \in \R_{>0}$.
-	\item We can compute the cell centre $\vec{x} = \frac{1}{N_V}\sum\limits_{j = 1}^{N_v} \vec{v}_j$ which will be used to determine the distance between two cells. 
-\end{enumerate}
 
-\subsection{The DF ODE}
 
 \subsection{A simulation run}
 % state the force system
