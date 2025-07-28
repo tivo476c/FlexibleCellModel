@@ -848,16 +848,35 @@ But we need the following assumptions:
 
 \end{definition}
 In order to achieve a similarly fast degeneration of the overlap as in~\cite{Bruna2012}, we need to scale the force with the scaling factor 
-\[
+\(
 \alpha^{(\hat{O})} = 10^5
-\]
+\)
 as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$. 
 
 %TODO: insert figure of Bounce off overlap force 
 
 
-\subsection{The DF ODE}
-
+\subsection{The DF SDE}
+Having defined all individual force contributions acting on the cell vertices, we now combine them to formulate the full dynamics of the system in terms of a stochastic differential equation. \\
+One challenging aspect that remains is the appropriate scaling of all forces.
+It has become evident that the system is highly sensitive to these scaling parameters. 
+If the shape-recovering forces are too small, the recovery process is excessively slow. 
+Conversely, if they are too large, the numerical integration scheme tends to become unstable. \\ 
+To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how \enquote{hard} the cells are. 
+The total overlap force is then defined as a weighted combination of two force types:
+\[
+F^{(\mathbf{O})} = h \cdot F^{(\hat{O})} + (1 - h) \cdot F^{(O)},
+\]
+where $F^{(\hat{O})}$ denotes the bounce-off overlap force and $F^{(O)}$ the shape-deforming overlap force.\\
+When $h = 1$, the cells are maximally stiff. 
+In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce-off mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
+As $h$ decreases, the cells become progressively softer. 
+The influence of the bounce-off force diminishes, while the shape-deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
+With the introduction of the hardness parameter $h$, we have established a mechanism that enables a smooth transition from the HSCM dynamics introduced in~\cite{Bruna2012} to our new DF cell model. \\
+For $h = 1$, the dynamics are identical to the original HSCM model, as we will show in the following chapter. 
+By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
+In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
+In the limiting case $h = 0$, we recover the DF dynamics without the bounce-off overlap force term.
 
 \subsection{A simulation run}
 % state the force system
