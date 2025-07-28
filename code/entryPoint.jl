@@ -25,9 +25,9 @@ gifPath = joinpath(simPath, string(simulationName, ".gif"))
 energyDiaPath = joinpath(simPath, "energies-$simulationName.png")
 p = [timeStepSize, D]
 
-runShow_overlap()
+# runShow_overlap()
 # @time runSimulation_locations()
 
 ###  OPTION 2: PARALLELIZED 
 # if wanna use parallelized run, inclusions happen in startParallelizedRun.jl: 
-# include("startParallelizedRun.jl")
+include("startParallelizedRun.jl")

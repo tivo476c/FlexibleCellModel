@@ -394,16 +394,16 @@ function do1SimulationRun(simRun)
         u0 = initializeCells(radius)
     end
 
-    # cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    # @time sol = solve(cellProb,
-    #     EM(),
-    #     # callback=CallBack_reflectiveBC_cellOverlap,
-    #     dt=timeStepSize,
-    # )
-    fakeSol = smallSolution([0.0], [u0])
-    # extractedSol = extractSolution(sol)
-    # createLocationFile(extractedSol, simRun, locationsPath)
-    createLocationFile(fakeSol, 1, locationsPath)
+    cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    @time sol = solve(cellProb,
+        EM(),
+        # callback=CallBack_reflectiveBC_cellOverlap,
+        dt=timeStepSize,
+    )
+    # fakeSol = smallSolution([0.0], [u0])
+    extractedSol = extractSolution(sol)
+    createLocationFile(extractedSol, simRun, locationsPath)
+    # createLocationFile(fakeSol, 1, locationsPath)
 end
 
 function doSimulationRuns_countLocations(currentProcss, NuSims)
@@ -484,6 +484,8 @@ function runSimulation_locations()
     mkpath(simPath)
     if gethostname() == "treuesStueck"      # home pc xd 
         cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    elseif gethostname() == "UNIPC-id"
+        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)    # use correct uniPC path
     else # laptop 
         cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     end
@@ -514,7 +516,7 @@ function runSimulation_locations()
     # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(do1SimulationRun, 1:1)
+    results = pmap(do1SimulationRun, 175:8505)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()

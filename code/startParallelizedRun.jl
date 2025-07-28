@@ -9,6 +9,7 @@ println("Started startParallelizedRun.jl")
 
 using Distributed
 
+# TODO: change to 30 or something for uni pc 
 NuProcs = 7
 if nprocs() == 1
     addprocs(NuProcs)
