@@ -484,7 +484,7 @@ function runSimulation_locations()
     mkpath(simPath)
     if gethostname() == "treuesStueck"      # home pc xd 
         cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    elseif gethostname() == "UNIPC-id"
+    elseif gethostname() == "iwr-25177394"
         cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)    # use correct uniPC path
     else # laptop 
         cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
