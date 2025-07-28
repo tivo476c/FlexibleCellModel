@@ -9,67 +9,51 @@ using DifferentialEquations, StochasticDiffEq, Distributions, DataStructures
 
 #-------------------------------------- FINAL ENERGY
 
-function energies(du, u, p, t)
-
-    # F1 is vector of all current edge lenghts, needed for edge Force and interior angle Force 
-    # J1 is vector of all current interior angles, needed for interior angle Force 
-    if forceScalings[1] != 0    # area force
-        A1 = zeros(M)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            polygon = Vector{Vector{Float64}, N}(undef) 
-            for j = 1:N
-                x, y = c.x[j], c.y[j]
-            end 
-            push!(polygon, [x,y])
-            A1[i] = areaPolygon(polygon)
-        end
-    end
-
-    if forceScalings[2] != 0    # edge force
-        F1 = zeros(M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            F1[(i-1)*N+1:i*N] = computeEdgeLengths(c)
-        end
-
-    end
-    if forceScalings[3] != 0    # interior angle force 
-        J1 = zeros(M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            J1[(i-1)*N+1:i*N] = computeInteriorAngles(c)
-        end
-
-    end
-
+function energies!(du, u, p, t)
+    """
+     Deterministic part of our SDE, includes area, edge, interior angle and overlap force. 
+     
+     Args:
+        du ... change that gets applied to u: u += dt*du + brownian 
+        u  ... current state of the cell system [c1.x, ..., cM.x, c1.y, ..., cM.y] (in R^(2MN))
+        p = dt, D, A_d, E_d, I_d, where
+            dt ... time step size (in R) 
+            D  ... diffusion coefficient (in R) 
+            A_d ... desired cell areas for all cells (in R)
+            E_d ... desired edge lengths of a cell (in R^N)
+            I_d ... desired interior angles of a cell (in R^N)
+        t  ... current time 
+    """
+    _, _, A_d, E_d, I_d = p
     if N != 0
         res = zeros(2 * N * M)
     else
         res = zeros(2 * M)
     end
-    # scalings = [area, edge, interiorAngle, overlap]
-    if (norm(forceScalings, 2) != 0)
-        scalings = forceScalings / norm(forceScalings, 2) * 100
-    else
-        scalings = forceScalings
+
+    if (forceScalings[1] != 0 && hardness < 1)
+        res += forceScalings[1] * areaForce(u, A_d; k=2)
+    end
+    if (forceScalings[2] != 0 && hardness < 1)
+        println("resOld = $res")
+        res += forceScalings[2] * edgeForce(u, E_d; k=2)
+        println("resNew = $res")
+    end
+    if (forceScalings[3] != 0 && hardness < 1)
+        res += forceScalings[3] * interiorAngleForce(u, I_d)
     end
 
-    if (scalings[1] != 0)
-        res += scalings[1] * areaForce(u, A1)
-    end
-    if (scalings[2] != 0)
-        res += scalings[2] * edgeForce(u, E1, F1)
-    end
-    if (scalings[3] != 0)
-        res += scalings[3] * interiorAngleForce(u, I1, J1)
-    end
-    if (scalings[4] != 0)
-        res += scalings[4] * overlapForce(u)
-    end
-    if (scalings[5] != 0)
-        res += scalings[5] * boundaryForce(u)
-    end
+    res += overlapForce(u)
+
+    # let cells drift into each other for 2 time steps 
+    # if t <= 0 * timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    # end
+
+    # apply BC for DF cells 
+    # res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -78,414 +62,428 @@ function energies(du, u, p, t)
     return du
 
 end
+#-------------------------------------- BROWNIAN MOTION 
+
+function brownian_pp!(du, u, p, t)
+
+    Δt, D = p
+    du .= sqrt(2 * D)
+
+end
+
+function brownian_DF!(du, u, p, t)
+
+    Δt, D = p
+
+    fill!(du, 0.0)
+    for i = 1:2*M
+        lineIdx = (N*(i-1)+1):(i*N)
+        du[lineIdx, i] .= sqrt(2 * D)
+    end
+
+    # du = res
+    # return res
+
+    # if t <= 2 * timeStepSize
+    # print brownian of cell 1 
+    # println("printing brownian for c1 at t=$t")
+    # b = randn(2 * M) .* sqrt(timeStepSize)
+    # sol_b = du * b
+    # println("dB_c1x = sol_b[1:N]: ")
+    # for k = 1:2*M*N
+    # println("sol_b[$k] = $(sol_b[k])")
+    # end
+    # println("dB_c1y = sol_b[M*N+1:M*N+N] = ")
+    # for k = M*N+1:M*N+N
+    # println("sol_b[$k] = $(sol_b[k])")
+    # end
+
+    # end
+
+end
+
+function nomotion!(du, u, p, t)
+    du = zeros(2 * M * N)
+end
+#-------------------------------------- BOUNDARY CONDITION
+
+function apply_BC(u, t, integrator)
+    return minimum(u) < -domainL || maximum(u) > domainL
+end
+
+function reflectiveBC!(integrator)
+    u = integrator.u
+    for i in eachindex(u)
+        if u[i] < -domainL
+            u[i] = -domainL + (-domainL - u[i])
+        elseif u[i] > domainL
+            u[i] = domainL - (u[i] - domainL)
+        end
+    end
+end
+
+CallBack_reflectiveBC = DiscreteCallback(apply_BC, reflectiveBC!)
+
+function apply_BC_overlap(u, t, integrator)
+    return true
+end
+
+function reflectiveBC_overlap!(integrator)
+    u = integrator.u
+
+    # reflective BC
+    for i in eachindex(u)
+        if u[i] < -domainL
+            u[i] = -domainL + (-domainL - u[i])
+        elseif u[i] > domainL
+            u[i] = domainL - (u[i] - domainL)
+        end
+    end
+
+    # Overlap check 
+    for i = 1:NumberOfCells
+
+        u_i = [u[i], u[i+NumberOfCells]]
+        for j = i+1:NumberOfCells
+            u_j = [u[j], u[j+NumberOfCells]]
+
+            distance = norm(u_i - u_j)
+            if distance < 2 * radius
+
+                # u[i+1] = -domainL -domainL - u[i]
+                # -> u[i+1] + u[i] = -2 domainL 
+                pushVec = (u_i - u_j) / distance * (2 * radius - distance)
+                u[i] += pushVec[1]
+                u[i+NumberOfCells] += pushVec[2]
+                u[j] -= pushVec[1]
+                u[j+NumberOfCells] -= pushVec[2]
+
+            end
+        end
+    end
+end
+
+CallBack_reflectiveBC_cellOverlap = DiscreteCallback(apply_BC_overlap, reflectiveBC_overlap!)
+
+function DFBoundaryConditionCell(c)
+
+    rx = zeros(N)
+    ry = zeros(N)
+
+    centre = getCentre(c)
+
+    if centre[1] < -domainL
+        rx = -2 * (domainL + centre[1]) * timeStepSize^(-1) * ones(N)
+    elseif centre[1] > domainL
+        rx = 2 * (domainL - centre[1]) * timeStepSize^(-1) * ones(N)
+    end
+
+    if centre[2] < -domainL
+        ry = -2 * (domainL + centre[2]) * timeStepSize^(-1) * ones(N)
+    elseif centre[2] > domainL
+        ry = 2 * (domainL - centre[2]) * timeStepSize^(-1) * ones(N)
+    end
+
+    return [rx; ry]
+end
+
+function DFBoundaryCondition(u)
+    cells = getCellsFromU(u)
+    res = zeros(2 * M * N)
+    for i = 1:M
+
+        bc = DFBoundaryConditionCell(cells[i])
+        for j = 1:N
+            res[N*(i-1)+j] = bc[j]
+            res[N*(i-1+M)+j] = bc[j+N]
+        end
+
+    end
+    return res
+end
 
 
 #-------------------------------------- SET Force FUNCTIONS
 
-#------------------- AREA Force -> add A1 ∈ R^M to initialisation 
+#------------------- AREA Force -> add A_d ∈ R to initialisation 
 
-# we need a vector of all wanted cell volumes A1 ∈ R^M in order to implement the area Force 
+function areaEnergyCell(c, A_d; k=2)
+    """
+    Returns area energy of a cell c. 
+    """
+    return areaForceFactor / k * abs(A_d - areaPolygon(c.x, c.y))^k
+end
 
-function areaGradient(c, a1=0.0)
+function areaGradientCell(c; NVertices=NumberOfCellWallPoints)
+    """
+    Returns for a cell c a vector of length (R^2)^N, that holds for each vertex its area gradient.  
+    First N entries are for the x coords of the N vertices and the second N entries for the y coords. 
+    """
 
-    N = length(c.x)
     #A = areaPolygon( c.x, c.y ) 
-    #factor = a1 - A  
-    res = zeros(2 * N)
-    res[1] = c.y[2] - c.y[N]
-    res[N+1] = c.x[N] - c.x[2]
-    res[N] = c.y[1] - c.y[N-1]
-    res[2*N] = c.x[N-1] - c.x[1]
-    for i = 2:N-1
-
+    res = zeros(2 * NVertices)
+    res[1] = c.y[2] - c.y[NVertices]
+    res[NVertices+1] = c.x[NVertices] - c.x[2]
+    res[NVertices] = c.y[1] - c.y[NVertices-1]
+    res[2*NVertices] = c.x[NVertices-1] - c.x[1]
+    for i = 2:NVertices-1
         res[i] = c.y[i+1] - c.y[i-1]
-        res[i+N] = c.x[i-1] - c.x[i+1]
-
+        res[i+NVertices] = c.x[i-1] - c.x[i+1]
     end
 
     return res
 
 end
 
-
 # computes all vertice forces for a single cell  
-function areaForceCell(c, a1)
+function areaForceCell(c, A_d; k=2)
+    """
+    Returns for a cell c a vector of length (R^2)^N, that holds for each vertex the area force that gets applied in each time step of a simulation.  
+    First N entries are for the x coords of the N vertices and the second N entries for the y coords. 
+    """
 
     A = areaPolygon(c.x, c.y)
-    factor = 0.5 * (a1 - A)
-    res = zeros(2 * N)
+    factor = 0.5 * sign(A_d - A) * abs(A_d - A)^(k - 1)
 
-    res[1] = c.y[2] - c.y[N]
-    res[N+1] = c.x[N] - c.x[2]
-    res[N] = c.y[1] - c.y[N-1]
-    res[2*N] = c.x[N-1] - c.x[1]
-    for i = 2:N-1
-
-        res[i] = c.y[i+1] - c.y[i-1]
-        res[i+N] = c.x[i-1] - c.x[i+1]
-
-    end
-
-    return factor * res
+    return factor * areaGradientCell(c)
 
 end
 
 # final area Force that can be used in foo 
-function areaForce(u, A1)
-
+function areaForce(u, A_d; k=2)
+    """
+    Returns for a cell system u a vector of length (R^2N)^M, that holds for each vertex the area force that gets applied in each time step of a simulation.  
+    """
     res = zeros(2 * M * N)
-
+    cells = getCellsFromU(u)
     for i = 1:M
 
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        a = areaForceCell(c, A1[i])
+        a = areaForceCell(cells[i], A_d; k=k)
         for j = 1:N
-
             res[N*(i-1)+j] = a[j]
             res[N*(i-1+M)+j] = a[j+N]
-
         end
 
-
     end
-
-    return 0.2 * res
+    return res
 
 end
 
-#------------------- EDGE Force -> add E1 ∈ R^(M*N) to initialisation 
 
-# we need a vector of all wanted edge lengths E1 ∈ R^(M*N) in order to implement the edge Force 
-# E1[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
+
+#------------------- EDGE Force -> add E_d ∈ R^(M*N) to initialisation 
+
+# we need a vector of all wanted edge lengths E_d ∈ R^(M*N) in order to implement the edge Force 
+# E_d[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
 
 function computeEdgeLengths(c::DiscreteCell)
-
-    N = length(c.x)
+    """
+    Returns vector R^N of all edge lengths of the given cell. 
+    """
     res = zeros(N)
-
     for i = 1:N-1
         res[i] = norm([c.x[i], c.y[i]] - [c.x[i+1], c.y[i+1]], 2)
     end
     res[N] = norm([c.x[N], c.y[N]] - [c.x[1], c.y[1]], 2)
-
     return res
-    # res[1] = length(vertex_1, vertex_2) | res[i] = length(vertex_i, vertex_i+1) | res[N] = length(vertex_N, vertex_1)
-
 end
 
-
+function edgeEnergyCell(c, E_d; k=2)
+    """
+    Returns edge energy of cell c. 
+    """
+    edgeLengths = computeEdgeLengths(c)
+    res = 0
+    for i = 1:N
+        res += edgeForceFactor / k * abs(E_d[i] - edgeLengths[i])^k
+    end
+    return res
+end
 
 # computes all Edge Energies for a single cell 
-function edgeForceCell(c, e1, f1)
-
+function edgeForceCell(c, E_d; k=2)
+    """
+    Returns the edge force vectors for all cell vertices of c. 
+    """
     res = zeros(2 * N)
-    #f1 = computeEdgeLengths(c) 
+    E = computeEdgeLengths(c)
 
-    # 1st and last x value 
-    res[1] = (e1[1] / f1[1] - 1) * (c.x[1] - c.x[2]) + (e1[N] / f1[N] - 1) * (c.x[1] - c.x[N])
-    res[N] = (e1[N] / f1[N] - 1) * (c.x[N] - c.x[1]) + (e1[N-1] / f1[N-1] - 1) * (c.x[N] - c.x[N-1])
-    # 1st and last y value 
-    res[N+1] = (e1[1] / f1[1] - 1) * (c.y[1] - c.y[2]) + (e1[N] / f1[N] - 1) * (c.y[1] - c.y[N])
-    res[2*N] = (e1[N] / f1[N] - 1) * (c.y[N] - c.y[1]) + (e1[N-1] / f1[N-1] - 1) * (c.y[N] - c.y[N-1])
+    for i = 1:N
 
-    # all remaining values 
-    for i = 2:(N-1)
-
-        res[i] = (e1[i] / f1[i] - 1) * (c.x[i] - c.x[i+1]) + (e1[i-1] / f1[i-1] - 1) * (c.x[i] - c.x[i-1])
-        res[i+N] = (e1[i] / f1[i] - 1) * (c.y[i] - c.y[i+1]) + (e1[i-1] / f1[i-1] - 1) * (c.y[i] - c.y[i-1])
-
-    end
-
-    return res
-
-end
-
-
-
-# computes all vertice forces for all cells 
-function edgeForce(u, E1, F1)
-
-    res = zeros(2 * M * N)
-
-    for i = 1:M
-
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-        edges = E1[(i-1)*N+1:i*N]
-        f1 = F1[(i-1)*N+1:i*N]
-        e = edgeForceCell(c, edges, f1)
-        for j = 1:N
-
-            res[N*(i-1)+j] = e[j]
-            res[N*(i-1+M)+j] = e[j+N]
-
+        if i == 1
+            next = 2
+            prev = N
+        elseif i == N
+            next = 1
+            prev = N - 1
+        else
+            next = i + 1
+            prev = i - 1
         end
 
+        res[i] = sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1)) / E[prev] * (c.x[i] - c.x[prev]) +
+                 +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1)) / E[i] * (c.x[i] - c.x[next])
 
+        res[i+N] = sign(E_d[prev] - E[prev]) * (abs(E_d[prev] - E[prev])^(k - 1)) / E[prev] * (c.y[i] - c.y[prev]) +
+                   +sign(E_d[i] - E[i]) * (abs(E_d[i] - E[i])^(k - 1)) / E[i] * (c.y[i] - c.y[next])
     end
+
 
     return res
 
+end
 
+# computes all vertice forces for all cells 
+function edgeForce(u, E_d; k=2)
+    """
+    Returns all edge force vectors for all vertices in the cell system u.  
+    """
+    res = zeros(2 * M * N)
+    cells = getCellsFromU(u)
+    for i = 1:M
+        e = edgeForceCell(cells[i], E_d; k=k)
+        for j = 1:N
+            res[N*(i-1)+j] = e[j]
+            res[N*(i-1+M)+j] = e[j+N]
+        end
+    end
+    return res
 end
 
 
-#------------------- INTERIOR ANGLE Force -> add I1 ∈ R^(M*N) to initialisation 
+#------------------- INTERIOR ANGLE Force -> add I_d ∈ R^(M*N) to initialisation 
 
-# we need a vector of all wanted interior angles I1 ∈ R^(M*N) in order to implement the edge Force 
-# I1[ (i-1)*N + 1 : i*N] are the edge lengths of cell i 
-
-#= old stuff 
-function computeCenter(c::DiscreteCell)
-
-    x = 0.0
-    y = 0.0
-    for i = 1:N 
-        x += c.x[i]
-        y += c.y[i]
-    end 
-
-    return [x,y] / N 
-
-end 
-
-function intAngle(x,y,z, centre) 
-
-    d1 = norm(x-y, 2)
-    d2 = norm(y-z, 2)
-    d3 = norm(z-x, 2) 
-
-    r1 = norm(centre-x, 2)
-    r2 = norm(centre-y, 2)
-    r3 = norm(centre-z, 2)
-
-    d = (d1^2 + d2^2 - d3^2) / (2*d1*d2)
-
-    if( d <= -1)
-        return π 
-    elseif(d >= 1)
-        return 0.0 
-    else 
-        res = acos(d) 
-    end 
-
-    if( r2*1.01 < min(r1,r3) ) 
-        return 2*π - res 
-    else 
-        return res 
-    end 
-
-end 
-=#
-
-# turn in vectors that span the according angle 
-
-function arctan2(x,y) 
+function arctan2(x, y)
     if x > 0
         return atan(y / x)
-    elseif x < 0 
-        if y > 0 
-            return atan(y / x) + pi 
-        elseif y < 0 
-            return atan(y / x) - pi 
-        elseif y == 0 
-            return pi 
-        end 
-    elseif x == 0 
+    elseif x < 0
         if y > 0
-            return pi/2.0
+            return atan(y / x) + pi
         elseif y < 0
-            return - pi/2.0
-        elseif y==0
+            return atan(y / x) - pi
+        elseif y == 0
+            return pi
+        end
+    elseif x == 0
+        if y > 0
+            return pi / 2.0
+        elseif y < 0
+            return -pi / 2.0
+        elseif y == 0
             println("(0,0) cant be put in arctan2(x,y)")
-        end 
-    end 
-end 
+        end
+    end
+end
 
-function intAngleMT(v_prev, v_curr, v_next) 
+function intAngleMT(v_prev, v_curr, v_next)
 
-    v1 = v_prev - v_curr 
-    v2 = v_next - v_curr 
+    v1 = v_prev - v_curr
+    v2 = v_next - v_curr
 
     a1 = arctan2(v1[1], v1[2])
     a2 = arctan2(v2[1], v2[2])
-    res = mod(a1 - a2 , (2 * π))
+    res = mod(a1 - a2, (2 * π))
     return res
 end
 
-
-function intAngle2(x, y, z)
-
-    v1 = x - y
-    v2 = z - y
-    return mod(-atan(v1[1] * v2[2] - v1[2] * v2[1], dot(v1, v2)), (2 * π))
-end
-
-function intAngle2(v1, v2)
-    return mod(-atan(v1[1] * v2[2] - v1[2] * v2[1], dot(v1, v2)), (2 * π))
-end
-
-function intAngle3(x, y, z)
-    v1 = x - y
-    v2 = z - y
-    return mod(atan(v1[2], v1[1]) - atan(v2[2], v2[1]), (2 * π))
-end
-
-function computeInteriorAngles(c::DiscreteCell)
+function computeIntAngles(c)
 
     V = Vector{Vector{Float64}}(undef, N)
     for i = 1:N
         V[i] = vertex(c, i)
     end
-
     res = zeros(N)
-    res[1] = intAngle2(V[N], V[1], V[2])
-    res[N] = intAngle2(V[N-1], V[N], V[1])
-    for i = 2:N-1
-        res[i] = intAngle2(V[i-1], V[i], V[i+1])
+    for i = 1:N
+        if i == 1
+            prev = N
+            next = 2
+        elseif i == N
+            prev = N - 1
+            next = 1
+        else
+            prev = i - 1
+            next = i + 1
+        end
+        res[i] = intAngleMT(V[prev], V[i], V[next])
     end
-
     return res
 
 end
 
-function d_xi_interiorAngle(x, y, z)
-
-    h = 0.01
-    return (intAngle2(x, [y[1] + h, y[2]], z) - intAngle2(x, y, z)) / h
-
-end
-
-function d_yi_interiorAngle(x, y, z)
-
-    h = 0.01
-    return (intAngle2(x, [y[1], y[2] + h], z) - intAngle2(x, y, z)) / h
+function distAngles(a1, a2)
+    """
+    Returns the distance between the two angles a1, a2 in [0, 2*pi) considering the periodicity of the interval (0 = 2*pi). 
+    """
+    d = mod(a1 - a2, 2 * pi)
+    return minimum([d, 2 * pi - d])
 
 end
 
-function d_xi_interiorAngle2(x, y, z)
-
-    v1 = x - y
-    v2 = z - y
-
-
-    return v1[2] / (v1[1]^2 + v1[2]^2) - v2[2] / (v2[1]^2 + v2[2]^2)
-
-end
-
-function d_yi_interiorAngle2(x, y, z)
-
-    v1 = x - y
-    v2 = z - y
-
-    return v2[1] / (v2[1]^2 + v2[2]^2) - v1[1] / (v1[1]^2 + v1[2]^2)
-end
-
-
-
-function interiorAngleForceCell(c, I, J)
-
-    res = zeros(2 * N)
-    res[1] = (I[1] - J[1]) * d_xi_interiorAngle(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[N] = (I[N] - J[N]) * d_xi_interiorAngle(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-    res[N+1] = (I[1] - J[1]) * d_yi_interiorAngle(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[2*N] = (I[N] - J[N]) * d_yi_interiorAngle(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-
-    for i = 2:N-1
-
-        res[i] = (I[i] - J[i]) * d_xi_interiorAngle(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-        res[i+N] = (I[i] - J[i]) * d_yi_interiorAngle(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-
+function angleEnergyCell(c, I_d; k=2)
+    res = 0
+    intAngles = computeIntAngles(c)
+    for i = 1:N
+        res += interiorAngleForceFactor / k * distAngles(I_d[i], intAngles[i])^k
     end
-
-    return -res
-
-end
-
-function interiorAngleForceCell2(c, I, J)
-
-    res = zeros(2 * N)
-
-    res[1] = (I[1] - J[1]) * d_xi_interiorAngle2(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[N] = (I[N] - J[N]) * d_xi_interiorAngle2(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-    res[N+1] = (I[1] - J[1]) * d_yi_interiorAngle2(vertex(c, N), vertex(c, 1), vertex(c, 2))
-    res[2*N] = (I[N] - J[N]) * d_yi_interiorAngle2(vertex(c, N - 1), vertex(c, N), vertex(c, 1))
-
-    for i = 2:N-1
-
-        res[i] = (I[i] - J[i]) * d_xi_interiorAngle2(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-        res[i+N] = (I[i] - J[i]) * d_yi_interiorAngle2(vertex(c, i - 1), vertex(c, i), vertex(c, i + 1))
-
-    end
-
     return res
-
 end
 
-function interiorAngleForceCell_MT1(c, I, J)
+function interiorAngleForceCell_MT1(c, I_d; k=2)
     """
     given: 
         * 1 DF cell c 
         * list of desired cell interior angles for that cell I 
-        * list of current cell interior angles for that cell J 
     """
 
+    intAngles = computeIntAngles(c)
     res = zeros(2 * NumberOfCellWallPoints) # res[1:NumberOfCellWallPoints] for x coordinates, res[NumberOfCellWallPoints+1:2*NumberOfCellWallPoints] for y coordinates
-    for k = 1:NumberOfCellWallPoints
+    for i = 1:NumberOfCellWallPoints
 
-        currentIdx = k 
-        if currentIdx == 1 
-            prevIdx = NumberOfCellWallPoints 
-        else 
-            prevIdx = currentIdx - 1 
-        end 
-
-        if currentIdx == NumberOfCellWallPoints 
-            nextIdx = 1 
-        else 
-            nextIdx = currentIdx + 1 
-        end 
-
-        v_prev = vertex(c, prevIdx)
-        v_curr = vertex(c, currentIdx)
-        v_next = vertex(c, nextIdx)
-
-        # assign x dynamic for vertex k 
-        # res[k] -= (J[prevIdx]    - I[prevIdx]   ) * (-1.0/norm(v_curr - v_prev, 2)^2*(v_curr[2] - v_prev[2]) )                
-        res[k] -= (J[currentIdx] - I[currentIdx]) * ( 1.0/norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]) )                
-        res[k] -= (J[currentIdx] - I[currentIdx]) * (-1.0/norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]) )                
-        # res[k] -= (J[nextIdx]    - I[nextIdx]   ) * ( 1.0/norm(v_curr - v_next, 2)^2*(v_curr[2] - v_next[2]) )
-        
-        # assign y dynamic for vertex k 
-        # res[NumberOfCellWallPoints + k] -= (J[prevIdx] - I[prevIdx])*      (- 1.0/norm(v_curr - v_prev, 2)^2*(v_prev[1] - v_curr[1]) )                
-        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(  1.0/norm(v_curr - v_prev, 2)^2*(v_curr[1] - v_prev[1]) )                
-        res[NumberOfCellWallPoints + k] -= (J[currentIdx] - I[currentIdx])*(- 1.0/norm(v_curr - v_next, 2)^2*(v_curr[1] - v_next[1]) )                
-        # res[NumberOfCellWallPoints + k] -= (J[nextIdx] - I[nextIdx])*      (  1.0/norm(v_curr - v_next, 2)^2*(v_next[1] - v_curr[1]) )
-
-    end 
-    
-    return res ./ 20
-
-end 
-
-function interiorAngleForce(u, I1, J1)
-
-    res = zeros(2 * M * N)
-    for i = 1:M
-
-        c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-
-        i1 = I1[(i-1)*N+1:i*N]
-        j1 = J1[(i-1)*N+1:i*N]
-        # a = interiorAngleForceCell2(c, i1, j1)
-        a = interiorAngleForceCell_MT1(c, i1, j1)
-        for j = 1:N
-
-            res[N*(i-1)+j] = a[j]
-            res[N*(i-1+M)+j] = a[j+N]
-
+        if i == 1
+            prev = NumberOfCellWallPoints
+        else
+            prev = i - 1
         end
 
+        if i == NumberOfCellWallPoints
+            next = 1
+        else
+            next = i + 1
+        end
 
+        v_prev = vertex(c, prev)
+        v_curr = vertex(c, i)
+        v_next = vertex(c, next)
+
+        ### I SKIPPED THE ^2 after the norm() statements, because i like this dynamic more 
+        # assign x dynamic for vertex k 
+        res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_curr[2] - v_prev[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2) * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2) * (v_next[2] - v_curr[2]))
+        res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2) * (v_curr[2] - v_next[2]))
+
+        # assign y dynamic for vertex k 
+        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_prev[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2) * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2) * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2) * (v_next[1] - v_curr[1]))
+
+    end
+
+    return res
+
+end
+
+function interiorAngleForce(u, I_d)
+
+    res = zeros(2 * M * N)
+    C = getCellsFromU(u)
+    for i = 1:M
+        a = interiorAngleForceCell_MT1(C[i], I_d)
+        for j = 1:N
+            res[N*(i-1)+j] = a[j]
+            res[N*(i-1+M)+j] = a[j+N]
+        end
     end
 
     return res
@@ -494,8 +492,32 @@ end
 
 
 #------------------- OVERLAP Force (the notorious)
-
 # pairs the vertex indice j from the overlap with the according vertex indice i in c1(v1) / c2(v2)
+
+function overlapEnergy(u; k=1)
+    """
+    Computes bachelor overlap energy of the cell system.  
+    """
+    if overlapForceFactor == 0
+        return 0
+    end
+
+    C = solutionToCells(u)
+    overlapEnergy = 0
+    for i = 1:length(C)
+        for j = i+1:length(C)
+
+            overlaps = getOverlap(C[i], C[j])
+            for o ∈ overlaps
+                area = areaPolygon(o.x, o.y)
+                overlapEnergy += overlapForceFactor / k * area^k
+            end
+
+        end
+    end
+    return overlapEnergy
+end
+
 function collectOverlapIndices(o, c1, c2)
 
     v1 = Set()
@@ -526,28 +548,43 @@ function collectOverlapIndices(o, c1, c2)
 
 end
 
-function overlapForceCells(c1, c2, overlapForceType=overlapForceType)
-    """
-    Returns the force caused by the cell overlap between the 2 given DF cells. 
-    Also selects which overlap force is selected: 
-        overlapforce ∈ {"bachelorThesis", "billiard", "combination"}
-    """
+function computeCenter(c::DiscreteCell)
 
-    if (overlapForceType == "bachelorThesis")
-        return bachelorOverlapForceCells(c1, c2)
-    elseif (overlapForceType == "billiard")
-        return billiardOverlapForceCells(c1, c2)
-    elseif (overlapForceType == "combination")
-        return combinationOverlapForceCells(c1, c2)
-    elseif (overlapForceType == "radiusBilliard")
-        return radiusOverlapForceCells(c1, c2)
-    else
-        print("error: 3rd argument overlapForceType must be in {bachelorThesis, billiard, combination}")
-        return []
-    end
+    x = sum(c.x)
+    y = sum(c.y)
+    return [x, y] / N
+
 end
 
-function bachelorOverlapForceCells(c1, c2)
+function radiusBilliardOverlapForce(u)
+    # currently the size of overlap is not considered 
+    res = zeros(2 * M)
+
+    for i = 1:M
+        centreI = [u[i], u[i+M]]
+        for j = i+1:M
+            centreJ = [u[j], u[j+M]]
+
+            distance = norm(centreI - centreJ)
+            if distance < 2 * radius
+
+                pushVec = (centreI - centreJ) / distance * (2 * radius - distance)  # pushVec b
+                # pushVec = (centreI - centreJ) / distance                            # pushVec c
+                # pushVec = (centreI - centreJ)                                       # pushVec d
+                res[i] += pushVec[1]
+                res[i+M] += pushVec[2]
+                res[j] -= pushVec[1]
+                res[j+M] -= pushVec[2]
+
+            end
+
+        end
+    end
+
+    return res
+end
+
+function bachelorOverlapForceCells(c1, c2; k=1)
 
     r1x = zeros(N)
     r1y = zeros(N)
@@ -560,117 +597,96 @@ function bachelorOverlapForceCells(c1, c2)
         # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
         v1, v2 = collectOverlapIndices(o, c1, c2)
 
-        gradO = areaGradient(o)
+        gradO = areaGradientCell(o; NVertices=K)
         for ind ∈ v1
 
             i, j = ind
-            r1x[i] = -0.5 * area * gradO[j]
-            r1y[i] = -0.5 * area * gradO[j+K]
+            r1x[i] = -0.5 * area^(k - 1) * gradO[j]
+            r1y[i] = -0.5 * area^(k - 1) * gradO[j+K]
 
         end
         for ind ∈ v2
 
             i, j = ind
-            r2x[i] = -0.5 * area * gradO[j]
-            r2y[i] = -0.5 * area * gradO[j+K]
+            r2x[i] = -0.5 * area^(k - 1) * gradO[j]
+            r2y[i] = -0.5 * area^(k - 1) * gradO[j+K]
 
         end
     end
-    return r1x, r1y, r2x, r2y
+    return forceScalings[4] * r1x, forceScalings[4] * r1y, forceScalings[4] * r2x, forceScalings[4] * r2y
 
 end
 
-function billiardOverlapForceCells(c1, c2)
-    # currently the size of overlap is not considered 
-    # TODO: how is correct force scaling? 
+function billiardForceDFCells(c1, c2)
 
-    r1x = zeros(N)
-    r1y = zeros(N)
-    r2x = zeros(N)
-    r2y = zeros(N)
+    c_1 = computeCenter(c1)
+    c_2 = computeCenter(c2)
 
-    overlaps = getOverlap(c1, c2)
-    if (length(overlaps) != 0)
+    dist = norm(c_1 - c_2, 2)
 
-        centre1 = getCentre(c1)
-        centre2 = getCentre(c2)
-
-        # push c1 in direction (c1 - c2) 
-        direction1 = centre1 - centre2
-        if (norm(direction1) != 0)
-            direction1 = direction1 / norm(direction1)
-        end
-
-        r1x = direction1[1] * ones(N)
-        r1y = direction1[2] * ones(N)
-
-        r2x = -r1x
-        r2y = -r1y
+    if dist >= 2 * radius
+        return zeros(N), zeros(N), zeros(N), zeros(N)
     end
+
+    pushVec = (2 * radius - dist) * (c_1 - c_2) / dist
+
+    scaling = timeStepSize^(-1)
+
+    r1x = scaling * pushVec[1] * ones(N)
+    r1y = scaling * pushVec[2] * ones(N)
+    r2x = -r1x
+    r2y = -r1y
 
     return r1x, r1y, r2x, r2y
 
 end
 
-function radiusOverlapForceCells(c1, c2)
-
-    r1x = zeros(N)
-    r1y = zeros(N)
-    r2x = zeros(N)
-    r2y = zeros(N)
-
-    # factor = sqrt(2*D) 
-
-    centre1 = computeCenter(c1)
-    centre2 = computeCenter(c2)
-    if (norm(centre1 - centre2) < 2 * radius)
-        direction1 = centre1 - centre2
-        if (norm(direction1) != 0)
-            # TODO: implement equ (3) function with heaviside from jamming of deformable paper 
-            direction1 = direction1 / norm(direction1)
-        end
-        r1x = direction1[1] * ones(N)
-        r1y = direction1[2] * ones(N)
-
-        r2x = -r1x
-        r2y = -r1y
+function combinationOverlapForceCells(c1, c2; hardness=hardness)
+    # hardness must be in [0,1]
+    if hardness == 1
+        return billiardForceDFCells(c1, c2)
+    elseif hardness == 0
+        return bachelorOverlapForceCells(c1, c2)
     end
 
-    return r1x, r1y, r2x, r2y
-
-end
-
-function computeCenter(c::DiscreteCell)
-
-    x = sum(c.x)
-    y = sum(c.y)
-    return [x, y] / N
-
-end
-
-function combinationOverlapForceCells(c1, c2, scalingBachelor=0.5)
-    # scalingBachelor must be in [0,1]
     r1xBach, r1yBach, r2xBach, r2yBach = bachelorOverlapForceCells(c1, c2)
-    r1xBill, r1yBill, r2xBill, r2yBill = billiardOverlapForceCells(c1, c2)
-    scalingBilliard = 1 - scalingBachelor
+    r1xBill, r1yBill, r2xBill, r2yBill = billiardForceDFCells(c1, c2)
 
-    r1x = scalingBachelor * r1xBach + scalingBilliard * r1xBill
-    r1y = scalingBachelor * r1yBach + scalingBilliard * r1yBill
-    r2x = scalingBachelor * r2xBach + scalingBilliard * r2xBill
-    r2y = scalingBachelor * r2yBach + scalingBilliard * r2yBill
-
-    #resBachelor = bachelorOverlapForceCells(c1,c2)
-    #resBilliard = billiardOverlapForceCells(c1,c2)
+    r1x = (1 - hardness) * r1xBach + hardness * r1xBill
+    r1y = (1 - hardness) * r1yBach + hardness * r1yBill
+    r2x = (1 - hardness) * r2xBach + hardness * r2xBill
+    r2y = (1 - hardness) * r2yBach + hardness * r2yBill
 
     return r1x, r1y, r2x, r2y
+end
+
+function overlapForceCells(c1, c2; overlapForceType=overlapForceType)
+    """
+    Returns the force caused by the cell overlap between the 2 given DF cells. 
+    Also selects which overlap force is selected: 
+        overlapforce ∈ {"bachelorThesis", "billiard", "combination"}
+    """
+
+    if (overlapForceType == "bachelorThesis")
+        return bachelorOverlapForceCells(c1, c2)
+    elseif (overlapForceType == "radiusBilliard")
+        return billiardForceDFCells(c1, c2)
+    elseif (overlapForceType == "combination")
+        return combinationOverlapForceCells(c1, c2)
+    else
+        print("error: 3rd argument overlapForceType must be in {bachelorThesis, billiard, combination}")
+        return []
+    end
 end
 
 function overlapForce(u)
 
-    cells = Vector{DiscreteCell}(undef, M)
-    for i = 1:M
-        cells[i] = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+    if N == 0
+        # we can just do radiusBilliard
+        return radiusBilliardOverlapForce(u)
     end
+
+    cells = getCellsFromU(u)
 
     res = zeros(2 * M * N)
 
@@ -690,104 +706,3 @@ function overlapForce(u)
 
 end
 
-
-#------------------- boundary push 
-
-function boundaryForceCell(c)
-
-    xmin, ymin = vertex(c, 1)
-    xmax, ymax = xmin, ymin
-    for i = 2:N
-        x, y = vertex(c, i)
-        if (x < xmin)
-            xmin = x
-        elseif (x > xmax)
-            xmax = x
-        end
-        if (y < ymin)
-            ymin = y
-        elseif (y > ymax)
-            ymax = y
-        end
-    end
-
-    res = zeros(2 * N)
-    if (xmin < -domainL)
-        res[1:N] = ones(N)
-    elseif (xmax > domainL)
-        res[1:N] = -ones(N)
-    end
-
-    if (ymin < -domainL)
-        res[N+1:2*N] = ones(N)
-    elseif (ymax > domainL)
-        res[N+1:2*N] = -ones(N)
-    end
-
-    return res
-
-end
-
-
-function boundaryForce(u)
-
-    if N != 0
-        # CASE: VOLUME PARTICLES
-        res = zeros(2 * M * N)
-        for i = 1:M
-            c = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
-            a = boundaryForceCell(c)
-            for j = 1:N
-                res[N*(i-1)+j] = a[j]
-                res[N*(i-1+M)+j] = a[j+N]
-            end
-        end
-        return res
-
-    else
-        # CASE: POINT PARTICLES 
-        # len(u) = 2*M
-        res = zeros(2 * M)
-        for i = 1:2*M
-            if u[i] < -domainL
-                res[i] = 1
-            elseif u[i] > domainL
-                res[i] = -1
-            end
-
-        end
-
-        return res
-    end
-end
-
-#------------------- BROWNIAN MOTION 
-
-
-
-function brownian(du, u, p, t)
-
-    Δt, D = p
-
-    # Compute the SDE
-    x = rand(Normal(0.0, 1.0), 2 * M)
-
-    if N != 0
-        fact = ones(N) * sqrt(2 * D * Δt)
-        for i = 1:M
-            du[(i-1)*N+1:i*N] = fact * x[i]
-            du[(i-1+M)*N+1:(i+M)*N] = fact * x[i+M]
-        end
-    else
-        fact = sqrt(2 * D * Δt)
-        for i = 1:M
-            du[i] = fact * x[i]
-            du[i+M] = fact * x[i+M]
-        end
-    end
-
-end
-
-function nomotion(du, u, p, t)
-    du = zeros(2 * M * N)
-end

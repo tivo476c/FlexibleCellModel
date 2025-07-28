@@ -1,4 +1,4 @@
-include("cell_functionalities.jl")
+include("../../cell_functionalities.jl")
 
 function radiusfunc(initialCell::Cell, desiredCell::Cell, t::Float64, ϕ::Float64)
     return (initialCell.r(ϕ) - desiredCell.r(ϕ))*exp(-t) + desiredCell.r(ϕ) 

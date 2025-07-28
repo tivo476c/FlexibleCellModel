@@ -9,4 +9,5 @@
 *.out
 *.synctex*
 *.toc
-*.txt
+*.xcf
+

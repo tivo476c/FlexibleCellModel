@@ -3,7 +3,7 @@ using Printf
 using ColorSchemes
 
 include("../cell_functionalities.jl")
-include("../parameters.jl")
+# include("../parameters.jl")
 
 function createLocationFile(sol, sim::Int64, locationsPath)
 
@@ -14,7 +14,7 @@ function createLocationFile(sol, sim::Int64, locationsPath)
     open(filePath, "w") do file
 
         for u in sol.u
-            X, Y = solutionToCells(u)
+            X, Y = solutionToXY(u)
             if NumberOfCellWallPoints != 0
                 for i = 1:M
                     xCentre = round(sum(X[i]) / Float64(N), digits=3)
@@ -34,6 +34,50 @@ function createLocationFile(sol, sim::Int64, locationsPath)
 
 
 end
+
+
+function mirrowhorizontal!(matrices)
+
+    for i in eachindex(matrices)
+        secondMatrix = reverse(matrices[i], dims=2)
+        matrices[i] += secondMatrix
+        matrices[i] .*= 0.5 
+    end 
+    
+end 
+
+function mirrowvertical!(matrices)
+
+    for i in eachindex(matrices)
+        secondMatrix = reverse(matrices[i], dims=1)
+        matrices[i] += secondMatrix
+        matrices[i] .*= 0.5 
+    end 
+    
+end 
+
+function addTransposed!(matrices)
+
+    for i in eachindex(matrices)
+        secondMatrix = transpose(matrices[i])
+        matrices[i] += secondMatrix
+        matrices[i] .*= 0.5 
+    end 
+    
+end 
+
+
+
+function smoothenMatrix!(matrices)
+    """
+    this function enhances the number of sims by copying matrices in different ways. 
+    """
+
+    mirrowhorizontal!(matrices)
+    mirrowvertical!(matrices)
+    addTransposed!(matrices)
+
+end 
 
 function makeMatrices()
     # ONE MATRIX STORES THE ENTRIES FOR ONE SAMPLE TIME AT ALL SIMULATION ITERATIONS 
@@ -63,6 +107,36 @@ function makeMatrices()
 
 end
 
+function addSolToMatrices(solution, matrices)
+    
+    for counter=1:NumberOfSampleTimes
+        
+        # extract centres from solution 
+        X,Y = solutionToXY(solution[counter])
+        centresX = zeros(NumberOfCells)
+        centresY = zeros(NumberOfCells)
+        if NumberOfCellWallPoints == 0 
+            centresX = X 
+            centresY = Y 
+        else 
+            for i = 1:NumberOfCells
+                centresX[i] = sum(X[i]) / Float64(NumberOfCellWallPoints)
+                centresY[i] = sum(Y[i]) / Float64(NumberOfCellWallPoints)
+            end 
+        end 
+
+        # add centres to matrices
+        for i = 1:NumberOfCells
+            coords = [centresX[i], centresY[i]]
+            row, column = getMatrixIndex(coords)
+            matrices[counter][row, column] += 1
+        end 
+    end 
+end 
+
+
+
+
 function getMatrixIndex(coords::Vector{Float64})
 
     x, y = coords
@@ -89,25 +163,24 @@ end
 function createHeatmaps(matrices)
 
     matrices .= [Float64.(M) for M in matrices]
-    maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    println("old minVal = ", minVal, "; old maxVal = ", maxVal)
     matrices = [matrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]
-
+    oldMatrices = copy(matrices)
+    # smoothenMatrix!(matrices)
     maxVal = maximum([maximum(matrices[i]) for i = 1:NumberOfSampleTimes])
     minVal = minimum([minimum(matrices[i]) for i = 1:NumberOfSampleTimes])
-    println("new minVal = ", minVal, "; new maxVal = ", maxVal)
+    println("NumberOfSimulations = $NumberOfSimulations \nNumberOfCells = $NumberOfCells \nHeatStepSize = $HeatStepSize")
     mass1 = sum(matrices[1]) * HeatStepSize^2
     massN = sum(matrices[NumberOfSampleTimes]) * HeatStepSize^2
-    println("mass1 = ", mass1, "; massN = ", massN)
+    println("mass1 = $mass1, massN = $massN")
 
     for i = 1:NumberOfSampleTimes
 
         sampleTime = sampleTimes[i]
-        heatMapName = string("heatmap-", simulationName, "-sampleTime", sampleTime, "bruna12scale.png")
+        heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.3f", sampleTime), "bruna12scale.png")
         # heatMapName = string("heatmap-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
-        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
+        caption = string("Number of cells = $NumberOfCells")
+        # caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
         heatmap(HeatGrid, HeatGrid, matrices[i],
             xlimits=domain,
@@ -115,10 +188,20 @@ function createHeatmaps(matrices)
             xlabel=caption,
             c=reverse(cgrad(:hot)),
             # clim=(minVal, maxVal),
-            clim=(0.55, 1.55),  # activate for bruna scaling 
+            clim=(0.0, 19.0),  # activate for bruna scaling 
             ratio=:equal,
             dpi=500
         )
+        # heatmap(HeatGrid, HeatGrid, matrices[i],
+        #     xlimits=domain,
+        #     ylimits=domain,
+        #     xlabel=caption,
+        #     c=reverse(cgrad(:hot)),
+        #     # clim=(minVal, maxVal),
+        #     clim=(0.55, 1.55),  # activate for bruna scaling 
+        #     ratio=:equal,
+        #     dpi=500
+        # )
         vline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
         hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
 

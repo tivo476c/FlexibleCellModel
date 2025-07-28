@@ -27,7 +27,7 @@ end
 
 # structure for CRF cells 
 mutable struct Cell
-    centre::Vector{Float64}
+    centre::Vector{}
     r::Function
 end
 
@@ -112,7 +112,7 @@ function DiscreteCellToXY(c::DiscreteCell)
 end
 
 #erstellt Zelle mit konstantem Radius r > 0 und Mittelpunkt M
-function circleCell(M:: Vector{Float64}, r:: Float64) :: Cell 
+function circleCell(M, r:: Float64) :: Cell 
     return Cell(M, x -> r )
 end 
 
@@ -761,20 +761,6 @@ l(x,y) = norm(x-y)
 l(x1, y1, x2, y2) = norm([x1-x2, y1-y2])
 
 
-# returns the force caused by the edge i 
-function edgeForce(x::Vector{Float64}, y::Vector{Float64}, i::Int64, j::Int64)
-
-    N = length(x)
-    if( i < 1 || j < 1 || i > N || j > N) 
-        println("Wrong Indices in edgeForce.")
-    end
-    if(N != length(y))
-        println("In edgeForce x & y must have the same dimension.")
-    end
-        
-    return (l1[j] / l(x[i], y[i], x[j], y[j]) - 1)*[x[i]-x[j], y[i]-y[j]] 
-
-end
 
 # TODO: go on 
 
@@ -910,9 +896,14 @@ function di_interiorAngle(x::Vector{Float64}, y::Vector{Float64}, i::Int64)
     return [d_xi_interiorAngle(x, y, i), d_yi_interiorAngle(x, y, i)] 
 end
 
-function solutionToCells(sol::Vector{Float64}) 
-    # sol = [x1,x2,...,xM,y1,y2,...,yM]
-    # res = X, Y, where X[1] = x1 
+function solutionToXY(sol::Vector{Float64}) 
+    """
+    Returns for the solution of A SINGLE TIME STEP
+        sol = [x1,x2,...,xM,y1,y2,...,yM],
+
+    vectors res = X, Y such that for all cells i = 1,...,M 
+        X[i] = x_i, Y[i] = y_i.      
+    """
     if NumberOfCellWallPoints!=0
         X = Vector{Vector{Float64}}(undef, M)
         Y = Vector{Vector{Float64}}(undef, M)
@@ -931,8 +922,71 @@ function solutionToCells(sol::Vector{Float64})
     return X,Y
 end 
 
+function solutionToCells(sol::Vector{Float64}) 
+    """
+    Returns for the solution of A SINGLE TIME STEP
+        sol = [x1,x2,...,xM,y1,y2,...,yM],
+
+    a vector C = [c1, ..., cM] of all DiscreteCells,    
+    such that for all cells i = 1,...,M 
+       c[i].x = x_i, c[i].y = y_i.       
+    """
+    C = DiscreteCell[]
+    if NumberOfCellWallPoints!=0
+        for i = 1:M 
+            x = sol[1+(i-1)*N : i*N]
+            y = sol[1+(i-1)*N + N*M: i*N + N*M]
+            c = DiscreteCell(x,y)
+            push!(C,c)
+        end 
+    else
+        for i = 1:M 
+            x = sol[i]
+            y = sol[i+M]
+            c = DiscreteCell(x,y)
+            push!(C,c)
+        end 
+    end 
+    return C
+end 
+
 function getCentre(c::DiscreteCell)
     x = sum(c.x) / N 
     y = sum(c.y) / N 
     return [x,y]
+end 
+
+function getCellsFromU(u)
+    """
+    Returns vector [c1, c2, ..., cM] of type DiscreteCell for u from DifferentialEquations.jl 
+    """
+
+    res = DiscreteCell[]
+    for i = 1:M
+        c_i = DiscreteCell(u[N*(i-1)+1:N*i], u[N*(i-1+M)+1:N*(i+M)])
+        push!(res, c_i)
+    end 
+    return res 
+    
+end 
+
+function circleArea(radius, N)
+    """
+    Returns area of a regular polygon with N vertices and each vertex having a distance of radius to centre. 
+    """
+    return 0.5*N*radius^2*sin(2*pi/N) 
+end 
+
+function circleEdgeLengths(radius, N)
+    """
+    Returns edge lengths of a regular polygon with N vertices and each vertex having a distance of radius to centre. 
+    """
+    return 2*radius*sin(pi/N)*ones(N)
+end 
+
+function circleInteriorAngles(N)
+    """
+    Returns interior angles of a regular polygon with N vertices and each vertex having a distance of radius to centre. 
+    """
+    return (N-2)/N * pi *ones(N)
 end 
