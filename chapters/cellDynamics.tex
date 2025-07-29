@@ -628,7 +628,7 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 % explain the algorithm
 Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. \\
 
-\subsubsection*{Shape deforming overlap force}
+\subsubsection*{Deforming overlap force}
 The first overlap force, that we want to introduce, is similar to the overlap force introduced in~\cite{Vogel2023}. 
 It degenerates a cell overlap by influencing that cell shapes of the affected cells. \\
 The challenging aspect of computing the overlap force lies in detecting overlaps within the cell system. 
@@ -723,25 +723,25 @@ This force is first computed based on the geometry of the overlap and then distr
 
 To decrease the overlap areas during the simulation, we evaluate the gradient flow of the area energy with a desired area of zero which indicates the direction of motion for each vertex for reducing the overlap areas.
 
-\begin{proposition} \textbf{Overlap force} \\
-	The overlap force $F_{k}^{(O)}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is given by  
+\begin{proposition} \textbf{Deforming overlap force} \\
+	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is given by  
 	\begin{align*}
-		F_{k}^{(O)}(\vec{C}) 
+		F_{k}^{\hat{(O)}}(\vec{C}) 
 		= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \vec{v}_1^{\:N_C} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T,
 	\end{align*}
-	where the gradient $\nabla_{\vec{v}_j} O_k(\vec{C})$ with respect to $\vec{v}_j = (v_{j}^{x}, v_{j}^{y})^T$ is given by 
+	where the gradient $\nabla_{\vec{v}^{\:i}_j} O_k(\vec{C})$ with respect to $\vec{v}^{\:i}_j$ is given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j} O_k(\vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}_j}(D)  \dfrac{1}{2} |A_{D}|^{k-1} \begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix} \right)
+			\nabla_{\vec{v}^{\:i}_j} O_k(\vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}^{\:i}_j}(D) \dfrac{1}{2} |A_{D}|^{k-1} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} \right)
 		\end{split}
 		\label{gradient:overlap}
 	\end{align}
-	for all $1 \leq j \leq N_V$, where $\Omega_{i,m}$ is the set of all overlaps that arise between the cells $i$ and $m$, $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{D, 1}, d_{j-1}^{D, 2})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{D, 1}, d_{j+1}^{D, 2})^T$ are the neighboring vertices of $\vec{v}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
-	The dirac $\delta_{\vec{v}_j}(D)$ equals one, if $\vec{v}_j$ is a vertex of the overlap $D$ and zero otherwise. \\
+	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\Omega_{i,m}$ is the set of all overlaps that arise between the cells $i$ and $m$, $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
+	The dirac $\delta_{\vec{v}^{\:i}_j}(D)$ equals one, if $\vec{v}^{\:i}_j$ is a vertex of the overlap $D$ and zero otherwise. \\
 	For addressing the overlap force that acts on cell $1 \leq i \leq N_C$, we define 
 	\begin{center}
-		$F_{k, i}^{(O)}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
-		$F_{k, i}^{(O)}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))$. 
+		$F_{k, i}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
+		$F_{k, i}^{\hat{(O)}}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))^T$. 
 	\end{center}
 	
 
@@ -757,9 +757,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		&= \delta_{\vec{v}_j}(D)  \nabla_{\vec{v}_j} \frac{1}{k}|A_{D} - 0|^k \\
 		&= \delta_{\vec{v}_j}(D)  \nabla_{\vec{v}_j} A_k(D) \\
 		&= \delta_{\vec{v}_j}(D)  \dfrac{1}{2} \sgn(A_{D} - 0) |A_{D} - 0|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix} \\
+		\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} \\
 		&= \delta_{\vec{v}_j}(D)  \dfrac{1}{2} |A_{D}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix}, \\
+		\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix}, \\
 	\end{align*}
 	where we obeserved the presence of the area energy $A_k(D) = \frac{1}{k}|A_{D} - 0|^k$ and used the area gradient from Formula \ref{gradient:area}. 
 	The desired cell area of the overlap is always zero, as we want to achieve a setting without overlaps. 
@@ -771,7 +771,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right)\\
 		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D}|^k\right)\\
 		&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}_j^{\: i}}(D)  \dfrac{1}{2} |A_{D}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{D, 2} - d_{j-1}^{D, 2} \\[0.5em]  d_{j-1}^{D, 1} - d_{j+1}^{D, 1} \end{pmatrix}\right)\\
+		\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix}\right)\\
 	\end{align*}
 
 	\qed
@@ -789,11 +789,11 @@ Figure \ref{fig:overlapForce} illustrates the interaction between two overlappin
 	\end{center}
 \end{figure}
 
-\subsubsection*{Bounce off overlap force} 
+\subsubsection*{Bounce overlap force} 
 While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially—leaving cells temporarily stuck together, relying on random Brownian motion to diffuse apart. 
 With just that force, it is hard to compare the DF cell model to the hard sphere cell model, where overlaps are solved by reflecting them away from each other, resulting in a real distance that both cells have after a really small amount of time. \\  
 To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
-This additional force, which we refer to as the bounce off overlap force, acts not by changing cell shape but by actively transporting overlapping cells away from each other. 
+This additional force, which we refer to as the bounce overlap force, acts not by changing cell shape but by actively transporting overlapping cells away from each other. 
 This mechanism captures the spatial repulsion characteristic of rigid body interactions while complementing the shape based degeneration of overlaps in deformable cells. 
 In the end, we will use a combination of both overlap forces to get a nice transition from the HCSM to the DF cell model. \\ 
 In~\cite{Bruna2012} overlapping cells with a radius of $r$ that have a centre-to-centre distance of $2r - a$ will be reflective apart in one time step (that is $10^{-5}$), resulting in a distance of $2r + a$ between the two cell centres afterwards. \\
@@ -805,55 +805,55 @@ But we need the following assumptions:
 	\item We can compute the cell centre $\vec{x} = \frac{1}{N_V}\sum\limits_{j = 1}^{N_v} \vec{v}_j$ which will be used to determine the distance between two cells. 
 \end{enumerate}
 
-\begin{definition}\textbf{Bounce off overlap force} \\
+\begin{definition}\textbf{Bounce overlap force} \\
 	% Let us consider two DF cells $C_i$ and $C_l$.
 	% We call their centres $\vec{x}_i$ and $\vec{x}_l$.
 	% We assume that each cell has a radius of $r>0$. \\
-	% The vector $\dequ \hat{o}_{i,l} \in \R^2$ that gets applied to all vertices of $C_i$, caused by another cell $C_l$ is given by 
+	% The vector $\dequ \bar{o}_{i,l} \in \R^2$ that gets applied to all vertices of $C_i$, caused by another cell $C_l$ is given by 
 	% \[
-	% \dequ \hat{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}. 
+	% \dequ \bar{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}. 
 	% \]
 	% It is zero if the cell centres have a distance of minimum $2r$. 
-	% Otherwise, we move all vertices of $C_i$ away from $C_l$ (direction $\vec{x}_i - \vec{x}_l$) so far, that both cells will have a distance of $2r + a$ after the application of the bounce off overlap force on both cells ($C_j$ gets transported the same distance to the reversed direction $\vec{x}_l - \vec{x}_i$), when $a$ is how much the cells overlapped before ($\norm[\vec{x}_i - \vec{x}_l] = 2r - a$ before force application). \\
-	% The force $F^{(\hat{O})}_{i,l}$ that acts on $C_i$ caused by the interaction with $C_l$ is given by
-	% \[F^{(\hat{O})}_{i,l}(C_i, C_l) =  (\dequ \hat{o}_{i,l}, ..., \dequ \hat{o}_{i,l})^T \in R^{2 N_V}.\]
-	% The total bounce off overlap force $F^{(\hat{O})}_{i}: (\R^{2 N_V})^{N_C} \rightarrow \R^{2 N_V}$ for $C_i$ is then given by 
+	% Otherwise, we move all vertices of $C_i$ away from $C_l$ (direction $\vec{x}_i - \vec{x}_l$) so far, that both cells will have a distance of $2r + a$ after the application of the bounce overlap force on both cells ($C_j$ gets transported the same distance to the reversed direction $\vec{x}_l - \vec{x}_i$), when $a$ is how much the cells overlapped before ($\norm[\vec{x}_i - \vec{x}_l] = 2r - a$ before force application). \\
+	% The force $F^{(\bar{O})}_{i,l}$ that acts on $C_i$ caused by the interaction with $C_l$ is given by
+	% \[F^{(\bar{O})}_{i,l}(C_i, C_l) =  (\dequ \bar{o}_{i,l}, ..., \dequ \bar{o}_{i,l})^T \in R^{2 N_V}.\]
+	% The total bounce overlap force $F^{(\bar{O})}_{i}: (\R^{2 N_V})^{N_C} \rightarrow \R^{2 N_V}$ for $C_i$ is then given by 
 	% \[
-	% 	F^{(\hat{O})}_{i}(\vec{C}) = \sum\limits_{l \neq i} F^{(\hat{O})}_{i,l}(C_i, C_l).
+	% 	F^{(\bar{O})}_{i}(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l).
 	% \] 
 
 	Let us consider two DF cells $C_i$ and $C_l$, with centres at $\vec{x}_i$ and $\vec{x}_l$, respectively. 
 	We assume that each cell has a fixed radius $r > 0$.
-	We define the vector $\dequ \hat{o}_{i,l} \in \mathbb{R}^2$, which is applied equally to all vertices of cell $C_i$, representing the repulsive overlap force caused by cell $C_l$. 
+	We define the vector $\dequ \bar{o}_{i,l} \in \mathbb{R}^2$, which is applied equally to all vertices of cell $C_i$, representing the repulsive overlap force caused by cell $C_l$. 
 	It is given by
 	\[
-	\dequ \hat{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}.
+	\dequ \bar{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}.
 	\]
 	This force is zero if the distance between the cell centres satisfies $\norm[\vec{x}_i - \vec{x}_l] \geq 2r$.
 
-	Otherwise, if the cells overlap (i.e., $\norm[\vec{x}_i - \vec{x}_l] < 2r$), the vector $\dequ \hat{o}_{i,l}$ points from $\vec{x}_l$ to $\vec{x}_i$ and has magnitude equal to the overlap depth $a = 2r - \norm[\vec{x}_i - \vec{x}_l]$. 
+	Otherwise, if the cells overlap (i.e., $\norm[\vec{x}_i - \vec{x}_l] < 2r$), the vector $\dequ \bar{o}_{i,l}$ points from $\vec{x}_l$ to $\vec{x}_i$ and has magnitude equal to the overlap depth $a = 2r - \norm[\vec{x}_i - \vec{x}_l]$. 
 	At the same time in the simulation, the same magnitude of displacement is applied to all vertices of $C_l$ in the opposite direction, i.e., along $\vec{x}_l - \vec{x}_i$.
-	This means that all vertices of cell $C_i$ are displaced away from $C_l$ in the direction $\vec{x}_i - \vec{x}_l$ such that the resulting displacement is sufficient to separate the two cells by exactly $2r + a$. 
+	This means that all vertices of cell $C_i$ are displaced away from $C_l$ in the direction $\vec{x}_i - \vec{x}_l$ such that the resulting displacement is sufficient to separate the two cells' centres by exactly $2r + a$. 
 
-	The force $F^{(\hat{O})}_{i,l}$ that acts on cell $C_i$ due to its interaction with cell $C_l$ is given by
+	The force $F^{(\bar{O})}_{i,l}$ that acts on cell $C_i$ due to its interaction with cell $C_l$ is given by
 	\[
-	F^{(\hat{O})}_{i,l}(C_i, C_l) =  (\dequ \hat{o}_{i,l}, \ldots, \dequ \hat{o}_{i,l})^T \in \mathbb{R}^{2N_V},
+	F^{(\bar{O})}_{i,l}(C_i, C_l) =  (\dequ \bar{o}_{i,l}, \ldots, \dequ \bar{o}_{i,l})^T \in \mathbb{R}^{2N_V},
 	\]
-	where the vector $\dequ \hat{o}_{i,l}$ is repeated $N_V$ times, once for each vertex of cell $C_i$.
+	where the vector $\dequ \bar{o}_{i,l}$ is repeated $N_V$ times, once for each vertex of cell $C_i$.
 
-	The total bounce off overlap force $F^{(\hat{O})}_i: (\mathbb{R}^{2N_V})^{N_C} \rightarrow \mathbb{R}^{2N_V}$ acting on cell $C_i$ due to all other cells in the system is then defined as
+	The total bounce overlap force $F^{(\bar{O})}_i: (\mathbb{R}^{2N_V})^{N_C} \rightarrow \mathbb{R}^{2N_V}$ acting on cell $C_i$ due to all other cells in the system is then defined as
 	\[
-	F^{(\hat{O})}_i(\vec{C}) = \sum\limits_{l \neq i} F^{(\hat{O})}_{i,l}(C_i, C_l).
+	F^{(\bar{O})}_i(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l).
 	\]
 
 \end{definition}
 In order to achieve a similarly fast degeneration of the overlap as in~\cite{Bruna2012}, we need to scale the force with the scaling factor 
 \(
-\alpha^{(\hat{O})} = 10^5
+\alpha^{(\bar{O})} = 10^5
 \)
 as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$. 
 
-%TODO: insert figure of Bounce off overlap force 
+%TODO: insert figure of Bounce overlap force 
 
 
 \subsection{The DF SDE}
@@ -865,9 +865,9 @@ Conversely, if they are too large, the numerical integration scheme tends to bec
 To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how \enquote{hard} the cells are. 
 The total overlap force is then defined as a weighted combination of two force types:
 \[
-F^{(\mathbf{O})} = h \cdot F^{(\hat{O})} + (1 - h) \cdot F^{(O)},
+F^{(\mathbf{O})} = h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
 \]
-where $F^{(\hat{O})}$ denotes the bounce-off overlap force and $F^{(O)}$ the shape-deforming overlap force.\\
+where $F^{(\bar{O})}$ denotes the bounce-off overlap force and $F^{\hat{(O)}}$ the shape-deforming overlap force.\\
 When $h = 1$, the cells are maximally stiff. 
 In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce-off mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
 As $h$ decreases, the cells become progressively softer. 
