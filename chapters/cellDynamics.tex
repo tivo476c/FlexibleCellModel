@@ -854,7 +854,21 @@ In order to achieve a similarly fast degeneration of the overlap as in~\cite{Bru
 as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$. 
 
 %TODO: insert figure of Bounce overlap force 
-
+To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how `hard' the cells are. 
+The total overlap force is then defined as a weighted combination of two overlap force types:
+\[
+F^{(\mathbf{O})} = h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
+\]
+where $F^{(\bar{O})}$ denotes the bounce-off overlap force and $F^{\hat{(O)}}$ the shape-deforming overlap force.\\
+When $h = 1$, the cells are maximally stiff. 
+In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce off mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
+As $h$ decreases, the cells become progressively softer. 
+The influence of the bounce-off force diminishes, while the shape-deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
+With the introduction of the hardness parameter $h$, we have established a mechanism that enables a smooth transition from the HSCM dynamics introduced in~\cite{Bruna2012} to our new DF cell model. \\
+For $h = 1$, the dynamics are identical to the original HSCM model, as we will show in the following chapter. 
+By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
+In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
+In the limiting case $h = 0$, we recover the DF dynamics without the bounce overlap force term.
 
 \subsection{The DF SDE}
 Having defined all individual force contributions acting on the cell vertices, we now combine them to formulate the full dynamics of the system in terms of a stochastic differential equation. \\
@@ -862,21 +876,42 @@ One challenging aspect that remains is the appropriate scaling of all forces.
 It has become evident that the system is highly sensitive to these scaling parameters. 
 If the shape-recovering forces are too small, the recovery process is excessively slow. 
 Conversely, if they are too large, the numerical integration scheme tends to become unstable. \\ 
-To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how \enquote{hard} the cells are. 
-The total overlap force is then defined as a weighted combination of two force types:
+To ensure numerical stability while preserving the intended dynamics, we systematically tested the appropriate scaling for each force type, focusing in particular on the shape-preserving forces and the deforming overlap force.
+
+Our method was to isolate each of these forces in simulation and determine the threshold at which the system becomes unstable. 
+Specifically, we ran simulations with only one force active at a time and gradually increased its scaling factor until numerical instabilities emerged. 
+We then selected the **maximum stable scaling** as the operative value for that force. \\
+These tests were conducted using a fixed time step of $10^{-5}$, with cell configurations composed of six vertices. 
+To rigorously challenge the model, we initialized the cells in deliberately distorted and uncomfortable shapes, which are most prone to triggering instabilities. 
+The configurations used in these tests are the same as those shown in the figures throughout this chapter, where the isolated effects of each force were illustrated following their respective introductions. 
+This allowed us to verify that the chosen scalings are robust even under unfavorable conditions. \\
+For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce off dynamics used in~\cite{Bruna2012}. \\
+Summarizing all these efforts, we arrived at the following force scalings used in the simulations:
+
 \[
-F^{(\mathbf{O})} = h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
+\begin{array}{|c|c|}
+	\label{forcescalings}
+	\hline
+	\text{Force type} & \text{Scaling parameter} \\
+	\hline
+	\text{Area force} & \alpha_A = \, \underline{\hspace{2cm}} \\
+	\text{Edge force} & \alpha_E = \, \underline{\hspace{2cm}} \\
+	\text{Interior angle force} & \alpha_I = \, \underline{\hspace{2cm}} \\
+	\text{Deforming overlap force} & \alpha_{\hat{O}} = \, \underline{\hspace{2cm}} \\
+	\text{Bounce overlap force} & \alpha_{\bar{O}} = 10^5 \\
+	\hline
+\end{array}
 \]
-where $F^{(\bar{O})}$ denotes the bounce-off overlap force and $F^{\hat{(O)}}$ the shape-deforming overlap force.\\
-When $h = 1$, the cells are maximally stiff. 
-In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce-off mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
-As $h$ decreases, the cells become progressively softer. 
-The influence of the bounce-off force diminishes, while the shape-deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
-With the introduction of the hardness parameter $h$, we have established a mechanism that enables a smooth transition from the HSCM dynamics introduced in~\cite{Bruna2012} to our new DF cell model. \\
-For $h = 1$, the dynamics are identical to the original HSCM model, as we will show in the following chapter. 
-By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
-In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
-In the limiting case $h = 0$, we recover the DF dynamics without the bounce-off overlap force term.
+
+These scaling parameters serve as the foundation for the complete DF SDE model, which we now introduce.
+\begin{definition} \textbf{The DF SDE} 
+
+	\begin{center}
+		$ \dequ C_i(\vec{C}) = \F^i(\vec{C}) \dequ t + \sqrt{2 D} \dequ \vec{B}^{\:i} M$, \hspace{0.5em} $1 \leq i \leq N_{C}$.
+	\end{center}
+
+\end{definition}
+
 
 \subsection{A simulation run}
 % state the force system
