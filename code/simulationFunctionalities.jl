@@ -94,8 +94,6 @@ mutable struct forceArrows
 end
 
 function getForces(u; A_d=[], E_d=[], I_d=[], overlap=false)
-    # println("timeStepSize = $timeStepSize")
-    # println("forceScalings = $forceScalings")
     res = forceArrows[]
     if A_d != []
         areaForceArr = forceArrows("area force", timeStepSize * forceScalings[1] * areaForce(u, A_d))
@@ -264,7 +262,7 @@ function createSimGif(gifPath::String,
                 xguidefontsize=13,
                 xlabel="t = $(@sprintf("%.6f", time))")
 
-            scatter!(plt, X[1], Y[1])
+            # scatter!(plt, X[1], Y[1])
 
             for i = 2:NumberOfCells
 
@@ -600,16 +598,15 @@ function runShow_overlap()
     ## 1st save one simulation as gif 
     println("save one sim as gif")
 
-    # c1 = rectangleCell(Rectangle(-0.002, 0.002, -0.005, 0.005), NumberOfCellWallPoints)
-    # u0 = [c1.x; c1.y]
+    #### deforming overlap force config 
+    c1 = cellToDiscreteCell(circleCell([-0.0025, 0.0], radius), 6) 
+    c2 = cellToDiscreteCell(circleCell([0.0025, 0.0], radius), 6; rotation=pi/6.0) 
+    
+    u0 = [c1.x; c2.x; c1.y; c2.y]
 
-    # c1 = cellToDiscreteCell(circleCell([0, 0], radius), N)
-    c1 = DiscreteCell([1.0,0.0,-1.0,0.0],[0.0,1.0,0.0,-1.0])
-    u0 = [c1.x; c1.y]
-
+    u0 = [0.00046225222112401137, 4.336808689942018e-19, -0.004999999999999999, -0.0075, -0.005000000000000003, -3.469446951953614e-18, 0.006830127018922194, 0.0025000000000000005, -0.00012023170995078555, -0.00012023170995078689, 0.002499999999999999, 0.006830127018922192, 5.746271514173174e-19, 0.004330127018922193, 0.004330127018922193, 6.123233995736766e-19, -0.004330127018922192, -0.004330127018922195, 0.0024999999999999996, 0.005, 0.0020308489501504093, -0.0020308489501504076, -0.005, -0.0025000000000000022]
     A_d = circleArea(radius, N)
     E_d = circleEdgeLengths(radius, N) * 0.5
-    println("E_d = $E_d")
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)

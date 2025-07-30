@@ -262,7 +262,12 @@ function computeEdges(c::DiscreteCell, R::Rectangle)
                 a = y0
             else 
                 m = (c.y[j] - c.y[i]) / (c.x[j] - c.x[i]) 
-                a = (c.x[j]*c.y[i] - c.x[i]*c.y[j]) / (c.x[j] - c.x[i])
+                if(abs(m) > 10000)
+                    m = 0.0
+                    a = y0
+                else 
+                    a = (c.x[j]*c.y[i] - c.x[i]*c.y[j]) / (c.x[j] - c.x[i])
+                end
             end 
         else 
             m = 0
@@ -404,7 +409,6 @@ function hasIntersection(e1::CriticalEdge, e2::CriticalEdge)::Bool
         return false  
     end 
 
-
     if(!e1.f)
         if(!e2.f)
             return true 
@@ -419,7 +423,6 @@ function hasIntersection(e1::CriticalEdge, e2::CriticalEdge)::Bool
     end 
 
     if(!e2.f)
-         
         s = [e2.xmin, param(e1.m, e2.xmin, e1.a)]
         if(pointInRectangle(s, Rectangle(a,b,c,d)))
             return true 
@@ -442,7 +445,6 @@ function hasIntersection(e1::CriticalEdge, e2::CriticalEdge)::Bool
         end 
     end 
     if(e2.m == 0)
-         
         t = (e2.ymin - e1.a)/e1.m
         if( a <= t <= b)
             return true 
@@ -671,16 +673,14 @@ function isInsideDiscreteCell(p::Vector{Float64}, c::CriticalCell)::Bool
     if(xMax < p[1])
         return false
     end 
-    testEdge = CriticalEdge(p[1], Rc.x1, p[2], p[2], true, true, 0.0, p[2])
+    testEdge = CriticalEdge(p[1], Rc.x1+0.001, p[2], p[2], true, true, 0.0, p[2])
     
-    # TODO: GO ON implement this function only using testEdge 
     numOfinters = 0     
-    for edge ∈ filter(x -> x.ymin <= p[2] <= x.ymax, c.edge)
+    for edge ∈ filter(e -> e.ymin <= p[2] <= e.ymax, c.edge)
         if(hasIntersection(edge, testEdge))
             numOfinters += 1
         end
     end 
-
 
     if(iseven(numOfinters))
         return false 
@@ -719,9 +719,6 @@ end
 function findPath1(c1::CriticalCell, c2::CriticalCell, currentInters::Intersection, I::MutableLinkedList{Intersection})
     # ich geh davon aus dass immer noch eine intersection kommen muss 
 
-
-    # TODO: Go on fix this shit 
-    
     M = length(c1.x)
     xRes = MutableLinkedList{Float64}()
     yRes = MutableLinkedList{Float64}()
@@ -730,8 +727,9 @@ function findPath1(c1::CriticalCell, c2::CriticalCell, currentInters::Intersecti
     listInd = currentInters.i
 
     if(listInd == 0)
-        println("Given currentInters is not on the given edge list.")
-        return xRes, yRes, nothing 
+        println("ERROR: Given currentInters is not on the given edge list.")
+        # return xRes, yRes, nothing 
+        return 
     end 
     
     direction = findDirection(currentInters, c1, listInd, c2)  
@@ -750,8 +748,6 @@ function findPath1(c1::CriticalCell, c2::CriticalCell, currentInters::Intersecti
         end 
 
         e = c1.edge[listInd] 
-        #println(" c1.x[listInd] = ", c1.x[listInd])
-        #println(" c1.y[listInd] = ", c1.y[listInd])
         push!(xRes, c1.x[listInd])
         push!(yRes, c1.y[listInd])
 
@@ -767,8 +763,6 @@ function findPath1(c1::CriticalCell, c2::CriticalCell, currentInters::Intersecti
                     listInd = 1 
                 end 
                 e = c1.edge[listInd] 
-                #println(" c1.x[listInd] = ", c1.x[listInd])
-                #println(" c1.y[listInd] = ", c1.y[listInd])
                 push!(xRes, c1.x[listInd])
                 push!(yRes, c1.y[listInd])
             else 
@@ -783,8 +777,6 @@ function findPath1(c1::CriticalCell, c2::CriticalCell, currentInters::Intersecti
 
     else 
         # now iterate through l1 in reversed order 
-        #println("going in direction -1 on cell 1")
-
         iNew = hasIntersectionFirst1(currentInters, c1, -1, I)
         if(iNew !== nothing)
             return xRes, yRes, iNew 
@@ -816,8 +808,9 @@ function findPath1(c1::CriticalCell, c2::CriticalCell, currentInters::Intersecti
         end 
     end 
 
-    println("In findPath1 konnte keine intersection auf dem verbleibenden weg gefunden werden")
-    return xRes, yRes, nothing 
+    println("ERROR: In findPath1 konnte keine intersection auf dem verbleibenden weg gefunden werden")
+    # return xRes, yRes, nothing 
+    return  
 
 end 
 
@@ -834,14 +827,13 @@ function findPath2(c2::CriticalCell, c1::CriticalCell, currentInters::Intersecti
     listInd = currentInters.j
 
     if(listInd == 0)
-        println("Given currentInters is not on the given edge list.")
-        return xRes, yRes, nothing 
+        println("ERROR: Given currentInters is not on the given edge list.")
+        # return xRes, yRes, nothing 
+        return  
     end 
     
     direction = findDirection(currentInters, c1, listInd, c2)  
     if( direction == 1)
-        
-        #println("going in direction 1 on cell 2")
         iNew = hasIntersectionFirst2(currentInters, c1, 1, I)
         if(iNew !== nothing && iNew != currentInters)
             return xRes, yRes, iNew 
@@ -881,7 +873,7 @@ function findPath2(c2::CriticalCell, c1::CriticalCell, currentInters::Intersecti
 
     else 
         # now iterate through l1 in reversed order 
-        # println("going in direction -1 on cell 2")
+        # going in direction -1 on cell 2
 
         iNew = hasIntersectionFirst2(currentInters, c1, -1, I)
         if(iNew !== nothing)
@@ -914,8 +906,9 @@ function findPath2(c2::CriticalCell, c1::CriticalCell, currentInters::Intersecti
         end 
     end 
 
-    println("In findPath2 konnte keine intersection auf dem verbleibenden weg gefunden werden")
-    return xRes, yRes, nothing 
+    println("ERROR: In findPath2 konnte keine intersection auf dem verbleibenden weg gefunden werden")
+    # return xRes, yRes, nothing 
+    return  
 
 end 
 
@@ -967,8 +960,6 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
     xVal = MutableLinkedList{Float64}(currentI.x)
     yVal = MutableLinkedList{Float64}(currentI.y)
 
-    #println("firstI =[", currentI.x, ", ", currentI.y, "]")
-
     for counter = 1:length(I)
 
         if(iseven(counter))
@@ -976,12 +967,6 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
         else 
             xPath, yPath, iNew = findPath1(c1, c2, currentI, I)
         end 
-
-        #println("counter = ", counter)
-        #println("iNew = [", iNew.x, ", ", iNew.y, "]")
-        #println("xPath = ", xPath)
-        #println("yPath = ", yPath)
-        #println()
     
         anhängen(xVal, xPath)
         anhängen(yVal, yPath)
@@ -1004,7 +989,6 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
         end 
     end 
 
-    #println(" yolo ")
     return forceOrientation(DiscreteCell(collect(xVal), collect(yVal))), usedI
 
 end 
@@ -1047,37 +1031,20 @@ function getOverlap(C11::DiscreteCell, c2::DiscreteCell)
     c1 = CriticalCell(C11.x, C11.y, computeEdges(C11, R), R1)
     C2 = CriticalCell(c2.x, c2.y, computeEdges(c2, R), R2)
 
-   
-
     C1 = copy(c1)
     while(badCells(C1, C2))
         C1 = moveC(C1, C2)
     end
 
-    
-
     intersections = findAllIntersections(C1, C2)
 
-    #println("length(intersections) = ", length(intersections))
-
     while(!isempty(intersections))
-
-        
-
         o, Iused = constructOverlap(C1, C2, copy(intersections))
         if(o !== nothing )
             push!(overlaps, o)
             deleteIntersection(intersections, Iused)
         end 
-
     end 
-
-    #=
-    res = 0
-    for o ∈ overlaps
-        res += areaPolygon(o.x, o.y)
-    end 
-    =#
 
     return overlaps
 end
@@ -1089,8 +1056,9 @@ function multiShapePlot(c, labels)
         return nothing
     end
     if(length(c) > length(labels))
-        println("Use more labels in multiShapePlot")
-        return nothing
+        println("ERROR: Use more labels in multiShapePlot")
+        # return nothing
+        return 
     end
 
     plot!(c[1].x, c[1].y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, label=labels[1])
@@ -1099,132 +1067,5 @@ function multiShapePlot(c, labels)
         plot!(c[i].x, c[i].y, seriestype=:shape, aspect_ratio=:equal, opacity=.25, label=labels[i])
     end
 end 
-
-#=
-c = DiscreteCell([ 5.0, 4.0, 1.0, 1.0, 2.0, 3.0, 2.0, 0.0, 0.0, 7.0, 8.0, 7.0, 1.0, 1.0, 4.0 ], [0.0, 1.0, 1.0, 3.0, 3.0, 4.0, 5.0, 5.0, -5.0, -5.0, -4.0, -3.0, -3.0,-1.0,  -1.0])
-d = DiscreteCell([0.5, 2.0, 4.0], [4.1, -2.0, 4.0])
-e = cellToDiscreteCell(peanutCell([2,5, 2.8], 2.0), 10)
-f = DiscreteCell([0.1, 2.0, 4.0, 2.0], [3.0, 0.0, 3.0, 6.0])
-g = DiscreteCell([0.0, 5.0, 5.0, 0.0], [-3.0, -3.0, 5.0, 5.0])
-
-# ___________________________________________________________________________________________________________________________
-
-
-c1_0 = cellToDiscreteCell(circleCell([2.0 , 2.0], 2.0), 30)
-c1_1 = cellToDiscreteCell(circleCell([10.0,2.0], 2.0), 30)
-
-c2_0 = cellToDiscreteCell(circleCell([10.0, 4.0], 2.0), 30)
-c2_1 = cellToDiscreteCell(circleCell([2.0 , 4.0], 2.0), 30)  
-
-
-abstand = norm([0.001875, 0.001233], 2)
-
-function findDEindices(vertex, u, M::Int64, N::Int64)
-    
-    for i = 1:M
-        point = [u[i], u[i+M]] 
-        if(point == vertex || norm(point - vertex, 2) <= abstand)
-            return [i, i+M]
-        end
-    end
-    
-    for i = 1:N
-        point = [u[2*M + i], u[2*M + i + N]]
-        if(point == vertex || norm(point - vertex, 2) <= abstand)
-            return [2*M + i, 2*M + i + N]
-        end
-    end
-    
-    return [0,0]
-
-end 
-
-
-function addOverlap(du, u, p, t)
-    # u is the vector of [c1.x; c1.y; c2.x; c2.y](t)
-    # p must tell how long c1 and c2 are such that 2*(p[1]+p[2]) = length(u) 
-    M, N = p
-    
-    x = zeros(M)
-    y = zeros(M)
-    for i = 1:M
-        x[i] = u[i]
-        y[i] = u[N+i]
-    end
-    a = zeros(N)
-    b = zeros(N)
-    for i = 1:N
-        a[i] = u[2*M + i]
-        b[i] = u[2*M + i + N]
-    end
-    
-    for i=1:M
-        scale = norm( [c1_1.x[i], c1_1.y[i]] - [u[i], u[i+N]], 2)
-        if(scale > 0.5)
-            du[i] = (c1_1.x[i] - u[i]) / scale 
-            du[i+N] = (c1_1.y[i] - u[i+N]) / scale 
-        else 
-            du[i] = (c1_1.x[i] - u[i])
-            du[i+N] = (c1_1.y[i] - u[i+N])
-        end 
-    end 
-    for i=1:N
-        scale = norm( [c2_1.x[i], c2_1.y[i]] - [u[2*M + i], u[2*M + i+N]], 2)
-        if(scale > 0.5)
-            du[2*M + i] = (c2_1.x[i] - u[2*M + i]) / scale 
-            du[2*M + i+N] = (c2_1.y[i] - u[2*M + i+N]) / scale 
-        else 
-            du[2*M + i] = (c2_1.x[i] - u[2*M + i])
-            du[2*M + i+N] = (c2_1.y[i] - u[2*M + i+N])
-        end 
-    end 
-    
-    overlaps = getOverlap(DiscreteCell(x,y), DiscreteCell(a,b))
-    for o ∈ overlaps
-        
-        #println("length x = ", length(o.x), "; length y = ", length(o.y))
-        K = length(o.x)
-        area = areaPolygon(o.x, o.y)
-        for i = 1:K
-            
-            vertex = [o.x[i], o.y[i]]
-            DEindices = findDEindices(vertex, u, M, N)
-            if DEindices != [0,0] 
-                
-                if(i == 1)
-                    prev = K
-                    next = 2
-                elseif(i == K)
-                    prev = K-1
-                    next = 1
-                else 
-                    prev = i-1
-                    next = i+1
-                end 
-                
-                #x indice
-                du[DEindices[1]] += -0.5 * area * ( o.y[next] - o.y[prev] )
-                du[DEindices[2]] += -0.5 * area * ( o.x[prev] - o.x[next] )         
-            
-            end 
-        end 
-    end
-end 
-
-u0 = [c1_0.x; c1_0.y; c2_0.x; c2_0.y]
-p = [length(c1_0.x), length(c2_0.x)]
-tspan = (0.0, 10.0)
-tstep = 0.5
-prob = ODEProblem(addOverlap,u0,tspan,p)
-sol = solve(prob, Tsit5(), saveat=tstep)
-
-println(":-)")
-
-
-multiShapePlot(MutableLinkedList{DiscreteCell}(C1, C2), MutableLinkedList{String}("C1", "C2"))
-
-=#
-
-
 
 

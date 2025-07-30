@@ -35,16 +35,13 @@ function energies!(du, u, p, t)
         res += forceScalings[1] * areaForce(u, A_d; k=2)
     end
     if (forceScalings[2] != 0 && hardness < 1)
-        println("resOld = $res")
         res += forceScalings[2] * edgeForce(u, E_d; k=2)
-        println("resNew = $res")
     end
     if (forceScalings[3] != 0 && hardness < 1)
         res += forceScalings[3] * interiorAngleForce(u, I_d)
     end
 
     res += overlapForce(u)
-
     # let cells drift into each other for 2 time steps 
     # if t <= 0 * timeStepSize
     #     println("pushing together at t = $t")
@@ -80,25 +77,6 @@ function brownian_DF!(du, u, p, t)
         lineIdx = (N*(i-1)+1):(i*N)
         du[lineIdx, i] .= sqrt(2 * D)
     end
-
-    # du = res
-    # return res
-
-    # if t <= 2 * timeStepSize
-    # print brownian of cell 1 
-    # println("printing brownian for c1 at t=$t")
-    # b = randn(2 * M) .* sqrt(timeStepSize)
-    # sol_b = du * b
-    # println("dB_c1x = sol_b[1:N]: ")
-    # for k = 1:2*M*N
-    # println("sol_b[$k] = $(sol_b[k])")
-    # end
-    # println("dB_c1y = sol_b[M*N+1:M*N+N] = ")
-    # for k = M*N+1:M*N+N
-    # println("sol_b[$k] = $(sol_b[k])")
-    # end
-
-    # end
 
 end
 

@@ -86,12 +86,12 @@ function XYToDiscreteCell(x::Vector{Float64}, y::Vector{Float64}):: DiscreteCell
 end 
 
 # turns CRF cell c to DF cell with N vertices 
-function cellToDiscreteCell(c::Cell, N::Int64)::DiscreteCell
+function cellToDiscreteCell(c::Cell, N::Int64; rotation=0)::DiscreteCell
 
     x = Vector{Float64}(undef, N)
     y = Vector{Float64}(undef, N)
     for i = 1:N
-        ϕ = 2 * pi / N * (i-1)
+        ϕ = 2 * pi / N * (i-1) + rotation
         x[i] = c.centre[1] + c.r(ϕ) * cos(ϕ) 
         y[i] = c.centre[2] + c.r(ϕ) * sin(ϕ) 
     end 
