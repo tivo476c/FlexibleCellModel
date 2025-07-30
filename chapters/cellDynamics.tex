@@ -888,22 +888,42 @@ This allowed us to verify that the chosen scalings are robust even under unfavor
 For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce off dynamics used in~\cite{Bruna2012}. \\
 Summarizing all these efforts, we arrived at the following force scalings used in the simulations:
 
-\[
-\begin{array}{|c|c|}
-	\label{forcescalings}
-	\hline
-	\text{Force type} & \text{Scaling parameter} \\
-	\hline
-	\text{Area force} & \alpha_A = \, \underline{\hspace{2cm}} \\
-	\text{Edge force} & \alpha_E = \, \underline{\hspace{2cm}} \\
-	\text{Interior angle force} & \alpha_I = \, \underline{\hspace{2cm}} \\
-	\text{Deforming overlap force} & \alpha_{\hat{O}} = \, \underline{\hspace{2cm}} \\
-	\text{Bounce overlap force} & \alpha_{\bar{O}} = 10^5 \\
-	\hline
-\end{array}
-\]
+% whats the problem with the following code???
 
-These scaling parameters serve as the foundation for the complete DF SDE model, which we now introduce.
+% \[
+% \begin{array}{|c|c|}
+% 	\hline
+% 	\text{Force type} & \text{Scaling parameter} \\
+% 	\hline
+% 	\text{Area force} & \alpha_A = \, \underline{\hspace{2cm}} \\
+% 	\text{Edge force} & \alpha_E = \, \underline{\hspace{2cm}} \\
+% 	\text{Interior angle force} & \alpha_I = \, \underline{\hspace{2cm}} \\
+% 	\text{Deforming overlap force} & \alpha_{\hat{O}} = \, \underline{\hspace{2cm}} \\
+% 	\text{Bounce overlap force} & \alpha_{\bar{O}} = 10^5 \\
+% 	\hline
+% 	\label{forcescalings}
+% \end{array}
+% \]
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Force type} & \textbf{Scaling parameter} \\
+		\hline
+		\text{Area force} & $\alpha_A = \, \underline{\hspace{2cm}}$ \\
+		\text{Edge force} & $\alpha_E = \, \underline{\hspace{2cm}}$ \\
+		\text{Interior angle force} & $\alpha_I = \, \underline{\hspace{2cm}}$ \\
+		\text{Deforming overlap force} & $\alpha_{\hat{O}} = \, \underline{\hspace{2cm}}$ \\
+		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 10^5$ \\
+		\hline
+	\end{tabular}
+	\caption{Scaling parameters for different force types}
+	\label{forcescalings}
+\end{table}
+
+These scaling par
+ameters serve as the foundation for the complete DF SDE model, which we now introduce.
 \begin{definition} \textbf{The DF SDE} 
 
 	\begin{center}
