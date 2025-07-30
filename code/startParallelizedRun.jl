@@ -9,8 +9,7 @@ println("Started startParallelizedRun.jl")
 
 using Distributed
 
-# TODO: change to 30 or something for uni pc 
-NuProcs = 7
+NuProcs = 60
 if nprocs() == 1
     addprocs(NuProcs)
 end
@@ -32,7 +31,7 @@ println("Loading parameters")
     locationsPath = joinpath(simPath, "locations")
     heatMapsPath = joinpath(simPath, "heatmaps")
     gifPath = joinpath(simPath, string(simulationName, ".gif"))
-    p = [timeStepSize, D]
+    p = [timeStepSize, D, 0, 0, 0]
 
 end
 
