@@ -255,19 +255,17 @@ function computeEdges(c::DiscreteCell, R::Rectangle)
             y1 = c.y[i]
         end 
         critical = overlap(R, Rectangle(x0, x1, min(y0,y1), max(y0,y1)))
-        f = c.x[i] != c.x[j]
+
+        # f = c.x[i] != c.x[j]
+        f = abs(c.x[i] - c.x[j]) > 1e-5
         if(f)
             if(y0 == y1)
                 m = 0.0
                 a = y0
             else 
                 m = (c.y[j] - c.y[i]) / (c.x[j] - c.x[i]) 
-                if(abs(m) > 10000)
-                    m = 0.0
-                    a = y0
-                else 
-                    a = (c.x[j]*c.y[i] - c.x[i]*c.y[j]) / (c.x[j] - c.x[i])
-                end
+                # alright
+                a = (c.x[j]*c.y[i] - c.x[i]*c.y[j]) / (c.x[j] - c.x[i])
             end 
         else 
             m = 0
@@ -476,8 +474,8 @@ function findAllIntersections(C1::CriticalCell, C2::CriticalCell)::MutableLinked
 
     res = MutableLinkedList{Intersection}()
 
-    for e1 ∈ filter(x -> x.critical, C1.edge)
-        for e2 ∈ filter(x -> x.critical, C2.edge)
+    for e1 ∈ filter(e -> e.critical, C1.edge)
+        for e2 ∈ filter(e -> e.critical, C2.edge)
             
             i = findIntersection(e1, e2, C1, C2)
             if(i !== nothing)
@@ -1037,7 +1035,6 @@ function getOverlap(C11::DiscreteCell, c2::DiscreteCell)
     end
 
     intersections = findAllIntersections(C1, C2)
-
     while(!isempty(intersections))
         o, Iused = constructOverlap(C1, C2, copy(intersections))
         if(o !== nothing )

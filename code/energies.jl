@@ -43,11 +43,17 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    # if t <= 0 * timeStepSize
-    #     println("pushing together at t = $t")
-    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    if t <= 1 * timeStepSize
+        println("pushing together at t = $t")
+        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    end
+    # if 11*timeStepSize <= t <= 11 * timeStepSize
+    #     println("pushing away at t = $t")
+    #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .+= 0.5 * sqrt(2 / timeStepSize)
     # end
+
 
     # apply BC for DF cells 
     # res += DFBoundaryCondition(u)
@@ -435,16 +441,16 @@ function interiorAngleForceCell_MT1(c, I_d; k=2)
 
         ### I SKIPPED THE ^2 after the norm() statements, because i like this dynamic more 
         # assign x dynamic for vertex k 
-        res[i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_curr[2] - v_prev[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2) * (v_prev[2] - v_curr[2]))
-        res[i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2) * (v_next[2] - v_curr[2]))
-        res[i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2) * (v_curr[2] - v_next[2]))
+        res[i] += sign(I_d[prev] - intAngles[prev]) * abs(I_d[prev] - intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i])       * abs(I_d[i]    - intAngles[i]   )^(k - 1) * ( 1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i])       * abs(I_d[i]    - intAngles[i]   )^(k - 1) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
+        res[i] += sign(I_d[next] - intAngles[next]) * abs(I_d[next] - intAngles[next])^(k - 1) * ( 1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
 
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * distAngles(I_d[prev], intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2) * (v_prev[1] - v_curr[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2) * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * distAngles(I_d[i], intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2) * (v_curr[1] - v_next[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * distAngles(I_d[next], intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2) * (v_next[1] - v_curr[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev])  * abs(I_d[prev] - intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i])        * abs(I_d[i]    - intAngles[i]   )^(k - 1) * ( 1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i])        * abs(I_d[i]    - intAngles[i]   )^(k - 1) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next])  * abs(I_d[next] - intAngles[next])^(k - 1) * ( 1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
 
     end
 

@@ -3,7 +3,7 @@ include("cell_functionalities.jl")
 # include("parameters.jl")
 include("figure-creating-code/heatmap.jl")
 
-using Distributions, Distributed, Printf, Sockets
+using Distributions, Distributed, LaTeXStrings, Printf, Sockets
 
 function giveCentreNormalDistrInDomain(radius; mean=0.0, deviation=0.09^2)
     """
@@ -168,7 +168,7 @@ function createSimGif(gifPath::String,
     xlab="x",
     ylab="y",
     fps=1,
-    dpi=200)
+    dpi=300)
 
     println("entered createSimGif")
 
@@ -178,7 +178,7 @@ function createSimGif(gifPath::String,
             animSDE = @animate for i = 1:length(sol.t)
 
                 u = sol.u[i]
-                time = sol.t[i]
+                time = sol.t[i] - timeStepSize
 
                 X, Y = solutionToCells(u)
 
@@ -202,7 +202,7 @@ function createSimGif(gifPath::String,
             animSDE = @animate for i = 1:length(sol.t)
 
                 u = sol.u[i]
-                time = sol.t[i]
+                time = sol.t[i]- timeStepSize
 
                 X, Y = solutionToXY(u)
 
@@ -247,9 +247,18 @@ function createSimGif(gifPath::String,
         animSDE = @animate for i = 1:NumberOfSampleTimes
 
             u = sol.u[i]
-            time = sampleTimes[i]
+            time = sampleTimes[i]  - timeStepSize
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
-
+            overlaps = getOverlap(DiscreteCell(u[1:6], u[13:18]), DiscreteCell(u[7:12], u[19:24]))
+            overlaparea = 0 
+            for o in overlaps
+                overlaparea += areaPolygon(o.x, o.y)
+            end 
+            # if round(Int, time/timeStepSize) == 3 
+            #     println("u = $u")
+            #     println("length(overlaps) = $(length(overlaps))")
+            # end 
+            title = "$(L"O_1(C_1, C_2)") = $(@sprintf("%.2e", overlaparea))"
             plt = plot(X[1], Y[1],
                 seriestype=:shape,
                 aspect_ratio=:equal,
@@ -260,7 +269,8 @@ function createSimGif(gifPath::String,
                 xlims=domain,
                 ylims=domain,
                 xguidefontsize=13,
-                xlabel="t = $(@sprintf("%.6f", time))")
+                # xlabel="t = $(@sprintf("%.1e", time))")
+                xlabel="t = $(round(Int, time/timeStepSize))e-05")
 
             # scatter!(plt, X[1], Y[1])
 
@@ -273,6 +283,8 @@ function createSimGif(gifPath::String,
                     label=false,
                 )
             end
+
+            savefig(plt, joinpath(simPath, "t$(round(Int, time/timeStepSize)).png"))
 
             # addEnergyForces(plt, u; A_d=A_d, E_d=E_d, I_d=I_d, overlap=true)
 
@@ -291,7 +303,7 @@ function createEnergyDiagram(diaPath::String,
     title="Energy diagram",
     xlab="time",
     ylab="energy",
-    dpi=100)
+    dpi=500)
 
     areaVector = zeros(NumberOfSampleTimes)
     edgeVector = zeros(NumberOfSampleTimes)
@@ -308,10 +320,19 @@ function createEnergyDiagram(diaPath::String,
         overlapVector[i] = overlapEnergy(sol.u[i])
     end
 
-    plot(sampleTimes, areaVector, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
-    plot!(sampleTimes, edgeVector, label="Edge energy")
-    plot!(sampleTimes, angleVector, label="Interior angle energy")
-    plot!(sampleTimes, overlapVector, label="Overlap energy")
+    sampleTimes2 = sampleTimes[2:end]
+    areaVector2 = areaVector[2:end]
+    edgeVector2 = edgeVector[2:end]
+    angleVector2 = angleVector[2:end]
+    overlapVector2 = overlapVector[2:end]
+    # plot(sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
+    # plot!(sampleTimes2, edgeVector2, label="Edge energy")
+    # plot!(sampleTimes2, angleVector2, label="Interior angle energy")
+    # plot!(sampleTimes2, overlapVector2, label="Overlap energy")
+    # plot(sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
+    # plot(sampleTimes2, edgeVector2, label="Edge energy")
+    plot(sampleTimes2, angleVector2, label="Interior angle energy")
+    # plot(sampleTimes2, overlapVector2, label="Overlap energy")
 
     savefig(diaPath)
 end
@@ -598,15 +619,33 @@ function runShow_overlap()
     ## 1st save one simulation as gif 
     println("save one sim as gif")
 
+    ###########################################################################################
     #### deforming overlap force config 
     c1 = cellToDiscreteCell(circleCell([-0.0025, 0.0], radius), 6) 
     c2 = cellToDiscreteCell(circleCell([0.0025, 0.0], radius), 6; rotation=pi/6.0) 
-    
     u0 = [c1.x; c2.x; c1.y; c2.y]
+    
+    ### area force config 
+    # c1 = DiscreteCell(0.7.*[0.01, 0.0, -0.01, -0.01, 0.0, 0.01], 0.1.*[0.0025, 0.005, 0.0025, -0.0025, -0.005, -0.0025])
+    # u0 = [c1.x; c1.y]
+    
+    ### edge force config 
+    # c1 = DiscreteCell([0.01, 0.0005, -0.0005, -0.01, -0.0005, 0.0005], [0.0, 0.004, 0.004, 0.0, -0.004, -0.004])
+    # u0 = [c1.x; c1.y]
+    
+    ### interior angle force config 
+    c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
+    u0 = [c1.x; c1.y]
+    
+    #### deforming overlap force config 
+    # c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6) 
+    # c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi/6.0) 
+    # u0 = [c1.x; c2.x; c1.y; c2.y]
 
-    u0 = [0.00046225222112401137, 4.336808689942018e-19, -0.004999999999999999, -0.0075, -0.005000000000000003, -3.469446951953614e-18, 0.006830127018922194, 0.0025000000000000005, -0.00012023170995078555, -0.00012023170995078689, 0.002499999999999999, 0.006830127018922192, 5.746271514173174e-19, 0.004330127018922193, 0.004330127018922193, 6.123233995736766e-19, -0.004330127018922192, -0.004330127018922195, 0.0024999999999999996, 0.005, 0.0020308489501504093, -0.0020308489501504076, -0.005, -0.0025000000000000022]
+    
+    ###########################################################################################
     A_d = circleArea(radius, N)
-    E_d = circleEdgeLengths(radius, N) * 0.5
+    E_d = circleEdgeLengths(radius, N) 
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
@@ -615,7 +654,8 @@ function runShow_overlap()
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title=simulationName)
+    # createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title=simulationName)
+    # createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title="", fps=1)
     createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
 
     # for intAngleScale in [5e0 ,1e1, 5e1,1e2]

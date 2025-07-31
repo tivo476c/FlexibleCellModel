@@ -415,13 +415,13 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	\begin{align}
 		\begin{split}
 			\nabla_{\vec{v}_j} I_k(C) &= \sgn(I^{j-1}_{C} - I^{j-1}_d) |I^{j-1}_{C} - I^{j-1}_d|^{k-1} \left( 
-					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{y}} \begin{pmatrix}
-						v_{j}^{y} - v_{j-1}^{y} \\[0.5em]
-						v_{j-1}^{x} - v_{j}^{x}
+					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
+						v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+						v_{j}^{x} - v_{j-1}^{x}
 					\end{pmatrix} 
 				\right) \\[0.5em] 
-			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} ( 
-				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{y}} \begin{pmatrix}
+			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \Biggl( 
+				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
 				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j-1}^{x}
 				\end{pmatrix} \\
@@ -429,11 +429,11 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
 				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
-				) \\[0.5em] 
+				\Biggr) \\[0.5em] 
 			&+ \sgn(I^{j+1}_{C} - I^{j+1}_d) |I^{j+1}_{C} - I^{j+1}_d|^{k-1} \left( 
 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-				v_{j}^{y} - v_{j+1}^{y} \\[0.5em]
-				v_{j+1}^{x} - v_{j}^{x}
+				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+				v_{j}^{x} - v_{j+1}^{x}
 				\end{pmatrix} 
 				\right) %\\[0.5em] 
 		\end{split}
@@ -446,22 +446,22 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	We are looking for 
 	\begin{center}
 		$
-		\nabla_{\vec{v}_j} I(C)
+		\nabla_{\vec{v}_j} I_k(C)
 		$
 	\end{center}
 	
 	Vertex $\vec{v}_j$ impacts the interior angles at $\vec{v}_{j-1}$, $\vec{v}_j$ and $\vec{v}_{j+1}$. 
 	Thus, we get 
 	\begin{align*}
-		\nabla_{\vec{v}_j}  I_{j}(C) &=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^{j}_d - I^j_{C_i} |^2 \\
-		&= \nabla_{\vec{v}_j} \frac{1}{2}| I^{j-1}_d - I^{j-1}_{C_i} |^2 
-		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
-		+ \nabla_{\vec{v}_j} \frac{1}{2}| I^{j+1}_d - I^{j+1}_{C_i} |^2
+		\nabla_{\vec{v}_j}  I_{k}(C) &=  \nabla_{\vec{v}_j} \sum\limits_{j=1}^{N_V} \frac{1}{k}| I^{j}_d - I^j_{C} |^k \\
+		&= \nabla_{\vec{v}_j} \frac{1}{k}| I^{j-1}_d - I^{j-1}_{C} |^k 
+		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_d - I^{j}_{C} |^k
+		+ \nabla_{\vec{v}_j} \frac{1}{k}| I^{j+1}_d - I^{j+1}_{C} |^k
 	\end{align*}
-	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2$. 
+	First, we will focus on the computation of $\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_d - I^{j}_{C} |^k$. 
 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_d - I^{j}_{C} |^k 
 		&= (I^{j}_d - I^j_{C}) \nabla_{\vec{v}_j} (- I^j_{C})\\
 		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j}  I^j_{C}   \\
 		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
@@ -536,7 +536,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	
 	Thus, we can come back to: 
 	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{2}| I^{j}_d - I^{j}_{C_i} |^2 
+		\nabla_{\vec{v}_j} \frac{1}{k}| I^{j}_d - I^{j}_{C} |^k 
 		&= (I^j_{C} - I^{j}_d) \nabla_{\vec{v}_j} \left(\arctan\!\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) - \arctan\!\left(\frac{v_{j+1}^{y} - v_{j}^{y}}{v_{j+1}^{x} - v_{j}^{x}}\right)\right) \\
 		&= (I^j_{C} - I^{j}_d) \Biggl( 
 		  \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^2} \begin{pmatrix}
@@ -585,7 +585,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
 		&\hspace{1cm} (- (\nabla f) \circ g_{-}(\vec{v}_{j-1}, \vec{v}_{j-1})) \\[0.5em]
 		&= \sgn(I^{j-1}_{C} - I^{j-1}_d)|I^{j-1}_{C} - I^{j-1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \left(- \frac{1}{\norm[\vec{v}_j - \vec{v}_{j-1}]^2} (v_j^y - v_{j-1}^y, v_{j-1}^x - v_j^x \right)^T).		
+		&\hspace{1cm} \left(- \frac{1}{\norm[\vec{v}_j - \vec{v}_{j-1}]^2} (v_{j-1}^y - v_{j}^y, v_{j}^x - v_{j-1}^x )^T\right).		
 	\end{align*}
 	Finally, for the successor vertex, we get 
 	\begin{align*}
@@ -599,7 +599,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
 		&\hspace{1cm} (\nabla f) \circ g_{+}(\vec{v}_{j-1}, \vec{v}_{j-1}) \\[0.5em]
 		&= \sgn(I^{j+1}_{C} - I^{j+1}_d)|I^{j+1}_{C} - I^{j+1}_d|^{k-1} \cdot \\
-		&\hspace{1cm} \left(- \frac{1}{\norm[\vec{v}_j - \vec{v}_{j+1}]^2} (v_j^y - v_{j+1}^y, v_{j+1}^x - v_j^x)^T \right).	
+		&\hspace{1cm} \left(\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} (v_{j+1}^y - v_{j}^y, v_{j}^x - v_{j+1}^x)^T \right).	
 	\end{align*}
 	\qed
 \end{proposition}
