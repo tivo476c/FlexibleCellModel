@@ -38,6 +38,10 @@ function heat_equ(du, u, p, t)
     return du
 end
 
+function area_equ(du, u, p, t)
+
+end 
+
 ### Simulation parameters  
 
 ## spatial discretisation  

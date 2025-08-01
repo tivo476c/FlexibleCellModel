@@ -924,11 +924,34 @@ Summarizing all these efforts, we arrived at the following force scalings used i
 
 These scaling par
 ameters serve as the foundation for the complete DF SDE model, which we now introduce.
-\begin{definition} \textbf{The DF SDE} 
-
+\begin{definition} \textbf{The DF SDE} \\
+	We define the vectors
+	\[
+	e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
+	\]
+	which allow us to distribute a two dimensional Brownian motion \(\dequ \vec{B}^{\:i} = (\dequ B^{i,x}, \dequ B^{i,y})^T\) to the $x$ and $y$ coordinates of a cell's vertices, respectively.
+	The cell hardness parameter $h \in [0,1]$ is assumed to be given.
+	The deterministic part $F^{i}(\vec{C})$ of the \textbf{DF SDE} is given by 
 	\begin{center}
-		$ \dequ C_i(\vec{C}) = \F^i(\vec{C}) \dequ t + \sqrt{2 D} \dequ \vec{B}^{\:i} M$, \hspace{0.5em} $1 \leq i \leq N_{C}$.
+		$ \F^i: (\R^{2N_V})^{N_C} \rightarrow \R^{2N_V} $
 	\end{center}
+	\begin{align}
+		\begin{split}
+			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \\
+			& (1-h)\alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + h \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C})
+		\end{split}
+	\end{align}
+	for each cell $1 \leq i \leq N_C$. \\ 
+	Each scaling parameter $\alpha \geq 0$. 
+	Each $F$ represents one of our forces that got defined in this chapter. 
+	For the shape preserving forces, we choose $k=2$ as then the difference between current state and desired state influences the intensity of the force which is nice.
+	But for the deforming overlap force, we choose $k=1$ we want it to have a strong impact whenever a small overlap arises. 
+	This configuration seems to be the best to model the physics we would like to achieve. 
+	With that we can write down the cell wise formulated DF SDE:
+	\begin{center}
+		$\dequ C_i = \F^{i}(\vec{C}) \dequ t + \dequ B^{i,x} \: e_{N_V}^{x} + \dequ B^{i,y} \: e_{N_V}^{y}.$
+	\end{center} 
+
 
 \end{definition}
 
