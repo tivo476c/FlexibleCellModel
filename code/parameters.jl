@@ -12,10 +12,10 @@ radius = 0.005                              # cell radius
 ## Force scalings: 
 hardness = 1                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
 
-areaForceFactor = (1 - hardness) * 1e6 + hardness * 1e10
-edgeForceFactor = (1 - hardness) * 1e1 + hardness * 1e5
-interiorAngleForceFactor = (1 - hardness) * 1e0 + hardness * 1e2
-overlapForceFactor = 2e4
+areaForceFactor = 0
+edgeForceFactor = 0
+interiorAngleForceFactor = 0
+overlapForceFactor = 0
 overlapForceTypes = ["bachelorThesis", "radiusBilliard", "combination"]
 overlapForceType = overlapForceTypes[2]
 
@@ -33,7 +33,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "test3-hard-DF-FIRSTWORKING"
+simulationName = "test3-hard-DF-FIRSTWORKING-second_try"
 
 
 ## Space Discretisation for heatmap 

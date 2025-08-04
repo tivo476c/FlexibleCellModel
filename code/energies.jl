@@ -53,7 +53,7 @@ function energies!(du, u, p, t)
     # end
 
     # apply BC for DF cells 
-    # res += DFBoundaryCondition(u)
+    res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -630,7 +630,7 @@ function billiardForceDFCells(c1, c2)
 
     pushVec = (2 * radius - dist) * (c_1 - c_2) / dist
 
-    scaling = timeStepSize^(-1)
+    scaling = 10^5
 
     r1x = scaling * pushVec[1] * ones(N)
     r1y = scaling * pushVec[2] * ones(N)
