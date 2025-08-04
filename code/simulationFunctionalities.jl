@@ -522,7 +522,7 @@ function runSimulation_locations()
     heatmatrices = makeMatrices()
     # smoothenMatrix!(heatmatrices, 30)
     createHeatmaps(heatmatrices)
-
+    x
 end
 
 function runSimulation(NuProcs)

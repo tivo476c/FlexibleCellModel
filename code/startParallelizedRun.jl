@@ -17,7 +17,9 @@ println("Using $(nprocs()) processors")
 println("Loading parameters")
 # load all parameters 
 @everywhere begin
-
+    using Pkg
+    Pkg.activate(".")
+    Pkg.instantiate()
     # including cell functionalities with decreasing grade of fundamentality 
     include("parameters.jl")
     include("cell_functionalities.jl")
