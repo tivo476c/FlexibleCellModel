@@ -14,24 +14,10 @@ if nprocs() == 1
     addprocs(NuProcs)
 end
 println("Using $(nprocs()) processors")
-println("Loading packages")
-
+println("Loading parameters")
 # load all parameters 
-using Pkg
-Pkg.activate(".")
-Pkg.instantiate()
-
 @everywhere begin
-    using Pkg
-    Pkg.activate(".")
-end
 
-# Now load your package on all workers AFTER environment is set:
-@everywhere using JuliaDependenciesForMT
-@everywhere begin
-    # using Pkg
-    # Pkg.activate(".")
-    # Pkg.instantiate()
     # including cell functionalities with decreasing grade of fundamentality 
     include("parameters.jl")
     include("cell_functionalities.jl")
