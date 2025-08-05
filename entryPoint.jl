@@ -30,7 +30,7 @@ println("Started entryPoint.jl")
 
 ###  OPTION 2: PARALLELIZED 
 # if wanna use parallelized run, inclusions happen in startParallelizedRun.jl: 
-# using Pkg
-# Pkg.activate(".")
-# Pkg.instantiate()
+using Pkg
+Pkg.activate(".")
+Pkg.instantiate()
 include("code/startParallelizedRun.jl")
