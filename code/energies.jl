@@ -43,11 +43,11 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    if t <= 1 * timeStepSize
-        println("pushing together at t = $t")
-        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    end
+    # if t <= 1 * timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    # end
     # if 11*timeStepSize <= t <= 11 * timeStepSize
     #     println("pushing away at t = $t")
     #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)
@@ -56,7 +56,7 @@ function energies!(du, u, p, t)
 
 
     # apply BC for DF cells 
-    # res += DFBoundaryCondition(u)
+    res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -370,7 +370,7 @@ function intAngleMT(v_prev, v_curr, v_next)
     return res
 end
 
-function computeIntAngles(c)
+function computeInteriorAngles(c)
 
     V = Vector{Vector{Float64}}(undef, N)
     for i = 1:N
@@ -405,7 +405,7 @@ end
 
 function angleEnergyCell(c, I_d; k=2)
     res = 0
-    intAngles = computeIntAngles(c)
+    intAngles = computeInteriorAngles(c)
     for i = 1:N
         res += interiorAngleForceFactor / k * distAngles(I_d[i], intAngles[i])^k
     end
@@ -419,7 +419,7 @@ function interiorAngleForceCell_MT1(c, I_d; k=2)
         * list of desired cell interior angles for that cell I 
     """
 
-    intAngles = computeIntAngles(c)
+    intAngles = computeInteriorAngles(c)
     res = zeros(2 * NumberOfCellWallPoints) # res[1:NumberOfCellWallPoints] for x coordinates, res[NumberOfCellWallPoints+1:2*NumberOfCellWallPoints] for y coordinates
     for i = 1:NumberOfCellWallPoints
 
@@ -614,7 +614,7 @@ function billiardForceDFCells(c1, c2)
 
     pushVec = (2 * radius - dist) * (c_1 - c_2) / dist
 
-    scaling = timeStepSize^(-1)
+    scaling = 10^5
 
     r1x = scaling * pushVec[1] * ones(N)
     r1y = scaling * pushVec[2] * ones(N)

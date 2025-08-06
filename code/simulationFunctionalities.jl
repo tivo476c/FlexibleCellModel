@@ -249,16 +249,7 @@ function createSimGif(gifPath::String,
             u = sol.u[i]
             time = sampleTimes[i]  - timeStepSize
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
-            overlaps = getOverlap(DiscreteCell(u[1:6], u[13:18]), DiscreteCell(u[7:12], u[19:24]))
-            overlaparea = 0 
-            for o in overlaps
-                overlaparea += areaPolygon(o.x, o.y)
-            end 
-            # if round(Int, time/timeStepSize) == 3 
-            #     println("u = $u")
-            #     println("length(overlaps) = $(length(overlaps))")
-            # end 
-            title = "$(L"O_1(C_1, C_2)") = $(@sprintf("%.2e", overlaparea))"
+            title= simulationName
             plt = plot(X[1], Y[1],
                 seriestype=:shape,
                 aspect_ratio=:equal,
@@ -479,16 +470,9 @@ end
 function computeDesiredStates_circleCells()
     C = circleCell([0.0, 0.0], radius)
     cDF = cellToDiscreteCell(C, N)
-    A_d = ones(M) * areaPolygon(cDF.x, cDF.y) # ∈ R^N
-    E_d = ones(N * M)              # ∈ (R^N)^M
-    I_d = ones(N * M)              # ∈ (R^N)^M
-    e = computeEdgeLengths(cDF)
-    ia = computeInteriorAngles(cDF)
-
-    for i = 1:M
-        E_d[(i-1)*N+1:i*N] = e
-        I_d[(i-1)*N+1:i*N] = ia
-    end
+    A_d = areaPolygon(cDF.x, cDF.y)         # ∈ R
+    E_d = computeEdgeLengths(cDF)           # ∈ R^N
+    I_d = computeInteriorAngles(cDF)        # ∈ R^N    
 
     return A_d, E_d, I_d
 end
@@ -511,36 +495,36 @@ function runSimulation_locations()
     mkpath(heatMapsPath)
     mkpath(locationsPath)
 
-    # if N != 0
-    #     A_d, E_d, I_d = computeDesiredStates_circleCells()
-    #     p = timeStepSize, D, A_d, E_d, I_d 
-    # end
+    if N != 0
+        A_d, E_d, I_d = computeDesiredStates_circleCells()
+        p = timeStepSize, D, A_d, E_d, I_d 
+    end
 
     # 1st save one simulation as gif 
-    # println("save one sim as gif")
+    println("save one sim as gif")
 
-    # if N == 0
-    #     u0 = InitializePointParticles(radius)
-    # else
-    #     u0 = initializeCells(radius)
-    # end
+    if N == 0
+        u0 = InitializePointParticles(radius)
+    else
+        u0 = initializeCells(radius)
+    end
 
-    # cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    # @time sol = solve(cellProblem,
-    #     EM(),
-    #     # callback=CallBack_reflectiveBC_cellOverlap,
-    #     dt=timeStepSize,
-    # )
-    # extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol)
+    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    @time sol = solve(cellProblem,
+        EM(),
+        # callback=CallBack_reflectiveBC_cellOverlap,
+        dt=timeStepSize,
+    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(do1SimulationRun, 175:8505)
+    # results = pmap(do1SimulationRun, 1:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
-    heatmatrices = makeMatrices()
+    # heatmatrices = makeMatrices()
     # smoothenMatrix!(heatmatrices, 30)
-    createHeatmaps(heatmatrices)
+    # createHeatmaps(heatmatrices)
 
 end
 
