@@ -37,6 +37,7 @@ mutable struct DiscreteCell
     y::Vector{Float64}
 end
 
+
 # structur to save rectangles
 mutable struct Rectangle
     x0:: Float64

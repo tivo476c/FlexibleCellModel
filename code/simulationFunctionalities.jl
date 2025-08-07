@@ -618,13 +618,13 @@ function runShow_overlap()
     # u0 = [c1.x; c1.y]
     
     ### interior angle force config 
-    c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
-    u0 = [c1.x; c1.y]
+    # c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
+    # u0 = [c1.x; c1.y]
     
     #### deforming overlap force config 
-    # c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6) 
-    # c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi/6.0) 
-    # u0 = [c1.x; c2.x; c1.y; c2.y]
+    c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6) 
+    c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi/6.0) 
+    u0 = [c1.x; c2.x; c1.y; c2.y]
 
     
     ###########################################################################################

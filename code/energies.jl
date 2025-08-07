@@ -43,11 +43,11 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    # if t <= 1 * timeStepSize
-    #     println("pushing together at t = $t")
-    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    # end
+    if t <= 1 * timeStepSize
+        println("pushing together at t = $t")
+        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    end
     # if 11*timeStepSize <= t <= 11 * timeStepSize
     #     println("pushing away at t = $t")
     #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)
@@ -56,7 +56,7 @@ function energies!(du, u, p, t)
 
 
     # apply BC for DF cells 
-    res += DFBoundaryCondition(u)
+    # res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
@@ -503,7 +503,15 @@ function overlapEnergy(u; k=1)
 end
 
 function collectOverlapIndices(o, c1, c2)
-
+    """
+    Computes two vectors v1, v2 such that:
+        v1 = {[i,j]_v | v = vertex in overlap and c1, i = index in c1, j = index in o}
+        v2 = {[i,j]_v | v = vertex in overlap and c2, i = index in c2, j = index in o}
+    Args:
+        o  ... discrete overlap cell 
+        c1 ... discrete cell 1 
+        c2 ... discrete cell 2
+    """
     v1 = Set()
     v2 = Set()
     for j = 1:length(o.x)
@@ -568,18 +576,68 @@ function radiusBilliardOverlapForce(u)
     return res
 end
 
-function bachelorOverlapForceCells(c1, c2; k=1)
+function vertexListToDiscreteCell(vList)
+    
+    # assume we have either type intersection or a 2d vector of reels 
+    xVec = []
+    yVec = []
+    for v in vList
+        if isa(v, Intersection)
+            push!(xVec, v.x)
+            push!(yVec, v.y)
+        elseif isa(v, Vector{Float64}) && length(v) == 2 
+            push!(xVec, v[1])
+            push!(yVec, v[2])
+        else 
+            println("ERROR: wrong element given in vertexListToDiscreteCell in overlap computation.")
+            return 
+        end 
+    end 
+    return DiscreteCell(xVec, yVec)
+end 
 
+function getInside_OutsideVertices(edgeInd, c, overlapVertexList)
+    """
+    Returns:
+        1st ... outside overlap vertex of the discrete cell c
+        2nd ...  inside overlap vertex of the discrete cell c 
+        3rd ... index of outside vertex in c 
+    """
+    if edgeInd == NumberOfCellWallPoints
+        nextInd = 1 
+    else 
+        nextInd = edgeInd + 1
+    end 
+    v1 = [c.x[edgeInd],  c.y[edgeInd]] 
+    v2 = [c.x[nextInd],  c.y[nextInd]] 
+    
+    if v2 in overlapVertexList
+        return v1, v2, edgeInd, nextInd
+    else 
+        return v2, v1, nextInd, edgeInd
+    end 
+end
+
+function bachelorOverlapForceCells(c1, c2; k=1)
+    """
+    Returns the dynamic that gets applied to the vertices of c1 and c2 caused by the shape deforming overlap force. 
+
+    Args:
+        c1 ... discrete cell 1, 
+        c2 ... discrete cell 2;
+        k  ... energy power 
+    """
     r1x = zeros(N)
     r1y = zeros(N)
     r2x = zeros(N)
     r2y = zeros(N)
-    overlaps = getOverlap(c1, c2)
+    overlaps, vertexLists = getOverlap(c1, c2)
+    # each overlap is now a list of vertices 
     for o ∈ overlaps
+
         K = length(o.x)
         area = areaPolygon(o.x, o.y)
-        # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
-        v1, v2 = collectOverlapIndices(o, c1, c2)
+        v1, v2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
 
         gradO = areaGradientCell(o; NVertices=K)
         for ind ∈ v1
@@ -597,6 +655,53 @@ function bachelorOverlapForceCells(c1, c2; k=1)
 
         end
     end
+
+    # now add dynamic for vertices that are not part of the overlap cell 
+    for vertexListIndex in eachindex(vertexLists) 
+        vertexList = vertexLists[vertexListIndex] 
+        overlap = overlaps[vertexListIndex]
+        K = length(overlap.x)
+        # indices_c1, indices_c2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
+        areaGradientOverlap = areaGradientCell(overlap; NVertices=K)
+
+        for indV in eachindex(vertexList)
+            intersec = vertexList[indV]
+            if isa(intersec, Intersection)
+
+                # TODO: test whether first edge index "i" is always for c1 and "j" for c2  
+                # u1, u2 ∈ c1; v1, v2 ∈ c2
+                # v1, u1 are the overlap OUTside vertices of c1, c2 
+                # v2, u2 are the overlap  INside vertices of c1, c2 
+                u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
+                v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
+                
+                dwu1 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to u1
+                dwu2 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to u2
+                dwv1 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to v1
+                dwv2 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to v2
+
+                du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
+                dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
+                areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
+                dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
+
+                R = -dOi - dwu2*du2t - dwv2*dc2t 
+
+                dwv1_inverted = inv(dwv1)
+                dwu1_inverted = inv(dwu1)
+
+                dv1t = 0.5 * dwv1_inverted * R 
+                du1t = 0.5 * dwu1_inverted * R 
+
+                r1x[outsideInd_u] += dv1t[1]
+                r1y[outsideInd_u] += dv1t[2]
+                r2x[outsideInd_v] += du1t[1]
+                r2y[outsideInd_v] += du1t[2]
+            end 
+
+        end 
+    end
+
     return forceScalings[4] * r1x, forceScalings[4] * r1y, forceScalings[4] * r2x, forceScalings[4] * r2y
 
 end

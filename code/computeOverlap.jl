@@ -921,7 +921,7 @@ function anhängen(l1, l2)
   
 end 
 
-function forceOrientation(c)
+function forceOrientation(c, vertexList)
 
     N = length(c.x)
     sum = 0
@@ -943,9 +943,9 @@ function forceOrientation(c)
     end
 
     if(sum > 0) 
-        return DiscreteCell( reverse(c.x), reverse(c.y) )
+        return DiscreteCell( reverse(c.x), reverse(c.y)), reverse(vertexList)
     else 
-        return c
+        return c, vertexList
     end 
     
 end
@@ -957,7 +957,7 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
     usedI = MutableLinkedList{Intersection}(currentI)
     xVal = MutableLinkedList{Float64}(currentI.x)
     yVal = MutableLinkedList{Float64}(currentI.y)
-
+    vertexList = Any[currentI]                                      
     for counter = 1:length(I)
 
         if(iseven(counter))
@@ -968,26 +968,25 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
     
         anhängen(xVal, xPath)
         anhängen(yVal, yPath)
-
+        for i in eachindex(xPath)
+            push!(vertexList, [xPath[i], yPath[i]])
+        end 
 
         if(iNew == first(I))
             # the cell is then closed 
-            return forceOrientation(DiscreteCell(collect(xVal), collect(yVal))), usedI
-
+            return forceOrientation(DiscreteCell(collect(xVal), collect(yVal)), vertexList), usedI
         else 
-
-
+            
             push!(usedI, iNew)
-
+            
             currentI = iNew 
             push!(xVal, currentI.x)
-
             push!(yVal, currentI.y)
-
+            push!(vertexList, currentI)
         end 
     end 
 
-    return forceOrientation(DiscreteCell(collect(xVal), collect(yVal))), usedI
+    return forceOrientation(DiscreteCell(collect(xVal), collect(yVal)), vertexList), usedI
 
 end 
 
@@ -1013,16 +1012,18 @@ function deleteIntersection(I::MutableLinkedList{Intersection}, Iused::MutableLi
 
 end
 
+
 # returns a list of all overlaps of C11 and c2 
 function getOverlap(C11::DiscreteCell, c2::DiscreteCell)
     
-    overlaps = MutableLinkedList{DiscreteCell}()
+    overlaps = DiscreteCell[]
+    vertexLists = Any[]
     M = length(C11.x)
     N = length(c2.x) 
     R1 = rectangle(C11)
     R2 = rectangle(c2)
     if(!overlap(R1, R2))
-        return overlaps
+        return overlaps, vertexLists
     end 
 
     R = Rectangle( max(R1.x0, R2.x0), min(R1.x1, R2.x1), max(R1.y0, R2.y0), min(R1.y1, R2.y1))
@@ -1036,14 +1037,15 @@ function getOverlap(C11::DiscreteCell, c2::DiscreteCell)
 
     intersections = findAllIntersections(C1, C2)
     while(!isempty(intersections))
-        o, Iused = constructOverlap(C1, C2, copy(intersections))
+        o, vertexList, Iused = constructOverlap(C1, C2, copy(intersections))
         if(o !== nothing )
             push!(overlaps, o)
+            push!(vertexLists, vertexList)
             deleteIntersection(intersections, Iused)
         end 
     end 
 
-    return overlaps
+    return overlaps, vertexLists
 end
 
 # ___________________________________________________________________________________________________________________________
