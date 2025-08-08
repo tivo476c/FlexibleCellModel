@@ -618,6 +618,8 @@ function getInside_OutsideVertices(edgeInd, c, overlapVertexList)
     end 
 end
 
+cross2d(a::AbstractVector, b::AbstractVector) = a[1]*b[2] - a[2]*b[1]
+
 function bachelorOverlapForceCells(c1, c2; k=1)
     """
     Returns the dynamic that gets applied to the vertices of c1 and c2 caused by the shape deforming overlap force. 
@@ -661,6 +663,7 @@ function bachelorOverlapForceCells(c1, c2; k=1)
         vertexList = vertexLists[vertexListIndex] 
         overlap = overlaps[vertexListIndex]
         K = length(overlap.x)
+        area = areaPolygon(overlap.x, overlap.y)
         # indices_c1, indices_c2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
         areaGradientOverlap = areaGradientCell(overlap; NVertices=K)
 
@@ -675,18 +678,36 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
                 v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
                 
-                dwu1 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to u1
-                dwu2 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to u2
-                dwv1 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to v1
-                dwv2 = [0, 0; 0, 0]        #TODO: Jacobian of intersection w.r. to v2
+                I = [1 0; 0 1]
+                #TODO:  
+                f = cross2d(v1-u1, v2-v1)
+                g = cross2d(u2-u1, v2-v1)
+                t = f / g
+                dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]]*g - f*[-(v2[2] - v1[2]),   v2[1] - v1[1] ]) / g^2
+                dtu2 = (                                    - f*[  v2[2] - v1[2] , -(v2[1] - v1[1])]) / g^2
+                dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2
+                dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]]*g - f*[-(u2[2] - u1[2]),   u2[1] - u1[1] ]) / g^2
+                
+                println("dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2")
+                println("f = $f")
+                println("g = $g")
+                println("u1 = $u1, u2 = $u2")
+                println("v1 = $v1, v2 = $v2")
+                dwu1 = (1 - t)*I + (u2-u1) * dtu1'         
+                dwu2 = t*I + (u2-u1) * dtu2'                      
+                dwv1 = (u2-u1) * dtv1'                      
+                dwv2 = (u2-u1) * dtv2'                        
 
                 du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
                 dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
                 areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
                 dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
 
-                R = -dOi - dwu2*du2t - dwv2*dc2t 
-
+                R = -dOi - dwu2*du2t - dwv2*dv2t 
+                
+                println("dwv1 = (u2-u1) * dtv1'")
+                println("(u2-u1)=$(u2-u1), dtv1' = $(dtv1')")
+                println("dwv1 = $dwv1")
                 dwv1_inverted = inv(dwv1)
                 dwu1_inverted = inv(dwu1)
 

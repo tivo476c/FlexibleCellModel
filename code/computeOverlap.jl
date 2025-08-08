@@ -968,13 +968,14 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
     
         anhängen(xVal, xPath)
         anhängen(yVal, yPath)
-        for i in eachindex(xPath)
+        for i = 1:length(xPath) 
             push!(vertexList, [xPath[i], yPath[i]])
         end 
 
         if(iNew == first(I))
             # the cell is then closed 
-            return forceOrientation(DiscreteCell(collect(xVal), collect(yVal)), vertexList), usedI
+            c, vertexList = forceOrientation(DiscreteCell(collect(xVal), collect(yVal)), vertexList)
+            return c, vertexList, usedI
         else 
             
             push!(usedI, iNew)
@@ -985,8 +986,9 @@ function constructOverlap(c1::CriticalCell, c2::CriticalCell, I::MutableLinkedLi
             push!(vertexList, currentI)
         end 
     end 
-
-    return forceOrientation(DiscreteCell(collect(xVal), collect(yVal)), vertexList), usedI
+    
+    c, vertexList = forceOrientation(DiscreteCell(collect(xVal), collect(yVal)), vertexList)
+    return c, vertexList, usedI
 
 end 
 
