@@ -491,7 +491,7 @@ function overlapEnergy(u; k=1)
     for i = 1:length(C)
         for j = i+1:length(C)
 
-            overlaps = getOverlap(C[i], C[j])
+            overlaps, _ = getOverlap(C[i], C[j])
             for o ∈ overlaps
                 area = areaPolygon(o.x, o.y)
                 overlapEnergy += overlapForceFactor / k * area^k
@@ -654,7 +654,9 @@ function bachelorOverlapForceCells(c1, c2; k=1)
             i, j = ind
             r2x[i] = -0.5 * area^(k - 1) * gradO[j]
             r2y[i] = -0.5 * area^(k - 1) * gradO[j+K]
-
+            println("")
+            println("r2y[$i] = $(r2y[i])")
+            println("")
         end
     end
 
@@ -708,6 +710,8 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 println("dwv1 = (u2-u1) * dtv1'")
                 println("(u2-u1)=$(u2-u1), dtv1' = $(dtv1')")
                 println("dwv1 = $dwv1")
+                println("c1 = $c1")
+                println("c2 = $c2")
                 dwv1_inverted = inv(dwv1)
                 dwu1_inverted = inv(dwu1)
 
@@ -718,6 +722,12 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 r1y[outsideInd_u] += dv1t[2]
                 r2x[outsideInd_v] += du1t[1]
                 r2y[outsideInd_v] += du1t[2]
+                println("")
+                println("r1x[$outsideInd_u] = $(r1x[outsideInd_u])")
+                println("r1y[$outsideInd_u] = $(r1y[outsideInd_u])")
+                println("r2x[$outsideInd_v] = $(r2x[outsideInd_v])")
+                println("r2y[$outsideInd_v] = $(r2y[outsideInd_v])")
+                println("")
             end 
 
         end 

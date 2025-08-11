@@ -316,15 +316,11 @@ function createEnergyDiagram(diaPath::String,
     edgeVector2 = edgeVector[2:end]
     angleVector2 = angleVector[2:end]
     overlapVector2 = overlapVector[2:end]
-    # plot(sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
-    # plot!(sampleTimes2, edgeVector2, label="Edge energy")
-    # plot!(sampleTimes2, angleVector2, label="Interior angle energy")
-    # plot!(sampleTimes2, overlapVector2, label="Overlap energy")
-    # plot(sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
-    # plot(sampleTimes2, edgeVector2, label="Edge energy")
-    plot(sampleTimes2, angleVector2, label="Interior angle energy")
-    # plot(sampleTimes2, overlapVector2, label="Overlap energy")
-
+    plot(sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
+    plot!(sampleTimes2, edgeVector2, label="Edge energy")
+    plot!(sampleTimes2, angleVector2, label="Interior angle energy")
+    plot!(sampleTimes2, overlapVector2, label="Overlap energy")
+   
     savefig(diaPath)
 end
 
@@ -601,13 +597,13 @@ function runShow_overlap()
     end
 
     ## 1st save one simulation as gif 
-    println("save one sim as gif")
+    # println("save one sim as gif")
 
     ###########################################################################################
     #### deforming overlap force config 
-    c1 = cellToDiscreteCell(circleCell([-0.0025, 0.0], radius), 6) 
-    c2 = cellToDiscreteCell(circleCell([0.0025, 0.0], radius), 6; rotation=pi/6.0) 
-    u0 = [c1.x; c2.x; c1.y; c2.y]
+    # c1 = cellToDiscreteCell(circleCell([-0.0025, 0.0], radius), 6) 
+    # c2 = cellToDiscreteCell(circleCell([0.0025, 0.0], radius), 6; rotation=pi/6.0) 
+    # u0 = [c1.x; c2.x; c1.y; c2.y]
     
     ### area force config 
     # c1 = DiscreteCell(0.7.*[0.01, 0.0, -0.01, -0.01, 0.0, 0.01], 0.1.*[0.0025, 0.005, 0.0025, -0.0025, -0.005, -0.0025])
@@ -638,7 +634,7 @@ function runShow_overlap()
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title=simulationName)
+    createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title=simulationName)
     # createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title="", fps=1)
     createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
 
