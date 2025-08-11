@@ -56,7 +56,7 @@ function energies!(du, u, p, t)
 
 
     # apply BC for DF cells 
-    # res += DFBoundaryCondition(u)
+    res += DFBoundaryCondition(u)
 
     for i = 1:length(du)
         du[i] = res[i]
