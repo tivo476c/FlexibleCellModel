@@ -9,7 +9,7 @@ println("Started startParallelizedRun.jl")
 
 using Distributed
 
-NuProcs = 60
+NuProcs = 1
 if nprocs() == 1
     addprocs(NuProcs)
 end

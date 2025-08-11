@@ -483,48 +483,48 @@ function runSimulation_locations()
     In this function, the locations of the cell centres from all simulations at all sample times are saved in a .txt file. 
     """
     ## create paths 
-    println("creating paths")
-    mkpath(simPath)
-    if gethostname() == "treuesStueck"      # home pc xd 
-        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    elseif gethostname() == "iwr-25177394"
-        cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)    # use correct uniPC path
-    else # laptop 
-        cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    end
-    mkpath(heatMapsPath)
-    mkpath(locationsPath)
+    # println("creating paths")
+    # mkpath(simPath)
+    # if gethostname() == "treuesStueck"      # home pc xd 
+    #     cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    # elseif gethostname() == "iwr-25177394"
+    #     cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)    # use correct uniPC path
+    # else # laptop 
+    #     cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
+    # end
+    # mkpath(heatMapsPath)
+    # mkpath(locationsPath)
 
-    if N != 0
-        A_d, E_d, I_d = computeDesiredStates_circleCells()
-        p = timeStepSize, D, A_d, E_d, I_d 
-    end
+    # if N != 0
+    #     A_d, E_d, I_d = computeDesiredStates_circleCells()
+    #     p = timeStepSize, D, A_d, E_d, I_d 
+    # end
 
-    # 1st save one simulation as gif 
-    println("save one sim as gif")
+    # # 1st save one simulation as gif 
+    # println("save one sim as gif")
 
-    if N == 0
-        u0 = InitializePointParticles(radius)
-    else
-        u0 = initializeCells(radius)
-    end
+    # if N == 0
+    #     u0 = InitializePointParticles(radius)
+    # else
+    #     u0 = initializeCells(radius)
+    # end
 
-    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    @time sol = solve(cellProblem,
-        EM(),
-        # callback=CallBack_reflectiveBC_cellOverlap,
-        dt=timeStepSize,
-    )
-    extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol)
+    # cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    # @time sol = solve(cellProblem,
+    #     EM(),
+    #     # callback=CallBack_reflectiveBC_cellOverlap,
+    #     dt=timeStepSize,
+    # )
+    # extractedSol = extractSolution(sol)
+    # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     # results = pmap(do1SimulationRun, 1:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
-    # heatmatrices = makeMatrices()
+    heatmatrices = makeMatrices()
     # smoothenMatrix!(heatmatrices, 30)
-    # createHeatmaps(heatmatrices)
+    createHeatmaps(heatmatrices)
 
 end
 

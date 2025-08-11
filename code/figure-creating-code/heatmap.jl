@@ -188,7 +188,7 @@ function createHeatmaps(matrices)
             xlabel=caption,
             c=reverse(cgrad(:hot)),
             # clim=(minVal, maxVal),
-            clim=(0.0, 19.0),  # activate for bruna scaling 
+            clim=(0.55, 1.55),  # activate for bruna scaling 
             ratio=:equal,
             dpi=500
         )
