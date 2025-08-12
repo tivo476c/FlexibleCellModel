@@ -402,8 +402,10 @@ function do1SimulationRun(simRun)
         u0 = InitializePointParticles(radius)
     else
         u0 = initializeCells(radius)
+        A_d, E_d, I_d = computeDesiredStates_circleCells()
+        p = timeStepSize, D, A_d, E_d, I_d 
     end
-
+    
     cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
     @time sol = solve(cellProb,
         EM(),
