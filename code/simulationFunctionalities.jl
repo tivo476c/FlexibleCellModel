@@ -360,7 +360,7 @@ function giveClosestTimeIdx(sol, wantTime)
         end
     end
 
-    println("warning in giveClosestTime: wantTime", wantTime, " is larger than latest solution time")
+    # println("warning in giveClosestTime: wantTime $wantTime is larger than latest solution time $(sol.t[end])")
     return length(sol.t)
 end
 
@@ -398,8 +398,10 @@ function do1SimulationRun(simRun)
         u0 = InitializePointParticles(radius)
     else
         u0 = initializeCells(radius)
+        A_d, E_d, I_d = computeDesiredStates_circleCells()
+        p = timeStepSize, D, A_d, E_d, I_d 
     end
-
+    
     cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
     @time sol = solve(cellProb,
         EM(),
@@ -515,7 +517,7 @@ function runSimulation_locations()
     # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    # results = pmap(do1SimulationRun, 1:NumberOfSimulations)
+    results = pmap(do1SimulationRun, 1:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()
