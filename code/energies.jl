@@ -712,11 +712,13 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 println("dwv1 = $dwv1")
                 println("c1 = $c1")
                 println("c2 = $c2")
-                dwv1_inverted = inv(dwv1)
-                dwu1_inverted = inv(dwu1)
+                # dwv1_inverted = inv(dwv1)
+                # dwu1_inverted = inv(dwu1)
 
-                dv1t = 0.5 * dwv1_inverted * R 
-                du1t = 0.5 * dwu1_inverted * R 
+                # dv1t = 0.5 * dwv1_inverted * R 
+                # du1t = 0.5 * dwu1_inverted * R 
+                dv1t = 0.5 * dwv1 \ R 
+                du1t = 0.5 * dwu1 \ R 
 
                 r1x[outsideInd_u] += dv1t[1]
                 r1y[outsideInd_u] += dv1t[2]
