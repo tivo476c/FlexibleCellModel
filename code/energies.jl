@@ -43,11 +43,11 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    # if t <= 1 * timeStepSize
-    #     println("pushing together at t = $t")
-    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    # end
+    if t <= 1 * timeStepSize
+        println("pushing together at t = $t")
+        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    end
     # if 11*timeStepSize <= t <= 11 * timeStepSize
     #     println("pushing away at t = $t")
     #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)
@@ -661,51 +661,51 @@ function bachelorOverlapForceCells(c1, c2; k=1)
     end
 
     # now add dynamic for vertices that are not part of the overlap cell 
-    # for vertexListIndex in eachindex(vertexLists) 
-    #     vertexList = vertexLists[vertexListIndex] 
-    #     overlap = overlaps[vertexListIndex]
-    #     K = length(overlap.x)
-    #     area = areaPolygon(overlap.x, overlap.y)
-    #     # indices_c1, indices_c2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
-    #     areaGradientOverlap = areaGradientCell(overlap; NVertices=K)
+    for vertexListIndex in eachindex(vertexLists) 
+        vertexList = vertexLists[vertexListIndex] 
+        overlap = overlaps[vertexListIndex]
+        K = length(overlap.x)
+        area = areaPolygon(overlap.x, overlap.y)
+        # indices_c1, indices_c2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
+        areaGradientOverlap = areaGradientCell(overlap; NVertices=K)
 
-    #     for indV in eachindex(vertexList)
-    #         intersec = vertexList[indV]
-    #         if isa(intersec, Intersection)
+        for indV in eachindex(vertexList)
+            intersec = vertexList[indV]
+            if isa(intersec, Intersection)
 
-    #             # TODO: test whether first edge index "i" is always for c1 and "j" for c2  
-    #             # u1, u2 ∈ c1; v1, v2 ∈ c2
-    #             # v1, u1 are the overlap OUTside vertices of c1, c2 
-    #             # v2, u2 are the overlap  INside vertices of c1, c2 
-    #             u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
-    #             v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
+                # TODO: test whether first edge index "i" is always for c1 and "j" for c2  
+                # u1, u2 ∈ c1; v1, v2 ∈ c2
+                # v1, u1 are the overlap OUTside vertices of c1, c2 
+                # v2, u2 are the overlap  INside vertices of c1, c2 
+                u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
+                v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
                 
-    #             I = [1 0; 0 1]
-    #             #TODO:  
-    #             f = cross2d(v1-u1, v2-v1)
-    #             g = cross2d(u2-u1, v2-v1)
-    #             t = f / g
-    #             dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]]*g - f*[-(v2[2] - v1[2]),   v2[1] - v1[1] ]) / g^2
-    #             dtu2 = (                                    - f*[  v2[2] - v1[2] , -(v2[1] - v1[1])]) / g^2
-    #             dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2
-    #             dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]]*g - f*[-(u2[2] - u1[2]),   u2[1] - u1[1] ]) / g^2
+                I = [1 0; 0 1]
+                #TODO:  
+                f = cross2d(v1-u1, v2-v1)
+                g = cross2d(u2-u1, v2-v1)
+                t = f / g
+                dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]]*g - f*[-(v2[2] - v1[2]),   v2[1] - v1[1] ]) / g^2
+                dtu2 = (                                    - f*[  v2[2] - v1[2] , -(v2[1] - v1[1])]) / g^2
+                dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2
+                dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]]*g - f*[-(u2[2] - u1[2]),   u2[1] - u1[1] ]) / g^2
                 
-    #             println("dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2")
-    #             println("f = $f")
-    #             println("g = $g")
-    #             println("u1 = $u1, u2 = $u2")
-    #             println("v1 = $v1, v2 = $v2")
-    #             dwu1 = (1 - t)*I + (u2-u1) * dtu1'         
-    #             dwu2 = t*I + (u2-u1) * dtu2'                      
-    #             dwv1 = (u2-u1) * dtv1'                      
-    #             dwv2 = (u2-u1) * dtv2'                        
+                println("dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2")
+                println("f = $f")
+                println("g = $g")
+                println("u1 = $u1, u2 = $u2")
+                println("v1 = $v1, v2 = $v2")
+                dwu1 = (1 - t)*I + (u2-u1) * dtu1'         
+                dwu2 = t*I + (u2-u1) * dtu2'                      
+                dwv1 = (u2-u1) * dtv1'                      
+                dwv2 = (u2-u1) * dtv2'                        
 
-    #             du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
-    #             dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
-    #             areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
-    #             dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
+                du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
+                dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
+                areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
+                dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
 
-    #             R = -dOi - dwu2*du2t - dwv2*dv2t 
+                R = -dOi - dwu2*du2t - dwv2*dv2t 
                 
                 println("dwv1 = (u2-u1) * dtv1'")
                 println("(u2-u1)=$(u2-u1), dtv1' = $(dtv1')")
@@ -732,8 +732,8 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 println("")
             end 
 
-    #     end 
-    # end
+        end 
+    end
 
     return forceScalings[4] * r1x, forceScalings[4] * r1y, forceScalings[4] * r2x, forceScalings[4] * r2y
 
