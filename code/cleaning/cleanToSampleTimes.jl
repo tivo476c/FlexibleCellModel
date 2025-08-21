@@ -42,8 +42,8 @@ for file in filter(f -> endswith(f, ".txt"), readdir("."))
 
     if length(keep_blocks) == 6
         # Write reduced output to new file
-        # outname = replace(file, ".txt" => "_filtered.txt")
-        outname = file
+        outname = replace(file, ".txt" => "_filtered.txt")
+        # outname = file
         open(outname, "w") do io
             for (k, block) in enumerate(keep_blocks)
                 for line in block
@@ -56,5 +56,7 @@ for file in filter(f -> endswith(f, ".txt"), readdir("."))
         end
 
         println("  Wrote $outname with $(length(keep_blocks)) time steps")
+        rm(file)
+        println("  Deleted original $file")
     end 
 end
