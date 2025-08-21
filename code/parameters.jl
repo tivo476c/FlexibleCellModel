@@ -33,13 +33,12 @@ timeInterval = (0.0, T)
 
 NumberOfSimulations = 10^4
 NumberOfSampleTimes = 6        # must be 2 at least
-NumberOfSampleTimes = round(Int, T/timeStepSize) + 1  # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "softSim1-bachelorOverlap"
+simulationName = "softSim2-bachelorOverlap"
 
 
 ## Space Discretisation for heatmap 
