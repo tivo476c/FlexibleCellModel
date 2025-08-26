@@ -1,5 +1,7 @@
-include("../parameters.jl") 
-include("../energies.jl") 
+-using LinearAlgebra
+
+include("../parameters.jl")
+include("../energies.jl")
 
 ################### PARAMETERS 
 NumberOfCellWallPoints = 6                  # number of wall points per cell [OLD NAME: "N"]
@@ -57,8 +59,8 @@ for o ∈ overlaps
 end
 
 # now add dynamic for vertices that are not part of the overlap cell 
-for vertexListIndex in eachindex(vertexLists) 
-    vertexList = vertexLists[vertexListIndex] 
+for vertexListIndex in eachindex(vertexLists)
+    vertexList = vertexLists[vertexListIndex]
     overlap = overlaps[vertexListIndex]
     K = length(overlap.x)
     area = areaPolygon(overlap.x, overlap.y)
@@ -79,31 +81,31 @@ for vertexListIndex in eachindex(vertexLists)
             scatter!(plt, [v2[1], u2[1]], [v2[2], u2[2]], label=false, color="red")     #  inside vertices
             I = [1 0; 0 1]
             #TODO:  
-            f = cross2d(v1-u1, v2-v1)
-            g = cross2d(u2-u1, v2-v1)
+            f = cross2d(v1 - u1, v2 - v1)
+            g = cross2d(u2 - u1, v2 - v1)
             t = f / g
-            dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]]*g - f*[-(v2[2] - v1[2]),   v2[1] - v1[1] ]) / g^2
-            dtu2 = (                                    - f*[  v2[2] - v1[2] , -(v2[1] - v1[1])]) / g^2
-            dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2
-            dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]]*g - f*[-(u2[2] - u1[2]),   u2[1] - u1[1] ]) / g^2
-            
+            dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]] * g - f * [-(v2[2] - v1[2]), v2[1] - v1[1]]) / g^2
+            dtu2 = (-f * [v2[2] - v1[2], -(v2[1] - v1[1])]) / g^2
+            dtv1 = ([-u1[2] + v2[2], u1[1] - v2[1]] * g - f * [u2[2] - u1[2], -(u2[1] - u1[1])]) / g^2
+            dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]] * g - f * [-(u2[2] - u1[2]), u2[1] - u1[1]]) / g^2
+
             println("dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2")
             println("f = $f")
             println("g = $g")
             println("u1 = $u1, u2 = $u2")
             println("v1 = $v1, v2 = $v2")
-            dwu1 = (1 - t)*I + (u2-u1) * dtu1'         
-            dwu2 = t*I + (u2-u1) * dtu2'                      
-            dwv1 = (u2-u1) * dtv1'                      
-            dwv2 = (u2-u1) * dtv2'                        
+            dwu1 = (1 - t) * I + (u2 - u1) * dtu1'
+            dwu2 = t * I + (u2 - u1) * dtu2'
+            dwv1 = (u2 - u1) * dtv1'
+            dwv2 = (u2 - u1) * dtv2'
 
             du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
             dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
             areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
             dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
 
-            R = -dOi - dwu2*du2t - dwv2*dv2t 
-            
+            R = -dOi - dwu2 * du2t - dwv2 * dv2t
+
             println("dwv1 = (u2-u1) * dtv1'")
             println("(u2-u1)=$(u2-u1), dtv1' = $(dtv1')")
             println("dwv1 = $dwv1")
@@ -114,8 +116,8 @@ for vertexListIndex in eachindex(vertexLists)
 
             # dv1t = 0.5 * dwv1_inverted * R 
             # du1t = 0.5 * dwu1_inverted * R 
-            dv1t = 0.5 * dwv1 \ R 
-            du1t = 0.5 * dwu1 \ R 
+            dv1t = 0.5 * pinv(dwv1) * R
+            du1t = 0.5 * pinv(dwu1) * R
 
             r1x[outsideInd_u] += dv1t[1]
             r1y[outsideInd_u] += dv1t[2]
@@ -127,9 +129,9 @@ for vertexListIndex in eachindex(vertexLists)
             println("r2x[$outsideInd_v] = $(r2x[outsideInd_v])")
             println("r2y[$outsideInd_v] = $(r2y[outsideInd_v])")
             println("")
-        end 
+        end
 
-    end 
+    end
 end
 
 r1x = forceScalings[4] * r1x
@@ -137,23 +139,23 @@ r1y = forceScalings[4] * r1y
 r2x = forceScalings[4] * r2x
 r2y = forceScalings[4] * r2y
 
-c1new = DiscreteCell(c1.x + r1x*timeStepSize, c1.y + r1y*timeStepSize)
-c2new = DiscreteCell(c2.x + r2x*timeStepSize, c2.y + r2y*timeStepSize)
+c1new = DiscreteCell(c1.x + r1x * timeStepSize, c1.y + r1y * timeStepSize)
+c2new = DiscreteCell(c2.x + r2x * timeStepSize, c2.y + r2y * timeStepSize)
 
 ################### PLOTTING  
 u = [c1.x; c2.x; c1.y; c2.y]
 # u = [c1new.x; c2new.x; c1new.y; c2new.y]
 
-X, Y = solutionToXY(u) 
+X, Y = solutionToXY(u)
 plot!(plt, X[1], Y[1],
-                seriestype=:shape,
-                aspect_ratio=:equal,
-                opacity=0.25,
-                dpi=500,
-                label=false,
-                # xlims=domain,
-                # ylims=domain,
-                )
+    seriestype=:shape,
+    aspect_ratio=:equal,
+    opacity=0.25,
+    dpi=500,
+    label=false,
+    # xlims=domain,
+    # ylims=domain,
+)
 
 
 for i = 2:NumberOfCells

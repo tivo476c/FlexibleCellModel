@@ -84,7 +84,6 @@ function makeMatrices()
 
     matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
     for file in readdir(locationsPath)
-        println("file = $file")
         runPath = joinpath(locationsPath, file)
         i = 1
         open(runPath, "r") do file_stream

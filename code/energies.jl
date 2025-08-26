@@ -442,15 +442,15 @@ function interiorAngleForceCell_MT1(c, I_d; k=2)
         ### I SKIPPED THE ^2 after the norm() statements, because i like this dynamic more 
         # assign x dynamic for vertex k 
         res[i] += sign(I_d[prev] - intAngles[prev]) * abs(I_d[prev] - intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
-        res[i] += sign(I_d[i] - intAngles[i])       * abs(I_d[i]    - intAngles[i]   )^(k - 1) * ( 1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
-        res[i] += sign(I_d[i] - intAngles[i])       * abs(I_d[i]    - intAngles[i]   )^(k - 1) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
-        res[i] += sign(I_d[next] - intAngles[next]) * abs(I_d[next] - intAngles[next])^(k - 1) * ( 1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * abs(I_d[i] - intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_prev[2] - v_curr[2]))
+        res[i] += sign(I_d[i] - intAngles[i]) * abs(I_d[i] - intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
+        res[i] += sign(I_d[next] - intAngles[next]) * abs(I_d[next] - intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_next[2] - v_curr[2]))
 
         # assign y dynamic for vertex k 
-        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev])  * abs(I_d[prev] - intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i])        * abs(I_d[i]    - intAngles[i]   )^(k - 1) * ( 1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i])        * abs(I_d[i]    - intAngles[i]   )^(k - 1) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
-        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next])  * abs(I_d[next] - intAngles[next])^(k - 1) * ( 1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[prev] - intAngles[prev]) * abs(I_d[prev] - intAngles[prev])^(k - 1) * (-1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * abs(I_d[i] - intAngles[i])^(k - 1) * (1.0 / norm(v_curr - v_prev, 2)^2 * (v_curr[1] - v_prev[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[i] - intAngles[i]) * abs(I_d[i] - intAngles[i])^(k - 1) * (-1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
+        res[NumberOfCellWallPoints+i] += sign(I_d[next] - intAngles[next]) * abs(I_d[next] - intAngles[next])^(k - 1) * (1.0 / norm(v_curr - v_next, 2)^2 * (v_curr[1] - v_next[1]))
 
     end
 
@@ -577,7 +577,7 @@ function radiusBilliardOverlapForce(u)
 end
 
 function vertexListToDiscreteCell(vList)
-    
+
     # assume we have either type intersection or a 2d vector of reels 
     xVec = []
     yVec = []
@@ -585,16 +585,16 @@ function vertexListToDiscreteCell(vList)
         if isa(v, Intersection)
             push!(xVec, v.x)
             push!(yVec, v.y)
-        elseif isa(v, Vector{Float64}) && length(v) == 2 
+        elseif isa(v, Vector{Float64}) && length(v) == 2
             push!(xVec, v[1])
             push!(yVec, v[2])
-        else 
+        else
             println("ERROR: wrong element given in vertexListToDiscreteCell in overlap computation.")
-            return 
-        end 
-    end 
+            return
+        end
+    end
     return DiscreteCell(xVec, yVec)
-end 
+end
 
 function getInside_OutsideVertices(edgeInd, c, overlapVertexList)
     """
@@ -604,21 +604,21 @@ function getInside_OutsideVertices(edgeInd, c, overlapVertexList)
         3rd ... index of outside vertex in c 
     """
     if edgeInd == NumberOfCellWallPoints
-        nextInd = 1 
-    else 
+        nextInd = 1
+    else
         nextInd = edgeInd + 1
-    end 
-    v1 = [c.x[edgeInd],  c.y[edgeInd]] 
-    v2 = [c.x[nextInd],  c.y[nextInd]] 
-    
+    end
+    v1 = [c.x[edgeInd], c.y[edgeInd]]
+    v2 = [c.x[nextInd], c.y[nextInd]]
+
     if v2 in overlapVertexList
         return v1, v2, edgeInd, nextInd
-    else 
+    else
         return v2, v1, nextInd, edgeInd
-    end 
+    end
 end
 
-cross2d(a::AbstractVector, b::AbstractVector) = a[1]*b[2] - a[2]*b[1]
+cross2d(a::AbstractVector, b::AbstractVector) = a[1] * b[2] - a[2] * b[1]
 
 function bachelorOverlapForceCells(c1, c2; k=1)
     """
@@ -661,8 +661,8 @@ function bachelorOverlapForceCells(c1, c2; k=1)
     end
 
     # now add dynamic for vertices that are not part of the overlap cell 
-    for vertexListIndex in eachindex(vertexLists) 
-        vertexList = vertexLists[vertexListIndex] 
+    for vertexListIndex in eachindex(vertexLists)
+        vertexList = vertexLists[vertexListIndex]
         overlap = overlaps[vertexListIndex]
         K = length(overlap.x)
         area = areaPolygon(overlap.x, overlap.y)
@@ -679,34 +679,34 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 # v2, u2 are the overlap  INside vertices of c1, c2 
                 u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
                 v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
-                
+
                 I = [1 0; 0 1]
                 #TODO:  
-                f = cross2d(v1-u1, v2-v1)
-                g = cross2d(u2-u1, v2-v1)
+                f = cross2d(v1 - u1, v2 - v1)
+                g = cross2d(u2 - u1, v2 - v1)
                 t = f / g
-                dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]]*g - f*[-(v2[2] - v1[2]),   v2[1] - v1[1] ]) / g^2
-                dtu2 = (                                    - f*[  v2[2] - v1[2] , -(v2[1] - v1[1])]) / g^2
-                dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2
-                dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]]*g - f*[-(u2[2] - u1[2]),   u2[1] - u1[1] ]) / g^2
-                
+                dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]] * g - f * [-(v2[2] - v1[2]), v2[1] - v1[1]]) / g^2
+                dtu2 = (-f * [v2[2] - v1[2], -(v2[1] - v1[1])]) / g^2
+                dtv1 = ([-u1[2] + v2[2], u1[1] - v2[1]] * g - f * [u2[2] - u1[2], -(u2[1] - u1[1])]) / g^2
+                dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]] * g - f * [-(u2[2] - u1[2]), u2[1] - u1[1]]) / g^2
+
                 println("dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2")
                 println("f = $f")
                 println("g = $g")
                 println("u1 = $u1, u2 = $u2")
                 println("v1 = $v1, v2 = $v2")
-                dwu1 = (1 - t)*I + (u2-u1) * dtu1'         
-                dwu2 = t*I + (u2-u1) * dtu2'                      
-                dwv1 = (u2-u1) * dtv1'                      
-                dwv2 = (u2-u1) * dtv2'                        
+                dwu1 = (1 - t) * I + (u2 - u1) * dtu1'
+                dwu2 = t * I + (u2 - u1) * dtu2'
+                dwv1 = (u2 - u1) * dtv1'
+                dwv2 = (u2 - u1) * dtv2'
 
                 du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
                 dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
                 areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
                 dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
 
-                R = -dOi - dwu2*du2t - dwv2*dv2t 
-                
+                R = -dOi - dwu2 * du2t - dwv2 * dv2t
+
                 println("dwv1 = (u2-u1) * dtv1'")
                 println("(u2-u1)=$(u2-u1), dtv1' = $(dtv1')")
                 println("dwv1 = $dwv1")
@@ -717,8 +717,10 @@ function bachelorOverlapForceCells(c1, c2; k=1)
 
                 # dv1t = 0.5 * dwv1_inverted * R 
                 # du1t = 0.5 * dwu1_inverted * R 
-                dv1t = 0.5 * dwv1 \ R 
-                du1t = 0.5 * dwu1 \ R 
+                # dv1t = 0.5 * dwv1 \ R
+                # du1t = 0.5 * dwu1 \ R
+                dv1t = 0.5 * pinv(dwv1) * R
+                du1t = 0.5 * pinv(dwu1) * R
 
                 r1x[outsideInd_u] += dv1t[1]
                 r1y[outsideInd_u] += dv1t[2]
@@ -730,9 +732,9 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 println("r2x[$outsideInd_v] = $(r2x[outsideInd_v])")
                 println("r2y[$outsideInd_v] = $(r2y[outsideInd_v])")
                 println("")
-            end 
+            end
 
-        end 
+        end
     end
 
     return forceScalings[4] * r1x, forceScalings[4] * r1y, forceScalings[4] * r2x, forceScalings[4] * r2y

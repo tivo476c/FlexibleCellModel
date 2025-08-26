@@ -1,33 +1,11 @@
-# save as filter_timesteps.jl
-# run with: julia filter_timesteps.jl
+### CLEAN TO SAMPLE TIMES
 
-# Parameters
+# # Parameters
 # dt = 1e-5
 # sample_times = 0.00:0.01:0.05  # times we want to keep 
 
 # # Compute which step indices to keep
 # sample_steps = Int.(round.(sample_times ./ dt))
-
-
-# Process every .txt file in the same directory
-for file in filter(f -> endswith(f, ".txt"), readdir("."))
-    println("Processing $file ...")
-    lines = readlines(file)
-    delete_file = false
-    for line in lines
-        coords = tryparse.(Float64, split(line))
-        if any(isnothing, coords) || any(isnan, coords)
-            delete_file = true
-            break  # no need to check further lines
-        end
-    end
-    if delete_file
-        println("Deleting $file (contains NaN or invalid entry)")
-        rm(file)
-    end
-end
-
-
 
 # for file in filter(f -> endswith(f, ".txt"), readdir("."))
 #     println("Processing $file ...")
@@ -54,10 +32,6 @@ end
 #     # Keep only the wanted sample steps
 #     keep_blocks = [blocks[i] for i in sample_steps if i ≤ length(blocks)]
 
-#     if length(keep_blocks) == 5 && blocks[end] != last(keep_blocks)
-#         println("pshhhh... secretly adding last entry")
-#         push!(keep_blocks, blocks[end]) 
-#     end 
 
 #     if length(keep_blocks) == 6
 #         # Write reduced output to new file
@@ -79,3 +53,21 @@ end
 #         println("  Deleted original $file")
 #     end 
 # end
+
+### CLEAN AWAY SIMULATIONS WITH NaN, nothing or infinite entries 
+for file in filter(f -> endswith(f, ".txt"), readdir("."))
+    println("Processing $file ...")
+    lines = readlines(file)
+    delete_file = false
+    for line in lines
+        coords = tryparse.(Float64, split(line))
+        if any(isnothing, coords) || any(isnan, coords) || isinf(isnan, coords)
+            delete_file = true
+            break  # no need to check further lines
+        end
+    end
+    if delete_file
+        println("Deleting $file (contains NaN or invalid entry)")
+        rm(file)
+    end
+end
