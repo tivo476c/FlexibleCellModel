@@ -202,7 +202,7 @@ function createSimGif(gifPath::String,
             animSDE = @animate for i = 1:length(sol.t)
 
                 u = sol.u[i]
-                time = sol.t[i]- timeStepSize
+                time = sol.t[i] - timeStepSize
 
                 X, Y = solutionToXY(u)
 
@@ -247,9 +247,9 @@ function createSimGif(gifPath::String,
         animSDE = @animate for i = 1:NumberOfSampleTimes
 
             u = sol.u[i]
-            time = sampleTimes[i]  - timeStepSize
+            time = sampleTimes[i] - timeStepSize
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
-            title= simulationName
+            title = simulationName
             plt = plot(X[1], Y[1],
                 seriestype=:shape,
                 aspect_ratio=:equal,
@@ -320,7 +320,7 @@ function createEnergyDiagram(diaPath::String,
     plot!(sampleTimes2, edgeVector2, label="Edge energy")
     plot!(sampleTimes2, angleVector2, label="Interior angle energy")
     plot!(sampleTimes2, overlapVector2, label="Overlap energy")
-   
+
     savefig(diaPath)
 end
 
@@ -399,9 +399,9 @@ function do1SimulationRun(simRun)
     else
         u0 = initializeCells(radius)
         A_d, E_d, I_d = computeDesiredStates_circleCells()
-        p = timeStepSize, D, A_d, E_d, I_d 
+        p = timeStepSize, D, A_d, E_d, I_d
     end
-    
+
     cellProb = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
     @time sol = solve(cellProb,
         EM(),
@@ -517,7 +517,7 @@ function runSimulation_locations()
     # createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
-    results = pmap(do1SimulationRun, 1:NumberOfSimulations)
+    # results = pmap(do1SimulationRun, 1:NumberOfSimulations)
 
     ### 3rd: CREATE THE HEATMAP FROM ALL SIMULATION DATA 
     heatmatrices = makeMatrices()
@@ -606,28 +606,28 @@ function runShow_overlap()
     # c1 = cellToDiscreteCell(circleCell([-0.0025, 0.0], radius), 6) 
     # c2 = cellToDiscreteCell(circleCell([0.0025, 0.0], radius), 6; rotation=pi/6.0) 
     # u0 = [c1.x; c2.x; c1.y; c2.y]
-    
+
     ### area force config 
     # c1 = DiscreteCell(0.7.*[0.01, 0.0, -0.01, -0.01, 0.0, 0.01], 0.1.*[0.0025, 0.005, 0.0025, -0.0025, -0.005, -0.0025])
     # u0 = [c1.x; c1.y]
-    
+
     ### edge force config 
     # c1 = DiscreteCell([0.01, 0.0005, -0.0005, -0.01, -0.0005, 0.0005], [0.0, 0.004, 0.004, 0.0, -0.004, -0.004])
     # u0 = [c1.x; c1.y]
-    
+
     ### interior angle force config 
     # c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
     # u0 = [c1.x; c1.y]
-    
+
     #### deforming overlap force config 
-    c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6) 
-    c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi/6.0) 
+    c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6)
+    c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi / 6.0)
     u0 = [c1.x; c2.x; c1.y; c2.y]
 
-    
+
     ###########################################################################################
     A_d = circleArea(radius, N)
-    E_d = circleEdgeLengths(radius, N) 
+    E_d = circleEdgeLengths(radius, N)
     I_d = circleInteriorAngles(N)
     p = timeStepSize, D, A_d, E_d, I_d
     cellProblem = SDEProblem(energies!, nomotion!, u0, timeInterval, p)
