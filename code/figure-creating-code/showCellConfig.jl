@@ -1,3 +1,5 @@
+using LinearAlgebra
+
 include("../parameters.jl") 
 include("../energies.jl") 
 
@@ -114,8 +116,8 @@ for vertexListIndex in eachindex(vertexLists)
 
             # dv1t = 0.5 * dwv1_inverted * R 
             # du1t = 0.5 * dwu1_inverted * R 
-            dv1t = 0.5 * dwv1 \ R 
-            du1t = 0.5 * dwu1 \ R 
+            dv1t = 0.5 * pinv(dwv1) * R 
+            du1t = 0.5 * pinv(dwu1) * R 
 
             r1x[outsideInd_u] += dv1t[1]
             r1y[outsideInd_u] += dv1t[2]

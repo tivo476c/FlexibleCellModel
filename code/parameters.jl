@@ -26,9 +26,9 @@ overlapForceType = overlapForceTypes[1]
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor]
 
 ## Simulation time parameters: 
-timeStepSize = 10^(-5)
+timeStepSize = 10^(-6)
 # T = 0.05
-T = 3*timeStepSize
+T = 20*timeStepSize
 timeInterval = (0.0, T)
 
 NumberOfSimulations = 10^4
