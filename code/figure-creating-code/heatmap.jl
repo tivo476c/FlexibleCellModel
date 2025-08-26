@@ -41,30 +41,30 @@ function mirrowhorizontal!(matrices)
     for i in eachindex(matrices)
         secondMatrix = reverse(matrices[i], dims=2)
         matrices[i] += secondMatrix
-        matrices[i] .*= 0.5 
-    end 
-    
-end 
+        matrices[i] .*= 0.5
+    end
+
+end
 
 function mirrowvertical!(matrices)
 
     for i in eachindex(matrices)
         secondMatrix = reverse(matrices[i], dims=1)
         matrices[i] += secondMatrix
-        matrices[i] .*= 0.5 
-    end 
-    
-end 
+        matrices[i] .*= 0.5
+    end
+
+end
 
 function addTransposed!(matrices)
 
     for i in eachindex(matrices)
         secondMatrix = transpose(matrices[i])
         matrices[i] += secondMatrix
-        matrices[i] .*= 0.5 
-    end 
-    
-end 
+        matrices[i] .*= 0.5
+    end
+
+end
 
 
 
@@ -77,13 +77,14 @@ function smoothenMatrix!(matrices)
     mirrowvertical!(matrices)
     addTransposed!(matrices)
 
-end 
+end
 
 function makeMatrices()
     # ONE MATRIX STORES THE ENTRIES FOR ONE SAMPLE TIME AT ALL SIMULATION ITERATIONS 
 
     matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
     for file in readdir(locationsPath)
+        println("file = $file")
         runPath = joinpath(locationsPath, file)
         i = 1
         open(runPath, "r") do file_stream
@@ -100,6 +101,7 @@ function makeMatrices()
                     end
                 end
             end
+
         end
     end
 
@@ -108,31 +110,31 @@ function makeMatrices()
 end
 
 function addSolToMatrices(solution, matrices)
-    
-    for counter=1:NumberOfSampleTimes
-        
+
+    for counter = 1:NumberOfSampleTimes
+
         # extract centres from solution 
-        X,Y = solutionToXY(solution[counter])
+        X, Y = solutionToXY(solution[counter])
         centresX = zeros(NumberOfCells)
         centresY = zeros(NumberOfCells)
-        if NumberOfCellWallPoints == 0 
-            centresX = X 
-            centresY = Y 
-        else 
+        if NumberOfCellWallPoints == 0
+            centresX = X
+            centresY = Y
+        else
             for i = 1:NumberOfCells
                 centresX[i] = sum(X[i]) / Float64(NumberOfCellWallPoints)
                 centresY[i] = sum(Y[i]) / Float64(NumberOfCellWallPoints)
-            end 
-        end 
+            end
+        end
 
         # add centres to matrices
         for i = 1:NumberOfCells
             coords = [centresX[i], centresY[i]]
             row, column = getMatrixIndex(coords)
             matrices[counter][row, column] += 1
-        end 
-    end 
-end 
+        end
+    end
+end
 
 
 
@@ -179,8 +181,8 @@ function createHeatmaps(matrices)
         heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.3f", sampleTime), "bruna12scale.png")
         # heatMapName = string("heatmap-sampleTime", sampleTime, "bruna12scale.png")
         title = string("Heatmap of simulation '", simulationName, "'")
-        caption = string("Number of cells = $NumberOfCells")
-        # caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
+        # caption = string("Number of cells = $NumberOfCells")
+        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
         heatmap(HeatGrid, HeatGrid, matrices[i],
             xlimits=domain,
