@@ -724,26 +724,41 @@ This force is first computed based on the geometry of the overlap and then distr
 To decrease the overlap areas during the simulation, we evaluate the gradient flow of the area energy with a desired area of zero which indicates the direction of motion for each vertex for reducing the overlap areas.
 
 \begin{proposition} \textbf{Deforming overlap force} \\
-	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is given by  
-	\begin{align*}
-		F_{k}^{\hat{(O)}}(\vec{C}) 
-		= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \vec{v}_1^{\:N_C} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T,
-	\end{align*}
-	where the gradient $\nabla_{\vec{v}^{\:i}_j} O_k(\vec{C})$ with respect to $\vec{v}^{\:i}_j$ is given by 
-	\begin{align}
-		\begin{split}
-			\nabla_{\vec{v}^{\:i}_j} O_k(\vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}^{\:i}_j}(D) \dfrac{1}{2} |A_{D}|^{k-1} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} \right)
-		\end{split}
-		\label{gradient:overlap}
-	\end{align}
-	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\Omega_{i,m}$ is the set of all overlaps that arise between the cells $i$ and $m$, $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
-	The dirac $\delta_{\vec{v}^{\:i}_j}(D)$ equals one, if $\vec{v}^{\:i}_j$ is a vertex of the overlap $D$ and zero otherwise. \\
-	For addressing the overlap force that acts on cell $1 \leq i \leq N_C$, we define 
+	% The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is given by  
+	% \begin{align*}
+	% 	F_{k}^{\hat{(O)}}(\vec{C}) 
+	% 	= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \vec{v}_1^{\:N_C} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T,
+	% \end{align*}
+	% where the gradient $\nabla_{\vec{v}^{\:i}_j} O_k(\vec{C})$ with respect to $\vec{v}^{\:i}_j$ is given by 
+	% \begin{align}
+	% 	\begin{split}
+	% 		\nabla_{\vec{v}^{\:i}_j} O_k(\vec{C}) &= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}^{\:i}_j}(D) \dfrac{1}{2} |A_{D}|^{k-1} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} \right)
+	% 	\end{split}
+	% 	\label{gradient:overlap}
+	% \end{align}
+	% for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\Omega_{i,m}$ is the set of all overlaps that arise between the cells $i$ and $m$, $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
+	% The dirac $\delta_{\vec{v}^{\:i}_j}(D)$ equals one, if $\vec{v}^{\:i}_j$ is a vertex of the overlap $D$ and zero otherwise. \\
+	% For addressing the overlap force that acts on cell $1 \leq i \leq N_C$, we define 
+	% \begin{center}
+	% 	$F_{k, i}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
+	% 	$F_{k, i}^{\hat{(O)}}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))^T$. 
+	% \end{center}
+	Let $\Omega_{i,j}$ be the set of all overlaps between the cells $C_i$ and $C_j$. 
+	Each overlap cell $o \in \Omega_{i,j}$ is a list of vertices, that form the overlap just like a DF cell. 
+	The vertices in $o$ can be divided into the vertices that are either in $C_i$ in $C_j$, we call that set $V(o)$, and into the vertices that are neither in $C_i$ or $C_j$, named $W(o) = o \setminus V(o)$.
+	All overlap vertices in $W(o)$ are intersections between the cells $C_i$ and $C_j$. 
+	Each intersection $\vec{w}$ is dependent on two vertices of each cell that limit the edges that intersect, where the intersection point $\vec{w}$ arises. 
+	We call those four vertices adjacent to the intersection $\vec{w}$. 
+	All intersection adjacent vertices will get an extra deforming overlap dynamic applied, since they influence the overlap area, and thus the overlap energy, via the intersection point they create. 
+	From each cell we get one vertex that is part of the overlap cell, called the inside vertex, and one vertex that is not part of the overlap, called the outside vertex. 
+	For each intersection $\vec{w} \in W(o)$, we call its adjacent vertices $\text{adj}(\vec{w}) = \{\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{in}}^{\: j}, \vec{v}_{\text{out}}^{\: j} \}$.  
+	Given the four adjacent vertices, we can always compute the intersection with the function:
 	\begin{center}
-		$F_{k, i}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
-		$F_{k, i}^{\hat{(O)}}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))^T$. 
+		$w: (\R^2)^4 \rightarrow \R^2$, \\
+		$w(\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{in}}^{\: j}, \vec{v}_{\text{out}}^{\: j}) = \vec{v}_{\text{out}}^{\: i} + \dfrac{(\vec{v}_{\text{out}}^{\: j} - \vec{v}_{\text{out}}^{\: i}) \times (\vec{v}_{\text{in}}^{\: j} - \vec{v}_{\text{out}}^{\: j})}{(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \times (\vec{v}_{\text{in}}^{\: j} - \vec{v}_{\text{out}}^{\: j})} (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i})$,
 	\end{center}
-	
+	where $(a^x, a^y)^T \times (b^x, b^y)^T = a^x b^y - a^y b^x$ denotes the two dimensional cross product. \\
+	We use this function to compute the influence of the adjacent vertices to the intersection point via the partial derivatives $\dfrac{\partial w(\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{in}}^{\: j}, \vec{v}_{\text{out}}^{\: j})}{\partial \vec{v}_{\text{in}}^{\: i}}$ and $\dfrac{\partial w(\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{in}}^{\: j}, \vec{v}_{\text{out}}^{\: j})}{\partial \vec{v}_{\text{out}}^{\: i}}$. 
 
 	Proof. \\
 	
