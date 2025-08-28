@@ -755,7 +755,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 \end{definition}
 
 \begin{proposition} \textbf{Partial derivatives of intersection points} \\
-	We use $w(\vargs)$ to compute the influence of the adjacent vertices to the intersection point via their partial derivatives and the chain rule.
+	We use $w(\vargs)$ to compute the influence of the adjacent vertices to the intersection point via their partial derivatives.
 	In this proposition, we compute the needed partial derivatives. \\
 	We define the following helper functions:
 	\begin{align*}
@@ -874,7 +874,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		= (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
-		\end{pmatrix}^T. \\[0.5em]
+		\end{pmatrix}^T, \\[0.5em]
 	\end{align*}
 	
 	\begin{align*}
@@ -882,6 +882,8 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\dfrac{\partial w_1}{\partial v_{\text{in}}^{i, y}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, y}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + 0, \\[0.5em]
 		\dfrac{\partial w_2}{\partial v_{\text{in}}^{i, x}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, x}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + 0, &\quad 
 		\dfrac{\partial w_2}{\partial v_{\text{in}}^{i, y}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, y}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + t, \\[0.5em]
+	\end{align*}
+	\begin{align*}
 		\Rightarrow \dfrac{\partial w}{\vec{v}_{\text{in}}^{\: i}} = t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{in}}^{\: i}} t)^T \\[0.5em]
 		= t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{f}{g^2} \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
@@ -902,11 +904,15 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) = \sum\limits_{D \in \Omega_{i,m}}  |A_{D}|^{k-1} \Biggl(& \mathbf{1}_{V(D)}(\vec{v}_j^{\: i})\dfrac{1}{2}\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} +\\
-			& \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}} O_k(\vec{C}) \Biggr),
+			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{i,m}}  |A_{D}|^{k-1} A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
+				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} %+ \\
+													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}} \right) \nabla_{\vec{w}}A(D)\Biggr),
 		\end{split}
 	\end{align}
-	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
+	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively. \\
+	Note, that the Formulas \ref{equ:dwv_out} and \ref{equ:dwv_in} define $\frac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}$ and $\frac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}}$, respectively. \\
+	The difference between $\nabla_{\vec{v}_j^{\: i}}A(D)$ and $\nabla_{\vec{w}}A(D)$ is that $\nabla_{\vec{v}_j^{\: i}}A(D)$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A(D)$ uses the neighbors of the corresponding intersection point in $D$, which is not the same overlap vertex as $\vec{v}_j^{\: i}$.
+    $A_{D}$ is the area of the overlap $D$.\\
 	The indicator function $\mathbf{1}_{A}(\vec{v})$ equals one, if $\vec{v} \in A$ and is zero otherwise. \\
 	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is then given by  
 	\begin{align*}
@@ -947,11 +953,11 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
 		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}}A(D), \\
+		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}\nabla_{\vec{w}}A(D), \\
 	\end{align*}
 	where, according to Equation \ref{equ:dwv_out}
 	\begin{align*}
-		\dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_j^{\: i}) \begin{pmatrix}
+		\dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_j^{\: i}) \begin{pmatrix}
 			-(v_{\text{in}}^{i, y} - v_{j}^{i, y}) \\[0.5em]
 			 v_{\text{in}}^{i, x} - v_{j}^{i, x}
 		\end{pmatrix}^T,
@@ -979,17 +985,21 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
 		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
-		\textbf{Overall:}\\
+		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D) %+ \\[0.5em]
+							+ \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}}A(D) \Biggr)\\[0.5em]
+		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D) + \\[0.5em]
+							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}\nabla_{\vec{w}}A(D) %+ \\
+		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}}\nabla_{\vec{w}}A(D)\right) \Biggr)\\[0.5em]
+		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
+							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} %+ \\
+		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}} \right) \nabla_{\vec{w}}A(D)\Biggr),
 	\end{align*}
+	where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively.\\
+	The difference between $\nabla_{\vec{v}_j^{\: i}}A(D)$ and $\nabla_{\vec{w}}A(D)$ is, that $\nabla_{\vec{v}_j^{\: i}}A(D)$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A(D)$ uses the neighbors of the according intersection point in $D$ which is not the same overlap vertex as $\vec{v}_j^{\: i}$. 
 	
-	Let us begin with the computation:
-	\begin{align*}
-		\nabla_{\vec{v}_j} \frac{1}{k}|A_{D}|^k
-	\end{align*}
+	\textbf{Overall:}\\
+	Actually, Case 4 already provides the final formulation, since in the other cases the additional terms vanish due to the indicator functions.
 		
-
-	
 	\qed
 \end{proposition}
 
