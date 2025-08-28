@@ -920,6 +920,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{center}
 
 	Proof. \\
+	%TODO: change from A_D^k to (A_D)^k
 	Although we did not noted it like this before, we must be aware that $A_D$ is actually dependent on all overlap vertices, e.g. $A_D = A(D)$.
 	We will also use that notation in the coming computation. 
 	Since the area $A(D)$ is always positive, we can drop the absolute value. \\
@@ -946,7 +947,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
 		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}}A(D), \\
+		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}}A(D), \\
 	\end{align*}
 	where, according to Equation \ref{equ:dwv_out}
 	\begin{align*}
@@ -963,42 +964,31 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of the intersection $\vec{w}$ in the overlap $D$.\\
 
 	\textbf{Case 3:} $\vec{v}_j^{\: i} \in D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
+	Now, $\vec{v}_j^{\: i}$ is a pure inside overlap vertex, in the sence that it does not have an intersection point as a neighbor in the overlap. 
+	This dynamic is quite easy, since we just have to use the Shoelace Formular~\ref{prop:Shoelace} for once more: 
+	\begin{align*}
+		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
+		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
+		&= A_{D}^{k-1} \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
+	\end{align*}
+	where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}_j^{\: i}$ in the overlap $D$.\\
 
 	\textbf{Case 4:} $\vec{v}_j^{\: i} \in D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$\\
-
-	\textbf{Overall:}\\
-
+	In the last case, the considered vertex is an overlap vertex and also adjacent to at least one intersection point. 
+	Thus, we have to add both dynamics from the last two cases and then use the partial derivative for inside vertices. 
+	\begin{align*}
+		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
+		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
+		&= A_{D}^{k-1} \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
+		\textbf{Overall:}\\
+	\end{align*}
+	
 	Let us begin with the computation:
 	\begin{align*}
 		\nabla_{\vec{v}_j} \frac{1}{k}|A_{D}|^k
-		&= \begin{cases}
-			\nabla_{\vec{v}_j} \frac{1}{k} |A_{D}|^k &\text{ if } \vec{v}_j \in D \\
-			0 &\text{ if } \vec{v}_j \notin D
-		\end{cases} \\
-		&= \delta_{\vec{v}_j}(D)  \nabla_{\vec{v}_j} \frac{1}{k}|A_{D} - 0|^k \\
-		&= \delta_{\vec{v}_j}(D)  \nabla_{\vec{v}_j} A_k(D) \\
-		&= \delta_{\vec{v}_j}(D)  \dfrac{1}{2} \sgn(A_{D} - 0) |A_{D} - 0|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} \\
-		&= \delta_{\vec{v}_j}(D)  \dfrac{1}{2} |A_{D}|^{k-1} 
-		\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix}, \\
 	\end{align*}
-	% where we obeserved the presence of the area energy $A_k(D) = \frac{1}{k}|A_{D} - 0|^k$ and used the area gradient from Formula \ref{gradient:area}. 
-	% The desired cell area of the overlap is always zero, as we want to achieve a setting without overlaps. 
-	% The vertices $\vec{d}_{j-1}^{\: D}$ and $\vec{d}_{j+1}^{\: D}$ represent the neighboring vertices of $\vec{v}_j$ in the overlap cell. \\
-	% Overall, we get:
-	% \begin{align*}
-	% 	\nabla_{\vec{v}_j^{\: i}} O_k(C_i, \vec{C}) 
-	% 	&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{n=1}^{N_C} \left( \sum\limits_{m=n+1}^{N_C}  \left(\sum\limits_{D \in \Omega_{n,m}} \frac{1}{k}|A_{D}|^k\right) \right) \\
-	% 	&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right)\\
-	% 	&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D}|^k\right)\\
-	% 	&= \sum\limits_{m=1, m \neq i}^{N_C} \left( \sum\limits_{D \in \Omega_{i,m}} \delta_{\vec{v}_j^{\: i}}(D)  \dfrac{1}{2} |A_{D}|^{k-1} 
-	% 	\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix}\right)\\
-	% \end{align*}
+		
 
-	\begin{align*}
-		\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{in}}^{\: i}} &= 
-	\end{align*}
-	
 	
 	\qed
 \end{proposition}
