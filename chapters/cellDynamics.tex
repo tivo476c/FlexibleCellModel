@@ -756,33 +756,42 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 \begin{proposition} \textbf{Partial derivatives of intersection points} \\
 	We use $w(\vargs)$ to compute the influence of the adjacent vertices to the intersection point via their partial derivatives and the chain rule.
-	In this proposition, we compute the needed partial derivatives. 
+	In this proposition, we compute the needed partial derivatives. \\
+	We define the following helper functions:
+	\begin{align*}
+		f: (\R^2)^3 \rightarrow \R^{\:} \quad f(\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m}, \vec{v}_{\text{in}}^{\: m}) &= \tu \\[1em]
+		g: (\R^2)^4 \rightarrow \R^{\:} \quad g(\vargs) &= \tl\\[1em]
+		t: (\R^2)^4 \rightarrow \R^{\:} \quad t(\vargs) &= \dfrac{f(\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m}, \vec{v}_{\text{in}}^{\: m})}{g(\vargs)} \\[1em]
+		w: (\R^2)^4 \rightarrow \R^2 \quad w(\vargs) &= \vec{v}_{\text{out}}^{\: i} + t(\vargs)(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \\[1em]
+	\end{align*}
 	It is sufficient to just compute the partial derivatives with respect to $\vec{v}_{\text{in}}^{\: i}$ and $\vec{v}_{\text{out}}^{\: i}$.
-	If we want the dynamic for the vertices of the other cell, we just switch the arrangement of the arguments (switch $\vec{v}_{\text{in}}^{\: i}$ with $\vec{v}_{\text{in}}^{\: j}$ and $\vec{v}_{\text{out}}^{\: i}$ with $\vec{v}_{\text{out}}^{\: j}$) and then use the same partial derivatives as for the first cell. 
+	If we want the dynamic for the vertices of the other cell, we just switch the arrangement of the arguments (switch $\vec{v}_{\text{in}}^{\: i}$ with $\vec{v}_{\text{in}}^{\: j}$ and $\vec{v}_{\text{out}}^{\: i}$ with $\vec{v}_{\text{out}}^{\: j}$) and then use the same partial derivatives as for the first cell. \\
 	The partial derivatives are: 
 	\begin{align}
 		\begin{split}
 			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{out}}^{\: i}}: (\R^2)^4 \rightarrow \R^{2 \times 2}, \\[0.5em]
-			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{out}}^{\: i}} = (1 - t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i})(\nabla_{\vec{v}_{\text{out}}} t)^T,
+			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{out}}^{\: i}} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}^T,
 		\end{split}
 	\end{align}
 
 	\begin{align}
 		\begin{split}
 			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{in}}^{\: i}}: (\R^2)^4 \rightarrow \R^{2 \times 2}, \\[0.5em]
-			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{in}}^{\: i}} = t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i})(\nabla_{\vec{v}_{\text{in}}} t)^T.
+			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{in}}^{\: i}} = t I_2 \:+\: \dfrac{f}{g^2}(\vec{v}_{\text{in}}^{\: i} \;-\; &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}^T.
 		\end{split}
 	\end{align}
 
 	Proof.\\
 
-	$f(\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m}, \vec{v}_{\text{in}}^{\: m}) = \tu$ \\[1em]
-	$g(\vargs) = \tl$\\[1em]
-	$t(\vargs) = \dfrac{f(\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m}, \vec{v}_{\text{in}}^{\: m})}{g(\vargs)}$ \\[1em]
-	$w(\vargs) = \vec{v}_{\text{out}}^{\: i} + t(\vargs)(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i})$ \\[1em]
 	For the ease of notation, we will drop the arguments, but keep in mind that $f$, $g$ and $t$ are dependent on the vertices. 
 
-	We need 
+	First of all, we compute the gradients of $f$ and $g$: 
 	\begin{align*}
 		\nabla_{\vec{v}_{\text{out}}^{\: i}} f 
 		&= \nabla_{\vec{v}_{\text{out}}^{\: i}}[(v_{\text{out}}^{m, x} - v_{\text{out}}^{i, x})(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) - (v_{\text{out}}^{m, y} - v_{\text{out}}^{i, y})(v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x})] \\[0.5em]
@@ -816,25 +825,78 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		&= \begin{pmatrix}
 			v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y} \\[0.5em]
 			-(v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x})
-		\end{pmatrix}. 
+		\end{pmatrix}. \\[2em]
 	\end{align*}
-	\vspace{3cm}
+	Now, we can succeed with the gradients of $t$:
 	\begin{align*}
 		\nabla_{\vec{v}_{\text{out}}^{\: i}} t
 		&= \nabla_{\vec{v}_{\text{out}}^{\: i}} \dfrac{f}{g} \\
-		&= \dfrac{(\nabla_{\vec{v}_{\text{out}}^{\: i}} f) g - (\nabla_{\vec{v}_{\text{out}}^{\: i}} g) f}{g^2}
+		&= \dfrac{(\nabla_{\vec{v}_{\text{out}}^{\: i}} f) g - (\nabla_{\vec{v}_{\text{out}}^{\: i}} g) f}{g^2} \\[0.5em]
+		&= \dfrac{1}{g^2} \left(\begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix} g - \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix} f\right)\\[0.5em]
+		&= \dfrac{g - f}{g^2} \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}\\[1em]
+	\end{align*}
+	\begin{align*}	
+		\nabla_{\vec{v}_{\text{in}}^{\: i}} t
+		&= \nabla_{\vec{v}_{\text{in}}^{\: i}} \dfrac{f}{g} \\
+		&= \dfrac{(\nabla_{\vec{v}_{\text{in}}^{\: i}} f) g - (\nabla_{\vec{v}_{\text{in}}^{\: i}} g) f}{g^2} \\[0.5em]
+		&= \dfrac{1}{g^2} \left( - \begin{pmatrix}
+			v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y} \\[0.5em]
+			-(v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x})
+		\end{pmatrix} f\right). \\[0.5em]
+		&= \dfrac{f}{g^2} \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}. \\[0.5em]
 	\end{align*}
 
+	And finally, we can compute the partial derivatives of $w = (w_1, w_2)^T$:
 	\begin{align*}
-		\nabla_{\vec{v}_{\text{in}}^{\: i}} t
-		&= 
+		\dfrac{\partial w_1}{\partial v_{\text{out}}^{i, x}} = 1 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, x}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) - t, &\quad 
+		\dfrac{\partial w_1}{\partial v_{\text{out}}^{i, y}} = 0 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, y}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + 0, \\[0.5em]
+		\dfrac{\partial w_2}{\partial v_{\text{out}}^{i, x}} = 0 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, x}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + 0, &\quad 
+		\dfrac{\partial w_2}{\partial v_{\text{out}}^{i, y}} = 1 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, y}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) - t, \\[0.5em]
+		\Rightarrow \dfrac{\partial w}{\vec{v}_{\text{out}}^{\: i}} = (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{out}}^{\: i}} t)^T \\[0.5em]
+		= (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{g - f}{g^2} \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}\right)^T \\[0.5em]
+		= (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}^T. \\[0.5em]
 	\end{align*}
+	
+	\begin{align*}
+		\dfrac{\partial w_1}{\partial v_{\text{in}}^{i, x}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, x}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + t, &\quad 
+		\dfrac{\partial w_1}{\partial v_{\text{in}}^{i, y}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, y}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + 0, \\[0.5em]
+		\dfrac{\partial w_2}{\partial v_{\text{in}}^{i, x}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, x}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + 0, &\quad 
+		\dfrac{\partial w_2}{\partial v_{\text{in}}^{i, y}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, y}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + t, \\[0.5em]
+		\Rightarrow \dfrac{\partial w}{\vec{v}_{\text{in}}^{\: i}} = t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{in}}^{\: i}} t)^T \\[0.5em]
+		= t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{f}{g^2} \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}\right)^T \\[0.5em]
+		= \; t I_2 \:+\: \dfrac{f}{g^2}(\vec{v}_{\text{in}}^{\: i} \;-\; &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
+			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
+		\end{pmatrix}^T. \\[0.5em]
+	\end{align*}
+
 	
 \end{proposition}
 
 \begin{proposition} \textbf{Deforming overlap force} \\
 	Let $\Omega_{i,m}$ be the set of all overlaps between the cells $C_i$ and $C_m$. 
-	Each overlap cell $D \in \Omega_{i,m}$ is a list of vertices, that form the overlap just like a DF cell. \\
+	Each overlap cell $D \in \Omega_{i,m}$ is a list of vertices, that form the overlap, just like a DF cell. \\
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
@@ -842,7 +904,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 			& \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial  O_k(\vec{C})}{\partial \vec{w}} \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}} \Biggr),
 		\end{split}
 	\end{align}
-	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\Omega_{i,m}$ is the set of all overlaps that arise between the cells $i$ and $m$, $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
+	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
 	The indicator function $\mathbf{1}_{A}(\vec{v})$ equals one, if $\vec{v} \in A$ and is zero otherwise. \\
 	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is then given by  
 	\begin{align*}
@@ -856,13 +918,15 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{center}
 
 	Proof. \\
+	Although we did not noted it like this before, we must be aware that $A_D$ is actually dependent on all overlap vertices, e.g. $A_D = A(D)$.
+	We will also use that notation in the coming computation. 
 	We aim to compute 
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) 
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right) \right) \\
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} O_k^{i,m}(C_i, C_m) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k \\
-		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D}|^k. 
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A(D)|^k \\
+		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A(D)|^k. 
 	\end{align*}
 	Now, there are different cases. \\
 	\textbf{Case 1:} $\vec{v}_j^{\: i} \notin D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
