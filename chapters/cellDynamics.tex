@@ -775,6 +775,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
 		\end{pmatrix}^T,
 		\end{split}
+		\label{equ:dwv_out}
 	\end{align}
 
 	\begin{align}
@@ -785,6 +786,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
 		\end{pmatrix}^T.
 		\end{split}
+		\label{equ:dwv_in}
 	\end{align}
 
 	Proof.\\
@@ -900,8 +902,8 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) = \sum\limits_{D \in \Omega_{i,m}} \dfrac{1}{2} |A_{D}|^{k-1} \Biggl(& \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} +\\
-			& \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial  O_k(\vec{C})}{\partial \vec{w}} \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}} \Biggr),
+			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) = \sum\limits_{D \in \Omega_{i,m}}  |A_{D}|^{k-1} \Biggl(& \mathbf{1}_{V(D)}(\vec{v}_j^{\: i})\dfrac{1}{2}\begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix} +\\
+			& \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}} O_k(\vec{C}) \Biggr),
 		\end{split}
 	\end{align}
 	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{	\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}^{\:i}_j$ in the overlap $D$ and $A_{D}$ is the area of the overlap $D$.\\
@@ -920,27 +922,46 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	Proof. \\
 	Although we did not noted it like this before, we must be aware that $A_D$ is actually dependent on all overlap vertices, e.g. $A_D = A(D)$.
 	We will also use that notation in the coming computation. 
+	Since the area $A(D)$ is always positive, we can drop the absolute value. \\
 	We aim to compute 
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) 
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right) \right) \\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}A_{D}^k\right) \right) \\
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} O_k^{i,m}(C_i, C_m) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A(D)|^k \\
-		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A(D)|^k. 
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}A(D)^k \\
+		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}A(D)^k. 
 	\end{align*}
 	Now, there are different cases. \\
 	\textbf{Case 1:} $\vec{v}_j^{\: i} \notin D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
 	In the first case, the considered vertex is neither a vertex from the overlap cell $D$, nor adjacent to any intersection point. \\
 	Hence, this vertex has zero impact on the overlap and its gradient is zero:
 	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k}|A_{D}|^k = 0.
+		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k}A_{D}^k = 0.
 	\end{align*}
 
 	\textbf{Case 2:} $\vec{v}_j^{\: i} \notin D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$\\
 	For case 2, we consider a vertex that is not directly an overlap vertex, but it influences the overlap cell by influencing an intersection point $\vec{w}$. 
 	This means that $\vec{v}_j^{\: i}$ is an outside adjacent vertex of the intersection $\vec{w}$. 
-	In order to compute the gradient, we need the partial derivative $\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{out}}^{\: i}}$.
-	
+	We compute:
+	\begin{align*}
+		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
+		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
+		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}}A(D), \\
+	\end{align*}
+	where, according to Equation \ref{equ:dwv_out}
+	\begin{align*}
+		\dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_j^{\: i}) \begin{pmatrix}
+			-(v_{\text{in}}^{i, y} - v_{j}^{i, y}) \\[0.5em]
+			 v_{\text{in}}^{i, x} - v_{j}^{i, x}
+		\end{pmatrix}^T,
+	\end{align*}
+	because $\vec{v}_j^{\: i}$ is an outside vertex in this case and $\vec{v}_{\text{in}}^{\: i}$ is the vertex adjacent to $\vec{v}_j^{\: i}$ in cell $i$, such that these vertices build the edge causing the intersection. \\
+	The gradient $\nabla_{\vec{w}}A(D)$ can easily be computed via the Shoelace Formula~\ref{prop:Shoelace}, as in the area gradient from Formula~\ref{gradient:area}:
+	\begin{align*}
+		\nabla_{\vec{w}}A(D) = \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
+	\end{align*}
+	where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of the intersection $\vec{w}$ in the overlap $D$.\\
+
 	\textbf{Case 3:} $\vec{v}_j^{\: i} \in D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
 
 	\textbf{Case 4:} $\vec{v}_j^{\: i} \in D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$\\
