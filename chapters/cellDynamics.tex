@@ -149,6 +149,14 @@ It is also valid to write $F_{j}^{(A)}(\vec{C})$ instead of $F_{j}^{(A)}(C)$, si
 	\end{center}
 \end{figure}
 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-show-areaForce.png}
+		\caption{}
+		\label{fig:areaEnergy}
+	\end{center}
+\end{figure}
+
 
 Figure~\ref{fig:areaForce} illustrates how the area force acts on a cell to either expand or contract it toward the desired target area.
 
@@ -294,6 +302,13 @@ An isolated application of the edge force can be seen in Figure \ref{fig:edgeFor
 	\end{center}
 \end{figure}
 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-show-edgeForce.png}
+		\caption{}
+		\label{fig:edgeEnergy}
+	\end{center}
+\end{figure}
 
 \subsection{Interior angle force}
 % mention scaling factor of /360 for interior angle force 
@@ -594,6 +609,16 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 		\label{fig:angleForce}
 	\end{center}
 \end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-show-intAngleForce.png}
+		\caption{}
+		\label{fig:intAngleEnergy}
+	\end{center}
+\end{figure}
+
+
 
 
 
@@ -986,7 +1011,15 @@ Figure \ref{fig:overlapForce} illustrates the interaction between two overlappin
 		\includegraphics[width=15cm]{forces/defOverlap1.png}
 			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}}, to see the animation as a gif.
 			}
-			\label{fig:overlapForce}
+			\label{fig:deformingOverlapForce}
+	\end{center}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-show-DeformaingOverlapForce.png}
+		\caption{}
+		\label{fig:deformingOverlapEnergy}
 	\end{center}
 \end{figure}
 
@@ -1076,7 +1109,15 @@ In the limiting case $h = 0$, we recover the DF dynamics without the bounce over
 		\includegraphics[width=15cm]{forces/bounceOverlap1.png}
 			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}}, to see the animation as a gif.
 			}
-			\label{fig:overlapForce}
+			\label{fig:bounceOverlapForce}
+	\end{center}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-show-bounceOverlapForce.png}
+		\caption{}
+		\label{fig:bounceOverlapEnergy}
 	\end{center}
 \end{figure}
 
@@ -1174,20 +1215,44 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\end{center}
 \end{figure}
 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-allforces_soft.png}
+		\caption{}
+		\label{fig:allEnergies-soft}
+	\end{center}
+\end{figure}
+
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[width=15cm]{forces/allforces_0-5.png}
-			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}}, to see the animation as a gif.
-			}
-			\label{fig:overlapForce}
+		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}}, to see the animation as a gif.
+		}
+		\label{fig:overlapForce}
+	\end{center}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-allforces_0-5.png}
+		\caption{}
+		\label{fig:allEnergies-half}
 	\end{center}
 \end{figure}
 
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[width=15cm]{forces/allforces_hard.png}
-			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}}, to see the animation as a gif.
-			}
-			\label{fig:overlapForce}
+		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}}, to see the animation as a gif.
+		}
+		\label{fig:overlapForce}
+	\end{center}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=6cm]{forces/energies-allforces_hard.png}
+		\caption{}
+		\label{fig:allEnergies-hard}
 	\end{center}
 \end{figure}

@@ -338,11 +338,11 @@ function createEnergyDiagram(diaPath::String,
     edgeVector2 = edgeVector[2:end]
     angleVector2 = angleVector[2:end]
     overlapVector2 = overlapVector[2:end]
-    plt = plot()
+    plt = plot(dpi=dpi)
     plot!(plt, sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
-    plot!(plt, sampleTimes2, edgeVector2, label="Edge energy")
-    plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy")
-    plot!(plt, sampleTimes2, overlapVector2, label="Overlap energy")
+    plot!(plt, sampleTimes2, edgeVector2, label="Edge energy", dpi=dpi)
+    plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy", dpi=dpi)
+    plot!(plt, sampleTimes2, overlapVector2, label="Overlap energy", dpi=dpi)
 
     savefig(plt, diaPath)
 end
