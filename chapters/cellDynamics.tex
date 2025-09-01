@@ -142,36 +142,16 @@ It is also valid to write $F_{j}^{(A)}(\vec{C})$ instead of $F_{j}^{(A)}(C)$, si
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=15cm]{bachelors-thesis/forces/area1/area1.png}
-		\caption{The figure displays the solution of Model  
-		Initially, the cell has an area of approximately $2.6$. 
-		Arrows originating from each vertex represent the forces acting on the vertices at the corresponding time.
-		The area force acts by pushing the vertices outward from the cell center, resulting in an increase in area.
-		The computed areas at each time step are indicated below the respective diagrams.
-		We can observe that the forces decrease as the actual cell area gets closer to its desired state. 
-		Once the target area of $A_d = 10.0$ is reached, the force vanishes and the system reaches a steady state.
+		\includegraphics[width=15cm]{forces/area1.png}
+		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}}, to see the animation as a gif. 
 		}
 		\label{fig:areaForce}
 	\end{center}
 \end{figure}
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=15cm]{bachelors-thesis/forces/area2/area2.png}
-		\caption{Similar to Figure \ref{fig:areaForce}, this image shows a cell that develops according to the area force. 
-		In contrast to the previous illustration, the initial area is now larger than the desired target area.
-		As a result, the area force needs to reverse its direction to shrink the cell toward the target area $A_d = 10.0$
-		This outcome is consistently demonstrated across the four diagrams. }
-		\label{fig:areaForce2}
-	\end{center}
-\end{figure}
 
-Figures \ref{fig:areaForce} and \ref{fig:areaForce2} illustrate how the area force acts on a cell to either expand or contract it toward the desired target area.
-\begin{figure}[h!]
-  \centering
-  \href{run:./figures/gifs/showForces/show-areaForce.gif}{
-    \includegraphics[width=0.6\textwidth]{figures/gifs/showForces/t0-area.png}}
-\end{figure}
+Figure~\ref{fig:areaForce} illustrates how the area force acts on a cell to either expand or contract it toward the desired target area.
+
     
 \subsection{Edge force}
 The next force we would like to model is the edge force. 
@@ -307,12 +287,8 @@ An isolated application of the edge force can be seen in Figure \ref{fig:edgeFor
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=15cm]{bachelors-thesis/forces/edge/edge1.png}
-		\caption{The diagram illustrates the edge force acting on a DF cell.
-		At time $t=0$, the cell is shaped as a rectangle $[-3,3]\times [-1,1]$, giving horizontal edges a length of 6 and vertical edges a length of 2.
-		The corresponding edge lengths at the different time steps are annotated below each diagram.
-		The target configuration is the rectangle $[-1,1]\times [-3,3]$, implying that the horizontal edges need to contract while the vertical edges must stretch.
-		This transformation is clearly observable in the progression of the diagrams.
+		\includegraphics[width=15cm]{forces/edge1.png}
+		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}}, to see the animation as a gif.
 		}
 		\label{fig:edgeForce}
 	\end{center}
@@ -612,11 +588,8 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=15cm]{bachelors-thesis/forces/angle/angle1.png}
-		\caption{The figure illustrates the action of the interior angle force on the vertices of a DF cell.
-		The initial state, shown in the first plot, must be mirrored horizontally to achieve the desired state depicted in the final plot.
-		This reshaping shows on the one hand that the dynamic is capable of decreasing interior angles from $270$° to $90$° and on the other hand it can also increase interior angles from $90$° to $270$°. 
-		Below each chart, we can see the current interior angles of the two vertices that have the $y$ value zero. 
+		\includegraphics[width=15cm]{forces/angle1.png}
+		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}}, to see the animation as a gif.
 		}
 		\label{fig:angleForce}
 	\end{center}
@@ -1010,11 +983,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 Figure \ref{fig:overlapForce} illustrates the interaction between two overlapping cells, highlighting the effect of the overlap force on their vertices.
 \begin{figure}[h!]
 	\begin{center}
-		\includegraphics[width=15cm]{bachelors-thesis/forces/overlap/overlap1.png}
-			\caption{This figure demonstrates how the overlap force acts on two overlapping DF cells.
-			The blue arrows indicate the forces acting on the blue cell, while the red arrows represent those acting on the red cell.
-			The current overlap areas at each time step are displayed below the corresponding diagrams.			
-			On each consecutive diagram, we can see that the overlap gets reduced, until the area of the overlap is zero.  }
+		\includegraphics[width=15cm]{forces/defOverlap1.png}
+			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}}, to see the animation as a gif.
+			}
 			\label{fig:overlapForce}
 	\end{center}
 \end{figure}
@@ -1099,6 +1070,15 @@ For $h = 1$, the dynamics are identical to the original HSCM model, as we will s
 By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
 In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
 In the limiting case $h = 0$, we recover the DF dynamics without the bounce overlap force term.
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{forces/bounceOverlap1.png}
+			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}}, to see the animation as a gif.
+			}
+			\label{fig:overlapForce}
+	\end{center}
+\end{figure}
 
 \subsection{The DF SDE}
 Having defined all individual force contributions acting on the cell vertices, we now combine them to formulate the full dynamics of the system in terms of a stochastic differential equation. \\
@@ -1185,8 +1165,29 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 
 \end{definition}
 
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{forces/allforces_soft.png}
+			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-soft.gif}{\textit{here}}, to see the animation as a gif.
+			}
+			\label{fig:overlapForce}
+	\end{center}
+\end{figure}
 
-\subsection{A simulation run}
-% state the force system
-% DifferentialEquations.jl solver \\
-%  -> Euler Maruyama method with fixed time step size  \\
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{forces/allforces_0-5.png}
+			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}}, to see the animation as a gif.
+			}
+			\label{fig:overlapForce}
+	\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=15cm]{forces/allforces_hard.png}
+			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}}, to see the animation as a gif.
+			}
+			\label{fig:overlapForce}
+	\end{center}
+\end{figure}
