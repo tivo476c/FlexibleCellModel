@@ -12,9 +12,9 @@ radius = 0.005                              # cell radius
 ## Force scalings: 
 hardness = 0                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
 
-areaForceFactor = 0
-edgeForceFactor = 0
-interiorAngleForceFactor = 0
+areaForceFactor = 4e8
+edgeForceFactor = 3e4
+interiorAngleForceFactor = 1e-1
 overlapForceFactor = 6e4
 # areaForceFactor = (1 - hardness) * 1e6 + hardness * 1e10
 # edgeForceFactor = (1 - hardness) * 1e1 + hardness * 1e5

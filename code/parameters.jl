@@ -13,8 +13,8 @@ radius = 0.005                              # cell radius
 hardness = 0                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
 
 areaForceFactor = 0
-edgeForceFactor = 0
-interiorAngleForceFactor = 1e-1
+edgeForceFactor = 3e4
+interiorAngleForceFactor = 0
 overlapForceFactor = 0
 # areaForceFactor = (1 - hardness) * 1e6 + hardness * 1e10
 # edgeForceFactor = (1 - hardness) * 1e1 + hardness * 1e5
@@ -39,7 +39,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "show-intAngleForce"
+simulationName = "show-edgeForce"
 
 
 ## Space Discretisation for heatmap 

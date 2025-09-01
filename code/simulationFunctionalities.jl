@@ -261,13 +261,16 @@ function createSimGif(gifPath::String,
             # overlaparea = @sprintf("%.1e", overlaparea)
             # overlaplab = L"A_{D} = %$(overlaparea)"
             # timelabel = "t = $(round(Int, time/timeStepSize))e-05"
-            intangle1 = @sprintf("%.1f", computeInteriorAngles(c1)[1]/pi*180)
-            intAngleLabel = L"I_C^1 = %$(intangle1)°"
+            # intangle1 = @sprintf("%.1f", computeInteriorAngles(c1)[1]/pi*180)
+            # intAngleLabel = L"I_C^1 = %$(intangle1)°"
+
+            edge1 = @sprintf("%.1e", computeEdgeLengths(c1)[2])
+            edgeLabel = L"E_C^2 = %$(edge1)"
             timelabel = L"t = %$(round(Int, time/timeStepSize))e-05"
             # xlab = "$overlaplab\n$timelabel"
             xlab = L"""
                     %$(" ")
-                    %$(intAngleLabel)
+                    %$(edgeLabel)
                     %$(timelabel)
                     """
 
@@ -336,8 +339,8 @@ function createEnergyDiagram(diaPath::String,
     overlapVector2 = overlapVector[2:end]
     plt = plot()
     # plot!(plt, sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
-    # plot!(plt, sampleTimes2, edgeVector2, label="Edge energy")
-    plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy")
+    plot!(plt, sampleTimes2, edgeVector2, label="Edge energy")
+    # plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy")
     # plot!(plt, sampleTimes2, overlapVector2, label="Overlap energy")
 
     savefig(plt, diaPath)
@@ -631,12 +634,12 @@ function runShow_overlap()
     # u0 = [c1.x; c1.y]
 
     ### edge force config 
-    # c1 = DiscreteCell([0.01, 0.0005, -0.0005, -0.01, -0.0005, 0.0005], [0.0, 0.004, 0.004, 0.0, -0.004, -0.004])
-    # u0 = [c1.x; c1.y]
+    c1 = DiscreteCell([0.01, 0.0005, -0.0005, -0.01, -0.0005, 0.0005], [0.0, 0.004, 0.004, 0.0, -0.004, -0.004])
+    u0 = [c1.x; c1.y]
 
     ### interior angle force config 
-    c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
-    u0 = [c1.x; c1.y]
+    # c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
+    # u0 = [c1.x; c1.y]
 
     #### deforming overlap force config 
     # c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6)
