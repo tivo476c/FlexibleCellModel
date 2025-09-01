@@ -251,26 +251,27 @@ function createSimGif(gifPath::String,
             X, Y = solutionToXY(u)               # now each cell is: [X[...], Y[...]]
             title = simulationName
             c1 = DiscreteCell(X[1], Y[1])
-            # c2 = DiscreteCell(X[2], Y[2])
-            # overlap, _ = getOverlap(c1, c2)
-            # if length(overlap) == 1 
-            #     overlaparea = areaPolygon(overlap[1].x, overlap[1].y)
-            # else #if length(overlaparea) == 0 
-            #     overlaparea = 0
-            # end 
-            # overlaparea = @sprintf("%.1e", overlaparea)
-            # overlaplab = L"A_{D} = %$(overlaparea)"
-            # timelabel = "t = $(round(Int, time/timeStepSize))e-05"
+            c2 = DiscreteCell(X[2], Y[2])
+            overlap, _ = getOverlap(c1, c2)
+            if length(overlap) == 1 
+                overlaparea = areaPolygon(overlap[1].x, overlap[1].y)
+            else #if length(overlaparea) == 0 
+                overlaparea = 0
+            end 
+            overlaparea = @sprintf("%.1e", overlaparea)
+            overlaplab = L"A_{D} = %$(overlaparea)"
             # intangle1 = @sprintf("%.1f", computeInteriorAngles(c1)[1]/pi*180)
             # intAngleLabel = L"I_C^1 = %$(intangle1)°"
+            # edge1 = @sprintf("%.1e", computeEdgeLengths(c1)[2])
+            # edgeLabel = L"E_C^2 = %$(edge1)"
+            area = @sprintf("%.1e",areaPolygon(c1.x, c1.y))
+            areaLabel = L"A_C = %$(area)"
 
-            edge1 = @sprintf("%.1e", computeEdgeLengths(c1)[2])
-            edgeLabel = L"E_C^2 = %$(edge1)"
             timelabel = L"t = %$(round(Int, time/timeStepSize))e-05"
             # xlab = "$overlaplab\n$timelabel"
             xlab = L"""
                     %$(" ")
-                    %$(edgeLabel)
+                    %$(overlaplab)
                     %$(timelabel)
                     """
 
@@ -338,10 +339,10 @@ function createEnergyDiagram(diaPath::String,
     angleVector2 = angleVector[2:end]
     overlapVector2 = overlapVector[2:end]
     plt = plot()
-    # plot!(plt, sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
+    plot!(plt, sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
     plot!(plt, sampleTimes2, edgeVector2, label="Edge energy")
-    # plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy")
-    # plot!(plt, sampleTimes2, overlapVector2, label="Overlap energy")
+    plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy")
+    plot!(plt, sampleTimes2, overlapVector2, label="Overlap energy")
 
     savefig(plt, diaPath)
 end
@@ -634,17 +635,17 @@ function runShow_overlap()
     # u0 = [c1.x; c1.y]
 
     ### edge force config 
-    c1 = DiscreteCell([0.01, 0.0005, -0.0005, -0.01, -0.0005, 0.0005], [0.0, 0.004, 0.004, 0.0, -0.004, -0.004])
-    u0 = [c1.x; c1.y]
+    # c1 = DiscreteCell([0.01, 0.0005, -0.0005, -0.01, -0.0005, 0.0005], [0.0, 0.004, 0.004, 0.0, -0.004, -0.004])
+    # u0 = [c1.x; c1.y]
 
     ### interior angle force config 
     # c1 = DiscreteCell([0.003, 0.009, -0.003, -0.009, -0.003, 0.009], [0.0, 0.003, 0.003, 0.0, -0.003, -0.003])
     # u0 = [c1.x; c1.y]
 
     #### deforming overlap force config 
-    # c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6)
-    # c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi / 6.0)
-    # u0 = [c1.x; c2.x; c1.y; c2.y]
+    c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6)
+    c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi / 6.0)
+    u0 = [c1.x; c2.x; c1.y; c2.y]
 
 
     ###########################################################################################
