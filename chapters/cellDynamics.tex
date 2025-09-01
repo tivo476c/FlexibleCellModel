@@ -904,7 +904,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{i,m}}  |A_{D}|^{k-1} A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
+			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{i,m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
 				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} %+ \\
 													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}} \right) \nabla_{\vec{w}}A(D)\Biggr),
 		\end{split}

@@ -43,11 +43,11 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    if t <= 1 * timeStepSize
-        println("pushing together at t = $t")
-        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    end
+    # if t <= 1 * timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    # end
     # if 11*timeStepSize <= t <= 11 * timeStepSize
     #     println("pushing away at t = $t")
     #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)
@@ -654,9 +654,6 @@ function bachelorOverlapForceCells(c1, c2; k=1)
             i, j = ind
             r2x[i] = -0.5 * area^(k - 1) * gradO[j]
             r2y[i] = -0.5 * area^(k - 1) * gradO[j+K]
-            println("")
-            println("r2y[$i] = $(r2y[i])")
-            println("")
         end
     end
 
@@ -673,65 +670,55 @@ function bachelorOverlapForceCells(c1, c2; k=1)
             intersec = vertexList[indV]
             if isa(intersec, Intersection)
 
-                # TODO: test whether first edge index "i" is always for c1 and "j" for c2  
                 # u1, u2 ∈ c1; v1, v2 ∈ c2
                 # v1, u1 are the overlap OUTside vertices of c1, c2 
                 # v2, u2 are the overlap  INside vertices of c1, c2 
                 u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
                 v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
 
+                println("  outsideInd_v = $outsideInd_v")
+                println("   insideInd_v = $insideInd_v \n")
+                println("c2[$outsideInd_v] = [$(c2.x[outsideInd_v]), $(c2.y[outsideInd_v])]")
+                println("c2[$insideInd_v] = [$(c2.x[insideInd_v]), $(c2.y[insideInd_v])]")
+
                 I = [1 0; 0 1]
-                #TODO:  
+
+                areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
+                dOi = 0.5 * area^(k - 1) * areaGradient_i                                         # grad_intersection Overlap 
+                
+                # COMPUTE u DYNAMICS 
                 f = cross2d(v1 - u1, v2 - v1)
                 g = cross2d(u2 - u1, v2 - v1)
                 t = f / g
-                dtu1 = ([-(v2[2] - v1[2]), v2[1] - v1[1]] * g - f * [-(v2[2] - v1[2]), v2[1] - v1[1]]) / g^2
-                dtu2 = (-f * [v2[2] - v1[2], -(v2[1] - v1[1])]) / g^2
-                dtv1 = ([-u1[2] + v2[2], u1[1] - v2[1]] * g - f * [u2[2] - u1[2], -(u2[1] - u1[1])]) / g^2
-                dtv2 = ([-(v1[2] - u1[2]), v1[1] - u1[1]] * g - f * [-(u2[2] - u1[2]), u2[1] - u1[1]]) / g^2
+                dwdu1 = (1-t)*I + (g-f)/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'      # outside vertex derivative 
+                dwdu2 = t*I + f/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'              #  inside vertex derivative 
+                
+                du1dt = - dwdu1 * dOi 
+                du2dt = - dwdu2 * dOi
 
-                println("dtv1 = ([ -u1[2] + v2[2] , u1[1] - v2[1]]*g - f*[  u2[2] - u1[2] , -(u2[1] - u1[1])]) / g^2")
-                println("f = $f")
-                println("g = $g")
-                println("u1 = $u1, u2 = $u2")
-                println("v1 = $v1, v2 = $v2")
-                dwu1 = (1 - t) * I + (u2 - u1) * dtu1'
-                dwu2 = t * I + (u2 - u1) * dtu2'
-                dwv1 = (u2 - u1) * dtv1'
-                dwv2 = (u2 - u1) * dtv2'
+                r1x[outsideInd_u] += du1dt[1]
+                r1y[outsideInd_u] += du1dt[2]
+                r1x[ insideInd_u] += du2dt[1]
+                r1y[ insideInd_u] += du2dt[2]
+                
+                # NOW CHANGE v WITH u IN ORDER TO COMPUTE v dynamics  
+                println("now testing v dynamic")
+                f = cross2d(u1 - v1, u2 - u1)
+                g = cross2d(v2 - v1, u2 - u1)
+                t = f / g
+                dwdv1 = (1-t)*I + (g-f)/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'      # outside vertex derivative 
+                dwdv2 = t*I + f/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'              #  inside vertex derivative 
+                
+                dv1dt = - dwdv1 * dOi 
+                dv2dt = - dwdv2 * dOi
 
-                du2t = [r1x[insideInd_u], r1y[insideInd_u]]           # the change thats already applied to u2 
-                dv2t = [r2x[insideInd_v], r2y[insideInd_v]]           # the change thats already applied to v2 
-                areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
-                dOi = 0.5 * area^(k - 1) * areaGradient_i             # grad_intersection Overlap 
-
-                R = -dOi - dwu2 * du2t - dwv2 * dv2t
-
-                println("dwv1 = (u2-u1) * dtv1'")
-                println("(u2-u1)=$(u2-u1), dtv1' = $(dtv1')")
-                println("dwv1 = $dwv1")
-                println("c1 = $c1")
-                println("c2 = $c2")
-                # dwv1_inverted = inv(dwv1)
-                # dwu1_inverted = inv(dwu1)
-
-                # dv1t = 0.5 * dwv1_inverted * R 
-                # du1t = 0.5 * dwu1_inverted * R 
-                # dv1t = 0.5 * dwv1 \ R
-                # du1t = 0.5 * dwu1 \ R
-                dv1t = 0.5 * pinv(dwv1) * R
-                du1t = 0.5 * pinv(dwu1) * R
-
-                r1x[outsideInd_u] += dv1t[1]
-                r1y[outsideInd_u] += dv1t[2]
-                r2x[outsideInd_v] += du1t[1]
-                r2y[outsideInd_v] += du1t[2]
-                println("")
-                println("r1x[$outsideInd_u] = $(r1x[outsideInd_u])")
-                println("r1y[$outsideInd_u] = $(r1y[outsideInd_u])")
-                println("r2x[$outsideInd_v] = $(r2x[outsideInd_v])")
-                println("r2y[$outsideInd_v] = $(r2y[outsideInd_v])")
-                println("")
+                println("dv1dt = $dv1dt")
+                println("dv2dt = $dv2dt \n")
+                r2x[outsideInd_v] += dv1dt[1]
+                r2y[outsideInd_v] += dv1dt[2]
+                r2x[ insideInd_v] += dv2dt[1]
+                r2y[ insideInd_v] += dv2dt[2]
+    
             end
 
         end
