@@ -4,18 +4,18 @@ domainL = 0.012                               # 0.5 / 40.0
 domain = (-domainL, domainL)                # domain where cells can move: [-5.0, 5.0]^2 
 NumberOfCellWallPoints = 6                  # number of wall points per cell [OLD NAME: "N"]
 N = NumberOfCellWallPoints
-NumberOfCells = 2                           # number of cells [OLD NAME: "M"] TODO: change to 400
+NumberOfCells = 1                           # number of cells [OLD NAME: "M"] TODO: change to 400
 M = NumberOfCells
 D = 1                                       # diffusitivity constant 
 radius = 0.005                              # cell radius 
 
 ## Force scalings: 
-hardness = 1                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
+hardness = 0                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
 
 areaForceFactor = 0
 edgeForceFactor = 0
-interiorAngleForceFactor = 0
-overlapForceFactor = 6e4
+interiorAngleForceFactor = 1e-1
+overlapForceFactor = 0
 # areaForceFactor = (1 - hardness) * 1e6 + hardness * 1e10
 # edgeForceFactor = (1 - hardness) * 1e1 + hardness * 1e5
 # interiorAngleForceFactor = (1 - hardness) * 1e0 + hardness * 1e2
@@ -28,7 +28,7 @@ forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, ove
 ## Simulation time parameters: 
 timeStepSize = 10^(-5)
 # T = 0.05
-T = 5*timeStepSize
+T = 20*timeStepSize
 timeInterval = (0.0, T)
 
 NumberOfSimulations = 10^4
@@ -39,7 +39,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "show-DeformaingOverlapForce"
+simulationName = "show-intAngleForce"
 
 
 ## Space Discretisation for heatmap 
