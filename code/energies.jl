@@ -676,11 +676,6 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
                 v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
 
-                println("  outsideInd_v = $outsideInd_v")
-                println("   insideInd_v = $insideInd_v \n")
-                println("c2[$outsideInd_v] = [$(c2.x[outsideInd_v]), $(c2.y[outsideInd_v])]")
-                println("c2[$insideInd_v] = [$(c2.x[insideInd_v]), $(c2.y[insideInd_v])]")
-
                 I = [1 0; 0 1]
 
                 areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
@@ -702,7 +697,6 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 r1y[ insideInd_u] += du2dt[2]
                 
                 # NOW CHANGE v WITH u IN ORDER TO COMPUTE v dynamics  
-                println("now testing v dynamic")
                 f = cross2d(u1 - v1, u2 - u1)
                 g = cross2d(v2 - v1, u2 - u1)
                 t = f / g
@@ -712,8 +706,6 @@ function bachelorOverlapForceCells(c1, c2; k=1)
                 dv1dt = - dwdv1 * dOi 
                 dv2dt = - dwdv2 * dOi
 
-                println("dv1dt = $dv1dt")
-                println("dv2dt = $dv2dt \n")
                 r2x[outsideInd_v] += dv1dt[1]
                 r2y[outsideInd_v] += dv1dt[2]
                 r2x[ insideInd_v] += dv2dt[1]
