@@ -1081,7 +1081,7 @@ In the limiting case $h = 0$, we recover the DF dynamics without the bounce over
 	\begin{minipage}[c]{0.6\textwidth}
 		\caption{
 			The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1e5$, at times $t \in \{0, 1e-5, 2e-5, 3e-5\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1e5 \nabla_{\vec{v}} \bar{O}_1(C_1, C_2)$ for all vertices.
+			In this case, we have $\frac{\dequ C_i}{\dequ t} = 1e5 \: F_i^{\bar{O}}(C_1, C_2)$ for both cells.
 			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
 			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. The corresponding energy development is illustrated in the diagram on the left.
 		}
@@ -1117,13 +1117,13 @@ Summarizing all these efforts, we arrived at the following force scalings used i
 		\hline
 		\text{Area force} & $\alpha_A = 4.0 \cdot 10^8$ \\
 		\text{Edge force} & $\alpha_E = 3.0 \cdot 10^4$ \\
-		\text{Interior angle force} & $\alpha_I = 1.0 \cdot 10^-1$ \\
+		\text{Interior angle force} & $\alpha_I = 1.0 \cdot 10^{-1}$ \\
 		\text{Deforming overlap force} & $\alpha_{\hat{O}} = 6.0 \cdot 10^4$ \\
-		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 10^5$ \\
+		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 1.0 \cdot 10^5$ \\
 		\hline
 	\end{tabular}
 	\caption{Scaling parameters for different force types}
-	\label{forcescalings}
+	\label{table:forcescalings}
 \end{table}
 
 These scaling par
@@ -1169,7 +1169,15 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\end{minipage}\hfill
 	\begin{minipage}[c]{0.6\textwidth}
 		\caption{
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+		This simulation shows two DF cells evolving according to the dynamics for $i = 1, 2$
+		$\frac{\dequ C_i}{\dequ t} = \F^i(C_1, C_2)$ with hardness $h=1$, force scalings as listed in Table~\ref{table:forcescalings} and without Brownian motion.
+		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}} to view the corresponding animation (GIF).
+		The cells are initially generated without overlap and are pushed together during the first two time steps. 
+		Afterwards, the dynamics from $\F^i$ alone resolve the overlap.
+		Since hardness $h=1$ was chosen, no deforming overlap force is active and the cell shape remains unchanged. 
+		Consequently, the shape-preserving forces are inactive, as the cells stay in their desired states.\\
+		This is also reflected in the energy diagram, which shows only an initial spike in the overlap energy. 
+		The bounce overlap force then eliminates the overlap within a single time step after the push.
 		}
 		\label{fig:allForces-hard}
 	\end{minipage}
@@ -1185,8 +1193,13 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\end{minipage}\hfill
 	\begin{minipage}[c]{0.6\textwidth}
 		\caption{
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-		}
+			This simulation shows two DF cells again evolving according to the dynamics $i=1,2$ $\frac{\dequ C_i}{\dequ t} = \F^i(C_1, C_2)$, with hardness $h=0.5$, force scalings as listed in Table~\ref{table:forcescalings}, and without Brownian motion.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}} to view the corresponding animation (GIF).
+			The cells are initially generated without overlap and are pushed together during the first two time steps. Afterwards, the dynamics from $\F^i$ alone resolve the overlap.\\
+			In contrast to the previous simulation, the cell shapes now change because the deforming overlap force is active. 
+			The overlap is still removed within a single time step after the push. 
+			By time step~10, the cell shapes are nearly restored, as illustrated in the energy diagram.
+			}
 		\label{fig:allForces-half}
 	\end{minipage}
 \end{figure}
@@ -1201,7 +1214,11 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\end{minipage}\hfill
 	\begin{minipage}[c]{0.6\textwidth}
 		\caption{
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-soft.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			This simulation shows two DF cells evolving according to the dynamics for $i=1,2$ $\frac{\dequ C_i}{\dequ t} = \F^i(C_1, C_2)$, with hardness $h=0$, force scalings as listed in Table~\ref{table:forcescalings}, and without Brownian motion.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-soft.gif}{\textit{here}} to view the corresponding animation (GIF).
+			The cells are initially generated without overlap and are pushed together during the first two time steps. Afterwards, the dynamics from $\F^i$ alone attempt to resolve the overlap.\\
+			In this case, only the deforming overlap force is active. This leads to a repeating interplay: the overlap is reduced, the cell shape is restored, and this restoration again induces overlap.
+			Under this setup, neither the overlap nor the desired cell shapes are fully resolved within 20 time steps, although all energy levels remain comparatively low.
 		}
 		\label{fig:allForces-soft}
 	\end{minipage}
