@@ -76,4 +76,5 @@ for (s, px, py) in symbols
 end
 
 # Show plot
-savefig("shoelace_new.png")
+# savefig("shoelace_new.png")
+show(plt)

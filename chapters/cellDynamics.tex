@@ -725,6 +725,8 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	From each cell we get one vertex that is part of the overlap cell, called the inside vertex, and one vertex that is not part of the overlap, called the outside vertex. 
 	For each intersection $\vec{w} \in W(D)$, we call its adjacent vertices 
 	\[\text{adj}(\vec{w}) = \{\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{in}}^{\: m}, \vec{v}_{\text{out}}^{\: m} \}. \]
+	In order to refer to the inside or outside vertices, we define the sets 
+	\[ \text{in}(\vec{w}) = \{\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{in}}^{\: m} \} \text{ and } \text{out}(\vec{w}) = \{\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m} \}.\]
 	Given the four adjacent vertices, we can always compute the intersection with the function:
 	\begin{center}
 		$w: (\R^2)^4 \rightarrow \R^2$, \\[0.5em]
@@ -732,6 +734,20 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{center}
 	where $(a^x, a^y)^T \times (b^x, b^y)^T = a^x b^y - a^y b^x$ denotes the two dimensional cross product. \\
 \end{definition}
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=8cm]{forces/adjacentVertices.pdf}
+		\caption{
+			Here, we can see a DF cell setup with two cells having an overlap. 
+			The intersection points $\vec{w}_1$ and $\vec{w}_2$ are marked green. 
+			We can also see all inside vertices colored in black and the outside vertices colored in white.
+			In this example, we have $\text{adj}(\vec{w}_1) = \{\vec{v}_1^{\:1}, \vec{v}_2^{\:1}, \vec{v}_2^{\:2}, \vec{v}_3^{\:2}\}$, $\text{in}(\vec{w}_1) = \{\vec{v}_1^{\:1}, \vec{v}_3^{\:2}\}$ and $\text{out}(\vec{w}_1) = \{\vec{v}_2^{\:1}, \vec{v}_2^{\:2}\}$ for the first intersection and $\text{adj}(\vec{w}_2) = \{\vec{v}_1^{\:1}, \vec{v}_6^{\:1}, \vec{v}_4^{\:2}, \vec{v}_5^{\:2}\}$, $\text{in}(\vec{w}_2) = \{\vec{v}_1^{\:1}, \vec{v}_4^{\:2}\}$ and $\text{out}(\vec{w}_2) = \{\vec{v}_6^{\:1}, \vec{v}_5^{\: 2}\}$ for the second intersection.
+			}
+		\label{fig:adjacent}
+	\end{center}
+\end{figure}
+
 
 \begin{proposition} \textbf{Partial derivatives of intersection points} \\
 	We use $w(\vargs)$ to compute the influence of the adjacent vertices to the intersection point via their partial derivatives.
