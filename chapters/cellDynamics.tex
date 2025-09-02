@@ -1,11 +1,10 @@
 \section{DF model dynamics} 
-% FOR ALL FORCES: 
-    % define them 
-    % explain how they get computed 
-% Show a simulation run with all forces combined 
-% also explained the numerical solver and method that gets used 
+% TODOs:
+% * explain what the k does to the forces (k=1 -> discrepance between current and desired state does not influence scaling of force, k=2 -> it does influence it linearly)
+% * explain that we use k=1 only for deforming overlap and k=2 for shape preserving forces 
+% * explain that each figure representing a force has every parameter chosen to be equivalent to the big monte carlo simulations in the next chapter: cell size, desired states (perfect 6eck with distance 0.005 from each vertex to the cell centre), force scalings, time step size  
+% * explain that we tried to use unfavourable initital states to test the forces stability  
 We characterise the interaction force $\F$ as the sum of gradient flows of energies. \\
-% TODO: Change desired state before minus in each force !!!
 A gradient flow describes how a system changes over time in a way that always reduces a given energy $E(\vec{C})$.
 To obtain the gradient flow of this energy on vertex $\vec{v}$, we must add the term $-\nabla_{\vec{v}} E(\vec{C})$ to $\F$.
 Since all our energy terms are positive, the lowest possible value is zero.  
@@ -139,22 +138,25 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 \end{proposition}
 It is also valid to write $F_{j}^{(A)}(\vec{C})$ instead of $F_{j}^{(A)}(C)$, since $C$ is included in $\vec{C}$. 
 
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=15cm]{forces/area1.png}
-		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}}, to see the animation as a gif. 
-		}
-		\label{fig:areaForce}
-	\end{center}
-\end{figure}
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-show-areaForce.png}
-		\caption{}
-		\label{fig:areaEnergy}
-	\end{center}
+\begin{figure}[htbp]
+  \centering
+  % --- top: wide figure ---
+  \includegraphics[width=15cm]{forces/area1.png}\\[1ex]
+  % --- bottom: left image + right caption ---
+  \begin{minipage}[c]{0.35\textwidth}
+    \includegraphics[width=\textwidth]{forces/energies-show-areaForce.png}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.6\textwidth}
+    \caption{
+		The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4e8$, at times $t \in \{0, 1e-5, 2e-5, 5e-5\}$.\\
+		Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4e8 \nabla_{\vec{v}} A_2(C)$ for all vertices.
+		The initial cell area is $A_C = 1e-5$, while the desired cell area is set to $6.5e-5$.\\
+		We deliberately chose an irregular cell shape, since small vertical changes to the vertices lead to large changes in area.
+		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+		The area force successfully restores the desired cell area after 5 time steps, which is also reflected in the energy diagram on the bottom left.
+    } 
+	\label{fig:areaForce}
+  \end{minipage}
 \end{figure}
 
 
@@ -211,8 +213,8 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	Proof. \\
 
 	\begin{align*}
-		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C} - E^{j}_d|^k \\
-		\nabla_{\vec{v}_{j}} E(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C} - E^{j}_d|^k \\
+		\nabla_{\vec{v}_{j}} E_k(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C} - E^{j}_d|^k \\
+		\nabla_{\vec{v}_{j}} E_k(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \frac{1}{k} |E^j_{C} - E^{j}_d|^k \\
 		&= \frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j-1}_{C} - E^{j-1}_d|^k + \frac{1}{k}\nabla_{\vec{v}_{j}} |E^j_{C} - E^{j}_d|^k 
 	\end{align*}
 
@@ -243,28 +245,7 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 		\end{pmatrix}
 	\end{align*}
 
-
 	For the second summand, we get:
-	% \begin{align*}
-	% 	\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
-	% 	\nabla_{\vec{v}_{j}} \frac{1}{2} | E^{j}_d - E^j_{C}|^2 &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} (E^j_d - E^j_C) \\
-	% 	% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} \norm[\vec{v}_j - \vec{v}_{j+1}] ) \\
-	% 	% &= (E^j_d - E^j_C) (- \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^{y} + (v_j^{y} - v_{j+1}^{y})^2]^{\frac{1}{2}} ) \\
-	% 	% &= (E^j_d - E^j_C) \nabla_{\vec{v}_j} ( - E^j_C) \\
-	% 	&= (E^j_d - E^j_C) (- \frac{1}{2 \norm[\vec{v}_j - \vec{v}_{j+1}]} \nabla_{\vec{v}_j} [(v_j^{x} - v_{j+1}^{x})^2 + (v_j^{y} - v_{j+1}^{y})^2]) \\[0.5em] 
-	% 	&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
-	% 		\partial_{v_j^{x}} (v_j^{x} - v_{j+1}^{x})^2 \\[0.5em]
-	% 		\partial_{v_j^{y}} (v_j^{y} - v_{j+1}^{y})^2
-	% 	\end{pmatrix}\right) \\[0.5em]
-	% 	&= (E^j_d - E^j_C) \left(- \frac{1}{2 E^j_C} \begin{pmatrix}
-	% 		 2(v_j^{x} - v_{j+1}^{x}) \\[0.5em]
-	% 		 2(v_j^{y} - v_{j+1}^{y})
-	% 	\end{pmatrix}\right) \\[0.5em] 
-	% 	&= \frac{E^j_C - E^j_d}{E^j_C} \begin{pmatrix}
-	% 		v_j^{x} - v_{j+1}^{x} \\[0.5em]
-	% 		v_j^{y} - v_{j+1}^{y}
-	%    \end{pmatrix} 
-	% \end{align*}
 	\begin{align*}
 		\frac{1}{k} \nabla_{\vec{v}_{j}} |E^{j}_{C} - E^{j}_d|^k 
 		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1} \nabla_{\vec{v}_j} E^{j}_C \\
@@ -286,28 +267,29 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 		\end{pmatrix}
 	\end{align*}
 	
-	
-
 	\qed  
 \end{proposition}
 
-An isolated application of the edge force can be seen in Figure \ref{fig:edgeForce}.  
+An isolated application of the edge force can be seen in Figure~\ref{fig:edgeForce}.  
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=15cm]{forces/edge1.png}
-		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}}, to see the animation as a gif.
-		}
-		\label{fig:edgeForce}
-	\end{center}
-\end{figure}
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-show-edgeForce.png}
-		\caption{}
-		\label{fig:edgeEnergy}
-	\end{center}
+\begin{figure}[htbp]
+  \centering
+  % --- top: wide figure ---
+  \includegraphics[width=15cm]{forces/edge1.png}\\[1ex]
+  % --- bottom: left image + right caption ---
+  \begin{minipage}[c]{0.35\textwidth}
+    \includegraphics[width=\textwidth]{forces/energies-show-edgeForce.png}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.6\textwidth}
+    \caption{
+		The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3e4$, at times $t \in \{0, 1e-5, 2e-5, 5e-5\}$.\\
+		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3e4 \nabla_{\vec{v}} E_2(C)$ for all vertices.\\
+		The initial edge length of the top edge is $E_C^2 = 1e-3$, while the desired edge lengths are all set to $5e-3$.\\
+		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}} to view the associated animation (GIF).\\
+		The edge force nearly restores the desired edge lengths after 5 time steps, which can also be observed in the energy diagram on the bottom left.
+    } 
+	\label{fig:edgeForce}
+  \end{minipage}
 \end{figure}
 
 \subsection{Interior angle force}
@@ -601,30 +583,25 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angle force.
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=15cm]{forces/angle1.png}
-		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}}, to see the animation as a gif.
-		}
+\begin{figure}[htbp]
+	\centering
+	% --- top: wide figure ---
+	\includegraphics[width=15cm]{forces/angle1.png}\\[1ex]
+	% --- bottom: left image + right caption ---
+	\begin{minipage}[c]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{forces/energies-show-intAngleForce.png}
+	\end{minipage}\hfill
+	\begin{minipage}[c]{0.6\textwidth}
+		\caption{
+			The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1e-1$, at times $t \in \{0, 3e-5, 5e-5, 19e-5\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1e-1 \nabla_{\vec{v}} I_2(C)$ for all vertices.\\
+			At the vertex with initial position $\vec{v}_1 = (0.003, 0.0)^T$, the starting interior angle is $306.9°$, while all desired interior angles are $120°$.\\
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			As seen in the energy diagram on the bottom left, the interior angle force requires more time to reach the target configuration. This slower convergence is due to the reduced force scaling, which was necessary to avoid stability issues encountered at higher force scaling values. 
+		} 
 		\label{fig:angleForce}
-	\end{center}
+	\end{minipage}
 \end{figure}
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-show-intAngleForce.png}
-		\caption{}
-		\label{fig:intAngleEnergy}
-	\end{center}
-\end{figure}
-
-
-
-
-
-
-
- 
 
 \subsection{Overlap force}
 % explain the algorithm
@@ -1006,21 +983,26 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 \end{proposition}
 
 Figure \ref{fig:overlapForce} illustrates the interaction between two overlapping cells, highlighting the effect of the overlap force on their vertices.
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[width=15cm]{forces/defOverlap1.png}
-			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}}, to see the animation as a gif.
-			}
-			\label{fig:deformingOverlapForce}
-	\end{center}
-\end{figure}
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-show-DeformaingOverlapForce.png}
-		\caption{}
-		\label{fig:deformingOverlapEnergy}
-	\end{center}
+\begin{figure}[htbp]
+	\centering
+	% --- top: wide figure ---
+	\includegraphics[width=15cm]{forces/defOverlap1.png}\\[1ex]
+	% --- bottom: left image + right caption ---
+	\begin{minipage}[c]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{forces/energies-show-DeformaingOverlapForce.png}
+	\end{minipage}\hfill
+	\begin{minipage}[c]{0.6\textwidth}
+		\caption{
+			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6e4$, at times $t \in \{0, 1e-5, 2e-5, 3e-5\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6e4 \nabla_{\vec{v}} \hat{O}_1(C_1, C_2)$ for all vertices.
+			The overlap area $D$ is indicated below each plot.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			Initially, the overlap area is $3e-5$, which is relatively large compared to the cell area of $6.5e-5$. 
+			However, it is completely resolved after just two time steps, as also illustrated in the energy diagram on the bottom left.
+		}
+		\label{fig:deformingOverlapForce}
+	\end{minipage}
 \end{figure}
 
 \subsubsection*{Bounce overlap force} 
@@ -1040,22 +1022,6 @@ But we need the following assumptions:
 \end{enumerate}
 
 \begin{definition}\textbf{Bounce overlap force} \\
-	% Let us consider two DF cells $C_i$ and $C_l$.
-	% We call their centres $\vec{x}_i$ and $\vec{x}_l$.
-	% We assume that each cell has a radius of $r>0$. \\
-	% The vector $\dequ \bar{o}_{i,l} \in \R^2$ that gets applied to all vertices of $C_i$, caused by another cell $C_l$ is given by 
-	% \[
-	% \dequ \bar{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}. 
-	% \]
-	% It is zero if the cell centres have a distance of minimum $2r$. 
-	% Otherwise, we move all vertices of $C_i$ away from $C_l$ (direction $\vec{x}_i - \vec{x}_l$) so far, that both cells will have a distance of $2r + a$ after the application of the bounce overlap force on both cells ($C_j$ gets transported the same distance to the reversed direction $\vec{x}_l - \vec{x}_i$), when $a$ is how much the cells overlapped before ($\norm[\vec{x}_i - \vec{x}_l] = 2r - a$ before force application). \\
-	% The force $F^{(\bar{O})}_{i,l}$ that acts on $C_i$ caused by the interaction with $C_l$ is given by
-	% \[F^{(\bar{O})}_{i,l}(C_i, C_l) =  (\dequ \bar{o}_{i,l}, ..., \dequ \bar{o}_{i,l})^T \in R^{2 N_V}.\]
-	% The total bounce overlap force $F^{(\bar{O})}_{i}: (\R^{2 N_V})^{N_C} \rightarrow \R^{2 N_V}$ for $C_i$ is then given by 
-	% \[
-	% 	F^{(\bar{O})}_{i}(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l).
-	% \] 
-
 	Let us consider two DF cells $C_i$ and $C_l$, with centres at $\vec{x}_i$ and $\vec{x}_l$, respectively. 
 	We assume that each cell has a fixed radius $r > 0$.
 	We define the vector $\dequ \bar{o}_{i,l} \in \mathbb{R}^2$, which is applied equally to all vertices of cell $C_i$, representing the repulsive overlap force caused by cell $C_l$. 
@@ -1104,22 +1070,26 @@ By gradually decreasing $h$, we can continuously adapt the system behavior towar
 In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
 In the limiting case $h = 0$, we recover the DF dynamics without the bounce overlap force term.
 
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[width=15cm]{forces/bounceOverlap1.png}
-			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}}, to see the animation as a gif.
-			}
-			\label{fig:bounceOverlapForce}
-	\end{center}
+\begin{figure}[htbp]
+	\centering
+	% --- top: wide figure ---
+	\includegraphics[width=15cm]{forces/bounceOverlap1.png}\\[1ex]
+	% --- bottom: left image + right caption ---
+	\begin{minipage}[c]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{forces/energies-show-bounceOverlapForce.png}
+	\end{minipage}\hfill
+	\begin{minipage}[c]{0.6\textwidth}
+		\caption{
+			The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1e5$, at times $t \in \{0, 1e-5, 2e-5, 3e-5\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1e5 \nabla_{\vec{v}} \bar{O}_1(C_1, C_2)$ for all vertices.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. The corresponding energy development is illustrated in the diagram on the left.
+		}
+		\label{fig:bounceOverlapForce}
+	\end{minipage}
 \end{figure}
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-show-bounceOverlapForce.png}
-		\caption{}
-		\label{fig:bounceOverlapEnergy}
-	\end{center}
-\end{figure}
+
 
 \subsection{The DF SDE}
 Having defined all individual force contributions acting on the cell vertices, we now combine them to formulate the full dynamics of the system in terms of a stochastic differential equation. \\
@@ -1139,33 +1109,16 @@ This allowed us to verify that the chosen scalings are robust even under unfavor
 For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce off dynamics used in~\cite{Bruna2012}. \\
 Summarizing all these efforts, we arrived at the following force scalings used in the simulations:
 
-% whats the problem with the following code???
-
-% \[
-% \begin{array}{|c|c|}
-% 	\hline
-% 	\text{Force type} & \text{Scaling parameter} \\
-% 	\hline
-% 	\text{Area force} & \alpha_A = \, \underline{\hspace{2cm}} \\
-% 	\text{Edge force} & \alpha_E = \, \underline{\hspace{2cm}} \\
-% 	\text{Interior angle force} & \alpha_I = \, \underline{\hspace{2cm}} \\
-% 	\text{Deforming overlap force} & \alpha_{\hat{O}} = \, \underline{\hspace{2cm}} \\
-% 	\text{Bounce overlap force} & \alpha_{\bar{O}} = 10^5 \\
-% 	\hline
-% 	\label{forcescalings}
-% \end{array}
-% \]
-
 \begin{table}[h]
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline
 		\textbf{Force type} & \textbf{Scaling parameter} \\
 		\hline
-		\text{Area force} & $\alpha_A = \, \underline{\hspace{2cm}}$ \\
-		\text{Edge force} & $\alpha_E = \, \underline{\hspace{2cm}}$ \\
-		\text{Interior angle force} & $\alpha_I = \, \underline{\hspace{2cm}}$ \\
-		\text{Deforming overlap force} & $\alpha_{\hat{O}} = \, \underline{\hspace{2cm}}$ \\
+		\text{Area force} & $\alpha_A = 4.0 \cdot 10^8$ \\
+		\text{Edge force} & $\alpha_E = 3.0 \cdot 10^4$ \\
+		\text{Interior angle force} & $\alpha_I = 1.0 \cdot 10^-1$ \\
+		\text{Deforming overlap force} & $\alpha_{\hat{O}} = 6.0 \cdot 10^4$ \\
 		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 10^5$ \\
 		\hline
 	\end{tabular}
@@ -1206,53 +1159,50 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 
 \end{definition}
 
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[width=15cm]{forces/allforces_soft.png}
-			\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-soft.gif}{\textit{here}}, to see the animation as a gif.
-			}
-			\label{fig:overlapForce}
-	\end{center}
-\end{figure}
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-allforces_soft.png}
-		\caption{}
-		\label{fig:allEnergies-soft}
-	\end{center}
-\end{figure}
-
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[width=15cm]{forces/allforces_0-5.png}
-		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}}, to see the animation as a gif.
+\begin{figure}[htbp]
+	\centering
+	% --- top: wide figure ---
+	\includegraphics[width=15cm]{forces/allforces_hard.png}\\[1ex]
+	% --- bottom: left image + right caption ---
+	\begin{minipage}[c]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{forces/energies-allforces_hard.png}
+	\end{minipage}\hfill
+	\begin{minipage}[c]{0.6\textwidth}
+		\caption{
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}} to view the corresponding animation (GIF).\\
 		}
-		\label{fig:overlapForce}
-	\end{center}
+		\label{fig:allForces-hard}
+	\end{minipage}
 \end{figure}
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-allforces_0-5.png}
-		\caption{}
-		\label{fig:allEnergies-half}
-	\end{center}
-\end{figure}
-
-\begin{figure}[h!]
-	\begin{center}
-		\includegraphics[width=15cm]{forces/allforces_hard.png}
-		\caption{Click: \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}}, to see the animation as a gif.
+\begin{figure}[htbp]
+	\centering
+	% --- top: wide figure ---
+	\includegraphics[width=15cm]{forces/allforces_0-5.png}\\[1ex]
+	% --- bottom: left image + right caption ---
+	\begin{minipage}[c]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{forces/energies-allforces_0-5.png}
+	\end{minipage}\hfill
+	\begin{minipage}[c]{0.6\textwidth}
+		\caption{
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}} to view the corresponding animation (GIF).\\
 		}
-		\label{fig:overlapForce}
-	\end{center}
+		\label{fig:allForces-half}
+	\end{minipage}
 \end{figure}
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=6cm]{forces/energies-allforces_hard.png}
-		\caption{}
-		\label{fig:allEnergies-hard}
-	\end{center}
+\begin{figure}[htbp]
+	\centering
+	% --- top: wide figure ---
+	\includegraphics[width=15cm]{forces/allforces_soft.png}\\[1ex]
+	% --- bottom: left image + right caption ---
+	\begin{minipage}[c]{0.35\textwidth}
+		\includegraphics[width=\textwidth]{forces/energies-allforces_soft.png}
+	\end{minipage}\hfill
+	\begin{minipage}[c]{0.6\textwidth}
+		\caption{
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-soft.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+		}
+		\label{fig:allForces-soft}
+	\end{minipage}
 \end{figure}
