@@ -10,7 +10,7 @@ D = 1                                       # diffusitivity constant
 radius = 0.005                              # cell radius 
 
 ## Force scalings: 
-hardness = 0                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
+hardness = 0.5                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
 
 areaForceFactor = 4e8
 edgeForceFactor = 3e4
@@ -21,7 +21,7 @@ overlapForceFactor = 6e4
 # interiorAngleForceFactor = (1 - hardness) * 1e0 + hardness * 1e2
 # overlapForceFactor = 2e4
 overlapForceTypes = ["bachelorThesis", "radiusBilliard", "combination"]
-overlapForceType = overlapForceTypes[1]
+overlapForceType = overlapForceTypes[3]
 
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor]
 
@@ -31,7 +31,7 @@ T = 0.05
 # T = 20*timeStepSize
 timeInterval = (0.0, T)
 
-NumberOfSimulations = 10^4
+NumberOfSimulations = 1.2*10^4
 NumberOfSampleTimes = 6        # must be 2 at least
 NumberOfSampleTimes = round(Int, T/timeStepSize) + 1  # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
@@ -39,7 +39,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "softSim1-bachelorOverlap"
+simulationName = "midSim1-masterOverlap"
 
 
 ## Space Discretisation for heatmap 
