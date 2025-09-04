@@ -4,6 +4,8 @@
 % * explain that we use k=1 only for deforming overlap and k=2 for shape preserving forces 
 % * explain that each figure representing a force has every parameter chosen to be equivalent to the big monte carlo simulations in the next chapter: cell size, desired states (perfect 6eck with distance 0.005 from each vertex to the cell centre), force scalings, time step size  
 % * explain that we tried to use unfavourable initital states to test the forces stability  
+% * change some of the 1e2 type numbers (eg 1e-1 -> 0.1)
+% * write down the cell SDE nicely 
 We characterise the interaction force $\F$ as the sum of gradient flows of energies. \\
 A gradient flow describes how a system changes over time in a way that always reduces a given energy $E(\vec{C})$.
 To obtain the gradient flow of this energy on vertex $\vec{v}$, we must add the term $-\nabla_{\vec{v}} E(\vec{C})$ to $\F$.
