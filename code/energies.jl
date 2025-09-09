@@ -43,11 +43,11 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    if t <= 1 * timeStepSize
-        println("pushing together at t = $t")
-        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    end
+    # if t <= 1 * timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    # end
     # if 11*timeStepSize <= t <= 11 * timeStepSize
     #     println("pushing away at t = $t")
     #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)
@@ -680,37 +680,37 @@ function bachelorOverlapForceCells(c1, c2; k=1)
 
                 areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
                 dOi = 0.5 * area^(k - 1) * areaGradient_i                                         # grad_intersection Overlap 
-                
+
                 # COMPUTE u DYNAMICS 
                 f = cross2d(v1 - u1, v2 - v1)
                 g = cross2d(u2 - u1, v2 - v1)
                 t = f / g
-                dwdu1 = (1-t)*I + (g-f)/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'      # outside vertex derivative 
-                dwdu2 = t*I + f/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'              #  inside vertex derivative 
-                
-                du1dt = - dwdu1 * dOi 
-                du2dt = - dwdu2 * dOi
+                dwdu1 = (1 - t) * I + (g - f) / g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'      # outside vertex derivative 
+                dwdu2 = t * I + f / g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'              #  inside vertex derivative 
+
+                du1dt = -dwdu1 * dOi
+                du2dt = -dwdu2 * dOi
 
                 r1x[outsideInd_u] += du1dt[1]
                 r1y[outsideInd_u] += du1dt[2]
-                r1x[ insideInd_u] += du2dt[1]
-                r1y[ insideInd_u] += du2dt[2]
-                
+                r1x[insideInd_u] += du2dt[1]
+                r1y[insideInd_u] += du2dt[2]
+
                 # NOW CHANGE v WITH u IN ORDER TO COMPUTE v dynamics  
                 f = cross2d(u1 - v1, u2 - u1)
                 g = cross2d(v2 - v1, u2 - u1)
                 t = f / g
-                dwdv1 = (1-t)*I + (g-f)/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'      # outside vertex derivative 
-                dwdv2 = t*I + f/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'              #  inside vertex derivative 
-                
-                dv1dt = - dwdv1 * dOi 
-                dv2dt = - dwdv2 * dOi
+                dwdv1 = (1 - t) * I + (g - f) / g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'      # outside vertex derivative 
+                dwdv2 = t * I + f / g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'              #  inside vertex derivative 
+
+                dv1dt = -dwdv1 * dOi
+                dv2dt = -dwdv2 * dOi
 
                 r2x[outsideInd_v] += dv1dt[1]
                 r2y[outsideInd_v] += dv1dt[2]
-                r2x[ insideInd_v] += dv2dt[1]
-                r2y[ insideInd_v] += dv2dt[2]
-    
+                r2x[insideInd_v] += dv2dt[1]
+                r2y[insideInd_v] += dv2dt[2]
+
             end
 
         end
