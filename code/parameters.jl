@@ -38,7 +38,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "midSim1-masterOverlap"
+simulationName = "midSim2-masterOverlap"
 
 
 ## Space Discretisation for heatmap 
