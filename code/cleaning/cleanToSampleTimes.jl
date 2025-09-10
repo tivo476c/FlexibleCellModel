@@ -61,7 +61,7 @@ for file in filter(f -> endswith(f, ".txt"), readdir("."))
     delete_file = false
     for line in lines
         coords = tryparse.(Float64, split(line))
-        if any(isnothing, coords) || any(isnan, coords) || isinf(isnan, coords)
+        if any(isnothing, coords) || any(isnan, coords) || any(isinf, coords)
             delete_file = true
             break  # no need to check further lines
         end
