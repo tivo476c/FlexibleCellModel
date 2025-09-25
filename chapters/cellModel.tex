@@ -46,10 +46,10 @@ The next step is to describe the setup of a DF simulation.
 
 	The simulation's dynamics are defined on all cell vertices via the stochastic differential equation (SDE):
 	\begin{center}
-		$ \dequ \vec{v}^{\:i}_j(\vec{C}) = \F^i_j(\vec{C}) \dequ t + \sqrt{2 D} \dequ \vec{B}^{\:i}$, \hspace{0.5em} $1 \leq i \leq N_{C}$, \hspace{0.5em} $1 \leq j \leq N_{V}$. 
+		$ \dequ \vec{v}^{\:i}_j(\vec{C}) = \F^i_j(\vec{C}) \dequ t + \sqrt{2 D} \dequ \vec{B}^{\:i}_t$, \hspace{0.5em} $1 \leq i \leq N_{C}$, \hspace{0.5em} $1 \leq j \leq N_{V}$. 
 	\end{center}
-	where $\F^i_j$ describes the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system $\vec{C}$ and $\sqrt{2 D} \dequ \vec{B}^{\:i}$ models the two dimensional standard Brownian motion of cell $i$ with diffusion coefficient $D$.  
-	Note, that all vertices of cell $i$ perform the same Brownian motion such that the whole cell $i$ moves in the direction of $\dequ \vec{B}^{\:i}$. \\
+	where $\F^i_j$ describes the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system $\vec{C}$ and $\sqrt{2 D} \dequ \vec{B}^{\:i}_t$ models the two dimensional standard Brownian motion of cell $i$ with diffusion coefficient $D$.  
+	Note, that all vertices of cell $i$ perform the same Brownian motion such that the whole cell $i$ moves in the direction of $\dequ \vec{B}^{\:i}_t$. \\
 
 	The simulation domain is always a square around the origin that is defined by $L > 0$ via 
 	\begin{center}

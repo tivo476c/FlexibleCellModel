@@ -610,10 +610,22 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. \\
 
 \subsubsection*{Deforming overlap force}
-The first overlap force, that we want to introduce, is similar to the overlap force introduced in~\cite{Vogel2023}. 
+The first overlap force, that we want to introduce, is an adapted form of the overlap force introduced in~\cite{Vogel2023}. 
 It degenerates a cell overlap by influencing that cell shapes of the affected cells. \\
 The challenging aspect of computing the overlap force lies in detecting overlaps within the cell system. 
-An overlap is treated as a DF cell in its own right, composed of the vertices from each of the two overlapping cells that lie inside the other, along with the two intersection points where the cell boundaries intersect. \\ 
+\begin{definition} \textbf{Overlap cell}\\
+	An overlap cell between two DF cells $C_i$ and $C_m$ is a DF cell in the sence of Definition~\ref{def:DF}, composed of all vertices of $C_i$ that lie inside $C_m$, all vertices of $C_m$ that lie inside $C_i$ and the intersection points of the cell walls of $C_i$ and $C_m$.
+\end{definition}
+Each pair of cells can have more than one overlap cell in unfavourable configurations.
+To be able to catch the correct dynamic in all cases, we need to introduce the set of all overlaps between a pair of DF cells.
+\begin{definition} \textbf{Set of overlaps $\Omega_{C_i,C_m}$}\\
+	Let $C_i, C_m \in \vec{C}$ be two DF cells. 
+	Then, the set of overlaps $\Omega_{C_i,C_m}$ is defined as
+	\[
+		\Omega_{C_i,C_m} = \{\, D \mid D \text{ is an overlap cell formed between } C_i \text{ and } C_m \,\}.
+	\]
+\end{definition}
+%TODO: add an example figure with 2 DF cells having two overlaps and write down what Omega_1,2 is and what their overlaps are
 Once all overlaps have been identified, we apply a dynamic similar to that of the area force, but with a desired area of zero. 
 This generates a force that acts to eliminate the overlap by reducing its area to zero. 
 The resulting force is then applied to the vertices of the original cells that define the overlapping region. \\
@@ -695,15 +707,15 @@ After introducing the method for detecting overlaps, we can now define the overl
 This force is first computed based on the geometry of the overlap and then distributed to the corresponding vertices of the original cells. 
 
 \begin{definition} \textbf{Overlap energy} \\
-	Let $C_i$ and $C_m$ be two cells from the system $\vec{C}$ and $\Omega_{i,m}$ be the set of all overlaps that appear between $C_i$ and $C_m$, like explained above. Then, the total overlap energy $O_k : (\R^{2N_V})^{N_C} \rightarrow \R$ of the cell system is given by the formula 
+	Let $C_i$ and $C_m$ be two cells from the system $\vec{C}$ and $\Omega_{C_i,C_m}$ be the set of all overlaps that appear between $C_i$ and $C_m$, like explained above. Then, the total overlap energy $O_k : (\R^{2N_V})^{N_C} \rightarrow \R$ of the cell system is given by the formula 
 	\begin{align}
-		O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k\right) \right),		
+		O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{C_i,C_m}} \frac{1}{k}|A_{D}|^k\right) \right),		
 	\end{align} 
 	where $A_{D}$ is the area of the overlap $D$.  \\
 	We define the inner bracket to be the overlap energy of the cell pair $C_i$ and $C_m$
 	\begin{center}
 		$O_k^{i,m}: (\R^{2 N_V})^2 \rightarrow \R$ \\[0.5em]
-		$O_k^{i,m}(C_i, C_m) = \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}|A_{D}|^k.$
+		$O_k^{i,m}(C_i, C_m) = \sum\limits_{D \in \Omega_{C_i,C_m}} \frac{1}{k}|A_{D}|^k.$
 	\end{center} 
 \end{definition}
 
@@ -755,20 +767,20 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 \begin{proposition} \textbf{Partial derivatives of intersection points} \\
 	We use $w(\vargs)$ to compute the influence of the adjacent vertices to the intersection point via their partial derivatives.
 	In this proposition, we compute the needed partial derivatives. \\
-	We define the following helper functions:
+	We define the following auxiliary terms:
 	\begin{align*}
-		f: (\R^2)^3 \rightarrow \R^{\:} \quad f(\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m}, \vec{v}_{\text{in}}^{\: m}) &= \tu \\[1em]
-		g: (\R^2)^4 \rightarrow \R^{\:} \quad g(\vargs) &= \tl\\[1em]
-		t: (\R^2)^4 \rightarrow \R^{\:} \quad t(\vargs) &= \dfrac{f(\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m}, \vec{v}_{\text{in}}^{\: m})}{g(\vargs)} \\[1em]
-		w: (\R^2)^4 \rightarrow \R^2 \quad w(\vargs) &= \vec{v}_{\text{out}}^{\: i} + t(\vargs)(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \\[1em]
+		f &= \tu \\[1em]
+		g &= \tl\\[1em]
+		t &= \frac{f}{g} \\[1em]
+		w &= \vec{v}_{\text{out}}^{\: i} + t(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \\[1em]
 	\end{align*}
 	It is sufficient to just compute the partial derivatives with respect to $\vec{v}_{\text{in}}^{\: i}$ and $\vec{v}_{\text{out}}^{\: i}$.
 	If we want the dynamic for the vertices of the other cell, we just switch the arrangement of the arguments (switch $\vec{v}_{\text{in}}^{\: i}$ with $\vec{v}_{\text{in}}^{\: j}$ and $\vec{v}_{\text{out}}^{\: i}$ with $\vec{v}_{\text{out}}^{\: j}$) and then use the same partial derivatives as for the first cell. \\
 	The partial derivatives are: 
 	\begin{align}
 		\begin{split}
-			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{out}}^{\: i}}: (\R^2)^4 \rightarrow \R^{2 \times 2}, \\[0.5em]
-			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{out}}^{\: i}} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+			D_{\vec{v}_{\text{out}}^{\: i}} w(\vargs): (\R^2)^4 \rightarrow \R^{2 \times 2}, \\[0.5em]
+			D_{\vec{v}_{\text{out}}^{\: i}} w(\vargs) = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
 		\end{pmatrix}^T,
@@ -778,8 +790,8 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 	\begin{align}
 		\begin{split}
-			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{in}}^{\: i}}: (\R^2)^4 \rightarrow \R^{2 \times 2}, \\[0.5em]
-			\dfrac{\partial w(\vargs)}{\partial \vec{v}_{\text{in}}^{\: i}} = t I_2 \:+\: \dfrac{f}{g^2}(\vec{v}_{\text{in}}^{\: i} \;-\; &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+			D_{\vec{v}_{\text{in}}^{\: i}} w(\vargs): (\R^2)^4 \rightarrow \R^{2 \times 2}, \\[0.5em]
+			D_{\vec{v}_{\text{in}}^{\: i}} w(\vargs) = t I_2 \:+\: \dfrac{f}{g^2}(\vec{v}_{\text{in}}^{\: i} \;-\; &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
 		\end{pmatrix}^T.
@@ -788,8 +800,6 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{align}
 
 	Proof.\\
-
-	For the ease of notation, we will drop the arguments, but keep in mind that $f$, $g$ and $t$ are dependent on the vertices. 
 
 	First of all, we compute the gradients of $f$ and $g$: 
 	\begin{align*}
@@ -864,7 +874,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\dfrac{\partial w_1}{\partial v_{\text{out}}^{i, y}} = 0 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, y}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + 0, \\[0.5em]
 		\dfrac{\partial w_2}{\partial v_{\text{out}}^{i, x}} = 0 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, x}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + 0, &\quad 
 		\dfrac{\partial w_2}{\partial v_{\text{out}}^{i, y}} = 1 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, y}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) - t, \\[0.5em]
-		\Rightarrow \dfrac{\partial w}{\vec{v}_{\text{out}}^{\: i}} = (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{out}}^{\: i}} t)^T \\[0.5em]
+		\Rightarrow D_{\vec{v}_{\text{out}}^{\: i}} w = (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{out}}^{\: i}} t)^T \\[0.5em]
 		= (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{g - f}{g^2} \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
@@ -882,7 +892,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\dfrac{\partial w_2}{\partial v_{\text{in}}^{i, y}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, y}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + t, \\[0.5em]
 	\end{align*}
 	\begin{align*}
-		\Rightarrow \dfrac{\partial w}{\vec{v}_{\text{in}}^{\: i}} = t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{in}}^{\: i}} t)^T \\[0.5em]
+		\Rightarrow D_{\vec{v}_{\text{in}}^{\: i}} w = t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{in}}^{\: i}} t)^T \\[0.5em]
 		= t I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{f}{g^2} \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
@@ -897,14 +907,13 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 \end{proposition}
 
 \begin{proposition} \textbf{Deforming overlap force} \\
-	Let $\Omega_{i,m}$ be the set of all overlaps between the cells $C_i$ and $C_m$. 
-	Each overlap cell $D \in \Omega_{i,m}$ is a list of vertices, that form the overlap, just like a DF cell. \\
+	Each overlap cell $D \in \Omega_{C_i,C_m}$ is a list of vertices, that form the overlap, just like a DF cell. \\
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{i,m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
-				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} %+ \\
-													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}} \right) \nabla_{\vec{w}}A(D)\Biggr),
+			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
+				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
+													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A(D)\Biggr),
 		\end{split}
 	\end{align}
 	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively. \\
@@ -931,10 +940,10 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	We aim to compute 
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) 
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}A_{D}^k\right) \right) \\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{C_i,C_m}} \frac{1}{k}A_{D}^k\right) \right) \\
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} O_k^{i,m}(C_i, C_m) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \frac{1}{k}A(D)^k \\
-		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{i,m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}A(D)^k. 
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \frac{1}{k}A(D)^k \\
+		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \nabla_{\vec{v}_j^{\: i}} \frac{1}{k}A(D)^k. 
 	\end{align*}
 	Now, there are different cases. \\
 	\textbf{Case 1:} $\vec{v}_j^{\: i} \notin D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
@@ -951,11 +960,11 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
 		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}\nabla_{\vec{w}}A(D), \\
+		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w}\nabla_{\vec{w}}A(D), \\
 	\end{align*}
 	where, according to Equation \ref{equ:dwv_out}
 	\begin{align*}
-		\dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_j^{\: i}) \begin{pmatrix}
+		D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_j^{\: i}) \begin{pmatrix}
 			-(v_{\text{in}}^{i, y} - v_{j}^{i, y}) \\[0.5em]
 			 v_{\text{in}}^{i, x} - v_{j}^{i, x}
 		\end{pmatrix}^T,
@@ -984,13 +993,13 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\nabla_{\vec{v}_j^{\: i}} \frac{1}{k} A(D)^k 
 		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
 		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D) %+ \\[0.5em]
-							+ \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_j^{\: i}}\nabla_{\vec{w}}A(D) \Biggr)\\[0.5em]
+							+ \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_j^{\: i}} \vec{w} \: \nabla_{\vec{w}}A(D) \Biggr)\\[0.5em]
 		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D) + \\[0.5em]
-							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}\nabla_{\vec{w}}A(D) %+ \\
-		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}}\nabla_{\vec{w}}A(D)\right) \Biggr)\\[0.5em]
+							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} \:\nabla_{\vec{w}}A(D) %+ \\
+		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \: \nabla_{\vec{w}}A(D)\right) \Biggr)\\[0.5em]
 		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
-							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}} %+ \\
-		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) \dfrac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}} \right) \nabla_{\vec{w}}A(D)\Biggr),
+							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
+		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A(D)\Biggr),
 	\end{align*}
 	where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively.\\
 	The difference between $\nabla_{\vec{v}_j^{\: i}}A(D)$ and $\nabla_{\vec{w}}A(D)$ is, that $\nabla_{\vec{v}_j^{\: i}}A(D)$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A(D)$ uses the neighbors of the according intersection point in $D$ which is not the same overlap vertex as $\vec{v}_j^{\: i}$. 
@@ -1152,7 +1161,7 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\[
 	e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
 	\]
-	which allow us to distribute a two dimensional Brownian motion \(\dequ \vec{B}^{\:i} = (\dequ B^{i,x}, \dequ B^{i,y})^T\) to the $x$ and $y$ coordinates of a cell's vertices, respectively.
+	which allow us to distribute a two dimensional Brownian motion \[\dequ \vec{B}^{\:i}_t = (\dequ B^{i,x}_t, \dequ B^{i,y}_t)^T\] to the $x$ and $y$ coordinates of a cell's vertices, respectively.
 	The cell hardness parameter $h \in [0,1]$ is assumed to be given.
 	The deterministic part $F^{i}(\vec{C})$ of the \textbf{DF SDE} is given by 
 	\begin{center}
@@ -1172,7 +1181,7 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	This configuration seems to be the best to model the physics we would like to achieve. 
 	With that we can write down the cell wise formulated DF SDE:
 	\begin{center}
-		$\dequ C_i = \F^{i}(\vec{C}) \dequ t + \dequ B^{i,x} \: e_{N_V}^{x} + \dequ B^{i,y} \: e_{N_V}^{y}.$
+		$\dequ C_i = \F^{i}(\vec{C}) \dequ t + \dequ B^{i,x}_t \: e_{N_V}^{x} + \dequ B^{i,y}_t \: e_{N_V}^{y}.$
 	\end{center} 
 
 
