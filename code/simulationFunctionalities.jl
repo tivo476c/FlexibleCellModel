@@ -338,11 +338,13 @@ function createEnergyDiagram(diaPath::String,
     edgeVector2 = edgeVector[2:end]
     angleVector2 = angleVector[2:end]
     overlapVector2 = overlapVector[2:end]
-    plt = plot(dpi=dpi)
-    plot!(plt, sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
-    plot!(plt, sampleTimes2, edgeVector2, label="Edge energy", dpi=dpi)
-    plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy", dpi=dpi)
+    plt = plot(dpi=dpi, xlab="time", ylab="energy")
+    # plot!(plt, sampleTimes2, areaVector2, label="Area energy", title=title, xlab=xlab, ylab=ylab, dpi=dpi)
+    # plot!(plt, sampleTimes2, edgeVector2, label="Edge energy", dpi=dpi)
+    # plot!(plt, sampleTimes2, angleVector2, label="Interior angle energy", dpi=dpi)
     plot!(plt, sampleTimes2, overlapVector2, label="Overlap energy", dpi=dpi)
+    # wholeEnergy = areaVector2 .+ edgeVector2 .+ angleVector2 .+ overlapVector2
+    # plot!(plt, sampleTimes2, wholeEnergy, label="Total energy", dpi=dpi, ls=:dash)
 
     savefig(plt, diaPath)
 end
@@ -615,7 +617,7 @@ function runShow_overlap()
     ## create paths 
     println("creating paths")
     mkpath(simPath)
-    if gethostname() == "treuesStueck"      # home pc xd 
+    if gethostname() == "treuesStueck" || gethostname() == "Harry"     # home pc xd 
         cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
     else # laptop 
         cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
@@ -643,8 +645,8 @@ function runShow_overlap()
     # u0 = [c1.x; c1.y]
 
     #### deforming overlap force config 
-    c1 = cellToDiscreteCell(circleCell([-0.006, 0.0], radius), 6)
-    c2 = cellToDiscreteCell(circleCell([0.006, 0.0], radius), 6; rotation=pi / 6.0)
+    c1 = cellToDiscreteCell(circleCell([-0.003, 0.0], radius), 6)
+    c2 = cellToDiscreteCell(circleCell([0.003, 0.0], radius), 6; rotation=pi / 6.0)
     u0 = [c1.x; c2.x; c1.y; c2.y]
 
 
@@ -659,8 +661,8 @@ function runShow_overlap()
         dt=timeStepSize,
     )
     extractedSol = extractSolution(sol)
-    createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title=simulationName)
-    # createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title="", fps=1)
+    # createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title="controll")
+    createSimGif(gifPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d, title="", fps=1)
     createEnergyDiagram(energyDiaPath, extractedSol; A_d=A_d, E_d=E_d, I_d=I_d)
 
     # for intAngleScale in [5e0 ,1e1, 5e1,1e2]

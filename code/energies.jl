@@ -43,11 +43,11 @@ function energies!(du, u, p, t)
 
     res += overlapForce(u)
     # let cells drift into each other for 2 time steps 
-    if t <= 1 * timeStepSize
-        println("pushing together at t = $t")
-        res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
-        res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
-    end
+    # if t <= 1 * timeStepSize
+    #     println("pushing together at t = $t")
+    #     res[1:6] .+= 0.5 * sqrt(2 / timeStepSize)
+    #     res[7:12] .-= 0.5 * sqrt(2 / timeStepSize)
+    # end
     # if 11*timeStepSize <= t <= 11 * timeStepSize
     #     println("pushing away at t = $t")
     #     res[1:6] .-= 0.5 * sqrt(2 / timeStepSize)

@@ -10,7 +10,7 @@ D = 1                                       # diffusitivity constant
 radius = 0.005                              # cell radius 
 
 ## Force scalings: 
-hardness = 1                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
+hardness = 0.5                                       # tells how hard the cells are hardness =1 for hard cells, hardness =0 for soft cells, or something in between 
 
 areaForceFactor = 4e8
 edgeForceFactor = 3e4
@@ -39,7 +39,7 @@ sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "show-allForces-hard1"
+simulationName = "show-allForces-hard5e-1"
 
 ## Space Discretisation for heatmap 
 NumberOfHeatGridPoints = 30
