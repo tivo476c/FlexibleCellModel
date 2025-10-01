@@ -2,18 +2,20 @@
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{c p{10cm}} % l = left aligned, c = centered, r = right aligned
+\begin{tabular}{c p{12cm}} % l = left aligned, c = centered, r = right aligned
 \hline
-symbol & description \\ \hline
+symbol & description \\ 
+\midrule
 $\vec{v}$ & Superscript arrows denote multidimensional variables \\[0.5em] 
 $\dfrac{\partial f}{\partial v}$ & Partial derivative of a scalar function $f$ with respect to a one dimensional variable $v$ \\[0.5em] 
-$\nabla_{\vec{v}} f$  & $\nabla_{\vec{v}} f = (\frac{\partial f}{\partial v_1}, \ldots, \frac{\partial f}{\partial v_n})^T$, where $f$ is a scalar function and $\vec{v} = (v_1, \ldots, v_n)^T$  \\[0.5em]
-$D_{\vec{v}} F$ & $D_{\vec{v}} F = \begin{pmatrix}
+$\nabla_{\vec{v}} f$  & gradient $\nabla_{\vec{v}} f = (\frac{\partial f}{\partial v_1}, \ldots, \frac{\partial f}{\partial v_n})^T$, where $f$ is a scalar function and $\vec{v} = (v_1, \ldots, v_n)^T$  \\[0.5em]
+$D_{\vec{v}} F$ & Jacobian matrix $D_{\vec{v}} F = \begin{pmatrix}
     \frac{\partial F_1}{\partial v_1} \cdots \frac{\partial F_1}{\partial v_n} \\
     \vdots \\
     \frac{\partial F_m}{\partial v_1} \cdots \frac{\partial F_m}{\partial v_n} \\
 \end{pmatrix}$, where $\vec{v} = (v_1, \ldots, v_n)^T$ is a multidimensional variable and $F = (F_1, \ldots, F_m)^T$ is a vector valued function \\
+$\Delta f$ & Laplacian of a scalar function $f$ \\ 
 $2e-3$ & scientific notation for $2 \times 10^{-3} = 0.002$ \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}

@@ -1,9 +1,25 @@
-\begin{thebibliography}{Vog23}
+\begin{thebibliography}{FOBS14}
 
 \bibitem[BC12]{Bruna2012}
 Maria Bruna and S.~Jonathan Chapman.
 \newblock Excluded-volume effects in the diffusion of hard spheres.
 \newblock {\em Phys. Rev. E}, 85:011103, Jan 2012.
+
+\bibitem[BCR17]{Bruna2017}
+Maria Bruna, S.~Jonathan Chapman, and Martin Robinson.
+\newblock Diffusion of particles with short-range interactions.
+\newblock {\em SIAM Journal on Applied Mathematics}, 77(6):2294--2316, 2017.
+
+\bibitem[FOBS14]{Fletcher14}
+Alexander G. Fletcher, Miriam Osterfield, Ruth E. Baker, and Stanislav Y.
+  Shvartsman.
+\newblock Vertex models of epithelial morphogenesis.
+\newblock {\em Biophysical Journal}, 106(11):2291--2304, 2014.
+
+\bibitem[HV23]{Happel2023}
+Lea Happel and Axel Voigt.
+\newblock Coordinated motion of epithelial layers on curved surfaces.
+\newblock {\em Cluster of Excellence, Physics of Life, TU Dresden}, 2023.
 
 \bibitem[Sho14]{Shoelace2014}
 ShoelaceFormula.
