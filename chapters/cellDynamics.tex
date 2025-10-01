@@ -149,9 +149,9 @@ It is also valid to write $F_{j}^{(A)}(\vec{C})$ instead of $F_{j}^{(A)}(C)$, si
         \includegraphics[width=0.5\textwidth]{forces/area1/t2.png} &
         \includegraphics[width=0.5\textwidth]{forces/area1/t5.png} \\
     \end{tabular}
-    \caption{The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4e8$, at times $t \in \{0, 1e-5, 2e-5, 5e-5\}$.\\
-	Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4e8 \nabla_{\vec{v}} A_2(C)$ for all vertices.
-	The initial cell area is $A_C = 1e-5$, while the desired cell area is set to $6.5e-5$.\\
+    \caption{The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4\times 10^{8}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
+	Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4\times 10^{8} \nabla_{\vec{v}} A_2(C)$ for all vertices.
+	The initial cell area is $A_C = 1\times 10^{-5}$, while the desired cell area is set to $6.5\times 10^{-5}$.\\
 	We deliberately chose an irregular cell shape, since small vertical changes to the vertices lead to large changes in area.
 	Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
 	The area force successfully restores the desired cell area after 5 time steps, which is also reflected Figure~\ref{fig:areaEnergyDiagram}.}
@@ -283,9 +283,9 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
         \includegraphics[width=0.5\textwidth]{forces/edge1/t2.png} &
         \includegraphics[width=0.5\textwidth]{forces/edge1/t5.png} \\
     \end{tabular}
-    \caption{The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3e4$, at times $t \in \{0, 1e-5, 2e-5, 5e-5\}$.\\
-		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3e4 \nabla_{\vec{v}} E_2(C)$ for all vertices.\\
-		The initial edge length of the top edge is $E_C^2 = 1e-3$, while the desired edge lengths are all set to $5e-3$.\\
+    \caption{The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
+		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3\times 10^{4} \nabla_{\vec{v}} E_2(C)$ for all vertices.\\
+		The initial edge length of the top edge is $E_C^2 = 1\times 10^{-3}$, while the desired edge lengths are all set to $5\times 10^{-3}$.\\
 		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}} to view the associated animation (GIF).\\
 		The edge force nearly restores the desired edge lengths after 5 time steps, which can also be observed in Figure~\ref{fig:edgeEnergyDiagram}.
 		}
@@ -597,8 +597,8 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
         \includegraphics[width=0.5\textwidth]{forces/angle1/t5.png} &
         \includegraphics[width=0.5\textwidth]{forces/angle1/t19.png} \\
     \end{tabular}
-    \caption{The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1e-1$, at times $t \in \{0, 3e-5, 5e-5, 19e-5\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1e-1 \nabla_{\vec{v}} I_2(C)$ for all vertices.\\
+    \caption{The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1\times 10^{-1}$, at times $t \in \{0, 3\times 10^{-5}, 5\times 10^{-5}, 19\times 10^{-5}\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1\times 10^{-1} \nabla_{\vec{v}} I_2(C)$ for all vertices.\\
 			At the vertex with initial position $\vec{v}_1 = (0.003, 0.0)^T$, the starting interior angle is $306.9°$, while all desired interior angles are $120°$.\\
 			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
 			As seen in Figure~\ref{fig:angleEnergyDiagram}, the interior angle force requires more time to reach the target configuration. 
@@ -759,7 +759,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=8cm]{forces/adjacentVertices.pdf}
+		\includegraphics[width=14cm]{forces/adjacentVertices.pdf}
 		\caption{
 			Here, we can see a DF cell setup with two cells having an overlap. 
 			The intersection points $\vec{w}_1$ and $\vec{w}_2$ are marked green. 
@@ -1028,11 +1028,11 @@ Figure \ref{fig:overlapForce} illustrates the interaction between two overlappin
         \includegraphics[width=0.5\textwidth]{forces/defOverlap1/t3.png} \\
     \end{tabular}
     \caption{
-			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6e4$, at times $t \in \{0, 1e-5, 2e-5, 3e-5\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6e4 \nabla_{\vec{v}} \hat{O}_1(C_1, C_2)$ for all vertices.
+			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6\times 10^{4} \nabla_{\vec{v}} \hat{O}_1(C_1, C_2)$ for all vertices.
 			The overlap area $D$ is indicated below each plot.
 			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-			Initially, the overlap area is $3e-5$, which is relatively large compared to the cell area of $6.5e-5$. 
+			Initially, the overlap area is $3\times 10^{-5}$, which is relatively large compared to the cell area of $6.5\times 10^{-5}$. 
 			However, it is completely resolved after just two time steps, as also illustrated in the energy diagram in Figure~\ref{fig:defOverlapEnergyDiagram}.
 		}
 	\label{fig:deformingOverlapForce}
@@ -1118,8 +1118,8 @@ In the limiting case $h = 0$, we recover the DF dynamics without the bounce over
         \includegraphics[width=0.5\textwidth]{forces/bounceOverlap1/t2.png} &
         \includegraphics[width=0.5\textwidth]{forces/bounceOverlap1/t3.png} \\
     \end{tabular}
-    \caption{The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1e5$, at times $t \in \{0, 1e-5, 2e-5, 3e-5\}$.\\
-			In this case, we have $\frac{\dequ C_i}{\dequ t} = 1e5 \: F_i^{\bar{O}}(C_1, C_2)$ for both cells.
+    \caption{The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1\times 10^{5}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
+			In this case, we have $\frac{\dequ C_i}{\dequ t} = 1\times 10^{5} \: F_i^{\bar{O}}(C_1, C_2)$ for both cells.
 			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
 			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. 
 			The corresponding energy development is illustrated in Figure~\ref{fig:bounceOverlapEnergyDiagram}.
@@ -1160,11 +1160,11 @@ Summarizing all these efforts, we arrived at the following force scalings used i
 		\hline
 		\textbf{Force type} & \textbf{Scaling parameter} \\
 		\hline
-		\text{Area force} & $\alpha_A = 4.0 \cdot 10^8$ \\
-		\text{Edge force} & $\alpha_E = 3.0 \cdot 10^4$ \\
-		\text{Interior angle force} & $\alpha_I = 1.0 \cdot 10^{-1}$ \\
-		\text{Deforming overlap force} & $\alpha_{\hat{O}} = 6.0 \cdot 10^4$ \\
-		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 1.0 \cdot 10^5$ \\
+		\text{Area force} & $\alpha_A = 4.0 \times 10^8$ \\
+		\text{Edge force} & $\alpha_E = 3.0 \times 10^4$ \\
+		\text{Interior angle force} & $\alpha_I = 1.0 \times 10^{-1}$ \\
+		\text{Deforming overlap force} & $\alpha_{\hat{O}} = 6.0 \times 10^4$ \\
+		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 1.0 \times 10^5$ \\
 		\hline
 	\end{tabular}
 	\caption{Scaling parameters for different force types}
