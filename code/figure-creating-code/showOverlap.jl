@@ -1,66 +1,47 @@
 include("../energies.jl")
 # include("../parameters.jl")
 
-using Plots 
-# SETUP: 2 cells overlapping 
+using Plots
 
+# SETUP: 2 cells overlapping
 C = circleCell([-1.5,0.0], 2.0)
 cDF1 = cellToDiscreteCell(C, N) 
-cDF2 = moveC(cDF1, 3.0, 0.0)
 
 A_d = ones(M) * areaPolygon(cDF1.x, cDF1.y) # ∈ R^N
-E_d = ones(N*M)              # ∈ (R^N)^M
-I_d = ones(N*M)              # ∈ (R^N)^M
+E_d = ones(N*M)                             # ∈ (R^N)^M
+I_d = ones(N*M)                             # ∈ (R^N)^M
 e = computeEdgeLengths(cDF1)
 ia = computeInteriorAngles(cDF1)
 
-# initial condition 
-
-for i = 1:M
-    E_d[(i-1)*N+1 : i*N] = e
-    I_d[(i-1)*N+1 : i*N] = ia
-end 
-
-u0 = vcat(cDF1.x, cDF2.x, cDF1.y, cDF2.y)
-
-p = [timeStepSize, D]
-# sus:
-prob_cell1 = SDEProblem( energies, brownian, u0, timeInterval, p, noise=WienerProcess(0., 0.))        
-
-gifPath = joinpath(homedir(), "showOverlap", "radiusOverlap2.gif")
-
-# sol = solve(prob_cell1, EM(), dt=timeStepSize, saveat=saveAtTimes)
-
-@time sol = solve(prob_cell1)
+xNeedle1 = [0.01, 0.002, -0.002, -0.01, -0.002, 0.002]
+yNeedle1 = [0.0, 0.002706329386826, 0.002706329386826, 0.0, -0.002706329386826, -0.002706329386826]
+cNeedle1 = DiscreteCell(xNeedle1, yNeedle1)
 
 
-animSDE = @animate for t = 1:length(sol)
-    # animSDE = @animate for t = 0:length(sol)
+a= 0.0008 
+b = 0.00245
+xNeedle2 = [0.01, 0, -0.01, -0.01, 0, 0.01]
+yNeedle2 = [a,b,a,-a,-b,-a]
+cNeedle2 = DiscreteCell(xNeedle2, yNeedle2)
+# while true
+#     global b 
+#     global cNeedle2
+#     global yNeedle2
+#     b -= 0.00001
+#     yNeedle2 = [a,b,a,-a,-b,-a]
+#     cNeedle2 = DiscreteCell(xNeedle2, yNeedle2)
+#     area = areaPolygon(xNeedle2, yNeedle2)
+#     if area < 6.495190528383289e-5
+#         println("b = $b")
+#         break
+#     end 
+# end
 
-    time = t[1]
-    # time = t[1]*timeStepSize+1
-    # time = t[1]*saveAtTimes+1
-    X, Y = solutionToXY(sol[time])
-    x = X[1]
-    y = Y[1]
+# initial condition plot
 
-    plot(x, y, 
-    seriestype = :shape, 
-    aspect_ratio = :equal, 
-    opacity = 0.25, 
-    dpi = 300,
-    xlims = domain,
-    ylims = domain)
-
-    for i = 2:M 
-        plot!(X[i],Y[i], seriestype=:shape, opacity=.25)
-    end  
-end
-
-
-gif(animSDE, gifPath, fps = 15)
-
-
-
-
-
+println("area = $(areaPolygon(cNeedle2.x, cNeedle2.y))")
+# plt = plot(cNeedle2.x, cNeedle2.y,
+#            seriestype=:shape,
+#            aspect_ratio=:equal,
+#            dpi=200
+#           )

@@ -498,7 +498,12 @@ function runSimulation_locations()
     mkpath(locationsPath)
 
     if N != 0
-        A_d, E_d, I_d = computeDesiredStates_circleCells()
+        # A_d, E_d, I_d = computeDesiredStates_circleCells()
+
+        # needle desired states 
+         A_d = 6.495190528383289e-5
+         E_d = [0.005, 0.004999999999999999, 0.005, 0.004999999999999999, 0.004999999999999999, 0.005000000000000004]
+         I_d = [2.094395102393195, 2.094395102393195, 2.0943951023931957, 2.0943951023931957, 2.0943951023931953, 2.0943951023931953]
         p = timeStepSize, D, A_d, E_d, I_d 
     end
 
