@@ -38,6 +38,16 @@ function isFeasible(newCell, oldCells, radius)
     return true
 end
 
+function isFeasible_needle(newNeedle, oldNeedles)::Bool
+    for oldNeedle in oldNeedles 
+        overlaps,_ = getOverlap(newNeedle, oldNeedle)
+        if length(overlaps) > 0
+            return false
+        end
+    end
+    return true
+end
+
 function initializeCells(radius)
     """
     Initializes a starting vector u0 for the solver to work with it. 
@@ -60,6 +70,33 @@ function initializeCells(radius)
 
         xCoords = vcat(xCoords, discreteCell.x)
         yCoords = vcat(yCoords, discreteCell.y)
+    end
+
+    return vcat(xCoords, yCoords)
+end
+
+function initializeCells_needles()
+    """
+    Initializes a starting vector u0 of needle cells for the solver to work with it. 
+    Cell by cell gets inserted at a feasible location in the domain. 
+    A position of newCell is feasible if distance(newCell, oldCell) > 2*radius for all oldCells.
+    This function first just computes a list that holds all cell centres. From this list, all cell wallpoints get computed and outputted in u0. 
+    """
+    savedNeedles = []
+    for i = 1:M
+        newCentre = giveCentreNormalDistrInDomain(radius)
+        newNeedle = needleCell(newCentre)
+        while (!isFeasible_needle(newNeedle, savedNeedles))
+            newCentre = giveCentreNormalDistrInDomain(radius)
+            newNeedle = needleCell(newCentre)
+        end
+        push!(savedNeedles, newNeedle)
+    end
+    xCoords = Float64[]
+    yCoords = Float64[]
+    for needle in savedNeedles
+        xCoords = vcat(xCoords, needle.x)
+        yCoords = vcat(yCoords, needle.y)
     end
 
     return vcat(xCoords, yCoords)
@@ -401,8 +438,21 @@ function do1SimulationRun(simRun)
     if N == 0
         u0 = InitializePointParticles(radius)
     else
-        u0 = initializeCells(radius)
-        A_d, E_d, I_d = computeDesiredStates_circleCells()
+        # circle cells 
+        # u0 = initializeCells(radius)
+        # A_d, E_d, I_d = computeDesiredStates_circleCells()
+        # p = timeStepSize, D, A_d, E_d, I_d 
+
+        # needle cells
+        u0 = initializeCells_needles()
+        a= 0.0008 
+        b = 0.00245
+        yNeedle = [a,b,a,-a,-b,-a]
+        xNeedle = [0.01, 0, -0.01, -0.01, 0, 0.01]
+        cNeedle = DiscreteCell(xNeedle, yNeedle)
+        A_d = areaPolygon(cNeedle.x, cNeedle.y)
+        E_d = computeEdgeLengths(cNeedle)
+        I_d = computeInteriorAngles(cNeedle)
         p = timeStepSize, D, A_d, E_d, I_d 
     end
     
@@ -489,7 +539,7 @@ function runSimulation_locations()
     mkpath(simPath)
     if gethostname() == "treuesStueck"      # home pc xd 
         cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
-    elseif gethostname() == "iwr-25177394"
+    elseif gethostname() == "Harry"
         cp(joinpath(homedir(), "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)    # use correct uniPC path
     else # laptop 
         cp(joinpath(homedir(), "OneDrive", "Desktop", "FlexibleCellModel", "code", "parameters.jl"), joinpath(simPath, "parameters.jl"), force=true)
@@ -501,29 +551,35 @@ function runSimulation_locations()
         # A_d, E_d, I_d = computeDesiredStates_circleCells()
 
         # needle desired states 
-         A_d = 6.495190528383289e-5
-         E_d = [0.005, 0.004999999999999999, 0.005, 0.004999999999999999, 0.004999999999999999, 0.005000000000000004]
-         I_d = [2.094395102393195, 2.094395102393195, 2.0943951023931957, 2.0943951023931957, 2.0943951023931953, 2.0943951023931953]
+        a= 0.0008 
+        b = 0.00245
+        yNeedle = [a,b,a,-a,-b,-a]
+        xNeedle = [0.01, 0, -0.01, -0.01, 0, 0.01]
+        cNeedle = DiscreteCell(xNeedle, yNeedle)
+        A_d = areaPolygon(cNeedle.x, cNeedle.y)
+        E_d = computeEdgeLengths(cNeedle)
+        I_d = computeInteriorAngles(cNeedle)
         p = timeStepSize, D, A_d, E_d, I_d 
     end
 
     # 1st save one simulation as gif 
-    # println("save one sim as gif")
+    println("save one sim as gif")
 
-    # if N == 0
-    #     u0 = InitializePointParticles(radius)
-    # else
-    #     u0 = initializeCells(radius)
-    # end
+    if N == 0
+        u0 = InitializePointParticles(radius)
+    else
+    #    u0 = initializeCells(radius)
+        u0 = initializeCells_needles()
+    end
 
-    # cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    # @time sol = solve(cellProblem,
-    #     EM(),
-    #     # callback=CallBack_reflectiveBC_cellOverlap,
-    #     dt=timeStepSize,
-    # )
-    # extractedSol = extractSolution(sol)
-    # createSimGif(gifPath, extractedSol)
+    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    @time sol = solve(cellProblem,
+        EM(),
+        # callback=CallBack_reflectiveBC_cellOverlap,
+        dt=timeStepSize,
+    )
+    extractedSol = extractSolution(sol)
+    createSimGif(gifPath, extractedSol)
 
     ### 2nd: CREATE ALL POINT LOCATIONS FOR ALL SIMULATIONS 
     results = pmap(do1SimulationRun, 1:NumberOfSimulations)

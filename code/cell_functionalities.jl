@@ -160,6 +160,16 @@ function peanutCell(M:: Vector{Float64}, r:: Float64) :: Cell
     return Cell(M, x -> 0.5*sin(2*x) + 0.5 + r)
 end
 
+function needleCell(centre) :: DiscreteCell
+
+    a= 0.0008 
+    b = 0.00245
+    xNeedle = [0.01, 0, -0.01, -0.01, 0, 0.01] .+ centre[1]
+    yNeedle = [a,b,a,-a,-b,-a] .+ centre[2]
+    return DiscreteCell(xNeedle, yNeedle)
+
+end
+
 #Bestimmt den Punkt der Außenwand der Zelle, zugehörig zum Winkel phi und dessen Radius
 function outerWallPoint(c::Cell, phi:: Float64):: Vector{Float64}
     x1 = c.centre[1] + cos(phi) * c.r(phi)
@@ -487,14 +497,11 @@ function rectangleOverlap(c1:: Cell, c2:: Cell) :: Rectangle
         
         #case2aII
         if(r1.y1 >= r2.y0)
-            #println("2aII")
-                    #println(r2.x0, min(r1.x1, r2.x1), r2.y0             , min(r1.y1, r2.y1))
             return Rectangle(r2.x0, min(r1.x1, r2.x1), max(r1.y0, r2.y0), min(r1.y1, r2.y1))
         end 
         
         #case2bII
         if(r1.y0 <= r2.y1)
-            #println("2bII")
             return Rectangle(r2.x0, min(r1.x1, r2.x1), r1.y0, min(r1.y1, r2.y1))
         end 
         

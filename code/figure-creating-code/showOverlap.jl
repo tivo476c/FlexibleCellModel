@@ -23,25 +23,7 @@ b = 0.00245
 xNeedle2 = [0.01, 0, -0.01, -0.01, 0, 0.01]
 yNeedle2 = [a,b,a,-a,-b,-a]
 cNeedle2 = DiscreteCell(xNeedle2, yNeedle2)
-# while true
-#     global b 
-#     global cNeedle2
-#     global yNeedle2
-#     b -= 0.00001
-#     yNeedle2 = [a,b,a,-a,-b,-a]
-#     cNeedle2 = DiscreteCell(xNeedle2, yNeedle2)
-#     area = areaPolygon(xNeedle2, yNeedle2)
-#     if area < 6.495190528383289e-5
-#         println("b = $b")
-#         break
-#     end 
-# end
 
-# initial condition plot
+areaPolygon(cNeedle2.x, cNeedle2.y)
 
-println("area = $(areaPolygon(cNeedle2.x, cNeedle2.y))")
-# plt = plot(cNeedle2.x, cNeedle2.y,
-#            seriestype=:shape,
-#            aspect_ratio=:equal,
-#            dpi=200
-#           )
+computeEdgeLengths(cNeedle2)

@@ -26,19 +26,18 @@ overlapForceType = overlapForceTypes[3]
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor]
 
 ## Simulation time parameters: 
-timeStepSize = 10^(-5)
+timeStepSize = 2*10^(-6)
 T = 0.05
-# T = 20*timeStepSize
 timeInterval = (0.0, T)
 
-NumberOfSimulations = Int(1.2 * 10^4)
+NumberOfSimulations = 12000
 NumberOfSampleTimes = 6        # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "midSim3-bachelorOverlap"
+simulationName = "needleCells-bachelorOverlap-1"
 
 
 ## Space Discretisation for heatmap 

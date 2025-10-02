@@ -291,7 +291,6 @@ function edgeForceCell(c, E_d; k=2)
     """
     res = zeros(2 * N)
     E = computeEdgeLengths(c)
-
     for i = 1:N
 
         if i == 1
