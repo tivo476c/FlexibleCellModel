@@ -176,23 +176,13 @@ function createHeatmaps(matrices)
 
     for i = 1:NumberOfSampleTimes
 
-        sampleTime = sampleTimes[i]
-        heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.3f", sampleTime), "bruna12scale.png")
-        # heatMapName = string("heatmap-sampleTime", sampleTime, "bruna12scale.png")
-        title = string("Heatmap of simulation '", simulationName, "'")
-        # caption = string("Number of cells = $NumberOfCells")
-        caption = string("Number of simulations: ", NumberOfSimulations, ", sample time t = ", @sprintf("%.4f", sampleTime))
+        # sampleTime = sampleTimes[i]
+        # heatMapName = string("heatmap-", simulationName, "-sampleTime", @sprintf("%.3f", sampleTime), "bruna12scale")
+        # # heatMapName = string("heatmap-sampleTime", sampleTime, "bruna12scale.png")
+        # title = string("Heatmap of simulation '", simulationName, "'")
+        # # caption = string("Number of cells = $NumberOfCells")
+        # caption = string("Number of simulations: ", 10000, ", sample time t = ", @sprintf("%.4f", sampleTime))
 
-        heatmap(HeatGrid, HeatGrid, matrices[i],
-            xlimits=domain,
-            ylimits=domain,
-            xlabel=caption,
-            c=reverse(cgrad(:hot)),
-            # clim=(minVal, maxVal),
-            clim=(0.55, 1.55),  # activate for bruna scaling 
-            ratio=:equal,
-            dpi=500
-        )
         # heatmap(HeatGrid, HeatGrid, matrices[i],
         #     xlimits=domain,
         #     ylimits=domain,
@@ -203,10 +193,47 @@ function createHeatmaps(matrices)
         #     ratio=:equal,
         #     dpi=500
         # )
+        # vline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
+        # hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
+        # savefig(joinpath(heatMapsPath, "$(heatMapName).png"))
+
+
+        # # plot without color legend
+        # heatmap(HeatGrid, HeatGrid, matrices[i],
+        #     xlimits=domain,
+        #     ylimits=domain,
+        #     xlabel=caption,
+        #     c=reverse(cgrad(:hot)),
+        #     # clim=(minVal, maxVal),
+        #     clim=(0.55, 1.55),  # activate for bruna scaling 
+        #     ratio=:equal,
+        #     dpi=500,
+        #     colorbar=false,
+        #     margin=0Plots.mm
+        # )
+        # vline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
+        # hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
+        # savefig(joinpath(heatMapsPath, "$(heatMapName)-nolegend.png"))
+
+        heatmap(
+            HeatGrid, HeatGrid, matrices[i],
+            xlimits=domain,
+            ylimits=domain,
+            # xlabel=caption,
+            c=reverse(cgrad(:hot)),
+            clim=(0.55, 1.55),
+            ratio=:equal,
+            size=(1000, 800),          # width x height in pixels (affects aspect)
+            colorbar=true,
+            colorbar_position=:bottom     # horizontal
+        )
+
         vline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
         hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
-
-        savefig(joinpath(heatMapsPath, heatMapName))
+        
+        plot!(Plots.current(), colorbar=:horizontal)
+        # Save as scalable PDF
+        savefig(joinpath(heatMapsPath, "colorbar.pdf"))
 
     end
 end
