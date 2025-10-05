@@ -236,3 +236,44 @@ Figure~\ref{fig:hscmHeatmaps} shows the density evolution of the HSCM.
     }
     % \label{fig:ppHeatmaps}
 \end{figure}
+
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{ccc}
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/0.png} &     % soft 0
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/0.png} &   %  mid 0
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/0.png} \\    % hard 0
+
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/1.png} &     % soft 
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/1.png} &   %  mid 
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/1.png} \\    % hard 
+
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/2.png} &     % soft 2
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/2.png} &   %  mid 2
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/2.png} \\    % hard 2
+
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/3.png} &     % soft 3
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/3.png} &   %  mid 3
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/3.png} \\    % hard 3
+
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/4.png} &     % soft 4
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/4.png} &   %  mid 4
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/4.png} \\    % hard 4
+
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/5.png} &     % soft 5
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/5.png} &   %  mid 5
+        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/5.png} \\    % hard 5
+
+    \end{tabular}
+    \caption{Heatmaps of a Monte Carlo simulation of the DF cell model with different hardness values at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
+    Left column shows hardness $0$, we can see hardness $0.5$ in the middle and hardness $1$ on the right.
+    We can oberserve that the diffusion rate increases with increasing hardness.} 
+	\label{fig:sanityCheck}    
+\end{figure}
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/area1/energies-show-areaForce.png} 
+    \caption{The area force successfully restores the desired cell area after 5 time steps as this energy diagram shows.}
+	\label{fig:areaEnergyDiagram}    
+\end{figure}
