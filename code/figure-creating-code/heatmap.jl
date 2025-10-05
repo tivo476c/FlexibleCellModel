@@ -161,6 +161,40 @@ function getMatrixIndex(coords::Vector{Float64})
 
 end
 
+function createCentralDensity(matrix)
+    """
+    Creates that middle cross section of the heatmap, i.e. the density along the lines x=0, y=0.
+
+    Args:
+        matrix: the heatmap matrix
+    """
+    matrix .= Float64.(matrix)
+    matrix = matrix ./ (NumberOfSimulations * NumberOfCells * HeatStepSize^2)
+
+    xMiddle = zeros(NumberOfHeatGridPoints)
+    yMiddle = zeros(NumberOfHeatGridPoints)
+
+    for i = 1:30
+        for j = 15:16
+            xMiddle[i] += matrix[j, i]
+            yMiddle[i] += matrix[i, j]
+        end
+    end
+
+    Middles = 0.5 .* (xMiddle + yMiddle)
+
+    heatMapName = string("middle-", simulationName, "-sampleTime", @sprintf("%.3f", 0.05))
+
+    centralplot = plot(HeatGrid, Middles,
+        xlimits=domain,
+        ylimits=(0, maximum(Middles)),
+        # clim=(0.55, 1.55),  # activate for bruna scaling 
+        dpi=500
+    )
+    savefig(joinpath(heatMapsPath, "$(heatMapName).png"))
+
+end
+
 function createHeatmaps(matrices)
 
     matrices .= [Float64.(M) for M in matrices]
@@ -215,7 +249,7 @@ function createHeatmaps(matrices)
         hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
         savefig(joinpath(heatMapsPath, "$(heatMapName)-nolegend.png"))
 
-  
+
 
     end
 end
