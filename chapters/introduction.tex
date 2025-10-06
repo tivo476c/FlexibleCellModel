@@ -26,7 +26,10 @@ where $\Delta_{\vec{x}}$ is the Laplacian operator with respect to the spatial v
 Equation~\eqref{eq:pointparticle} represents the classic diffusion equation, a cornerstone of physics and mathematics.
 The same diffusion constant $D>0$ is used in the SDE for particle movement and the PDE for the probability density function $\rho$. \\
 
+
+
 % intro hp model 
+\textbf{Hard sphere model} \\
 Next, we consider models that add a real size to the particles and introduce particle interactions. 
 With the inclusion of a real size, the particles cannot overlap, resulting in exclusion effects. 
 To account for this, we introduce a new interaction dynamics that ensures the particles do not overlap. 
@@ -60,7 +63,10 @@ Using the method of matched asymptotic expansions, the authors also derived the 
 When $f$ is neglected and $\epsilon \rightarrow 0$, this equation reduces to the probability density function of the point particle model, except for a rescaling factor.
 Similarly, the Fokker-Planck equation is a direct extension of the diffusion equation, with an additional drift term.\\
 
+
+
 % bachelor intro sp model 
+\textbf{Soft sphere model} \\
 Next, we consider an extension of the model by introducing deformable soft spherical particles. 
 This new model incorporates the effect of deformation and interaction between particles through a potential energy function that depends on the distance between the particles.
 The paper~\cite{Bruna2017}, written by Bruna, Chapman and Robinson, analyses the diffusion properties of such a model. \\
@@ -117,23 +123,51 @@ where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon_u \l
 In this thesis, we aim to derive forces that can be applied to our cell model and affect the diffusion behavior of the cell system, similar to the forces studied in \cite{Bruna2012} and \cite{Bruna2017}. \\
 
 % transition to phase field models 
-A limitation of the previous models is that they only considered spherical particles. 
-In contrast, the next model we will introduce allows for particles of different shapes. 
-In this thesis, we aim to develop models that can represent a wide range of shapes, as the shape of a cell can influence its diffusion behavior. 
-Phase field models, for example, are capable of representing complex shapes, as demonstrated in the work of Happel and Voigt \cite{Happel2023}. \\
-In this model, each cell is described by a two-dimensional phase field variable $\phi_i \in [-1, 1]$, which is a smooth function. 
-The interior of the cell is represented by points $\vec{x} \in \Omega$ with positive values in $\phi_i$, while points with negative values are considered to be exterior. 
+While these models are powerful, they are limited to spherical particles and do not account for the complex shapes and deformations observed in biological cells.  \\
+
+
+% phase field model
+\textbf{Phase field model} \\
+- A new cell model approach  
+The phase field model developed by Happel and Voigt \cite{HV23} shares conceptual similarities with the soft-sphere model of Bruna, Chapman, and Robinson \cite{BCR17} in that both incorporate cell-cell interactions through a continuous, repulsive energy term that prevents interpenetration. 
+
+In both frameworks, the interaction is mediated by a smooth, short-range potential (via the diffuse interface in the phase field model and via a potential 
+u in the soft-sphere model), leading to a physically realistic representation of cell crowding. 
+However, the phase field model differs fundamentally in its approach: it is a deterministic, continuum PDE-based model that explicitly represents cell shape and internal structure through a phase field variable $\phi_i​$, allowing for complex deformations, topological changes, and geometric coupling to surface curvature. 
+
+Unlike the soft-sphere model, which is derived from stochastic particle dynamics and leads to a nonlinear Fokker-Planck equation for the marginal density, the phase field model does not describe diffusion in a statistical sense. 
+Instead, it focuses on emergent collective behaviors such as coordinated rotation on curved surfaces, driven by curvature alignment and self-propulsion. 
+In contrast to the hard-sphere model, which enforces rigid, instantaneous collisions via reflective boundary conditions, the phase field model resolves overlaps through gradual, continuous deformation of cell interfaces, avoiding discontinuities in dynamics. 
+These differences make the phase field model particularly suited for studying morphogenesis and tissue mechanics, but it does not yield a macroscopic diffusion equation like those in the soft-sphere or hard-sphere frameworks.
+
+
+Both frameworks are based on a variational principle, where cell dynamics are governed by a gradient flow of a free energy functional that incorporates shape preservation, cell-cell interactions, and the physical constraints of the system. \\
+In both models, cell-cell interactions are mediated through a continuous, short-range potential that prevents interpenetration while allowing for deformations, leading to a smooth transition between overlapping and non-overlapping states. 
+The soft-sphere model derives its interaction term from a potential energy function $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which results in a nonlinear diffusion equation with a density-dependent diffusion coefficient. \\
+Similarly, the phase field model uses a diffuse interface representation where the interaction energy arises from a non-local term in the free energy, effectively generating a repulsive force between cells that scales with local cell density. 
+Both models exhibit enhanced diffusion due to excluded-volume effects, and their macroscopic behavior is described by a nonlinear Fokker-Planck-type equation that captures the collective dynamics of dense cell systems. \\
+These shared mathematical structures and physical principles — namely, gradient flow dynamics, continuous interactions, and density-dependent diffusion — highlight the conceptual and formal parallels between the phase field approach and the soft-sphere model. \\
+While the phase field model shares core principles with the soft-sphere model—such as continuous interactions and density-dependent diffusion—it differs significantly from both the soft-sphere and hard-sphere models in its representation and physical implementation. 
+Unlike the soft-sphere model, which treats cells as point particles with a smooth interaction potential, the phase field model explicitly represents cells as extended, diffuse regions with a continuous internal structure defined by the phase field variable $\phi_i$. \\
+Phase field variables represent cells as smooth functions $\phi_i(\vec{x}, t) \in [-1, 1]$, with $\phi_i > 0$ in the cell interior and $\phi_i <0$ in the exterior. 
 The cell wall is denoted by values of $\phi_i = 0$. \\
-The dynamic for each $\phi_i$ is given by the equation
+The dynamics of $\phi_i$ are governed by a gradient flow of a free energy functional:
 \begin{align}
-	\dfrac{ \partial \phi_i}{ \partial t} + v_0(\textbf{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \dfrac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N \label{eq:phasefield},
+	\frac{\partial \phi_i}{\partial t} + v_0 (\vec{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \frac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N \label{eq:phasefield},
 \end{align}
-where $\textbf{v}_i$ is a vector field used to incorporate activity, with a self propulsion strength $v_0$, $F$ is a free energy, and $\dfrac{\delta F}{\delta \phi_i}$ denotes the first variation.\\
-The free energy $F$ arises from a sum of different energies, including shape preservation, cell interaction, and preservation of the codomain of $\phi_i$ to be $[-1, 1]$.
-%%% TODO: MORE FOR PHASE FIELD MODEL 
+where $\vec{v}_i$ is a vector field used to incorporate activity, with a self propulsion strength $v_0$, $F$ is a free energy, and $\dfrac{\delta F}{\delta \phi_i}$ denotes the first variation.\\
+The free energy $F$ arises from a sum of different energies, including shape preservation, cell-cell interaction, and preservation of the codomain of $\phi_i$ to be $[-1, 1]$. 
+This allows for natural handling of complex cell shapes, topological changes (such as cell division or fusion), and the coupling of cell mechanics to geometric curvature through extrinsic curvature terms in the free energy. 
+In contrast, the hard-sphere model enforces rigid, non-deformable boundaries via reflective boundary conditions at a fixed distance, resulting in abrupt, instantaneous collisions without shape deformation. 
+The phase field model, by contrast, resolves overlaps through gradual, continuous deformation of cell interfaces, avoiding the discontinuities inherent in hard-sphere dynamics. 
+Furthermore, while the soft-sphere model typically assumes spherical symmetry and isotropic interactions, the phase field model can incorporate anisotropic effects—such as alignment with principal curvature directions—through geometric coupling terms, enabling the simulation of complex collective behaviors like coordinated rotation on curved surfaces. 
+These differences make the phase field model more biologically realistic for epithelial tissues, but also more computationally demanding than the simpler point-particle approaches. \\
+
+
 
 % vertex based model 
-A simpler approach for modeling diverse shapes in cell models is to use a vertex-based model, as used in \cite{Fletcher14}. 
+\textbf{Vertex model} \\
+A simpler approach for modeling diverse shapes in cell models is to use a vertex-based model, as used in~\cite{Fletcher14}. 
 Vertex models are a valuable tool in computational biology and biophysics for studying the biomechanics and behavior of cells and tissues. \\
 In a vertex model of a cell, the cell's outline or boundary is approximated as a polygon, with the vertices of this polygon representing discrete points along the cell's boundary. 
 Movements or transformations of the cell are given by forces that are applied on each vertex individually. \\
@@ -143,7 +177,21 @@ The cell dynamic in a vertex model is given by the equation
 \end{align}
 where $\eta$ is a scaling factor and $F_i$ is the total force acting on $\vec{x}_i$. \\
 Like in the phase field model, $F_i$ is a sum of different forces that define the cell behavior, such as the cell flexibility or the interaction with other cells. \\
-Our new cell model shall be able to represent a wide range of shapes, similar to the phase field model in \cite{Happel2023} and the vertex model in \cite{Fletcher14}.
+Our new cell model shall be able to represent a wide range of shapes, similar to the phase field model in~\cite{Happel2023} and the vertex model in~\cite{Fletcher14}. \\
+
+
+
+% transition to our model:
+\textbf{Discrete form model} \\ 
+The DF model shares several key features with the referenced cell models. 
+All frameworks after the point particles account for excluded-volume effects, which prevent cell overlap and lead to enhanced diffusion and non-trivial collective behavior. 
+The dynamics in each model are governed by gradient flows of energy functionals, ensuring that the system evolves toward lower-energy configurations. 
+Furthermore, stochastic motion—modeled as Brownian motion—is included in all approaches to capture thermal fluctuations. 
+These shared principles provide a strong foundation for comparing our model to established frameworks.
+Like the vertex model of Fletcher et al.~\cite{Fletcher14}, our cells are represented as polygons with discrete vertices, and their dynamics are governed by forces derived from energy gradients. 
+However, unlike the standard vertex model, our framework explicitly incorporates a **hardness parameter $h \in [0,1]$** that allows for a continuous transition from rigid hard-sphere behavior ($h=1$) to fully deformable cell dynamics ($h=0$).
+In this thesis, we derive and study a non-confluent DF model that systematically investigates how cellular deformability—controlled by the hardness parameter $h$—influences the overall diffusivity of the cell system. 
+By connecting our model to the established frameworks of Bruna and Chapman~\cite{Bruna2012, Bruna2017} and Happel and Voigt~\cite{Happel2023}, we provide a unified perspective on cell dynamics that spans from rigid to deformable regimes.
 
 %%% TODO: work in missing papers 
 %%% TODO: explain what was done in bachelor thesis 
