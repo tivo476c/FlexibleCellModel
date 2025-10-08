@@ -130,20 +130,20 @@ The resulting counts are normalised by dividing by the total number of cells $N_
 This approach provides a smooth estimate of the empirical cell density, allowing direct comparison with the corresponding solutions of the diffusion equations.
 
 Figure~\ref{fig:fig2BC12} shows the discussed graphic from~\cite{Bruna2012}. 
-\begin{figure}
-	\centering
-    \includegraphics[width=\textwidth*2/3]{sanity-check/heatmaps/fig2_BC12.png}
-    \caption{
-    This figure contains the following four plots, all of them are shown at time \( t=0.05 \): \newline
-    \hspace*{0.5em}(a) shows the solution of the linear diffusion equation~\ref{eq:heat} for point particles. \newline
-    \hspace*{0.5em}(b) shows the histogram of a Monte Carlo simulation of the point particle model. \newline
-    \hspace*{0.5em}(c) shows the solution of the nonlinear diffusion equation~\ref{eq:hard-sphere-p} for finite-sized particles. \newline
-    \hspace*{0.5em}(d) shows the histogram of a Monte Carlo simulation of the HSCM. \newline
-    For the two lower plots (c) and (d), a higher diffusion rate can be observed. 
-    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
-    }
-    \label{fig:fig2BC12}
-\end{figure}
+% \begin{figure}
+% 	\centering
+%     \includegraphics[width=\textwidth*2/3]{sanity-check/heatmaps/fig2_BC12.png}
+%     \caption{
+%     This figure contains the following four plots, all of them are shown at time \( t=0.05 \): \newline
+%     \hspace*{0.5em}(a) shows the solution of the linear diffusion equation~\ref{eq:heat} for point particles. \newline
+%     \hspace*{0.5em}(b) shows the histogram of a Monte Carlo simulation of the point particle model. \newline
+%     \hspace*{0.5em}(c) shows the solution of the nonlinear diffusion equation~\ref{eq:hard-sphere-p} for finite-sized particles. \newline
+%     \hspace*{0.5em}(d) shows the histogram of a Monte Carlo simulation of the HSCM. \newline
+%     For the two lower plots (c) and (d), a higher diffusion rate can be observed. 
+%     The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
+%     }
+%     \label{fig:fig2BC12}
+% \end{figure}
 
 \subsection{Reproduction of reference results}
 Before running our new dynamics that include cell flexibility, we first want to guarantee that the simulations are running in the correct setup.
