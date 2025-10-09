@@ -170,7 +170,8 @@ The cell wall is denoted by values of $\phi_i = 0$. \\
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/phasefield.pdf}
-	\caption{A snapshot from the paper~\cite{alert2020} illustrating a phase field variable. The cell's inside has value $\phi$ = 1 and the outside $\phi$ = -1. 
+	\caption{A snapshot from the paper~\cite{alert2020} illustrating a phase field variable. 
+	The cell's inside has value $\phi = 1$ and the outside $\phi = -1$. 
 	}
 	\label{fig:phasefield}
 \end{figure}
@@ -314,22 +315,43 @@ where $\gamma$ is the line tension coefficient,
 	U_{bending} &= \frac{k_b}{2 N_v} \sum\limits_{m=1}^{N} \sum\limits_{i=1}^{N_v} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
 \end{align*}
 where the last sum is a cyclic summation, $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,i}}{\norm[\vec{l}_{m,i}]} $ is the unit vector of $\vec{l}_{m,i}$
+
+
+There are two different methods to model the repulsive interaction between two deformable polygons called rough surface (RS) and smooth surface (SS) method.
+- In the RS method, each vertex of a polygon is treated as the center of a disk with diameter $\delta = l_0 = 1$. 
+- Repulsive interactions are computed as linear spring forces between overlapping disks on contacting polygons. 
+- This method effectively models a "rough" surface with discrete, localized repulsion at vertices.
 \begin{align*}
-	U_{interaction} &=  \sum\limits_{m=1}^{N} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_v} \sum\limits_{k=1}^{N_v} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
+	U_{RS interaction} &=  \sum\limits_{m=1}^{N} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_v} \sum\limits_{k=1}^{N_v} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
 \end{align*}
 where $k_r$ is the repulsive constant, $\delta$ is the diameter of the disks or width of the circulo-lines (see Fig.~\ref{fig:vertex}), and $\Theta$ is the Heaviside step function, that is either $1$ for a positive argument or $0$ otherwise. \\
 
-% TODO: explain mechanics from figure. 
-% TODO: explain results from the paper. 
+- In contrast, the SS method models polygon edges as circulo-lines (i.e., line segments with finite width $\delta$). 
+- The repulsive interaction is computed based on the minimum distance $d_{\min}$ between two edge segments $l_{m,j}$ and $l_{n,k}$, replacing the vertex-to-vertex distance in the RS method. 
+The interaction energy becomes:
+$
+U_{SS interaction} = \sum_{m=1}^N \sum_{n \neq m} \sum_{j=1}^{N_v} \sum_{k=1}^{N_v} \frac{1}{2} k_r \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right),
+$
+where $d_{\min}$ is the shortest distance between the two line segments. 
+This method provides a smoother, more continuous repulsion, better approximating the behavior of soft, continuous interfaces.
+
+Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
+This indicates that the overall jamming behavior is robust to the specific choice of interaction model.
+Figure~\ref{fig:vertex} illustrates the two interaction methods.
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/jamming.png}
-	\caption{A snapshot from the paper~\cite{Boromand2018} illustrating a configuration of vertex-based deformable cells. Schematic of deformable polygons with $N_v = 34$ vertices (where the position of the $j$-th vertex in the $m$-th polygon is denoted by $\vec{v}_{m,j}$), area $a_m$, and perimeter $p_m$. The edge $l_{m,j} = p_m / N_v$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. Two methods are used to model the edges of deformable polygons: (a) and (b) show the RS method, where disks of diameter $\delta$ are centered at the polygon vertices; (c) and (d) show the SS method, where polygon edges are modeled as circulo-lines of width $\delta$. The quantity $d_{\text{min}}$ denotes the minimum distance between the line segments $l_{m,j}$ and $l_{n,k}$.
+	\caption{A snapshot from the paper~\cite{Boromand2018} illustrating a configuration of vertex-based deformable cells. 
+	Schematic of deformable polygons with $N_v = 34$ vertices (where the position of the $j$-th vertex in the $m$-th polygon is denoted by $\vec{v}_{m,j}$), area $a_m$, and perimeter $p_m$. 
+	The edge $l_{m,j} = p_m / N_v$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. 
+	Two methods are used to model the edges of deformable polygons: (a) and (b) show the RS method, where disks of diameter $\delta$ are centered at the polygon vertices; (c) and (d) show the SS method, where polygon edges are modeled as circulo-lines of width $\delta$. 
+	The quantity $d_{\text{min}}$ denotes the minimum distance between the line segments $l_{m,j}$ and $l_{n,k}$.
 	}
 	\label{fig:vertex}
 \end{figure}
 
+% fletcher 
 
 % bachelor thesis 
 A simpler approach for modeling diverse shapes in cell models is to use a vertex-based model, as used in~\cite{Fletcher14}. 
@@ -365,5 +387,7 @@ In this thesis, we derive and study a non-confluent DF model that systematically
 By connecting our model to the established frameworks of Bruna and Chapman~\cite{Bruna2012, Bruna2017} and Happel and Voigt~\cite{Happel2023}, we provide a unified perspective on cell dynamics that spans from rigid to deformable regimes.
 
 %%% TODO: work in missing papers 
+- we define similar energies as in~\cite{Fletcher14}, but we mostly consider simulations with only $N_V=6$ vertices per cell.  
+
 %%% TODO: tell what happens in the following chapters 
 
