@@ -27,7 +27,7 @@ In contrast, cancer cells often invade tissues as sheets, strands, or clusters, 
 While cell migration occurs extensively in three dimensions, modeling these complex processes remains a significant challenge. 
 Consequently, much current scientific work focuses on two dimensional systems as a more tractable approach to understand the underlying physical principles.
 Throughout this thesis, we consider cell dynamics within a bounded two-dimensional domain, denoted by $\Omega \subset \R^2$. 
-Throughout this work, the total number of cells present within the domain $\Omega$ is denoted by $N_V \in \N$. \\
+Throughout this work, the total number of cells present within the domain $\Omega$ is denoted by $N_C \in \N$. \\
 In two dimensions, cell monolayers serve as fundamental model systems to study cell behavior and tissue function. 
 These systems, comprising a single layer of cells grown on a surface, can be mathematically and computationally modeled in either a confluent or non-confluent manner. 
 A confluent cell model depicts a continuous, tightly packed layer where cells cover the entire surface without gaps, whereas a non-confluent monolayer represents a state with spaces and gaps between individual cells or cell clusters that have not yet achieved full surface coverage. \\
@@ -38,7 +38,7 @@ The systematic comparison of these diverse cell models is crucial for selecting 
 Understanding the diffusion behavior of cells, influenced by various forces and interactions, is a key aspect of collective cell migration. This will be a central focus of this thesis. Different mathematical cell models, incorporating distinct cell dynamics, will exhibit varying diffusion behaviors. To begin this investigation, we will first introduce the simplest model: the point particle model. \\
 
 \textbf{Point particle model} \\
-We consider the point particle model on a two dimensional bounded domain $\Omega \subset \mathbb{R}^2$, where we have $N_V \in \N$ particles.
+We consider the point particle model on a two dimensional bounded domain $\Omega \subset \mathbb{R}^2$, where we have $N_C \in \N$ particles.
 These particles have no real size.
 There is also no particle interaction, as there is no possibility of collision. \\
 Initially, the particles are randomly distributed in $\Omega$. \\
@@ -58,10 +58,11 @@ The term $dB_t^{(i)}$ introduces the randomness of Brownian motion, where $dB_t^
 We also consider the probability density function $\rho(t, \vec{x})$, which describes the probability of finding a particle at a specific position $\vec{x}$ at time $t$.
 In the given context, the function $\rho$ satisfies the partial differential equation:
 \begin{align}
-	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t, \vec{x}) \label{eq:pointparticle}, 
+	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t, \vec{x}) ,
+	\label{equ:pointparticle}
 \end{align}
 where $\Delta_{\vec{x}}$ is the Laplacian operator with respect to the spatial variables. \\
-Equation~\eqref{eq:pointparticle} represents the classic diffusion equation, a cornerstone of physics and mathematics.
+Equation~\eqref{equ:pointparticle} represents the classic diffusion equation, a cornerstone of physics and mathematics.
 The same diffusion constant $D>0$ is used in the SDE for particle movement and the PDE for the probability density function $\rho$. \\
 
 
@@ -72,41 +73,62 @@ Next, we consider models that add a real size to the particles and introduce par
 With the inclusion of a real size, the particles cannot overlap, resulting in exclusion effects. 
 To account for this, we introduce a new interaction dynamics that ensures the particles do not overlap. 
 This new interaction dynamics leads to a more complex and realistic model that captures the behavior of particles with a real size and interactions. \\
-Since particles cannot overlap, the domain $\Omega^{(i)}_{\epsilon}$, that holds the information where the centre of particle $i$ can be located, must exclude the areas where $\norm[\vec{x}_i - \vec{x}_j] \leq \epsilon$ for all $1 \leq j \leq N,$ $j \neq i$. 
+Since particles cannot overlap, the domain $\Omega^{(i)}_{\epsilon}$, that holds the information where the centre of particle $i$ can be located, must exclude the areas where $\norm[\vec{x}_i - \vec{x}_j] \leq \epsilon$ for all $1 \leq j \leq N_C,$ $j \neq i$. 
 This is due to the fact that particles cannot occupy the same space simultaneously. \\
-The domain that holds all possible locations of the particles is then given by \[\Omega^N_{\epsilon} = \Omega^{(1)}_{\epsilon} \times \ldots \times \Omega^{(N)}_{\epsilon} .\] 
+The domain that holds all possible locations of the particles is then given by \[\Omega^{N_C}_{\epsilon} = \Omega^{(1)}_{\epsilon} \times \ldots \times \Omega^{(N_C)}_{\epsilon} .\] 
 This can be visualized as a product space, where each particle's domain is combined to form a larger domain that encompasses all possible locations of the particles.
-Under this circumstances, we will get a new dynamic compared to the point particle model.  \\
-In the work of Bruna et al.~\cite{Bruna2012}, a hard sphere particle model is examined.
-Here, the particles are spherical in shape, with a diameter $0 < \epsilon \ll 1$.
-All particles in this model are distinct and can be distinguished from one another. \\
-The hard sphere model is characterized by the fact that any interaction between particles may cause a change in their direction of motion, but the spherical shape of the particles remains unchanged.
-Hardcore collisions are modeled as reflective boundary conditions on the collision surfaces defined by $r = \norm[\vec{x}_i - \vec{x}_j] = \epsilon$, where $1 \leq i < j \leq N$.
-The external forces acting on a particle in the system are described by the force function $f: \R^2 \rightarrow \R^2$, which depends only on the location of the particle.
-The function $\vec{F}$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_N)^T$ to the vector of external forces $\vec{F}(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_N))^T$.
-The dynamics of the particles are governed by the SDE
-\begin{center}
-	$d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t)) \: dt, \qquad 1 \leq i \leq N$.
-\end{center}
-In this model, the particles are initially randomly distributed in $\Omega^N_{\epsilon}$, ensuring that no overlap occurs between the particles.
-The joint probability density function $P$ of the $N$ particles satisfies the high-dimensional Fokker-Planck equation
-\begin{center}
-	$\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot (D \nabla_{\vec{X}} P - P \vec{F})$,
-\end{center}
-where $\nabla_{\vec{X}}$ and $\nabla_{\vec{X}} \cdot$ denote the gradient and divergence operators with respect to the $N$-particle position vector $\vec{X}$.\\
-Using the method of matched asymptotic expansions, the authors also derived the probability density function $\rho$ of finding a single particle at time $t$ and position $\vec{x}$, which satisfies the equation
-\begin{align}
-	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho + \alpha_d (N - 1) \epsilon^d \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f(\vec{x}) \rho).
-\end{align}
-When $f$ is neglected and $\epsilon \rightarrow 0$, this equation reduces to the probability density function of the point particle model, except for a rescaling factor.
-Similarly, the Fokker-Planck equation is a direct extension of the diffusion equation, with an additional drift term.\\
+Under this circumstances, we will get a new dynamic compared to the point particle model.  
+Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration looks like compared to a point particle configuration. \\
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/hardsphere.eps}
 	\caption{An illustration from~\cite{Bruna2012} of the point particles on the left and the hard sphere particles on the right. We can see areas where the centre of the particles cannot be located, as they would overlap with other particles being marked red. 
 	}
-	\label{fig:curved_phasefield}
+	\label{fig:hardsphere}
+\end{figure}
+
+In the work of Bruna et al.~\cite{Bruna2012}, a hard sphere particle model is examined.
+Here, the particles are spherical in shape, with a diameter $0 < \epsilon \ll 1$.
+All particles in this model are distinct and can be distinguished from one another. 
+The diffusivity constant $D$ is set to be $D=1$. \\
+The hard sphere model is characterized by the fact that any interaction between particles may cause a change in their direction of motion, but the spherical shape of the particles remains unchanged.
+Hardcore collisions are modeled as reflective boundary conditions on the collision surfaces defined by $r = \norm[\vec{x}_i - \vec{x}_j] = \epsilon$, where $1 \leq i < j \leq N_C$.
+The external forces acting on a particle in the system are described by the force function $f: \R^2 \rightarrow \R^2$, which depends only on the location of the particle.
+The function $\vec{F}$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $\vec{F}(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
+The dynamics of the particles are governed by the SDE
+\begin{align*}
+	d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t)) \: dt, \qquad 1 \leq i \leq N_C.
+\end{align*}
+In this model, the particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles.
+The joint probability density function $P$ of the $N_C$ particles satisfies the high-dimensional Fokker-Planck equation
+\begin{align*}
+	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot ( \nabla_{\vec{X}} P - P \vec{F}),
+\end{align*}
+where $\nabla_{\vec{X}}$ and $\nabla_{\vec{X}} \cdot$ denote the gradient and divergence operators with respect to the $N_C$-particle position vector $\vec{X}$.\\
+Using the method of matched asymptotic expansions, the authors also derived the probability density function $\rho$ of finding a single particle at time $t$ and position $\vec{x}$, which satisfies the equation
+\begin{align}
+	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f(\vec{x}) \rho).
+	\label{equ:hardsphere}
+\end{align}
+When $f$ is neglected and $\epsilon \rightarrow 0$, this equation reduces to the probability density function of the point particle model, except for a rescaling factor.
+The Fokker-Planck equation is a direct extension of the diffusion equation, with an additional drift term.\\
+A central finding of~\cite{Bruna2012} is shown in Figure~\ref{fig:fig2BC12}, which compares the diffusion behavior of the point particle model and the hard sphere model. \\
+
+\begin{figure}[h!]
+	\centering
+    \includegraphics[width=0.8\textwidth]{intro/fig2_BC12.png}
+    \caption{
+    This figure from~\cite{Bruna2012} contains the following four plots, all of them are shown at time \( t=0.05 \). 
+	For all plots, the initial condition is normally distributed with mean $(0,0)^T$ and standard deviation $0.09$. 
+    (a) shows the solution of the linear diffusion Equation~\eqref{equ:pointparticle} for point particles. 
+    (b) shows the histogram of a Monte Carlo simulation of the point particle model. 
+    (c) shows the solution of the nonlinear diffusion Equation~\eqref{equ:hardsphere} for finite-sized particles. 
+    (d) shows the histogram of a Monte Carlo simulation of the hard sphere model. 
+    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
+	We can see that the hard sphere model in (c) and (d) shows a quicker diffusion rate as the cell concentration in the centrum of the domain has already diffused more compared to the point particle model in (a) and (b). 
+    }
+    \label{fig:fig2BC12}
 \end{figure}
 
 
@@ -116,62 +138,46 @@ Similarly, the Fokker-Planck equation is a direct extension of the diffusion equ
 Next, we consider an extension of the model by introducing deformable soft spherical particles. 
 This new model incorporates the effect of deformation and interaction between particles through a potential energy function that depends on the distance between the particles.
 The paper~\cite{Bruna2017}, written by Bruna, Chapman and Robinson, analyses the diffusion properties of such a model. \\
+In contrast to the soft sphere model, the hard sphere model enforces rigid, non-deformable cell boundaries through reflective boundary conditions at a fixed separation distance, leading to abrupt, instantaneous collisions without any interface deformation. 
+The soft sphere model uses a smoother approach including interaction potentials. \\
 The equation of motion for each particle $i$ is given by
-\begin{equation}
-d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t))\: dt - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \: dt, \qquad 1 \leq i \leq N,
-\end{equation}
+\begin{align*}
+	d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t))\: dt - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \: dt, \qquad 1 \leq i \leq N_C,
+\end{align*}
 where $\nabla_{\vec{x}_i}$ is the gradient with respect to $\vec{x}_i$. \\
 The effect of the interaction potential is to cause particles to repel or attract each other depending on the distance between them, rather than simply overlapping. \\
 For the modeling of short range interacting soft sphere particles, the authors computed the one particle probability density $\rho(t, \vec{x})$ of finding a given particle at position $\vec{x}$ at time $t$ developing according to
-\begin{equation}
-\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot (D \nabla_{\vec{x}} \rho - f(\vec{x}) \rho + \alpha_u \epsilon_u^2(N-1)\rho \nabla_{\vec{x}} \rho)
-\end{equation}
+\begin{align}
+	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot (D \nabla_{\vec{x}} \rho - f(\vec{x}) \rho + \alpha_u \epsilon_u^2(N_C-1)\rho \nabla_{\vec{x}} \rho)
+	\label{equ:softsphere}
+\end{align}
 where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon_u \ll 1$ is the interaction range of $u$.
-% TODO: mention that figure 2 
-\begin{figure}
-	\centering
-    \includegraphics[width=0.8\textwidth]{intro/fig2_BC12.png}
-    \caption{
-    This figure contains the following four plots, all of them are shown at time \( t=0.05 \): 
-    (a) shows the solution of the linear diffusion equation~\ref{eq:heat} for point particles. 
-    (b) shows the histogram of a Monte Carlo simulation of the point particle model. 
-    (c) shows the solution of the nonlinear diffusion equation~\ref{eq:hard-sphere-p} for finite-sized particles. 
-    (d) shows the histogram of a Monte Carlo simulation of the HSCM. 
-    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
-    }
-    \label{fig:fig2BC12}
-\end{figure}
-In this thesis, we aim to derive forces that can be applied to our cell model and affect the diffusion behavior of the cell system, similar to the forces studied in~\cite{Bruna2012} and~\cite{Bruna2017}. \\
-
-
-
-% transition to phase field models 
+When comparing the first marginals of the soft sphere model (Equ.~\eqref{equ:softsphere}) and the hard sphere model (Equ.~\eqref{equ:hardsphere}), we can see that they are similar in structure, with the main difference being the coefficients of the nonlinear diffusion terms. 
+We can not clearly say which model diffuses faster, as this is dependent on the modelling of the soft interaction. \\
+The influence of the cell hardness to the diffusion rate of the cell system will be investigated in this thesis. 
+We even introduce a parameter that can continuously change the cell hardness from hard to soft. \\
 While these models are powerful, they are limited to spherical particles and do not account for the complex shapes and deformations observed in biological cells.  \\
+
 
 
 % phase field model
 \textbf{Phase field models} \\
-
-% intro phase field model: 
-- A new cell model approach is now considered. 
-- The principle of phase field models shares conceptual similarities with the soft-sphere model of Bruna, Chapman, and Robinson~\cite{BCR17} in that both incorporate cell-cell interactions through a continuous, repulsive energy term that prevents interpenetration. 
-- In both frameworks, the interaction is mediated by a smooth, short-range potential (via the diffuse interface in the phase field model and via a potential 
-u in the soft-sphere model), leading to a physically realistic representation of cell crowding. 
-However, the phase field model differs fundamentally in its approach: it is a continuum differential equations-based model that explicitly represents cell shape and internal structure through a phase field variable $\phi_i$, allowing for complex deformations, topological changes, and geometric coupling to surface curvature. 
-- In both models, cell-cell interactions are mediated through a continuous, short-range potential that prevents interpenetration while allowing for deformations, leading to a smooth transition between overlapping and non-overlapping states. 
-- The soft-sphere model derives its interaction term from a potential energy function $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which results in a nonlinear diffusion equation with a density-dependent diffusion coefficient. Similarly, the phase field model uses a diffuse interface representation where the interaction energy arises from a non-local term in the free energy, effectively generating a repulsive force between cells that scales with local cell density. 
-- These shared mathematical structures and physical principles — namely, gradient flow dynamics, continuous interactions, and density-dependent diffusion — highlight the conceptual and formal parallels between the phase field approach and the soft-sphere model. \\
-- While the phase field model shares core principles with the soft-sphere model—such as continuous interactions and density-dependent diffusion—it differs significantly from both the soft-sphere and hard-sphere models in its representation and physical implementation. 
-Unlike the soft-sphere model, which treats cells as point particles with a smooth interaction potential, the phase field model explicitly represents cells as extended, diffuse regions with a continuous internal structure defined by the phase field variable $\phi_i$. \\
-
-This allows for natural handling of complex cell shapes, topological changes (such as cell division or fusion), and the coupling of cell mechanics to geometric curvature through extrinsic curvature terms in the free energy. 
-- the phase field model resolves overlaps through gradual, continuous deformation of cell interfaces, avoiding discontinuities in dynamics. 
-- Both frameworks are based on a variational principle, where cell dynamics are governed by a gradient flow of a free energy functional that incorporates shape preservation, cell-cell interactions, and the physical constraints of the system. 
-- contrasts to the sphere models are: 
-- the hard-sphere model enforces rigid, non-deformable boundaries via reflective boundary conditions at a fixed distance, resulting in abrupt, instantaneous collisions without shape deformation.  The phase field model, by contrast, resolves overlaps through gradual, continuous deformation of cell interfaces, avoiding the discontinuities inherent in hard-sphere dynamics. \\
-
+A new cell modeling framework is now considered. 
+The phase field approach exhibits conceptual parallels with the soft sphere model proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modeled through a continuous repulsive energy that prevents overlap. 
+In both formulations, interactions are governed by a smooth, short range influence manifesting through the diffuse interface in the phase field model and via the interaction potential $u$ in the soft-sphere model, thereby enabling a realistic description of cell crowding effects. \\
+Nevertheless, the phase field model diverges fundamentally in its underlying structure: it is a continuum model based on partial differential equations that explicitly encodes cell morphology and internal organisation through the phase field variable $\phi_i$, enabling dynamic shape changes, topological transitions, and coupling to geometric features such as surface curvature. 
+In both models, the interaction mechanism operates continuously and locally, ensuring a seamless transition between overlapping and non overlapping configurations while maintaining physical consistency. \\
+The soft-sphere model derives its interaction dynamics from the potential energy $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which leads to a nonlinear diffusion equation featuring a diffusion coefficient that depends on local density. 
+Analogously, in the phase field model, the interaction energy emerges from a non-local term in the free energy functional, producing a repulsive force between cells that scales with the local concentration of $\phi_i$. 
+These shared mathematical features: gradient flow evolution, continuous interaction laws and density-dependent diffusion underscore a formal and conceptual alignment between the two approaches. \\
+Although the phase field model inherits key principles from the soft-sphere model, such as continuous interaction and density-dependent transport, it fundamentally differs from both the soft-sphere and hard-sphere frameworks in its physical representation. 
+The phase field model resolves cell overlaps through a free energy which enables gradual, continuous deformation of cell interfaces, thereby avoiding discontinuities in the dynamics that are characteristic of discrete collision models. \\
+The free energy functional encodes shape regularization, intercellular interactions, and physical constraints of the system. 
+Unlike the soft-sphere model, which treats cells as point-like entities interacting via a smooth potential, the phase field model represents cells as much more complex, spatially extended, continuously structured entities, with their internal state fully described by the evolution of the phase field variable $\phi_i$. 
+This enables a natural description of complex cell morphologies, topological transitions such as cell division or fusion, and the integration of cell mechanics with geometric curvature via extrinsic curvature contributions in the free energy. \\
 Phase field variables represent cells as smooth functions $\phi_i(\vec{x}, t) \in [-1, 1]$, with $\phi_i > 0$ in the cell interior and $\phi_i <0$ in the exterior. 
-The cell wall is denoted by values of $\phi_i = 0$. \\
+The cell wall is denoted by values of $\phi_i = 0$. 
+An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield}. \\
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/phasefield.pdf}
@@ -180,10 +186,11 @@ The cell wall is denoted by values of $\phi_i = 0$. \\
 	}
 	\label{fig:phasefield}
 \end{figure}
-	
+
+%%% TODO: continue: 
 The dynamics of $\phi_i$ are governed by a gradient flow of a free energy functional:
 \begin{align*}
-	\frac{\partial \phi_i}{\partial t} + v_0 (\vec{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \frac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N 
+	\frac{\partial \phi_i}{\partial t} + v_0 (\vec{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \frac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N_C 
 \end{align*}
 where $\vec{v}_i$ is a vector field used to incorporate activity, with a self propulsion strength $v_0$, $F$ is a free energy, and $\dfrac{\delta F}{\delta \phi_i}$ denotes the first variation.\\
 The free energy $F$ arises from a sum of different energies, 
@@ -286,7 +293,7 @@ With precedents in the physics of foams, network models describe epithelial tiss
 - In vertex models, by contrast, network rearrangements entail the appearance and disappearance of vertices, which requires implementing specific rules
 
 
-% jamming 
+% jamming (deformable particles in confluent model)
 - the paper~\cite{Boromand2018} by Boromand, Merkel and Manning, studies the jamming transition in a system of deformable cells with a vertex model. 
 - whats interesting for us is its the non-confluent cell model 
 - the particle model is called deformable particle (DP) model
@@ -378,6 +385,12 @@ Our new cell model shall be able to represent a wide range of shapes, similar to
 % transition to our model:
 \textbf{Discrete form model} \\ 
 %%% TODO: explain what was done in bachelor thesis 
+- our model is also vertex based, but we use it in a non confluent setting
+- we can use different desired shapes
+- cell deformation is allowed 
+- shape preserving forces and interaction forces 
+- transition from hard discs to soft discs and then other shapes 
+
 The DF model shares several key features with the referenced cell models. 
 All frameworks after the point particles account for excluded-volume effects, which prevent cell overlap and lead to enhanced diffusion and non-trivial collective behavior. 
 The dynamics in each model are governed by gradient flows of energy functionals, ensuring that the system evolves toward lower-energy configurations. 
@@ -387,6 +400,9 @@ Like the vertex model of Fletcher et al.~\cite{Fletcher14}, our cells are repres
 However, unlike the standard vertex model, our framework explicitly incorporates a **hardness parameter $h \in [0,1]$** that allows for a continuous transition from rigid hard-sphere behavior ($h=1$) to fully deformable cell dynamics ($h=0$).
 In this thesis, we derive and study a non-confluent DF model that systematically investigates how cellular deformability—controlled by the hardness parameter $h$—influences the overall diffusivity of the cell system. 
 By connecting our model to the established frameworks of Bruna and Chapman~\cite{Bruna2012, Bruna2017} and Happel and Voigt~\cite{Happel2023}, we provide a unified perspective on cell dynamics that spans from rigid to deformable regimes.
+
+
+
 
 %%% TODO: work in missing papers 
 - we define similar energies as in~\cite{Fletcher14}, but we mostly consider simulations with only $N_V=6$ vertices per cell.  
