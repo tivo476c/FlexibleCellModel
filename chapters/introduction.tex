@@ -37,6 +37,8 @@ A key challenge is linking this macroscopic behavior to the properties of indivi
 The systematic comparison of these diverse cell models is crucial for selecting appropriate methods for future studies and enabling predictive simulations of patterns and correlations in cell colonies. \\
 Understanding the diffusion behavior of cells, influenced by various forces and interactions, is a key aspect of collective cell migration. This will be a central focus of this thesis. Different mathematical cell models, incorporating distinct cell dynamics, will exhibit varying diffusion behaviors. To begin this investigation, we will first introduce the simplest model: the point particle model. \\
 
+
+
 \textbf{Point particle model} \\
 We consider the point particle model on a two dimensional bounded domain $\Omega \subset \mathbb{R}^2$, where we have $N_C \in \N$ particles.
 These particles have no real size.
@@ -113,7 +115,12 @@ Using the method of matched asymptotic expansions, the authors also derived the 
 \end{align}
 When $f$ is neglected and $\epsilon \rightarrow 0$, this equation reduces to the probability density function of the point particle model, except for a rescaling factor.
 The Fokker-Planck equation is a direct extension of the diffusion equation, with an additional drift term.\\
-A central finding of~\cite{Bruna2012} is shown in Figure~\ref{fig:fig2BC12}, which compares the diffusion behavior of the point particle model and the hard sphere model. \\
+A central finding of~\cite{Bruna2012} is shown in Figure~\ref{fig:fig2BC12}, which compares the diffusion behavior of the point particle model and the hard sphere model. 
+It uses the Monte Carlo method for the point particles and the hard sphere in order to give a numerical approximation of the density dynamic. 
+The Monte Carlo method involves running the simulation many times ($M=10000$). 
+For each discrete subsquare of our domain, we count how many particles were found at that location across all runs at time $t=0.05$. 
+We then divide by the total number of runs to get the estimated probability density at that place and time. 
+This estimated density converges to the true density as the number of runs increases. \\
 
 \begin{figure}[h!]
 	\centering
@@ -152,7 +159,7 @@ For the modeling of short range interacting soft sphere particles, the authors c
 	\label{equ:softsphere}
 \end{align}
 where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon_u \ll 1$ is the interaction range of $u$.
-When comparing the first marginals of the soft sphere model (Equ.~\eqref{equ:softsphere}) and the hard sphere model (Equ.~\eqref{equ:hardsphere}), we can see that they are similar in structure, with the main difference being the coefficients of the nonlinear diffusion terms. 
+When comparing the first marginals of the soft sphere model Equation~\eqref{equ:softsphere} and the hard sphere model Equation~\eqref{equ:hardsphere}, we can see that they are similar in structure, with the main difference being the coefficients of the nonlinear diffusion terms. 
 We can not clearly say which model diffuses faster, as this is dependent on the modelling of the soft interaction. \\
 The influence of the cell hardness to the diffusion rate of the cell system will be investigated in this thesis. 
 We even introduce a parameter that can continuously change the cell hardness from hard to soft. \\
@@ -161,17 +168,15 @@ While these models are powerful, they are limited to spherical particles and do 
 
 
 % phase field model
-\textbf{Phase field models} \\
+\textbf{Phase field model} \\
 A new cell modeling framework is now considered. 
-The phase field approach exhibits conceptual parallels with the soft sphere model proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modeled through a continuous repulsive energy that prevents overlap. 
-In both formulations, interactions are governed by a smooth, short range influence manifesting through the diffuse interface in the phase field model and via the interaction potential $u$ in the soft-sphere model, thereby enabling a realistic description of cell crowding effects. \\
-Nevertheless, the phase field model diverges fundamentally in its underlying structure: it is a continuum model based on partial differential equations that explicitly encodes cell morphology and internal organisation through the phase field variable $\phi_i$, enabling dynamic shape changes, topological transitions, and coupling to geometric features such as surface curvature. 
-In both models, the interaction mechanism operates continuously and locally, ensuring a seamless transition between overlapping and non overlapping configurations while maintaining physical consistency. \\
-The soft-sphere model derives its interaction dynamics from the potential energy $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which leads to a nonlinear diffusion equation featuring a diffusion coefficient that depends on local density. 
-Analogously, in the phase field model, the interaction energy emerges from a non-local term in the free energy functional, producing a repulsive force between cells that scales with the local concentration of $\phi_i$. 
-These shared mathematical features: gradient flow evolution, continuous interaction laws and density-dependent diffusion underscore a formal and conceptual alignment between the two approaches. \\
-Although the phase field model inherits key principles from the soft-sphere model, such as continuous interaction and density-dependent transport, it fundamentally differs from both the soft-sphere and hard-sphere frameworks in its physical representation. 
-The phase field model resolves cell overlaps through a free energy which enables gradual, continuous deformation of cell interfaces, thereby avoiding discontinuities in the dynamics that are characteristic of discrete collision models. \\
+The phase field approach exhibits conceptual parallels with the soft sphere model proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modeled through a continuous repulsive energy that prevents overlap. \\
+In both formulations, interactions are governed by a smooth, short range influence. 
+The soft-sphere model derives its interaction dynamics from the potential energy $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which leads to a nonlinear diffusion equation featuring a diffusion coefficient that depends on local density. \\
+The phase field model resolves cell overlaps through a free energy producing a repulsive force between cells that scales with the local concentration of $\phi_i$. 
+This enables gradual, continuous deformation of cell interfaces, thereby avoiding discontinuities in the dynamics that are characteristic of discrete collision models. 
+Thus, the interaction mechanisms operate continuously and locally, ensuring a seamless transition between overlapping and non overlapping configurations while maintaining physical consistency in both models. \\
+Nevertheless, the phase field model diverges fundamentally in its underlying structure: it is a continuum model based on partial differential equations that explicitly encodes cell morphology and internal organisation through the phase field variable $\phi_i$, enabling dynamic shape changes, topological transitions, and coupling to geometric features such as surface curvature. \\
 The free energy functional encodes shape regularization, intercellular interactions, and physical constraints of the system. 
 Unlike the soft-sphere model, which treats cells as point-like entities interacting via a smooth potential, the phase field model represents cells as much more complex, spatially extended, continuously structured entities, with their internal state fully described by the evolution of the phase field variable $\phi_i$. 
 This enables a natural description of complex cell morphologies, topological transitions such as cell division or fusion, and the integration of cell mechanics with geometric curvature via extrinsic curvature contributions in the free energy. \\
@@ -188,7 +193,7 @@ An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield
 \end{figure}
 
 %%% TODO: continue: 
-The dynamics of $\phi_i$ are governed by a gradient flow of a free energy functional:
+The dynamics of a phase field variable $\phi_i$ can typically be given by a gradient flow of a free energy functional:
 \begin{align*}
 	\frac{\partial \phi_i}{\partial t} + v_0 (\vec{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \frac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N_C 
 \end{align*}
@@ -201,8 +206,9 @@ The first energy is a Cahn-Hilliard energy and could look like in~\cite{wenzel20
 \begin{align*} 
 	F_{CH} = \sum\limits_{i=1}^N \int_{\Omega} \dfrac{1}{Ca} \left( \dfrac{\epsilon}{2} \norm[\nabla_{\vec{x}} \phi_i]^2 + \dfrac{1}{\epsilon} W(\phi_i) \right) d\vec{x},
 \end{align*}
-$\epsilon$ is a small parameter related to the interface thickness, and $Ca$ is a capillary number that scales the relative importance of surface tension.
+where $\epsilon$ is a small parameter related to the interface thickness, and $Ca$ is a capillary number that scales the relative importance of surface tension.
 The term $\norm[\nabla_{\vec{x}} \phi_i]^2$ penalises a long cell wall, as $\nabla_{\vec{x}} \phi_i \neq 0$ only at the cell wall.
+Thus, the Cahn-Hilliard energy always tries to minimize the area of the cell interface. \\
 $W(\phi_i) = \dfrac{1}{4} (\phi_i^2 - 1)^2$ is a double-well potential. 
 This energy ensures that each $\phi_i$ maintains a stable interface of $[-1,1]$.  \\ 
 The second energy term $F_{INT}$ models cell-cell interactions and could be defined as in~\cite{wenzel2021}
@@ -213,56 +219,71 @@ where
 \[B(\phi_i) = \dfrac{3}{4\sqrt{2}\epsilon} (\phi_i^2 - 1)^2\]
 is an approximation of the delta function of the cell boundary that is non-zero only at the cell wall.
 The sum in the integral accounts for the interaction with all other cells $j \neq i$ through a short-range potential $w(d_j)$, where $d_j$ is the signed distance function to the cell boundary of cell $j$.  
-
+When employing this dynamics, the interaction force $F_{INT}$, acts to reduce or eliminate cell overlaps. \\
 The third energy term $F_M$ differs for different models and incorporates additional mechanical properties of the cells, such as area conservation or bending energy.
-% phase field comparison paper:
-
-- In \cite{wenzel2021}, the authors focussed on the influence of microscopic details to incorporate active forces on emerging phenomena.
-The models are based on cell deformations and cell-cell interactions and we investigate 
-- We compare four different approaches, one in which the activity is determined by a random orientation, one where the activity is related to the deformation of
-the cells, and two models with subcellular details to resolve the mechanochemical interactions underlying cell
-migration.
-- The models are compared with respect to generic features, such as coordination number distribution,
-cell shape variability, emerging nematic properties, as well as vorticity correlations and flow patterns in large
-confluent monolayers and confinements. 
-- The random model determines the direction of motion on the single cell level by a stochastic process
-- elongation model aligns the direction of motion with the long axis of the cell
-- polar and a nematic model, which use subcellular details to determine strength and direction of motion on a single cell level.
-
-- The goal of this paper is a systematic comparison of these approaches and their linkage with statistical observables of experiments to provide a route towards predictive simulations of patterns and correlations in cell colonies. After introducing the multiphase field models, discussing microscopic differences, and briefly describing the numerical approach enabling large-scale simulations, we address coordination number distribution, analyze statistics on shape variability of the cells and the ratio of multicellular rosettes, velocity distributions of emerging topological defects, their stress fields, as well as defect density and creation rates
-- All results are compared with experimental data for a large variety of cell cultures. The appearing qualitative differences of the models show the importance of microscopic details.
+This energy is dependent on the use case of the model. \\
+It can have a big influence on the dynamic of a phase field model, as analysed in~\cite{wenzel2021}, where the authors focussed on the influence of microscopic details to incorporate active forces on emerging phenomena.\\
+Four different approaches are considered.
+One in which the activity is determined by a random orientation, one where the activity is related to the deformation of the cells, and two models with subcellular details to resolve the mechanochemical interactions underlying cell migration. \\
+The random model determines the direction of motion on the single cell level by a stochastic process. 
+The second model is called elongation model.
+It identifies the longest axis of the cell's phase field and aligns the direction of motion with this axis. \\
+The third and fourth models presented are referred to as the polar model and the nematic model, respectively.
+Cell motion strength and direction are determined based on subcellular details at the single-cell level. \\
+All models are compared with respect to generic features, such as coordination number distribution, cell shape variability, emerging nematic properties, as well as vorticity correlations and flow patterns in large confluent monolayers and confinements. 
+We can see the results in Table~\ref{table:phasefield}. \\
 
 \begin{table*}[h!]
-\centering
-\begin{tabular}{>{\scriptsize}l >{\small}c  >{\small}c  >{\small}c  >{\small}c} % l = left aligned, c = centered, r = right aligned
-\hline
-characteristic & Random & Elongation & Polar & Nematic \\ 
-\midrule
-Coordination number distribution & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) \\[0.5em]
-Shape variability & ($\checkmark$) & $\checkmark$ & $\checkmark$ & ($\checkmark$) \\[0.5em]
-Rosette ratio & \multicolumn{4}{>{\small}c}{Differences between models} \\[0.5em]
-Velocity distribution of topological defects & \multicolumn{4}{>{\small}c}{Differences between models} \\[0.5em]
-Correlation between direction of motion and orientation of defect & $\boldsymbol{\times}$ & $\checkmark$ & $\checkmark$ & ($\checkmark$) \\[0.5em]
-Elastic property of + 12 defect & $\boldsymbol{\times}$ & Extensile & Contractile & Contractile \\[0.5em]
-Active turbulence & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) \\[0.5em]
-Vorticity-vorticity correlation & \multicolumn{4}{>{\small}c}{Similar for all models} \\[0.5em]
-Dependency of defect density on activity & Linear & Linear & Linear & Constant \\[0.5em]
-Rotational motion in circular confinement & $\boldsymbol{\times}$ & ($\checkmark$) & $\boldsymbol{\times}$ & $\boldsymbol{\times}$ \\[0.5em]
+	\centering
+	\begin{tabular}{>{\small}l >{\small}c  >{\small}c  >{\small}c  >{\small}c} % l = left aligned, c = centered, r = right aligned
+	\hline
+	characteristic & Random & Elongation & Polar & Nematic \\ 
+	\midrule
+	Coordination number distribution & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) \\
+	& & & &  \\
+	
+	Shape variability & ($\checkmark$) & $\checkmark$ & $\checkmark$ & ($\checkmark$) \\
+	& & & &  \\
+	
+	Rosette ratio & \multicolumn{4}{>{\small}c}{Differences between models} \\
+	& & & &  \\
 
-\bottomrule
-\end{tabular}
-\caption{Comparison of the four different phase field models from~\cite{wenzel2021} with respect to various characteristics observed in experiments. 
-A check mark $\checkmark$ indicates observed agreement, $\boldsymbol{\times}$ indicates disagreement and ($\checkmark$) indicates only qualitative agreement with universal feature. 
-If experimental data are not available or insufficient for a comparison, only similarities or differences of the models are noted.}
+	Velocity distribution of  & \multicolumn{4}{>{\small}c}{Differences between models} \\
+	topological defects  & & & &  \\
+	& & & &  \\
+
+	Correlation between direction of  & \Large $\boldsymbol{\times}$ & $\checkmark$ & $\checkmark$ & ($\checkmark$) \\
+	motion and orientation of defect  & & & &  \\
+	& & & &  \\
+
+	Elastic property of + 12 defect & \Large $\boldsymbol{\times}$ & Extensile & Contractile & Contractile \\
+	& & & &  \\
+	
+	Active turbulence & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) & ($\checkmark$) \\
+	& & & &  \\
+	
+	Vorticity-vorticity correlation & \multicolumn{4}{>{\small}c}{Similar for all models} \\
+	& & & &  \\
+
+	Dependency of defect  & Linear & Linear & Linear & Constant \\
+	density on activity  & & & &  \\
+	& & & &  \\
+
+	Rotational motion in  & \Large $\boldsymbol{\times}$ & ($\checkmark$) & \Large $\boldsymbol{\times}$ & \Large $\boldsymbol{\times}$ \\
+	circular confinement  & & & &  \\
+
+	\bottomrule
+	\end{tabular}
+	\caption{Comparison of the four different phase field models from~\cite{wenzel2021} with respect to various characteristics observed in experiments. 
+	A check mark $\checkmark$ indicates observed agreement, $\mathnormal{\Large \boldsymbol{\times}}$  
+	indicates disagreement and ($\checkmark$) indicates only qualitative agreement with universal feature. 
+	If experimental data are not available or insufficient for a comparison, only similarities or differences of the models are noted.}
+	\label{table:phasefield}
 \end{table*}
-% phase fields on curved domains 
-- Another work that uses phase field models to describe cell dynamics is~\cite{Happel2023} by Axel Voigt and Lea Happel.
-- this work focuses on the impact of curved domains on the collective behavior of cells, defining the phase fields on tori. 
-- it focuses on emergent collective behaviors such as coordinated rotation on curved surfaces, driven by curvature alignment and self-propulsion. 
-- while the soft-sphere model typically assumes spherical symmetry and isotropic interactions, the phase field model can incorporate anisotropic effects—such as alignment with principal curvature directions—through geometric coupling terms, enabling the simulation of complex collective behaviors like coordinated rotation on curved surfaces. 
-These differences make the phase field model more biologically realistic for epithelial tissues, but also more computationally demanding than the simpler point-particle approaches. 
-- The phase field model developed by Happel and Voigt \cite{HV23} demonstrates that extrinsic curvature coupling is essential for explaining the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotational motion in epithelial layers on curved surfaces. Their simulations reproduce key experimental observations—such as spontaneous rotation on cylinders and curvature-dependent shape changes on tori—by combining a diffuse interface representation with a free energy that includes both intrinsic and extrinsic geometric terms. This work underscores the importance of geometric effects in tissue morphogenesis and provides a framework for studying how curvature influences collective cell behavior beyond flat, two-dimensional environments.
 
+The goal of this paper is a systematic comparison of these approaches and their linkage with statistical observables of experiments to provide a route towards predictive simulations of patterns and correlations in cell colonies. 
+Model predictions are compared with experimental data from various cell cultures. 
+The qualitative differences observed highlight the importance of microscopic details. \\ 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/curved_phasefield.png}
@@ -277,135 +298,137 @@ These differences make the phase field model more biologically realistic for epi
 	}
 	\label{fig:curved_phasefield}
 \end{figure}
+A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behavior. 
+The visualization of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
+Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self-propulsion. 
+Unlike the soft-sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
+This capability enables the simulation of complex collective behaviors but also increases computational demands compared to simpler point-particle models. \\
+The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
+By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature-dependent morphological changes on tori. 
+This work emphasizes the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
 
 
 
-% vertex based model 
-\textbf{Vertex models} \\
+\textbf{Vertex model} \\
+The last cell model approach is also the approach we choose in this thesis. 
+Vertex models represent a powerful and versatile approach for simulating the mechanical behavior of biological cells and tissues. \\
+Originating from materials science and solid mechanics, these models represent cells as polygons, where the boundaries are defined by a discrete set of vertices connected by edges. 
+The degrees of freedom in these models are precisely these vertices, meaning that all the cell model dynamics are applied only to the vertices. \\
+The cell dynamic in a vertex model is usually given by the equation
+\begin{align}
+	\dfrac{d \vec{x}_i}{dt} = F_i^m, \label{eq:vertexmodel}, 
+\end{align}
+where $F_i^m$ is the total force acting on vertex $1 \leq i \leq N_V$ of cell $1 \leq m \leq N_C$. \\
+Like in the phase field model, $F_i^m$ is a sum of different forces that define the cell behavior, such as the cell flexibility or the interaction with other cells. 
+The forces participating in $F_i^m$ or often found as negative gradients of energies that shall be minimized. 
+This method called gradient flow is also used for phase field models. \\
+Due to their discrete nature, vertex models are computationally efficient compared to continuum models, while still providing rich insights into the interplay between cell mechanics and collective behavior, making them invaluable for understanding fundamental principles governing cell organization and tissue dynamics across diverse biological contexts. \\
+This geometric representation allows for the incorporation of key cellular properties, such as surface tension, cortical tension, adhesion, and local shape constraints, into an energy functional. 
+Minimizing this energy through computational simulation enables the capture of emergent phenomena like tissue morphogenesis, cell migration, wound healing, and pattern formation. \\
 
-% bridge paper:
-With precedents in the physics of foams, network models describe epithelial tissues as networks of polygonal cells. Thus, albeit in less detail than lattice and phase-field models, these models still describe subcellular features of cell shape. They encompass two subtypes of models: vertex and Voronoi models.
-
-- In vertex models, the degrees of freedom are the vertices of the polygons.
-- Alternatively, the network can be described by the cell centers, and this reduces the number of degrees of freedom. These descriptions are known as Voronoi models because, given the positions of the cell centers, the cell-cell boundaries are delineated by the Voronoi tessellation
-- The difference in the number of degrees of freedom has important consequences for the mechanical properties of the network, which may thus differ between vertex and Voronoi models 
-- In Voronoi models, the network is dynamic, evolving with each recomputation of the tessellation
-- In vertex models, by contrast, network rearrangements entail the appearance and disappearance of vertices, which requires implementing specific rules
-
+% fletcher 
+The paper \cite{Fletcher14} developed a sophisticated vertex based model to simulate the dynamic behavior of confluent epithelial cell sheets, representing tissues where cells completely cover the available space without gaps. 
+Their model aims to capture key biological processes observed in real epithelial tissues. \\
+Conservation of cell area and perimeter ensures cells maintain their size and shape during deformation.
+Junctional rearrangements, including neighbor exchange and vertex/edge merging, enable cell migration and tissue remodeling.
+Cell division is modeled by creating a rosette structure from multiple adjacent vertices and cell growth and death simulate changes in individual cell size.
+A detailed exploration of the implementation and specific consequences of these confluent specific mechanics is beyond the scope of this work.
+While these mechanisms are essential for understanding the complex dynamics of confluent tissues, the focus of this thesis lies on non confluent cell models, where the presence of interstitial space and variable packing density leads to distinct physical behaviors. \\
 
 % jamming (deformable particles in confluent model)
-- the paper~\cite{Boromand2018} by Boromand, Merkel and Manning, studies the jamming transition in a system of deformable cells with a vertex model. 
-- whats interesting for us is its the non-confluent cell model 
-- the particle model is called deformable particle (DP) model
-- it can be used to model cells, foams, emulsions, and other soft particulate materials
-- The DP model combines the ability to model individual soft particles with the shape-energy function of the vertex model,
-- there is a shape-energy function that is minimized for area and perimeter and repulsive interparticle forces. 
-- we have:
-* p perimeter 
-* a area 
-* bond vector $\vec{l}_{mi}$ connects vertices $i$ and $i+1$ of cell $m$ that are written as $\vec{v}_{m,i}$ and $\vec{v}_{m,i+1}$, respectively.
-- shape energy function:
+Boromand, Merkel, and Manning~\cite{Boromand2018} investigated the jamming transition in a system of deformable cells using a vertex model. 
+Of particular interest is their development of a non confluent cell model meaning that gaps between the cells are allowed by the model. 
+This model is versatile and can be applied to simulate cells, foams, emulsions, and other soft particulate materials. \\
+It uniquely combines the ability to represent individual deformable particles with the established shape energy function of the vertex model. 
+This shape energy function incorporates terms that penalize deviations from a target area ($a$) and perimeter ($p$), along with repulsive interparticle forces to prevent overlap. \\
+The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}_{mi}$ connects vertex $\vec{v}_{m,i}$ to $\vec{v}_{m,i+1}$, i.e. vertex $i$ to vertex $i+1$ of cell $m$.
+The complete shape energy function, which governs the particle dynamics, integrates these various contributions:
 \begin{align*}
-	U &= U_{contract} + U_{compress} + U_{line tension} + U_{bending} + U_{interaction} ,
+	U &= U_{\text{contract}} + U_{\text{compress}} + U_{\text{line tension}} + U_{\text{bending}} + U_{\text{interaction}}.
 \end{align*}
-\begin{align*}
-	U_{contract} &= \frac{k_l N_v}{2} \sum\limits_{m=1}^{N} \sum\limits_{i=1}^{N_v} (l_{m,i}-l_0)^2,
-\end{align*}
-where $N_v$ number of vertices per cell, $k_l$ is spring constant, $l_0$ equilibrium length of the edges 
-\begin{align*}
-	U_{compress} &= \frac{k_a}{2} \sum\limits_{m=1}^{N} (a_m - a_0)^2, 
-\end{align*}
-where $k_a$ is compressibility constant, $a_0$ equilibrium area of the cell
-\begin{align*}
-	U_{line tension} &= \gamma \sum\limits_{m=1}^{N} \sum\limits_{i=1}^{N_v} l_{m,i} ,
-\end{align*}
-where $\gamma$ is the line tension coefficient, 
-\begin{align*}
-	U_{bending} &= \frac{k_b}{2 N_v} \sum\limits_{m=1}^{N} \sum\limits_{i=1}^{N_v} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
-\end{align*}
-where the last sum is a cyclic summation, $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,i}}{\norm[\vec{l}_{m,i}]} $ is the unit vector of $\vec{l}_{m,i}$
 
-
-There are two different methods to model the repulsive interaction between two deformable polygons called rough surface (RS) and smooth surface (SS) method.
-- In the RS method, each vertex of a polygon is treated as the center of a disk with diameter $\delta = l_0 = 1$. 
-- Repulsive interactions are computed as linear spring forces between overlapping disks on contacting polygons. 
-- This method effectively models a "rough" surface with discrete, localized repulsion at vertices.
+The first energy reads
 \begin{align*}
-	U_{RS interaction} &=  \sum\limits_{m=1}^{N} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_v} \sum\limits_{k=1}^{N_v} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
+	U_{\text{contract}} &= \frac{k_l N_V}{2} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} (l_{m,i}-l_0)^2,
 \end{align*}
-where $k_r$ is the repulsive constant, $\delta$ is the diameter of the disks or width of the circulo-lines (see Fig.~\ref{fig:vertex}), and $\Theta$ is the Heaviside step function, that is either $1$ for a positive argument or $0$ otherwise. \\
-
-- In contrast, the SS method models polygon edges as circulo-lines (i.e., line segments with finite width $\delta$). 
-- The repulsive interaction is computed based on the minimum distance $d_{\min}$ between two edge segments $l_{m,j}$ and $l_{n,k}$, replacing the vertex-to-vertex distance in the RS method. 
-The interaction energy becomes:
-$
-U_{SS interaction} = \sum_{m=1}^N \sum_{n \neq m} \sum_{j=1}^{N_v} \sum_{k=1}^{N_v} \frac{1}{2} k_r \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right),
-$
-where $d_{\min}$ is the shortest distance between the two line segments. 
-This method provides a smoother, more continuous repulsion, better approximating the behavior of soft, continuous interfaces.
-
-Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
-This indicates that the overall jamming behavior is robust to the specific choice of interaction model.
-Figure~\ref{fig:vertex} illustrates the two interaction methods.
-
+where $k_l$ is the spring constant and $l_0$ is the equilibrium length of the edges. 
+It penalises contractions or expansion of cell edges and makes the edges return to their desired length $l_0$. \\ 
+Similarly, the second force $U_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_0$ 
+\begin{align*}
+	U_{\text{compress}} &= \frac{k_a}{2} \sum\limits_{m=1}^{N_C} (a_m - a_0)^2, 
+\end{align*}
+where $k_a$ is compressibility constant. \\ 
+The line tension energy is another energy working with the cell edges.
+It sanctions long edges with the formula 
+\begin{align*}
+	U_{\text{line tension}} &= \gamma \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} l_{m,i} ,
+\end{align*}
+where $\gamma$ is the line tension coefficient. \\
+The last shape energy is given by the bending energy. 
+It acts to resist changes in the angles between adjacent edges of the polygonal cells.
+This energy encourages the cells to maintain smooth, relatively straight boundaries and discourages sharp bends or kinks.
+\begin{align*}
+	U_{\text{bending}} &= \frac{k_b}{2 N_V} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
+\end{align*}
+where $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,i}}{\norm[\vec{l}_{m,i}]} $ is the unit vector of $\vec{l}_{m,i}$.
+These four energies are conserving a specific cell shape. \\
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/jamming.png}
 	\caption{A snapshot from the paper~\cite{Boromand2018} illustrating a configuration of vertex-based deformable cells. 
-	Schematic of deformable polygons with $N_v = 34$ vertices (where the position of the $j$-th vertex in the $m$-th polygon is denoted by $\vec{v}_{m,j}$), area $a_m$, and perimeter $p_m$. 
-	The edge $l_{m,j} = p_m / N_v$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. 
+	Schematic of deformable polygons with $N_V = 34$ vertices (where the position of the $j$-th vertex in the $m$-th polygon is denoted by $\vec{v}_{m,j}$), area $a_m$, and perimeter $p_m$. 
+	The edge $l_{m,j} = p_m / N_V$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. 
 	Two methods are used to model the edges of deformable polygons: (a) and (b) show the RS method, where disks of diameter $\delta$ are centered at the polygon vertices; (c) and (d) show the SS method, where polygon edges are modeled as circulo-lines of width $\delta$. 
 	The quantity $d_{\text{min}}$ denotes the minimum distance between the line segments $l_{m,j}$ and $l_{n,k}$.
 	}
 	\label{fig:vertex}
 \end{figure}
+There are two different methods to model the repulsive interaction between two deformable polygons called rough surface (RS) and smooth surface (SS) method.
+Both methods are illustrated in Figure~\ref{fig:vertex}. \\ 
+In the Rough Surface (RS) method, the discrete nature of the polygonal cell representation is emphasized. 
+Each vertex of a cell is treated as the center of a rigid disk with a fixed diameter, set to $\delta = l_0$ (equilibrium bond length).
+Repulsive interactions between cells are then modeled as linear spring forces that arise when these disks overlap. 
+This approach effectively simulates a rough surface interaction, characterized by discrete points of repulsion localized at the cell vertices, rather than a continuous interaction across the cell boundary.
+\begin{align*}
+	U_{\text{RS}} &=  \sum\limits_{m=1}^{N_C} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
+\end{align*}
+where $k_r$ is the repulsive constant and $\Theta$ is the Heaviside step function, that is either $1$ for a positive argument or $0$ otherwise. \\
+In contrast to the RS method, the Smooth Surface (SS) method adopts a smoother representation, modeling polygon edges as circulo-lines, essentially line segments with a finite width $\delta$. 
+Repulsive forces are then calculated based on the minimum distance $d_{\text{min}}$, between these circulo-line segments belonging to different polygons. 
+The interaction energy is then formulated using this minimum distance $d_{\text{min}}$.
+\begin{align*}
+	U_{\text{SS}} = \sum_{m=1}^{N_C} \sum_{n \neq m} \sum_{j=1}^{N_V} \sum_{k=1}^{N_V} \frac{1}{2} k_r \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right).
+\end{align*}
+This method provides a smoother, more continuous repulsion, better approximating the behavior of soft, continuous interfaces. \\ 
+Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
+This indicates that the overall jamming behavior is robust to the specific choice of interaction model. \\
 
-% fletcher 
-
-% bachelor thesis 
-A simpler approach for modeling diverse shapes in cell models is to use a vertex-based model, as used in~\cite{Fletcher14}. 
-Vertex models are a valuable tool in computational biology and biophysics for studying the biomechanics and behavior of cells and tissues. \\
-In a vertex model of a cell, the cell's outline or boundary is approximated as a polygon, with the vertices of this polygon representing discrete points along the cell's boundary. 
-Movements or transformations of the cell are given by forces that are applied on each vertex individually. \\
-The cell dynamic in a vertex model is given by the equation
-\begin{align}
-	\eta \dfrac{d \vec{x}_i}{dt} = F_i, \qquad 1 \leq i \leq N \label{eq:vertexmodel}, 
-\end{align}
-where $\eta$ is a scaling factor and $F_i$ is the total force acting on $\vec{x}_i$. \\
-Like in the phase field model, $F_i$ is a sum of different forces that define the cell behavior, such as the cell flexibility or the interaction with other cells. \\
-Our new cell model shall be able to represent a wide range of shapes, similar to the phase field model in~\cite{Happel2023} and the vertex model in~\cite{Fletcher14}. \\
-- we have worked on the same 4 forces as in this thesis, but in the master thesis, there were many adaptations made 
-- bug fixes, redefining forces with neighboring vertices, stability 
-- parameter studies to find force scalings that work
-- paralellisation of the code to be able to run the monte carlo sims  
-
-
-%%% TODO: describe RS and SS method
 
 % transition to our model:
-\textbf{Discrete form model} \\ 
-%%% TODO: explain what was done in bachelor thesis 
-- our model is also vertex based, but we use it in a non confluent setting
-- we can use different desired shapes
-- cell deformation is allowed 
-- shape preserving forces and interaction forces 
-- transition from hard discs to soft discs and then other shapes 
-
-The DF model shares several key features with the referenced cell models. 
-All frameworks after the point particles account for excluded-volume effects, which prevent cell overlap and lead to enhanced diffusion and non-trivial collective behavior. 
-The dynamics in each model are governed by gradient flows of energy functionals, ensuring that the system evolves toward lower-energy configurations. 
-Furthermore, stochastic motion—modeled as Brownian motion—is included in all approaches to capture thermal fluctuations. 
-These shared principles provide a strong foundation for comparing our model to established frameworks.
-Like the vertex model of Fletcher et al.~\cite{Fletcher14}, our cells are represented as polygons with discrete vertices, and their dynamics are governed by forces derived from energy gradients. 
-However, unlike the standard vertex model, our framework explicitly incorporates a **hardness parameter $h \in [0,1]$** that allows for a continuous transition from rigid hard-sphere behavior ($h=1$) to fully deformable cell dynamics ($h=0$).
-In this thesis, we derive and study a non-confluent DF model that systematically investigates how cellular deformability—controlled by the hardness parameter $h$—influences the overall diffusivity of the cell system. 
-By connecting our model to the established frameworks of Bruna and Chapman~\cite{Bruna2012, Bruna2017} and Happel and Voigt~\cite{Happel2023}, we provide a unified perspective on cell dynamics that spans from rigid to deformable regimes.
-
-
-
-
-%%% TODO: work in missing papers 
-- we define similar energies as in~\cite{Fletcher14}, but we mostly consider simulations with only $N_V=6$ vertices per cell.  
-
-%%% TODO: tell what happens in the following chapters 
-
+\textbf{Discrete Form model} \\ 
+% - The model developed in this thesis is called discrete form (DF) model
+% - In this thesis, we derive and study a non confluent DF model that systematically investigates how cellular deformability—controlled by the hardness parameter $h$—influences the overall diffusivity of the cell system. 
+% - By connecting our model to the established frameworks of Bruna and Chapman~\cite{Bruna2012, Bruna2017} and Happel and Voigt~\cite{Happel2023}, we provide a unified perspective on cell dynamics that spans from rigid to deformable regimes.
+% - our model is also vertex based like in~\cite{Fletcher14, Boromand2018} and we use it in a non confluent setting, like in~\cite{Boromand2018}
+% - our model uses less vertices (usually $N_V=6$ for us, whereas $N_V=34$ in~\cite{Boromand2018})
+% - shape preserving forces and interaction forces 
+% - we use different energies: area, edge, interior angle energy for shape preservation and deforming overlap force and bounce overlap force for degenerating cell overlaps 
+% - The dynamics for these energies are governed by gradient flows of energy functionals, ensuring that the system evolves toward lower-energy configurations. 
+% - this ensures: we can use represent a wide range of desired cell shapes like in the discussed phase field and vertex models 
+% - cell deformation is allowed like in~\cite{Boromand2018, Fletcher14,wenzel2021,Happel2023}
+% - These shared principles provide a strong foundation for comparing our model to established frameworks.
+% - we have introduced the shape preserving forces as well as the deforming overlap force in my bachelors thesis ~\cite{Vogel2023}, but here in the masters thesis, there were many bug fixes, parallelisation of the code, redefinition of forces now using neighboring vertices done to make to them in the sections~\ref{model, dynamics}, really enabling them to savely work stable in big simulations like the monte carlo simulations in chapter~\ref{sanitycheck}.
+% - In this chapter we did a sanity check looking for recreate the diffusion dynamics for the point particle model and the hard spheres from \cite{Bruna2012}. 
+% - we enable a transition from hard discs to soft discs with hardness parameter $h \in [0,1]$ 
+% - overall 3 big monte carlo simulations were made in Chapter~\ref{sanitycheck} with different hardnesses $h \in {0,0.5,1}$ representing soft, mid and hard cells.  
+% - Afterwards, we discuss the density dynamic in Chapter~\ref{density}.
+% - In the end, we give a conclusion and an outlook on how this model could be used or extanded in the future.  
+This thesis introduces the Discrete Form (DF) cell model, a vertex based framework inspired by~\cite{Fletcher14, Boromand2018} for simulating cell dynamics in non-confluent systems, similar to~\cite{Boromand2018}, but typically using fewer vertices (e.g., $N_V=6$). \\
+The DF model incorporates shape preserving forces (area, edge, interior angle energies) and interaction forces (deforming and bounce overlap forces) derived as gradient flows of energy functionals, allowing for cell deformation like in~\cite{Boromand2018, Fletcher14,wenzel2021,Happel2023} and ensuring evolution towards lower-energy configurations. 
+This allows representation of a wide range of desired cell shapes. \\
+The core contribution of this thesis is a non confluent DF model that systematically investigates how cellular deformability, controlled by a hardness parameter $h \in [0,1]$, influences the overall diffusivity of the cell system, enabling a transition from hard disc-like to soft disc-like behavior. 
+Building upon the foundations laid in the Bachelor's thesis~\cite{Vogel2023}, significant improvements were made, including bug fixes, code parallelization, and reformulation of forces for stable large-scale simulations (detailed in Sections~\ref{model} and~\ref{dynamics}). \\
+Chapter~\ref{sanitycheck} presents a rigorous validation by recreating the diffusion dynamics of the point particle and hard sphere models from~\cite{Bruna2012} through extensive Monte Carlo simulations with varying hardness ($h \in \{0, 0.5, 1\}$), representing soft, intermediate, and hard cell behaviors. \\
+Subsequently, Chapter~\ref{density} analyzes the resulting density dynamics. 
+By connecting to the frameworks of~\cite{Bruna2012, Bruna2017, Boromand2018}, this work provides a unified perspective on cell dynamics spanning rigid to deformable regimes. 
+Finally, the thesis concludes with a summary of findings and an outlook on potential future extensions and applications of the DF model.
