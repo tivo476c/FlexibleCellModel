@@ -25,9 +25,13 @@ Snapshots from a cell wound healing process, illustrating the dynamics of cell m
 
 In contrast, cancer cells often invade tissues as sheets, strands, or clusters, navigating a complex three-dimensional extracellular matrix (ECM) environment~\cite{friedl2009, cai2014, clark2015}. \\
 While cell migration occurs extensively in three dimensions, modeling these complex processes remains a significant challenge. 
-Consequently, much current scientific work focuses on two dimensional systems as a more tractable approach to understand the underlying physical principles.
-Throughout this thesis, we consider cell dynamics within a bounded two-dimensional domain, denoted by $\Omega \subset \R^2$. 
-Throughout this work, the total number of cells present within the domain $\Omega$ is denoted by $N_C \in \N$. \\
+Consequently, much current scientific work focuses on two dimensional systems as a more tractable approach to understand the underlying physical principles. \\
+Throughout this thesis, we study cell dynamics in a bounded two dimensional domain $\Omega \subset \R^2$. 
+The domain is taken to be a square centered at the origin with side length $2L$, where $L > 0$, and is defined as
+\[
+\Omega = [-L, L]^2.
+\]
+In this work, the total number of cells present within the domain $\Omega$ is denoted by $N_C \in \N$. \\
 In two dimensions, cell monolayers serve as fundamental model systems to study cell behavior and tissue function. 
 These systems, comprising a single layer of cells grown on a surface, can be mathematically and computationally modeled in either a confluent or non-confluent manner. 
 A confluent cell model depicts a continuous, tightly packed layer where cells cover the entire surface without gaps, whereas a non-confluent monolayer represents a state with spaces and gaps between individual cells or cell clusters that have not yet achieved full surface coverage. \\
@@ -35,32 +39,96 @@ Recent years have seen growing interest in understanding the principles governin
 Experimental studies on model systems have revealed phenomena such as unjamming transitions, spontaneous vortex formation, topological defects, and active turbulence. 
 A key challenge is linking this macroscopic behavior to the properties of individual cells and their interactions, leading to a diverse range of modeling approaches spanning different levels of coarse-graining, from subcellular lattices and multiphase field models to vertex, Voronoi, particle, and continuum models. 
 The systematic comparison of these diverse cell models is crucial for selecting appropriate methods for future studies and enabling predictive simulations of patterns and correlations in cell colonies. \\
-Understanding the diffusion behavior of cells, influenced by various forces and interactions, is a key aspect of collective cell migration. This will be a central focus of this thesis. Different mathematical cell models, incorporating distinct cell dynamics, will exhibit varying diffusion behaviors. To begin this investigation, we will first introduce the simplest model: the point particle model. \\
+Understanding the collective behavior of cells, particularly in processes such as wound healing, tissue regeneration, and embryonic development, is a central challenge in computational and mathematical biology. 
+These phenomena arise from the interplay of intrinsic cell dynamics and extrinsic cues, including chemical gradients, mechanical forces, and the physical constraints of the environment. 
+A key aspect of this behavior is the diffusion-like motion of cells, which governs how populations spread, organize, and respond to perturbations. \\
+To gain insight into these processes, we focus on the diffusion dynamics of cells as a fundamental tool for characterizing and comparing different modeling approaches. 
+In this thesis, we investigate how distinct mathematical cell models, ranging from point particles to extended, deformable cells, give rise to different diffusion behaviors. 
+By analyzing the underlying mechanisms that drive cell movement and spatial spreading, we aim to uncover the role of cell shape, interaction dynamics, and mechanical properties in shaping collective migration patterns, ultimately providing a deeper understanding of biological processes such as wound closure and tissue morphogenesis. \\
 
-
+\subsection{Review of cell model literature} 
+Each cell model employs distinct dynamical rules and interaction mechanisms, leading to qualitatively and quantitatively different diffusion behaviors. 
+These differences arise from how the models represent cell shape, internal structure, cell-cell interactions, and response to external cues. 
+As a result, the emergent collective dynamics, such as the speed of spreading, the formation of clusters or gaps, and the sensitivity to crowding, can vary significantly across models. \\
+To establish a comprehensive understanding of these variations, we now provide an overview of the most widely used cell modeling approaches. 
+Starting from the simplest representation, we progress through increasingly complex frameworks, highlighting their underlying assumptions, mathematical structure, and implications for cell diffusion. 
+This comparative analysis sets the foundation for our investigation into how model-specific dynamics influence the macroscopic behavior of cell populations. \\
 
 \textbf{Point particle model} \\
-We consider the point particle model on a two dimensional bounded domain $\Omega \subset \mathbb{R}^2$, where we have $N_C \in \N$ particles.
-These particles have no real size.
+We consider the point particle model on the square $\Omega \subset \mathbb{R}^2$, where $N_C$ point particles are located in.
+Initially, these particles are randomly distributed in $\Omega$. \\
+Let 
+\[
+\vec{x}_i(t) \in \Omega, \quad 1 \leq i \leq N_C,
+\]
+be the location of the particle $i$ at time $t > 0$. 
+In this model, cells are considered to be point particles with no real size. 
 There is also no particle interaction, as there is no possibility of collision. \\
-Initially, the particles are randomly distributed in $\Omega$. \\
 The particles' dynamics are governed solely by Brownian motion.
 Brownian motion is a random and unpredictable motion that occurs in the real world when particles are suspended in a fluid and collide with surrounding molecules. \\
 In mathematics, we model Brownian motion using stochastic differential equations (SDEs), which are equations that describe the motion of a particle over time in a random and unpredictable manner. 
 SDEs are a powerful tool for modeling complex phenomena in physics, finance, and other fields, and are characterized by the presence of random terms that capture the uncertainty of the system. \\
-Let 
-\[\vec{x}_i(t) \in \Omega \quad 1 \leq i \leq N,\]
-be the location of the particle $i$ at time $t > 0$. 
-The particle movement can be modeled using the diffusion equation, which describes the random motion of particles over time
+The particle movement can be modeled using the following SDE, which describes the random motion of particles over time
 \begin{center}
-	$d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)}, \quad 1 \leq i \leq N$,
+	$\dequ \vec{x}_i(t) = \sqrt{2D} \: \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C$,
 \end{center}
-where the constant $D > 0$ represents the diffusion coefficient which proportionally scales the speed of the particle movements by scaling the random fluctuations.
-The term $dB_t^{(i)}$ introduces the randomness of Brownian motion, where $dB_t^{(i)}$ is a normally distributed random variable that accounts for the unpredictable changes in the position of particle $vec{x}_i$ over time. \\
-We also consider the probability density function $\rho(t, \vec{x})$, which describes the probability of finding a particle at a specific position $\vec{x}$ at time $t$.
+where the constant $D > 0$ represents the diffusion coefficient which proportionally scales the speed of the particle movements by scaling the random fluctuations. \\
+The term $\dequ \vec{B}_i(t) $ represents the stochastic increment of a two dimensional Wiener process (Brownian motion) associated with particle $i$. 
+It models the random, unpredictable fluctuations in the particle's position over time. \\
+For infinitesimally small time intervals $ dt $, the increment $ \dequ \vec{B}_i(t) $ is normally distributed with mean zero and covariance $ dt \cdot I_2$, where $I_2$ denotes the $2 \times 2$ identity matrix. \\  
+This dynamic is fundamental and widely used in SDEs across various fields, including modelling particle diffusion~\cite{Bruna2012}, biological systems such as cell migration and also financial markets. \\ 
+% TODO: add external force term f(x) to motion equation for modelling environmental influences or chemical gradients.
+
+The stochastic dynamics of individual particles - governed by Brownian motion and external forces - naturally give rise to a probability density function that characterises the collective behaviour of the entire system. 
+This enables a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution. \\
+When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
+The first marginal density function $\rho(t, \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ at time $t > 0$. 
+It provides a coarse-grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
+
+In order to compute the first marginal, we have to start with the joined probability density function. 
+This function, denoted by 
+\[
+P: \R_{+} \times (\Omega)^{N_c} \rightarrow \R_+, \\	
+t, \vec{x}_1, \ldots, \vec{x}_{N_C} \rightarrow P(t, \vec{x}_1, \ldots, \vec{x}_{N_C}), 
+\]
+tells the probability that the whole cell configuration is in the given state $\vec{x}_1, \ldots, \vec{x}_{N_C} \in \Omega$ at time $t$. 
+It lives on the high dimensional space $\R_{+} \times (\Omega)^{N_c} \subset \R \times (\R^2)^{N_C}$ and fulfils
+\[
+\int_{\Omega^{N_C}} P(t, \vec{x}_1, \ldots, \vec{x}_{N_C}) \dequ \vec{x}_1 \ldots \vec{x}_{N_C} = 1, 
+\]
+for all $t>0$. \\ 
+
+For our point particle model, this joined probability is given by a high dimensional Fokker-Planck equation 
+\[
+\dfrac{\partial P}{\partial t} = \Delta_{\vec{X}} \cdot [\Delta_{\vec{X}} P - F(\vec{X}) P ], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
+\] 
+where we define $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ and $F = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$. \\
+The derivation of the Fokker-Planck equation relies on a combination of stochastic calculus, continuity principles and vector calculus in high-dimensional spaces. 
+The primary method is based on the Itô calculus framework, which provides the mathematical foundation for handling SDEs driven by Brownian motion. \\
+The evolution of the joint probability density $ P(t, \vec{X}) $ is derived using the continuity equation (or conservation of probability), which states that the rate of change of probability in a region is equal to the net flux of probability across its boundary. \\
+This leads to a flux expression involving both advective (drift) and diffusive components. 
+The divergence theorem is applied in the $2 N_C$-dimensional configuration space $ \Omega^{N_C} $ to convert surface integrals into volume integrals, yielding the final form of the Fokker-Planck equation. \\
+
+Having obtained the joined probability function $P$, we can continue by deriving the first marginal $\rho(\vec{x}, t)$. 
+In contrast to the joined probability function that tells probabilities of a whole cell configuration $\vec{X}$, the first marginal function tells the probability of finding any particle $\vec{x}_i$ ($1 \leq i \leq N_C$) at a specific place $\vec{x} \in \Omega$ and time $t > 0$. \\
+
+The first marginal density function is obtained by integrating the joint probability density $P(t, \vec{x}_1, \dots, \vec{x}_{N_C})$ over the positions of all particles except the first, i.e., over $\vec{x}_2, \dots, \vec{x}_{N_C}$, i.e.
+\[
+	\rho(t, \vec{x}_1) = \int_{\Omega^{N_C-1}}  P(t, \vec{X}) \dequ \vec{x}_2 \ldots \dequ \vec{x}_{N_C}.
+\]
+This marginalisation process effectively averages out the influence of the other particles, yielding the probability density $\rho(t, \vec{x}_1)$ for finding any one particle at position $\vec{x}_1$. 
+Due to the indistinguishability of the particles, this marginal is the same for any particle and represents the macroscopic distribution of the system.
+By integrating out all particles but one, we find $\rho$ acting on a much lower dimensional space 
+\[
+\rho: 
+\]
+
+
+
+
 In the given context, the function $\rho$ satisfies the partial differential equation:
 \begin{align}
-	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t, \vec{x}) ,
+	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t, \vec{x}), \quad \vec{x} \in \Omega, \; t>0, 
 	\label{equ:pointparticle}
 \end{align}
 where $\Delta_{\vec{x}}$ is the Laplacian operator with respect to the spatial variables. \\
@@ -100,7 +168,7 @@ The external forces acting on a particle in the system are described by the forc
 The function $\vec{F}$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $\vec{F}(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
 The dynamics of the particles are governed by the SDE
 \begin{align*}
-	d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t)) \: dt, \qquad 1 \leq i \leq N_C.
+	d\vec{x}_i(t) = \sqrt{2D} \: \dequ \vec{B}_i(t) + f(\vec{x}_i(t)) \: dt, \qquad 1 \leq i \leq N_C.
 \end{align*}
 In this model, the particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles.
 The joint probability density function $P$ of the $N_C$ particles satisfies the high-dimensional Fokker-Planck equation
@@ -149,7 +217,7 @@ In contrast to the soft sphere model, the hard sphere model enforces rigid, non-
 The soft sphere model uses a smoother approach including interaction potentials. \\
 The equation of motion for each particle $i$ is given by
 \begin{align*}
-	d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t))\: dt - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \: dt, \qquad 1 \leq i \leq N_C,
+	d\vec{x}_i(t) = \sqrt{2D} \: \dequ \vec{B}_i(t) + f(\vec{x}_i(t))\: dt - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \: dt, \qquad 1 \leq i \leq N_C,
 \end{align*}
 where $\nabla_{\vec{x}_i}$ is the gradient with respect to $\vec{x}_i$. \\
 The effect of the interaction potential is to cause particles to repel or attract each other depending on the distance between them, rather than simply overlapping. \\
@@ -403,7 +471,7 @@ This method provides a smoother, more continuous repulsion, better approximating
 Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
 This indicates that the overall jamming behavior is robust to the specific choice of interaction model. \\
 
-
+\subsection{Thesis overview} 
 % transition to our model:
 \textbf{Discrete Form model} \\ 
 % - The model developed in this thesis is called discrete form (DF) model

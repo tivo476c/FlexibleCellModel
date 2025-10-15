@@ -33,7 +33,7 @@ The paper~\cite{Bruna2012} analyses these dynamics on the domain
 on which $N_{BC} = 400$ particles are located. \\
 The movement of each point particle $\vec{x}_i$ in the simulation is given by the SDE
 \begin{center}
-    $\dequ \vec{x}_i(t) = \sqrt{2} \dequ B_t^{(i)}$, \hspace{0.5em} $1 \leq i \leq N_{BC}$,
+    $\dequ \vec{x}_i(t) = \sqrt{2} \dequ \vec{B}_i(t)$, \hspace{0.5em} $1 \leq i \leq N_{BC}$,
 \end{center}
 which describes a Brownian motion in $\Omega_{BC}$.
 The reflective boundary condition on $\partial \Omega_{BC}$ is imposed.
@@ -156,7 +156,7 @@ I employed a callback function that was triggered after each simulation step to 
 Whenever a particle moved outside the domain, it was relocated to the position within the domain such that its distance to the domain boundary remained unchanged, effectively reflecting the particle off the boundary. \\
 Beside of this, all particles moved according to the two dimensional Brownian motion
 \begin{center}
-		$ \dequ \vec{x}_i(t) = \sqrt{2} \dequ \vec{B}^{\:i}$, \hspace{0.5em} $1 \leq i \leq N_{C}$.
+		$ \dequ \vec{x}_i(t) = \sqrt{2} \dequ \vec{B}_i(t)$, \hspace{0.5em} $1 \leq i \leq N_{C}$.
 \end{center}
 Figure~\ref{fig:ppHeatmaps} shows the evolution of the particle density in terms of heatmaps for different time steps. 
 The results of our Monte Carlo simulation appear to be in good agreement with those of Bruna and Chapman, suggesting that our approach is robust and accurate.

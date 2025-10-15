@@ -1178,7 +1178,7 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\[
 	e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
 	\]
-	which allow us to distribute a two dimensional Brownian motion \[\dequ \vec{B}^{\:i}_t = (\dequ B^{i,x}_t, \dequ B^{i,y}_t)^T\] to the $x$ and $y$ coordinates of a cell's vertices, respectively.
+	which allow us to distribute a two dimensional Brownian motion \[\dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T\] to the $x$ and $y$ coordinates of a cell's vertices, respectively.
 	The cell hardness parameter $h \in [0,1]$ is assumed to be given.
 	The deterministic part $F^{i}(\vec{C})$ of the \textbf{DF SDE} is given by 
 	\begin{center}
@@ -1198,7 +1198,7 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	This configuration seems to be the best to model the physics we would like to achieve. 
 	With that we can write down the cell wise formulated DF SDE:
 	\begin{center}
-		$\dequ C_i = \F^{i}(\vec{C}) \dequ t + \dequ B^{i,x}_t \: e_{N_V}^{x} + \dequ B^{i,y}_t \: e_{N_V}^{y}.$
+		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}.$
 	\end{center} 
 
 
