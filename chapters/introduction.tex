@@ -56,7 +56,8 @@ This comparative analysis sets the foundation for our investigation into how mod
 
 \textbf{Point particle model} \\
 We consider the point particle model on the square $\Omega \subset \mathbb{R}^2$, where $N_C$ point particles are located in.
-Initially, these particles are randomly distributed in $\Omega$. \\
+Initially, these particles are randomly distributed in $\Omega$. 
+We impose the reflective boundary condition on $\partial \Omega$. \\
 Let 
 \[
 \vec{x}_i(t) \in \Omega, \quad 1 \leq i \leq N_C,
@@ -70,71 +71,106 @@ In mathematics, we model Brownian motion using stochastic differential equations
 SDEs are a powerful tool for modeling complex phenomena in physics, finance, and other fields, and are characterized by the presence of random terms that capture the uncertainty of the system. \\
 The particle movement can be modeled using the following SDE, which describes the random motion of particles over time
 \begin{center}
-	$\dequ \vec{x}_i(t) = \sqrt{2D} \: \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C$,
+	$\dequ \vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C$,
 \end{center}
 where the constant $D > 0$ represents the diffusion coefficient which proportionally scales the speed of the particle movements by scaling the random fluctuations. \\
 The term $\dequ \vec{B}_i(t) $ represents the stochastic increment of a two dimensional Wiener process (Brownian motion) associated with particle $i$. 
 It models the random, unpredictable fluctuations in the particle's position over time. \\
-For infinitesimally small time intervals $ dt $, the increment $ \dequ \vec{B}_i(t) $ is normally distributed with mean zero and covariance $ dt \cdot I_2$, where $I_2$ denotes the $2 \times 2$ identity matrix. \\  
+For infinitesimally small time intervals $ \dequ t $, the increment $ \dequ \vec{B}_i(t) $ is normally distributed with mean zero and covariance $ \dequ t \cdot I_2$, where $I_2$ denotes the $2 \times 2$ identity matrix. \\  
 This dynamic is fundamental and widely used in SDEs across various fields, including modelling particle diffusion~\cite{Bruna2012}, biological systems such as cell migration and also financial markets. \\ 
 % TODO: add external force term f(x) to motion equation for modelling environmental influences or chemical gradients.
 
 The stochastic dynamics of individual particles - governed by Brownian motion and external forces - naturally give rise to a probability density function that characterises the collective behaviour of the entire system. 
 This enables a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution. \\
 When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
-The first marginal density function $\rho(t, \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ at time $t > 0$. 
-It provides a coarse-grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
-
+The first marginal density function $\rho(t; \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ and time $t > 0$. 
+It provides a coarse grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
 In order to compute the first marginal, we have to start with the joined probability density function. 
 This function, denoted by 
+\begin{align*}
+	P : \R_{+} \times \Omega^{N_c} &\longrightarrow  \R_+, \\	
+	(t; \vec{x}_1, \ldots, \vec{x}_{N_C}) &\longmapsto  P(t; \vec{x}_1, \ldots, \vec{x}_{N_C}).
+\end{align*}	
+$P(t; \vec{x}_1, \ldots, \vec{x}_{N_C})$ tells the probability that the whole cell configuration is in the given state $\vec{x}_1, \ldots, \vec{x}_{N_C} \in \Omega$ at time $t$. 
+It is defined on the high dimensional configuration space $\R_{+} \times (\Omega)^{N_c} \subset \R \times (\R^2)^{N_C}$ and fulfils
 \[
-P: \R_{+} \times (\Omega)^{N_c} \rightarrow \R_+, \\	
-t, \vec{x}_1, \ldots, \vec{x}_{N_C} \rightarrow P(t, \vec{x}_1, \ldots, \vec{x}_{N_C}), 
-\]
-tells the probability that the whole cell configuration is in the given state $\vec{x}_1, \ldots, \vec{x}_{N_C} \in \Omega$ at time $t$. 
-It lives on the high dimensional space $\R_{+} \times (\Omega)^{N_c} \subset \R \times (\R^2)^{N_C}$ and fulfils
-\[
-\int_{\Omega^{N_C}} P(t, \vec{x}_1, \ldots, \vec{x}_{N_C}) \dequ \vec{x}_1 \ldots \vec{x}_{N_C} = 1, 
+	\int_{\Omega^{N_C}} P(t; \vec{x}_1, \ldots, \vec{x}_{N_C}) \, \dequ \vec{x}_1 \ldots \vec{x}_{N_C} = 1, 
 \]
 for all $t>0$. \\ 
-
-For our point particle model, this joined probability is given by a high dimensional Fokker-Planck equation 
+We define $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$. 
+The derivation of the high dimensional diffusion equation is based on the principle of probability conservation in the configuration space. Starting from the stochastic dynamics of $N_C$ independent particles undergoing pure Brownian motion, the evolution of the joint probability density $P(t; \vec{X})$ is governed by the continuity equation, which states that the rate of change of probability within a region is equal to the net flux of probability across its boundary. \\ 
+In the absence of external forces, the probability flux is purely diffusive, proportional to the gradient of $P$, with diffusion coefficient $D$. \\
+Applying the divergence theorem in the $2N_C$ dimensional configuration space $\Omega^{N_C}$, the surface integral of the flux is converted into a volume integral, leading to the Laplacian operator acting on $P$. 
+This results in the final form of the equation:
 \[
-\dfrac{\partial P}{\partial t} = \Delta_{\vec{X}} \cdot [\Delta_{\vec{X}} P - F(\vec{X}) P ], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
+	\dfrac{\partial P}{\partial t} = D \Delta_{\vec{X}} P, \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
 \] 
-where we define $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ and $F = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$. \\
-The derivation of the Fokker-Planck equation relies on a combination of stochastic calculus, continuity principles and vector calculus in high-dimensional spaces. 
-The primary method is based on the Itô calculus framework, which provides the mathematical foundation for handling SDEs driven by Brownian motion. \\
-The evolution of the joint probability density $ P(t, \vec{X}) $ is derived using the continuity equation (or conservation of probability), which states that the rate of change of probability in a region is equal to the net flux of probability across its boundary. \\
-This leads to a flux expression involving both advective (drift) and diffusive components. 
-The divergence theorem is applied in the $2 N_C$-dimensional configuration space $ \Omega^{N_C} $ to convert surface integrals into volume integrals, yielding the final form of the Fokker-Planck equation. \\
-
-Having obtained the joined probability function $P$, we can continue by deriving the first marginal $\rho(\vec{x}, t)$. 
-In contrast to the joined probability function that tells probabilities of a whole cell configuration $\vec{X}$, the first marginal function tells the probability of finding any particle $\vec{x}_i$ ($1 \leq i \leq N_C$) at a specific place $\vec{x} \in \Omega$ and time $t > 0$. \\
-
-The first marginal density function is obtained by integrating the joint probability density $P(t, \vec{x}_1, \dots, \vec{x}_{N_C})$ over the positions of all particles except the first, i.e., over $\vec{x}_2, \dots, \vec{x}_{N_C}$, i.e.
+where $D$ is the diffusion constant from the particle dynamic and $\Delta_{\vec{X}}$ is the Laplacian operator with respect to $\vec{X}$. \\
+Having obtained the joined probability function $P(t; \vec{X})$, we can continue by deriving the first marginal $\rho(t; \vec{x})$. 
+In contrast to the joined probability function that tells probabilities of a whole cell configuration $\vec{X}$, the first marginal function is a probability density that describes the likelihood of finding any one particle at position  $\vec{x} \in \Omega$ and time $t > 0$. \\
+The first marginal still fulfils the condition 
 \[
-	\rho(t, \vec{x}_1) = \int_{\Omega^{N_C-1}}  P(t, \vec{X}) \dequ \vec{x}_2 \ldots \dequ \vec{x}_{N_C}.
+	\int_{\Omega} \rho(t; \vec{x}) \, \dequ \vec{x} = 1, \quad t > 0. 
 \]
-This marginalisation process effectively averages out the influence of the other particles, yielding the probability density $\rho(t, \vec{x}_1)$ for finding any one particle at position $\vec{x}_1$. 
+We can obtain $\rho(t; \vec{x})$ by integrating the joint probability density $P(t; \vec{x}_1, \dots, \vec{x}_{N_C})$ over the positions of all particles except the first, i.e., over $\vec{x}_2, \dots, \vec{x}_{N_C}$
+\[
+	\rho(t; \vec{x}_1) = \int_{\Omega^{N_C-1}}  P(t; \vec{X}) \, \dequ \vec{x}_2 \ldots \, \dequ \vec{x}_{N_C}.
+\]
+This marginalisation process effectively averages out the influence of the other particles, yielding the probability density $\rho(t; \vec{x})$ for finding any one particle at position $\vec{x}$. 
 Due to the indistinguishability of the particles, this marginal is the same for any particle and represents the macroscopic distribution of the system.
 By integrating out all particles but one, we find $\rho$ acting on a much lower dimensional space 
-\[
-\rho: 
-\]
+\begin{align*}
+	\rho : \R_{+} \times \Omega &\longrightarrow  \R_+, \\	
+	(t; \vec{x}) &\longmapsto  \rho(t; \vec{x}_1). 
+\end{align*}	
 
-
-
-
-In the given context, the function $\rho$ satisfies the partial differential equation:
-\begin{align}
-	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t, \vec{x}), \quad \vec{x} \in \Omega, \; t>0, 
-	\label{equ:pointparticle}
-\end{align}
+In the setting of our point particle model, the first marginal $\rho$ satisfies the partial differential equation:
+\begin{align*}
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t; \vec{x}), \quad \vec{x} \in \Omega, \; t>0, 
+\end{align*}
 where $\Delta_{\vec{x}}$ is the Laplacian operator with respect to the spatial variables. \\
-Equation~\eqref{equ:pointparticle} represents the classic diffusion equation, a cornerstone of physics and mathematics.
+This equation represents the classic diffusion equation, a cornerstone of physics and mathematics.
 The same diffusion constant $D>0$ is used in the SDE for particle movement and the PDE for the probability density function $\rho$. \\
 
+%%% NEXT: do this with external force f
+If we wish to model additional dynamics for our point particles - such as directed motion towards a food source or response to a chemical gradient - we must incorporate an external force into the system. 
+This force is modelled by a vector valued function $f(\vec{x})$, which depends on the particle's position $\vec{x}$ and represents the influence of external cues, such as chemotactic gradients or mechanical drag \\
+\begin{align*}
+	f : \Omega &\longrightarrow \R^2, \\
+	\vec{x} &\longmapsto f(\vec{x}). 
+\end{align*}
+This force modifies the stochastic dynamics by introducing a deterministic drift component, enabling the particles to exhibit non-random, directed movement in response to their environment.
+This yields a new particle dynamic 
+\begin{center}
+	$\, \dequ \vec{x}_i(t) = f(\vec{x}_i(t)) \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C$. 
+\end{center}
+We define a multidimensional function
+\begin{align*}
+	F : \Omega^{N_C} &\longrightarrow {(\R^2)}^{N_C}, \\
+	\vec{X} &\longmapsto F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T,
+\end{align*}
+that gathers the external dynamics for all particles. \\
+With that new external force, the diffusion behaviour changes. 
+For our point particle model with included external effects, the joined probability is given by a high dimensional Fokker-Planck equation 
+\[
+	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot [D \nabla_{\vec{X}} P - F(\vec{X}) P ], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
+\] 
+where $\nabla_{\vec{X}} \cdot$ denotes the divergence operator with respect to $\vec{X}$ and $\nabla_{\vec{X}}$ is the corresponding gradient. \\
+The Fokker-Planck equation is just as fundamental as the diffusion equation, because it provides a deterministic description of the evolution of the probability density for a stochastic system, enabling the analysis of macroscopic behaviour — such as diffusion, drift, and pattern formation — from microscopic particle dynamics. \\
+It is derived using the continuity equation (or conservation of probability), which states that the rate of change of probability in a region is equal to the net flux of probability across its boundary, similarly to the model before. \\
+This leads to a flux expression involving both advective (drift) and diffusive components. 
+The divergence theorem is applied in the $2 N_C$ dimensional configuration space $\Omega^{N_C}$ to convert surface integrals into volume integrals.
+This is the step where the additional term comes from, yielding the final form of the Fokker-Planck equation. \\
+% transition to first marginal
+To transition from the joint probability density function to the first marginal density function in the presence of external forces, we consider the evolution of the system at the macroscopic level by integrating out the degrees of freedom of all but one particle. 
+This process, which is analogous to the case of pure Brownian motion, relies on the symmetry of the system: since the particles are identical and non-interacting, the joint density is invariant under permutations of particle labels. \\
+The first marginal of the point particle model with external forces and Brownian motion is given by 
+\begin{align}
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t; \vec{x}) - \nabla_{\vec{x}} \cdot (\rho(t; \vec{x}) f(\vec{x}) ), \quad \vec{x} \in \Omega, \; t>0.
+	\label{equ:pointparticle}
+\end{align}
+The structure of the resulting Equation~\eqref{equ:pointparticle} for $\rho$ mirrors that derived in the absence of external forces, with the key difference being the inclusion of a drift term due to the external force field $\mathbf{f}(\mathbf{x})$. 
+This similarity in derivation underscores the robustness of the marginalisation procedure, which consistently reduces the high-dimensional dynamics to a one-particle description, regardless of whether the motion is driven solely by diffusion or by a combination of diffusion and drift. \\
 
 
 % intro hp model 
@@ -168,7 +204,7 @@ The external forces acting on a particle in the system are described by the forc
 The function $\vec{F}$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $\vec{F}(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
 The dynamics of the particles are governed by the SDE
 \begin{align*}
-	d\vec{x}_i(t) = \sqrt{2D} \: \dequ \vec{B}_i(t) + f(\vec{x}_i(t)) \: dt, \qquad 1 \leq i \leq N_C.
+	d\vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t) + f(\vec{x}_i(t)) \, \dequ t, \qquad 1 \leq i \leq N_C.
 \end{align*}
 In this model, the particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles.
 The joint probability density function $P$ of the $N_C$ particles satisfies the high-dimensional Fokker-Planck equation
@@ -178,7 +214,7 @@ The joint probability density function $P$ of the $N_C$ particles satisfies the 
 where $\nabla_{\vec{X}}$ and $\nabla_{\vec{X}} \cdot$ denote the gradient and divergence operators with respect to the $N_C$-particle position vector $\vec{X}$.\\
 Using the method of matched asymptotic expansions, the authors also derived the probability density function $\rho$ of finding a single particle at time $t$ and position $\vec{x}$, which satisfies the equation
 \begin{align}
-	\dfrac{\partial \rho (t, \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f(\vec{x}) \rho).
+	\dfrac{\partial \rho(t; \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f(\vec{x}) \rho).
 	\label{equ:hardsphere}
 \end{align}
 When $f$ is neglected and $\epsilon \rightarrow 0$, this equation reduces to the probability density function of the point particle model, except for a rescaling factor.
@@ -217,11 +253,11 @@ In contrast to the soft sphere model, the hard sphere model enforces rigid, non-
 The soft sphere model uses a smoother approach including interaction potentials. \\
 The equation of motion for each particle $i$ is given by
 \begin{align*}
-	d\vec{x}_i(t) = \sqrt{2D} \: \dequ \vec{B}_i(t) + f(\vec{x}_i(t))\: dt - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \: dt, \qquad 1 \leq i \leq N_C,
+	d\vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t) + f(\vec{x}_i(t))\, \dequ t - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \, \dequ t, \qquad 1 \leq i \leq N_C,
 \end{align*}
 where $\nabla_{\vec{x}_i}$ is the gradient with respect to $\vec{x}_i$. \\
 The effect of the interaction potential is to cause particles to repel or attract each other depending on the distance between them, rather than simply overlapping. \\
-For the modeling of short range interacting soft sphere particles, the authors computed the one particle probability density $\rho(t, \vec{x})$ of finding a given particle at position $\vec{x}$ at time $t$ developing according to
+For the modeling of short range interacting soft sphere particles, the authors computed the one particle probability density $\rho(t; \vec{x})$ of finding a given particle at position $\vec{x}$ at time $t$ developing according to
 \begin{align}
 	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot (D \nabla_{\vec{x}} \rho - f(\vec{x}) \rho + \alpha_u \epsilon_u^2(N_C-1)\rho \nabla_{\vec{x}} \rho)
 	\label{equ:softsphere}
@@ -384,7 +420,7 @@ Originating from materials science and solid mechanics, these models represent c
 The degrees of freedom in these models are precisely these vertices, meaning that all the cell model dynamics are applied only to the vertices. \\
 The cell dynamic in a vertex model is usually given by the equation
 \begin{align}
-	\dfrac{d \vec{x}_i}{dt} = F_i^m, \label{eq:vertexmodel}, 
+	\dfrac{\dequ \vec{x}_i}{\dequ t} = F_i^m, \label{eq:vertexmodel}, 
 \end{align}
 where $F_i^m$ is the total force acting on vertex $1 \leq i \leq N_V$ of cell $1 \leq m \leq N_C$. \\
 Like in the phase field model, $F_i^m$ is a sum of different forces that define the cell behavior, such as the cell flexibility or the interaction with other cells. 
