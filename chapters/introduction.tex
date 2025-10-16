@@ -80,8 +80,8 @@ For infinitesimally small time intervals $ \dequ t $, the increment $ \dequ \vec
 This dynamic is fundamental and widely used in SDEs across various fields, including modelling particle diffusion~\cite{Bruna2012}, biological systems such as cell migration and also financial markets. \\ 
 % TODO: add external force term f(x) to motion equation for modelling environmental influences or chemical gradients.
 
-The stochastic dynamics of individual particles - governed by Brownian motion and external forces - naturally give rise to a probability density function that characterises the collective behaviour of the entire system. 
-This enables a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution. \\
+The stochastic dynamics of individual particles—governed by Brownian motion and external forces—naturally give rise to a probability density function that characterises the collective behaviour of the entire system through a mean field description. 
+This density function serves as the fundamental mean field that encapsulates the averaged influence of all particles, enabling a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution where individual fluctuations are replaced by deterministic evolution of the ensemble density. \\
 When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
 The first marginal density function $\rho(t; \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ and time $t > 0$. 
 It provides a coarse grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
@@ -153,7 +153,7 @@ that gathers the external dynamics for all particles. \\
 With that new external force, the diffusion behaviour changes. 
 For our point particle model with included external effects, the joined probability is given by a high dimensional Fokker-Planck equation 
 \[
-	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot [D \nabla_{\vec{X}} P - F(\vec{X}) P ], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
+	\dfrac{\partial P(t; \vec{X})}{\partial t} = \nabla_{\vec{X}} \cdot [D \nabla_{\vec{X}} P(t; \vec{X}) - P(t; \vec{X}) F(\vec{X})], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
 \] 
 where $\nabla_{\vec{X}} \cdot$ denotes the divergence operator with respect to $\vec{X}$ and $\nabla_{\vec{X}}$ is the corresponding gradient. \\
 The Fokker-Planck equation is just as fundamental as the diffusion equation, because it provides a deterministic description of the evolution of the probability density for a stochastic system, enabling the analysis of macroscopic behaviour — such as diffusion, drift, and pattern formation — from microscopic particle dynamics. \\
@@ -181,6 +181,21 @@ To account for this, we introduce a new interaction dynamics that ensures the pa
 This new interaction dynamics leads to a more complex and realistic model that captures the behavior of particles with a real size and interactions. \\
 Since particles cannot overlap, the domain $\Omega^{(i)}_{\epsilon}$, that holds the information where the centre of particle $i$ can be located, must exclude the areas where $\norm[\vec{x}_i - \vec{x}_j] \leq \epsilon$ for all $1 \leq j \leq N_C,$ $j \neq i$. 
 This is due to the fact that particles cannot occupy the same space simultaneously. \\
+Therefore, we first define the set of illegal configurations as
+\[
+	\mathcal{B}_{\epsilon} = \{(\vec{x}_1, \ldots, \vec{x}_{N_C})^T \in \Omega^{N_C} | \exists i \neq j: \: \norm[\vec{x}_i - \vec{x}_j] \leq \epsilon\}.
+\]
+Then we can define the `hollow' domain 
+\[
+	\Omega_{\epsilon}^{N_C} = \Omega^{N_C} \ \mathcal{B}_{\epsilon}.
+\]
+Let $\Omega^{(i)}_{\epsilon}$ denote the domain corresponding to the $i$-th particle. 
+The configuration space for $N_C$ particles, $\Omega_{\epsilon}^{N_C}$, is then also given as the Cartesian product of these individual domains
+\[
+	\Omega_{\epsilon}^{N_C} = \Omega^{(1)}_{\epsilon} \times \ldots \times \Omega^{(N_C)}_{\epsilon}.
+\]
+
+
 The domain that holds all possible locations of the particles is then given by \[\Omega^{N_C}_{\epsilon} = \Omega^{(1)}_{\epsilon} \times \ldots \times \Omega^{(N_C)}_{\epsilon} .\] 
 This can be visualized as a product space, where each particle's domain is combined to form a larger domain that encompasses all possible locations of the particles.
 Under this circumstances, we will get a new dynamic compared to the point particle model.  
@@ -197,24 +212,26 @@ Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration loo
 In the work of Bruna et al.~\cite{Bruna2012}, a hard sphere particle model is examined.
 Here, the particles are spherical in shape, with a diameter $0 < \epsilon \ll 1$.
 All particles in this model are distinct and can be distinguished from one another. 
-The diffusivity constant $D$ is set to be $D=1$. \\
+This model also uses a diffusion constant $D>0$. \\
 The hard sphere model is characterized by the fact that any interaction between particles may cause a change in their direction of motion, but the spherical shape of the particles remains unchanged.
 Hardcore collisions are modeled as reflective boundary conditions on the collision surfaces defined by $r = \norm[\vec{x}_i - \vec{x}_j] = \epsilon$, where $1 \leq i < j \leq N_C$.
 The external forces acting on a particle in the system are described by the force function $f: \R^2 \rightarrow \R^2$, which depends only on the location of the particle.
-The function $\vec{F}$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $\vec{F}(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
+The function $F$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
 The dynamics of the particles are governed by the SDE
 \begin{align*}
-	d\vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t) + f(\vec{x}_i(t)) \, \dequ t, \qquad 1 \leq i \leq N_C.
+	d\vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \qquad t >0, \:1 \leq i \leq N_C.
 \end{align*}
-In this model, the particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles.
-The joint probability density function $P$ of the $N_C$ particles satisfies the high-dimensional Fokker-Planck equation
+In this model, the particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles. \\
+Similarly as in the point particle model, we are now interested in the macroscopic view of this model. 
+The structure for computing the first marginal of the hard sphere model is quite analogous to the computation for the point particles. \\
+The joint probability density function $P$ of the $N_C$ particles satisfies the high dimensional Fokker-Planck equation
 \begin{align*}
-	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot ( \nabla_{\vec{X}} P - P \vec{F}),
+	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot [ D \nabla_{\vec{X}} P - P F], \quad \vec{X} \in \Omega_{\epsilon}^{N_C}, \: t > 0,
 \end{align*}
 where $\nabla_{\vec{X}}$ and $\nabla_{\vec{X}} \cdot$ denote the gradient and divergence operators with respect to the $N_C$-particle position vector $\vec{X}$.\\
 Using the method of matched asymptotic expansions, the authors also derived the probability density function $\rho$ of finding a single particle at time $t$ and position $\vec{x}$, which satisfies the equation
 \begin{align}
-	\dfrac{\partial \rho(t; \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f(\vec{x}) \rho).
+	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f) + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2), \quad \vec{x} \in \Omega, \: t>0 .
 	\label{equ:hardsphere}
 \end{align}
 When $f$ is neglected and $\epsilon \rightarrow 0$, this equation reduces to the probability density function of the point particle model, except for a rescaling factor.
@@ -253,13 +270,13 @@ In contrast to the soft sphere model, the hard sphere model enforces rigid, non-
 The soft sphere model uses a smoother approach including interaction potentials. \\
 The equation of motion for each particle $i$ is given by
 \begin{align*}
-	d\vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t) + f(\vec{x}_i(t))\, \dequ t - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)]) \, \dequ t, \qquad 1 \leq i \leq N_C,
+	d\vec{x}_i(t) =  f(\vec{x}_i(t))\, \dequ t - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)])\, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), 
 \end{align*}
-where $\nabla_{\vec{x}_i}$ is the gradient with respect to $\vec{x}_i$. \\
+for $1 \leq i \leq N_C$ and $t>0$.  \\
 The effect of the interaction potential is to cause particles to repel or attract each other depending on the distance between them, rather than simply overlapping. \\
 For the modeling of short range interacting soft sphere particles, the authors computed the one particle probability density $\rho(t; \vec{x})$ of finding a given particle at position $\vec{x}$ at time $t$ developing according to
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot (D \nabla_{\vec{x}} \rho - f(\vec{x}) \rho + \alpha_u \epsilon_u^2(N_C-1)\rho \nabla_{\vec{x}} \rho)
+	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f)  + \nabla_{\vec{x}} \cdot (\alpha_u \epsilon_u^2(N_C-1)\rho \nabla_{\vec{x}} \rho)
 	\label{equ:softsphere}
 \end{align}
 where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon_u \ll 1$ is the interaction range of $u$.
@@ -273,16 +290,17 @@ While these models are powerful, they are limited to spherical particles and do 
 
 % phase field model
 \textbf{Phase field model} \\
-A new cell modeling framework is now considered. 
-The phase field approach exhibits conceptual parallels with the soft sphere model proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modeled through a continuous repulsive energy that prevents overlap. \\
+A new cell modelling framework is now considered which, unlike the models before, features cell deformation. 
+The representation of a cell shifts from just a two dimensional point $\vec{x}_i(t) \in \Omega$ to a phase field variable $\phi_i(t, \vec{x}): \R_+ \times \Omega \longrightarrow [-1,1]$ that defines it's cell border through the level null set, i.e., points $\vec{x} \in \Omega$ where $\phi_i(t, \vec{x}) = 0$. \\
+The phase field approach exhibits conceptual parallels with the soft sphere model proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modelled through a continuous repulsive energy that prevents overlap. \\
 In both formulations, interactions are governed by a smooth, short range influence. 
-The soft-sphere model derives its interaction dynamics from the potential energy $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which leads to a nonlinear diffusion equation featuring a diffusion coefficient that depends on local density. \\
-The phase field model resolves cell overlaps through a free energy producing a repulsive force between cells that scales with the local concentration of $\phi_i$. 
+The soft sphere model derives its interaction dynamics from the potential energy $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which leads to a non linear diffusion equation featuring a diffusion coefficient that depends on local density. \\
+The phase field model resolves cell overlaps through a free energy producing a repulsive force between cells. 
 This enables gradual, continuous deformation of cell interfaces, thereby avoiding discontinuities in the dynamics that are characteristic of discrete collision models. 
 Thus, the interaction mechanisms operate continuously and locally, ensuring a seamless transition between overlapping and non overlapping configurations while maintaining physical consistency in both models. \\
 Nevertheless, the phase field model diverges fundamentally in its underlying structure: it is a continuum model based on partial differential equations that explicitly encodes cell morphology and internal organisation through the phase field variable $\phi_i$, enabling dynamic shape changes, topological transitions, and coupling to geometric features such as surface curvature. \\
 The free energy functional encodes shape regularization, intercellular interactions, and physical constraints of the system. 
-Unlike the soft-sphere model, which treats cells as point-like entities interacting via a smooth potential, the phase field model represents cells as much more complex, spatially extended, continuously structured entities, with their internal state fully described by the evolution of the phase field variable $\phi_i$. 
+Unlike the soft sphere model, which treats cells as point-like entities interacting via a smooth potential, the phase field model represents cells as much more complex, spatially extended, continuously structured entities, with their internal state fully described by the evolution of the phase field variable $\phi_i$. 
 This enables a natural description of complex cell morphologies, topological transitions such as cell division or fusion, and the integration of cell mechanics with geometric curvature via extrinsic curvature contributions in the free energy. \\
 Phase field variables represent cells as smooth functions $\phi_i(\vec{x}, t) \in [-1, 1]$, with $\phi_i > 0$ in the cell interior and $\phi_i <0$ in the exterior. 
 The cell wall is denoted by values of $\phi_i = 0$. 
@@ -310,7 +328,7 @@ The first energy is a Cahn-Hilliard energy and could look like in~\cite{wenzel20
 \begin{align*} 
 	F_{CH} = \sum\limits_{i=1}^N \int_{\Omega} \dfrac{1}{Ca} \left( \dfrac{\epsilon}{2} \norm[\nabla_{\vec{x}} \phi_i]^2 + \dfrac{1}{\epsilon} W(\phi_i) \right) d\vec{x},
 \end{align*}
-where $\epsilon$ is a small parameter related to the interface thickness, and $Ca$ is a capillary number that scales the relative importance of surface tension.
+where now, $\epsilon$ is a small parameter related to the interface thickness, and $Ca$ is a capillary number that scales the relative importance of surface tension.
 The term $\norm[\nabla_{\vec{x}} \phi_i]^2$ penalises a long cell wall, as $\nabla_{\vec{x}} \phi_i \neq 0$ only at the cell wall.
 Thus, the Cahn-Hilliard energy always tries to minimize the area of the cell interface. \\
 $W(\phi_i) = \dfrac{1}{4} (\phi_i^2 - 1)^2$ is a double-well potential. 
@@ -405,7 +423,7 @@ The qualitative differences observed highlight the importance of microscopic det
 A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behavior. 
 The visualization of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
 Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self-propulsion. 
-Unlike the soft-sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
+Unlike the soft sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
 This capability enables the simulation of complex collective behaviors but also increases computational demands compared to simpler point-particle models. \\
 The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
 By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature-dependent morphological changes on tori. 
@@ -420,7 +438,7 @@ Originating from materials science and solid mechanics, these models represent c
 The degrees of freedom in these models are precisely these vertices, meaning that all the cell model dynamics are applied only to the vertices. \\
 The cell dynamic in a vertex model is usually given by the equation
 \begin{align}
-	\dfrac{\dequ \vec{x}_i}{\dequ t} = F_i^m, \label{eq:vertexmodel}, 
+	\dfrac{\dequ \vec{x}_i}{\dequ t} = F_i^m, \label{eq:vertexmodel}
 \end{align}
 where $F_i^m$ is the total force acting on vertex $1 \leq i \leq N_V$ of cell $1 \leq m \leq N_C$. \\
 Like in the phase field model, $F_i^m$ is a sum of different forces that define the cell behavior, such as the cell flexibility or the interaction with other cells. 
@@ -448,31 +466,31 @@ This shape energy function incorporates terms that penalize deviations from a ta
 The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}_{mi}$ connects vertex $\vec{v}_{m,i}$ to $\vec{v}_{m,i+1}$, i.e. vertex $i$ to vertex $i+1$ of cell $m$.
 The complete shape energy function, which governs the particle dynamics, integrates these various contributions:
 \begin{align*}
-	U &= U_{\text{contract}} + U_{\text{compress}} + U_{\text{line tension}} + U_{\text{bending}} + U_{\text{interaction}}.
+	E &= E_{\text{contract}} + E_{\text{compress}} + E_{\text{line tension}} + E_{\text{bending}} + E_{\text{interaction}}.
 \end{align*}
 
 The first energy reads
 \begin{align*}
-	U_{\text{contract}} &= \frac{k_l N_V}{2} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} (l_{m,i}-l_0)^2,
+	E_{\text{contract}} &= \frac{k_l N_V}{2} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} (l_{m,i}-l_0)^2,
 \end{align*}
 where $k_l$ is the spring constant and $l_0$ is the equilibrium length of the edges. 
 It penalises contractions or expansion of cell edges and makes the edges return to their desired length $l_0$. \\ 
-Similarly, the second force $U_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_0$ 
+Similarly, the second force $E_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_0$ 
 \begin{align*}
-	U_{\text{compress}} &= \frac{k_a}{2} \sum\limits_{m=1}^{N_C} (a_m - a_0)^2, 
+	E_{\text{compress}} &= \frac{k_a}{2} \sum\limits_{m=1}^{N_C} (a_m - a_0)^2, 
 \end{align*}
 where $k_a$ is compressibility constant. \\ 
 The line tension energy is another energy working with the cell edges.
 It sanctions long edges with the formula 
 \begin{align*}
-	U_{\text{line tension}} &= \gamma \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} l_{m,i} ,
+	E_{\text{line tension}} &= \gamma \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} l_{m,i} ,
 \end{align*}
 where $\gamma$ is the line tension coefficient. \\
 The last shape energy is given by the bending energy. 
 It acts to resist changes in the angles between adjacent edges of the polygonal cells.
 This energy encourages the cells to maintain smooth, relatively straight boundaries and discourages sharp bends or kinks.
 \begin{align*}
-	U_{\text{bending}} &= \frac{k_b}{2 N_V} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
+	E_{\text{bending}} &= \frac{k_b}{2 N_V} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
 \end{align*}
 where $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,i}}{\norm[\vec{l}_{m,i}]} $ is the unit vector of $\vec{l}_{m,i}$.
 These four energies are conserving a specific cell shape. \\
@@ -494,20 +512,19 @@ Each vertex of a cell is treated as the center of a rigid disk with a fixed diam
 Repulsive interactions between cells are then modeled as linear spring forces that arise when these disks overlap. 
 This approach effectively simulates a rough surface interaction, characterized by discrete points of repulsion localized at the cell vertices, rather than a continuous interaction across the cell boundary.
 \begin{align*}
-	U_{\text{RS}} &=  \sum\limits_{m=1}^{N_C} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
+	E_{\text{RS}} &=  \sum\limits_{m=1}^{N_C} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
 \end{align*}
 where $k_r$ is the repulsive constant and $\Theta$ is the Heaviside step function, that is either $1$ for a positive argument or $0$ otherwise. \\
 In contrast to the RS method, the Smooth Surface (SS) method adopts a smoother representation, modeling polygon edges as circulo-lines, essentially line segments with a finite width $\delta$. 
 Repulsive forces are then calculated based on the minimum distance $d_{\text{min}}$, between these circulo-line segments belonging to different polygons. 
 The interaction energy is then formulated using this minimum distance $d_{\text{min}}$.
 \begin{align*}
-	U_{\text{SS}} = \sum_{m=1}^{N_C} \sum_{n \neq m} \sum_{j=1}^{N_V} \sum_{k=1}^{N_V} \frac{1}{2} k_r \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right).
+	E_{\text{SS}} = \sum_{m=1}^{N_C} \sum_{n \neq m} \sum_{j=1}^{N_V} \sum_{k=1}^{N_V} \frac{1}{2} k_r \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right).
 \end{align*}
 This method provides a smoother, more continuous repulsion, better approximating the behavior of soft, continuous interfaces. \\ 
 Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
 This indicates that the overall jamming behavior is robust to the specific choice of interaction model. \\
 
-\subsection{Thesis overview} 
 % transition to our model:
 \textbf{Discrete Form model} \\ 
 % - The model developed in this thesis is called discrete form (DF) model
@@ -530,9 +547,10 @@ This indicates that the overall jamming behavior is robust to the specific choic
 This thesis introduces the Discrete Form (DF) cell model, a vertex based framework inspired by~\cite{Fletcher14, Boromand2018} for simulating cell dynamics in non-confluent systems, similar to~\cite{Boromand2018}, but typically using fewer vertices (e.g., $N_V=6$). \\
 The DF model incorporates shape preserving forces (area, edge, interior angle energies) and interaction forces (deforming and bounce overlap forces) derived as gradient flows of energy functionals, allowing for cell deformation like in~\cite{Boromand2018, Fletcher14,wenzel2021,Happel2023} and ensuring evolution towards lower-energy configurations. 
 This allows representation of a wide range of desired cell shapes. \\
-The core contribution of this thesis is a non confluent DF model that systematically investigates how cellular deformability, controlled by a hardness parameter $h \in [0,1]$, influences the overall diffusivity of the cell system, enabling a transition from hard disc-like to soft disc-like behavior. 
+The core contribution of this thesis is a non confluent DF model that systematically investigates how cellular deformability, controlled by a hardness parameter $h \in [0,1]$, influences the overall diffusivity of the cell system, enabling a transition from hard disc like to soft disc-like behaviour. 
+\subsection{Thesis overview} 
 Building upon the foundations laid in the Bachelor's thesis~\cite{Vogel2023}, significant improvements were made, including bug fixes, code parallelization, and reformulation of forces for stable large-scale simulations (detailed in Sections~\ref{model} and~\ref{dynamics}). \\
 Chapter~\ref{sanitycheck} presents a rigorous validation by recreating the diffusion dynamics of the point particle and hard sphere models from~\cite{Bruna2012} through extensive Monte Carlo simulations with varying hardness ($h \in \{0, 0.5, 1\}$), representing soft, intermediate, and hard cell behaviors. \\
-Subsequently, Chapter~\ref{density} analyzes the resulting density dynamics. 
+Subsequently, Chapter~\ref{density} analyses the resulting density dynamics. 
 By connecting to the frameworks of~\cite{Bruna2012, Bruna2017, Boromand2018}, this work provides a unified perspective on cell dynamics spanning rigid to deformable regimes. 
 Finally, the thesis concludes with a summary of findings and an outlook on potential future extensions and applications of the DF model.
