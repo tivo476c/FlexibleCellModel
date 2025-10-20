@@ -179,27 +179,31 @@ Next, we consider models that add a real size to the particles and introduce par
 With the inclusion of a real size, the particles cannot overlap, resulting in exclusion effects. 
 To account for this, we introduce a new interaction dynamics that ensures the particles do not overlap. 
 This new interaction dynamics leads to a more complex and realistic model that captures the behavior of particles with a real size and interactions. \\
-Since particles cannot overlap, the domain $\Omega^{(i)}_{\epsilon}$, that holds the information where the centre of particle $i$ can be located, must exclude the areas where $\norm[\vec{x}_i - \vec{x}_j] \leq \epsilon$ for all $1 \leq j \leq N_C,$ $j \neq i$. 
+We model particles as spherical in shape, with a diameter $0 < \epsilon \ll 1$. 
+Since particles cannot overlap, the domain $\Omega_{\epsilon}^{N_C} \subset \Omega^{N_C}$, that encodes where each particle centre can be located, must exclude the areas where \[ \norm[\vec{x}_i - \vec{x}_j] \leq \epsilon, \quad 1 \leq i < j \leq N_C.\] 
 This is due to the fact that particles cannot occupy the same space simultaneously. \\
-Therefore, we first define the set of illegal configurations as
+How this kind of exclusion works is visualized in an one dimensional example in Figure~\ref{fig:exclusion1d}.  
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.8\textwidth]{intro/hardsphere.eps}
+	\caption{We can see where cell 2 can be located in the domain $[-0.5, 0.5]$, dependent on the location of cell 1. 
+	The feasible area is white and the occupied area is red.  % TODO this figure.
+	}
+	\label{fig:exclusion1d}
+\end{figure}
+
+To define the new domain, we first describe the set of illegal configurations as
 \[
 	\mathcal{B}_{\epsilon} = \{(\vec{x}_1, \ldots, \vec{x}_{N_C})^T \in \Omega^{N_C} | \exists i \neq j: \: \norm[\vec{x}_i - \vec{x}_j] \leq \epsilon\}.
 \]
 Then we can define the `hollow' domain 
 \[
-	\Omega_{\epsilon}^{N_C} = \Omega^{N_C} \ \mathcal{B}_{\epsilon}.
+	\Omega_{\epsilon}^{N_C} = \Omega^{N_C} \setminus \mathcal{B}_{\epsilon}.
 \]
-Let $\Omega^{(i)}_{\epsilon}$ denote the domain corresponding to the $i$-th particle. 
-The configuration space for $N_C$ particles, $\Omega_{\epsilon}^{N_C}$, is then also given as the Cartesian product of these individual domains
-\[
-	\Omega_{\epsilon}^{N_C} = \Omega^{(1)}_{\epsilon} \times \ldots \times \Omega^{(N_C)}_{\epsilon}.
-\]
-
-
-The domain that holds all possible locations of the particles is then given by \[\Omega^{N_C}_{\epsilon} = \Omega^{(1)}_{\epsilon} \times \ldots \times \Omega^{(N_C)}_{\epsilon} .\] 
-This can be visualized as a product space, where each particle's domain is combined to form a larger domain that encompasses all possible locations of the particles.
-Under this circumstances, we will get a new dynamic compared to the point particle model.  
 Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration looks like compared to a point particle configuration. \\
+
+
 
 \begin{figure}[h!]
 	\centering
@@ -209,19 +213,32 @@ Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration loo
 	\label{fig:hardsphere}
 \end{figure}
 
+Under this circumstances, we will get a new dynamic compared to the point particle model.  
 In the work of Bruna et al.~\cite{Bruna2012}, a hard sphere particle model is examined.
-Here, the particles are spherical in shape, with a diameter $0 < \epsilon \ll 1$.
 All particles in this model are distinct and can be distinguished from one another. 
-This model also uses a diffusion constant $D>0$. \\
-The hard sphere model is characterized by the fact that any interaction between particles may cause a change in their direction of motion, but the spherical shape of the particles remains unchanged.
-Hardcore collisions are modeled as reflective boundary conditions on the collision surfaces defined by $r = \norm[\vec{x}_i - \vec{x}_j] = \epsilon$, where $1 \leq i < j \leq N_C$.
-The external forces acting on a particle in the system are described by the force function $f: \R^2 \rightarrow \R^2$, which depends only on the location of the particle.
-The function $F$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
+A diffusion constant, $D>0$, is again included in the model to account for Brownian motion. \\
 The dynamics of the particles are governed by the SDE
 \begin{align*}
-	d\vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \qquad t >0, \:1 \leq i \leq N_C.
+	d\vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{\epsilon}^{(i)}, \: 1 \leq i \leq N_C,
 \end{align*}
-In this model, the particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles. \\
+where $\Omega_{\epsilon}^{(i)}$ is the factor domain for cell $i$ of the product space $\Omega_{\epsilon}^{N_C}$, in the sense of 
+\[
+	\Omega_{\epsilon}^{N_C} =  \mathop{\otimes}\limits_{i=1}^{N_C} \Omega_{\epsilon}^{(i)}. 
+\]
+The particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles. \\
+The dynamics of hard spheres share significant similarities with those of point particles, featuring both an external force $f$ and Brownian motion. 
+The primary difference lies in the constrained movement: hard spheres are confined to a domain that excludes the volume occupied by other spheres. 
+The model enforces this constraint using reflective boundary conditions on the effective `hollow' domain surrounding each cell. 
+Due to the presence of numerous `holes' (occupied by other cells), these reflections create a unique dynamic where cells effectively `bounce' off each other, distinct from the unhindered motion of point particles. 
+
+
+The hard sphere model is characterized by the fact that any interaction between particles may cause a change in their direction of motion, but the spherical shape of the particles remains unchanged.
+Hardcore collisions are modeled as reflective boundary conditions on the collision surfaces defined by $r = \norm[\vec{x}_i - \vec{x}_j] = \epsilon$, where $1 \leq i < j \leq N_C$.
+
+The external forces acting on a particle in the system are described by the force function $f: \R^2 \rightarrow \R^2$, which depends only on the location of the particle.
+The function $F$ maps the particle configuration $\vec{X} = (\vec{x}_1, \ldots, \vec{x}_{N_C})^T$ to the vector of external forces $F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T$.
+
+
 Similarly as in the point particle model, we are now interested in the macroscopic view of this model. 
 The structure for computing the first marginal of the hard sphere model is quite analogous to the computation for the point particles. \\
 The joint probability density function $P$ of the $N_C$ particles satisfies the high dimensional Fokker-Planck equation
