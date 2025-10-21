@@ -2,11 +2,14 @@ name = "JuliaDependenciesForMT"
 uuid = "fb6b2fa0-9015-4046-9d13-d2374757a8e5"
 
 [deps]
+BSplineKit = "093aae92-e908-43d7-9660-e50ee39d5a0a"
 ColorSchemes = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+Dierckx = "39dd38d3-220a-591b-8e3c-4c3a8c710a94"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Interpolations = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
 LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
@@ -16,5 +19,8 @@ Sockets = "6462fe0b-24de-5631-8697-dd941f90decc"
 StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 
 [compat]
+BSplineKit = "0.19.1"
 DataStructures = "0.18.22"
+Dierckx = "0.5.4"
+Interpolations = "0.16.2"
 Sockets = "1.11.0"

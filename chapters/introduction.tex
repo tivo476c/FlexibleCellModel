@@ -184,11 +184,14 @@ Since particles cannot overlap, the domain $\Omega_{\epsilon}^{N_C} \subset \Ome
 This is due to the fact that particles cannot occupy the same space simultaneously. \\
 How this kind of exclusion works is visualized in an one dimensional example in Figure~\ref{fig:exclusion1d}.  
 
+
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/hardsphere.eps}
-	\caption{We can see where cell 2 can be located in the domain $[-0.5, 0.5]$, dependent on the location of cell 1. 
-	The feasible area is white and the occupied area is red.  % TODO this figure.
+	\includegraphics[width=0.8\textwidth]{intro/hardsphere_exclusion.png}
+	\caption{This plot illustrates the feasible regions for cell 2 in one dimensional space, as a function of the position of cell 1. 
+	The domain of interest is restricted to the one dimensional interval $[-L, L]$, with the two cells having a diameter of $\epsilon$. 
+	The red boundaries indicate the excluded regions, where neither cell can occupy a position closer than $\frac{\epsilon}{2}$ to the boundary. 
+	The red diagonal line represents the occupied region by cell 1.
 	}
 	\label{fig:exclusion1d}
 \end{figure}
@@ -376,14 +379,16 @@ The cell wall is denoted by values of $\phi_i = 0$.
 An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield}. \\
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/phasefield.pdf}
+	\includegraphics[width=\textwidth]{intro/phasefield+cut.png}
 	\caption{A snapshot from the paper~\cite{alert2020} illustrating a phase field variable. 
 	The cell's inside has value $\phi = 1$ and the outside $\phi = -1$. 
+	On the right, we can see a cut of the plot from the left. 
+	It also shows the cell wall level set with a dashed line. 
 	}
 	\label{fig:phasefield}
 \end{figure}
 
-%%% TODO: continue: 
+
 The dynamics of a phase field variable $\phi_i$ can typically be given by a gradient flow of a free energy functional:
 \begin{align*}
 	\frac{\partial \phi_i}{\partial t} + v_0 (\vec{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \frac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N_C 
