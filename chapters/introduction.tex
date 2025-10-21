@@ -249,8 +249,28 @@ Using the method of matched asymptotic expansions, the authors also derived the 
 	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f) + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2), \quad \vec{x} \in \Omega, \: t>0 .
 	\label{equ:hardsphere}
 \end{align}
+Comparing Equation~\eqref{equ:hardsphere} (the first marginal distribution for hard spheres) with Equation~\eqref{equ:pointparticle} (the first marginal distribution for point particles), we observe an additional term in Equation~\eqref{equ:hardsphere}. 
+This term accounts for the enhanced diffusion rate resulting from the excluded volume effects of the hard spheres. 
+As the particle diameter $\epsilon \to 0$, Equation~\eqref{equ:hardsphere} converges to Equation~\eqref{equ:pointparticle}, recovering the dynamics of point particles. \\
 It is important to note that while the joint probability density function for hard spheres is defined on the restricted configuration space $\Omega_{\epsilon}^{N_C}$, the first marginal density function $\rho(t, \mathbf{x})$ remains defined on the original domain $\Omega$. \\
 This distinction arises because $\rho(t; \vec{x})$ is obtained by integrating the joint density over all other particle positions, effectively averaging out the excluded-volume constraints. 
+
+\begin{figure}[t!]
+	\centering
+    \includegraphics[width=0.8\textwidth]{intro/fig2_BC12.png}
+    \caption{
+    This figure from~\cite{Bruna2012} contains the following four plots, all of them are shown at time \( t=0.05 \). 
+	For all plots, the initial condition is normally distributed with mean $(0,0)^T$ and standard deviation $0.09$. 
+    (a) shows the solution of the linear diffusion Equation~\eqref{equ:pointparticle} for point particles. 
+    (b) shows the histogram of a Monte Carlo simulation of the point particle model. 
+    (c) shows the solution of the non linear diffusion Equation~\eqref{equ:hardsphere} for finite-sized particles. 
+    (d) shows the histogram of a Monte Carlo simulation of the hard sphere model. 
+    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
+	We can see that the hard sphere model in (c) and (d) shows a quicker diffusion rate as the cell concentration in the centrum of the domain has already diffused more compared to the point particle model in (a) and (b). 
+    }
+    \label{fig:fig2BC12}
+\end{figure}
+
 For any position $\vec{x} \in \Omega$, there exist valid configurations where the first particle occupies $\vec{x}$ while all other particles are positioned to avoid overlap. 
 Consequently, the marginal density remains well defined across the entire domain $\Omega$, despite the joint density being restricted to $\Omega_{\epsilon}^{N_C}$. \\
 In the derivation of Equation~\eqref{equ:hardsphere}, the divergence theorem introduces additional boundary terms arising from the excluded volume holes in the configuration space $\Omega_{\epsilon}^{N_C}$. 
@@ -265,21 +285,7 @@ For each discrete subsquare of our domain, we count how many particles were foun
 We then divide by the total number of runs to get the estimated probability density at that place and time. 
 This estimated density converges to the true density as the number of runs increases. \\
 
-\begin{figure}[h!]
-	\centering
-    \includegraphics[width=0.8\textwidth]{intro/fig2_BC12.png}
-    \caption{
-    This figure from~\cite{Bruna2012} contains the following four plots, all of them are shown at time \( t=0.05 \). 
-	For all plots, the initial condition is normally distributed with mean $(0,0)^T$ and standard deviation $0.09$. 
-    (a) shows the solution of the linear diffusion Equation~\eqref{equ:pointparticle} for point particles. 
-    (b) shows the histogram of a Monte Carlo simulation of the point particle model. 
-    (c) shows the solution of the nonlinear diffusion Equation~\eqref{equ:hardsphere} for finite-sized particles. 
-    (d) shows the histogram of a Monte Carlo simulation of the hard sphere model. 
-    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
-	We can see that the hard sphere model in (c) and (d) shows a quicker diffusion rate as the cell concentration in the centrum of the domain has already diffused more compared to the point particle model in (a) and (b). 
-    }
-    \label{fig:fig2BC12}
-\end{figure}
+
 
 
 
@@ -287,22 +293,63 @@ This estimated density converges to the true density as the number of runs incre
 \textbf{Soft sphere model} \\
 Next, we consider an extension of the model by introducing deformable soft spherical particles. 
 This new model incorporates the effect of deformation and interaction between particles through a potential energy function that depends on the distance between the particles.
-The paper~\cite{Bruna2017}, written by Bruna, Chapman and Robinson, analyses the diffusion properties of such a model. \\
-In contrast to the soft sphere model, the hard sphere model enforces rigid, non-deformable cell boundaries through reflective boundary conditions at a fixed separation distance, leading to abrupt, instantaneous collisions without any interface deformation. 
-The soft sphere model uses a smoother approach including interaction potentials. \\
-The equation of motion for each particle $i$ is given by
+E.g. the paper~\cite{Bruna2017}, written by Bruna, Chapman and Robinson, analyses the diffusion properties of such a model. \\
+The hard sphere model enforces rigid, non deformable cell boundaries through reflective boundary conditions at a fixed separation distance, leading to abrupt, instantaneous collisions without any interface deformation. \\
+Cells are still represented solely by their centre points $\vec{x}_i \in \Omega$, $1 \leq i \leq N_C$.
+Consequently, this model does not account for shape deformations, as no explicit cell boundary is included in the system. \\
+In contrast to the hard sphere model, the soft sphere model does not enforce rigid reflective boundaries. 
+Instead, it allows the centres of two cells to temporarily approach each other to a distance less than $\epsilon$. 
+The system is driven to resolve such overlaps through a repulsive interaction potential, $u: \R_+ \longrightarrow \R$ that assigns an energy penalisation for a given intercellular distance. 
+For repulsive short range potentials, $u$ is characterised by a rapid decay from a high value at small separations to zero at larger distances. \\
+The transition from reflective boundary conditions on neighbouring cell walls to interaction potentials renders the use of a hollow domain impractical.
+Therefore, we return to the original domain $\Omega$, within which all cells are located. \\
+There are different approaches for modelling a specific function for $u$, that of course also change the cell system dynamics. 
+The interaction potentials discussed in Bruna, Chapman, and Robinson~\cite{Bruna2012}, represent the energy of interaction between two particles separated by distance $r$. 
+The cell diameter $\epsilon > 0$ used in the hard sphere model now represents the range of interaction in the soft sphere setting. 
+Nevertheless, it can still be interpreted as an effective cell diameter, since regions with $r = \epsilon$ mark the transition between overlapping and non overlapping cells. \\
+The simplest repulsive pair potential is the soft sphere (SS) potential, which assumes the form
+\[
+	u_{\text{SS}}(r) = \left( \dfrac{\epsilon}{r}\right)^{\nu},
+\]
+where $\nu > 0$ is the hardness parameter that controls the steepness of the potential. 
+As $\nu$ increases, the potential becomes more hard sphere like, with the hard sphere limit ($u(r) = \infty$ for $r \leq \epsilon$ and $u(r) = 0$ for $r > \epsilon$) approached as $\nu \to \infty$. \\
+Another common form is the exponential (EX) potential 
+\[
+	u_{\text{EX}}(r) = e^{-r/\epsilon},
+\]
+which features a smooth, rapidly decaying repulsion. \\
+
+Once an interaction potential has been chosen, the dynamics of the soft sphere cell model for cell $i$ can be defined as follows
 \begin{align*}
 	d\vec{x}_i(t) =  f(\vec{x}_i(t))\, \dequ t - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)])\, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), 
 \end{align*}
 for $1 \leq i \leq N_C$ and $t>0$.  \\
-The effect of the interaction potential is to cause particles to repel or attract each other depending on the distance between them, rather than simply overlapping. \\
-For the modeling of short range interacting soft sphere particles, the authors computed the one particle probability density $\rho(t; \vec{x})$ of finding a given particle at position $\vec{x}$ at time $t$ developing according to
+
+The authors derive the joint probability density for the soft sphere system as part of their many-particle Fokker-Planck formulation.
+They begin from the stochastic Langevin dynamics for $N_C$ interacting particles subject to pairwise soft repulsive potentials, and then obtain the corresponding Fokker-Planck equation governing the evolution of the joint probability density as 
+\begin{align*}
+	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot [ D \nabla_{\vec{X}} P + P \nabla_{\vec{X}} \Phi], \quad \vec{X} \in \Omega^{N_C}, \: t > 0, \\
+\end{align*}
+where 
+\begin{align*}
+	\Phi: \Omega^{N_C} &\longrightarrow \R, \\
+	\vec{X} &\longmapsto \Phi(\vec{X}) = \sum\limits_{i \neq j} u\left( \dfrac{\norm[\vec{x}_i - \vec{x}_j]}{\epsilon} \right), 
+\end{align*}
+is total interaction potential energy of the $N_C$ particle system. \\
+
+The authors continued by deriving the first marginal function, by integrating the joint probability density function of all particles over the positions of all other particles. 
+They then used matched asymptotic expansions to obtain a closed equation for the first marginal, which is a non linear advection diffusion equation, given by
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f)  + \nabla_{\vec{x}} \cdot (\alpha_u \epsilon_u^2(N_C-1)\rho \nabla_{\vec{x}} \rho)
+	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f)  + \nabla_{\vec{x}} \cdot (\alpha_u \epsilon^2(N_C-1)\rho \nabla_{\vec{x}} \rho), \quad \vec{x} \in \Omega, \; t >0, 
 	\label{equ:softsphere}
 \end{align}
-where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon_u \ll 1$ is the interaction range of $u$.
-When comparing the first marginals of the soft sphere model Equation~\eqref{equ:softsphere} and the hard sphere model Equation~\eqref{equ:hardsphere}, we can see that they are similar in structure, with the main difference being the coefficients of the nonlinear diffusion terms. 
+where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon \ll 1$ is the interaction range of the particles.
+Crucially, the parameter 
+\[
+	\alpha_u = \int_{\Omega} 1 - e^{-u(\epsilon \|x\|)} \, dx, 
+\]
+quantifies the strength of the non linear diffusion effect, with larger values corresponding to stronger excluded-volume effects that enhance the overall diffusion rate of the system. \\
+When comparing the first marginals of the soft sphere model Equation~\eqref{equ:softsphere} and the hard sphere model Equation~\eqref{equ:hardsphere}, we can see that they are similar in structure, with the difference being the coefficients of the non linear diffusion terms. 
 We can not clearly say which model diffuses faster, as this is dependent on the modelling of the soft interaction. \\
 The influence of the cell hardness to the diffusion rate of the cell system will be investigated in this thesis. 
 We even introduce a parameter that can continuously change the cell hardness from hard to soft. \\
