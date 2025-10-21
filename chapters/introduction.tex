@@ -85,7 +85,7 @@ This density function serves as the fundamental mean field that encapsulates the
 When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
 The first marginal density function $\rho(t; \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ and time $t > 0$. 
 It provides a coarse grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
-In order to compute the first marginal, we have to start with the joined probability density function. 
+In order to compute the first marginal, we have to start with the joint probability density function. 
 This function, denoted by 
 \begin{align*}
 	P : \R_{+} \times \Omega^{N_c} &\longrightarrow  \R_+, \\	
@@ -106,8 +106,8 @@ This results in the final form of the equation:
 	\dfrac{\partial P}{\partial t} = D \Delta_{\vec{X}} P, \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
 \] 
 where $D$ is the diffusion constant from the particle dynamic and $\Delta_{\vec{X}}$ is the Laplacian operator with respect to $\vec{X}$. \\
-Having obtained the joined probability function $P(t; \vec{X})$, we can continue by deriving the first marginal $\rho(t; \vec{x})$. 
-In contrast to the joined probability function that tells probabilities of a whole cell configuration $\vec{X}$, the first marginal function is a probability density that describes the likelihood of finding any one particle at position  $\vec{x} \in \Omega$ and time $t > 0$. \\
+Having obtained the joint probability function $P(t; \vec{X})$, we can continue by deriving the first marginal $\rho(t; \vec{x})$. 
+In contrast to the joint probability function that tells probabilities of a whole cell configuration $\vec{X}$, the first marginal function is a probability density that describes the likelihood of finding any one particle at position  $\vec{x} \in \Omega$ and time $t > 0$. \\
 The first marginal still fulfils the condition 
 \[
 	\int_{\Omega} \rho(t; \vec{x}) \, \dequ \vec{x} = 1, \quad t > 0. 
@@ -151,7 +151,7 @@ We define a multidimensional function
 \end{align*}
 that gathers the external dynamics for all particles. \\
 With that new external force, the diffusion behaviour changes. 
-For our point particle model with included external effects, the joined probability is given by a high dimensional Fokker-Planck equation 
+For our point particle model with included external effects, the joint probability is given by a high dimensional Fokker-Planck equation 
 \[
 	\dfrac{\partial P(t; \vec{X})}{\partial t} = \nabla_{\vec{X}} \cdot [D \nabla_{\vec{X}} P(t; \vec{X}) - P(t; \vec{X}) F(\vec{X})], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
 \] 
@@ -177,8 +177,8 @@ This similarity in derivation underscores the robustness of the marginalisation 
 \textbf{Hard sphere model} \\
 Next, we consider models that add a real size to the particles and introduce particle interactions. 
 With the inclusion of a real size, the particles cannot overlap, resulting in exclusion effects. 
-To account for this, we introduce a new interaction dynamics that ensures the particles do not overlap. 
-This new interaction dynamics leads to a more complex and realistic model that captures the behavior of particles with a real size and interactions. \\
+To account for this, we introduce a new interaction dynamic that ensures the particles do not overlap. 
+This leads to a more complex and realistic model that captures the behavior of particles with a real size and interactions. \\
 We model particles as spherical in shape, with a diameter $0 < \epsilon \ll 1$. 
 Since particles cannot overlap, the domain $\Omega_{\epsilon}^{N_C} \subset \Omega^{N_C}$, that encodes where each particle centre can be located, must exclude the areas where \[ \norm[\vec{x}_i - \vec{x}_j] \leq \epsilon, \quad 1 \leq i < j \leq N_C.\] 
 This is due to the fact that particles cannot occupy the same space simultaneously. \\
@@ -216,7 +216,7 @@ Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration loo
 Under this circumstances, we will get a new dynamic compared to the point particle model.  
 In the work of Bruna et al.~\cite{Bruna2012}, a hard sphere particle model is examined.
 All particles in this model are distinct and can be distinguished from one another. 
-A diffusion constant, $D>0$, is again included in the model to account for Brownian motion. \\
+A diffusion constant, $D>0$, is again included in the model to scale the Brownian motion. \\
 The dynamics of the particles are governed by the SDE
 \begin{align*}
 	d\vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{\epsilon}^{(i)}, \: 1 \leq i \leq N_C,
@@ -228,33 +228,37 @@ where $\Omega_{\epsilon}^{(i)} \subset \Omega$ is the factor domain for cell $i$
 The particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles. \\
 The dynamics of hard spheres share significant similarities with those of point particles, featuring both an external force $f$ and Brownian motion. 
 The primary difference lies in the constrained movement: hard spheres are confined to a domain that excludes the volume occupied by other spheres. \\
-The model enforces this constraint using reflective boundary conditions on the collision surfaces defined by $r = \norm[\vec{x}_i - \vec{x}_j] = \epsilon$, where $1 \leq i < j \leq N_C$. 
+The model enforces this constraint using reflective boundary conditions on the collision surfaces whenever there are two cells with 
+\[
+	\norm[\vec{x}_i - \vec{x}_j] = \epsilon, \quad 1 \leq  i < j \leq N_C.
+\]
 Due to the presence of numerous holes (occupied by other cells), these reflections create a unique dynamic where cells effectively bounce off each other, distinct from the unhindered motion of point particles. \\
+
 Similarly as in the point particle model, we are now interested in the macroscopic view of this model. 
 The structure for computing the first marginal of the hard sphere model is quite analogous to the computation for the point particles. \\
 The joint probability density function $P$ of the $N_C$ particles satisfies the high dimensional Fokker-Planck equation
 \begin{align*}
 	\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot [ D \nabla_{\vec{X}} P - P F], \quad \vec{X} \in \Omega_{\epsilon}^{N_C}, \: t > 0,
 \end{align*}
-where $\nabla_{\vec{X}}$ and $\nabla_{\vec{X}} \cdot$ denote the gradient and divergence operators with respect to the $N_C$ particle position vector $\vec{X}$ and we again use $F(\vec{X}) = (f(\vec{x}_1, \ldots, f(\vec{x}_{N_C})))$. \\
+where $\nabla_{\vec{X}}$ and $\nabla_{\vec{X}} \cdot$ denote the gradient and divergence operators with respect to the $N_C$ particle position vector $\vec{X}$ and we again use $F(\vec{X}) = (f(\vec{x}_1, \ldots, f(\vec{x}_{N_C})))^T$. \\
 The joint probability density function for hard spheres differs from that of point particles solely in its domain of definition. 
 While the point particle model is defined on the full configuration space $\Omega^{N_C}$, the hard sphere model is governed by the same Fokker-Planck equation but restricted to the excluded volume domain $\Omega_{\epsilon}^{N_C}$. 
 This domain restriction encodes the physical impenetrability of finite sized particles while preserving the mathematical structure of the evolution equation. \\
-
 Using the method of matched asymptotic expansions, the authors also derived the probability density function $\rho$ of finding a single particle at time $t$ and position $\vec{x}$, which satisfies the equation
 \begin{align}
 	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f) + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2), \quad \vec{x} \in \Omega, \: t>0 .
 	\label{equ:hardsphere}
 \end{align}
-It is important to note that while the joint probability density function for hard spheres is defined on the restricted configuration space $\Omega_{\epsilon}^{N_C}$ (which excludes overlapping particle configurations), the first marginal density function $\rho(t, \mathbf{x})$ remains defined on the original domain $\Omega$. 
+It is important to note that while the joint probability density function for hard spheres is defined on the restricted configuration space $\Omega_{\epsilon}^{N_C}$, the first marginal density function $\rho(t, \mathbf{x})$ remains defined on the original domain $\Omega$. \\
 This distinction arises because $\rho(t; \vec{x})$ is obtained by integrating the joint density over all other particle positions, effectively averaging out the excluded-volume constraints. 
 For any position $\vec{x} \in \Omega$, there exist valid configurations where the first particle occupies $\vec{x}$ while all other particles are positioned to avoid overlap. 
 Consequently, the marginal density remains well defined across the entire domain $\Omega$, despite the joint density being restricted to $\Omega_{\epsilon}^{N_C}$. \\
 In the derivation of Equation~\eqref{equ:hardsphere}, the divergence theorem introduces additional boundary terms arising from the excluded volume holes in the configuration space $\Omega_{\epsilon}^{N_C}$. 
 These boundary contributions, localized near particle-particle collision surfaces, ultimately generate the non linear diffusion correction term in the first marginal density equation for hard spheres. 
-This term, proportional to the particle volume fraction, captures the excluded-volume effects that enhance collective diffusion compared to the point particle model. \\
-A central finding of~\cite{Bruna2012} is shown in Figure~\ref{fig:fig2BC12}, which compares the diffusion behaviour of the point particle model and the hard sphere model. 
-The figure confirms the enhanced diffusion behaviour of the hard sphere system, as the density profile exhibits greater spatial spreading across $\Omega$ compared to the point particle model.
+This term, proportional to the particle volume fraction, captures the excluded-volume effects that enhance collective diffusion compared to the point particle model. 
+Bruna and Chapman~\cite{Bruna2012} demonstrated that the excluded-volume effects of hard spheres lead to enhanced diffusion within the system. \\
+This is also shown in Figure~\ref{fig:fig2BC12} from the original paper, which compares the diffusion behaviour of the point particle model and the hard sphere model. 
+The figure confirms the enhanced diffusion behaviour of the hard sphere system, as the density profile exhibits greater spatial spreading across $\Omega$ compared to the point particle model. 
 It uses the Monte Carlo method for the point particles and the hard sphere in order to give a numerical approximation of the density dynamic. 
 The Monte Carlo method involves running the simulation many times ($M=10000$). 
 For each discrete subsquare of our domain, we count how many particles were found at that location across all runs at time $t=0.05$. 
