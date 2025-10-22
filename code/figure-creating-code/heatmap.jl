@@ -168,7 +168,7 @@ function createCrossSection(matrix; time=0.05)
     Args:
         matrix: the heatmap matrix for 1 time step, for each subcell it holds the number of counts of cell centres throughout all simulations
     """
-        
+
     matrix .= Float64.(matrix)
     matrix = matrix ./ (NumberOfSimulations * NumberOfCells * HeatStepSize^2)   # get density for all cells 
 
@@ -186,23 +186,24 @@ function createCrossSection(matrix; time=0.05)
     # combine 
     Middles = 0.5 .* (xMiddle + yMiddle)                                        # average over both directions 
 
-    
-    heatcells = HeatGrid[1:end-1] .+ 0.5*HeatStepSize
-    
+
+    heatcells = HeatGrid[1:end-1] .+ 0.5 * HeatStepSize
+
     centralplot = plot(heatcells, Middles,
-    label="Cross section",
-    xlimits=domain,
-    # ylimits=(0, maximum(Middles)),
-    dpi=500
+        label="Cross section",
+        xlimits=domain,
+        # ylimits=(0, maximum(Middles)),
+        dpi=500
     )
-    
+
     crossSectionPath = joinpath(simPath, "crosssections")
     heatMapName = string("middle-", simulationName, "-sampleTime", @sprintf("%.2f", time))
     if !isdir(crossSectionPath)
         mkpath(crossSectionPath)  # creates the directory, including intermediate folders
-    end 
+    end
     savefig(joinpath(crossSectionPath, "$(heatMapName).png"))
 
+    # alles aufaddieren * dx = 1 ? (integral [-0.5, 0.5] plot line = 1)
 end
 
 function createHeatmaps(matrices)
