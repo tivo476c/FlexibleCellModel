@@ -240,3 +240,28 @@ Figure~\ref{fig:hscmHeatmaps} shows the density evolution of the HSCM.
     \caption{The area force successfully restores the desired cell area after 5 time steps as this energy diagram shows.}
 	\label{fig:areaEnergyDiagram}    
 \end{figure}
+
+\subsection{Shape deformation check}
+In this subsection, we are going to investigate how much the cells deformed throughout our big monte carlo simulations.
+Therefore, we need to introduce a measure of how much a cell is deformed. 
+There is already some theory existing on how to measure that for two dimensional figures. 
+A basic approach is to study the ratio between cell area and cell perimeter. 
+We call that ratio the isoperimetric quotient $\alpha$ of that geometric figure $F$, i.e. 
+\[
+    \alpha_{F} = \nu \dfrac{area_{F}}{perimeter_{F}^2},  
+\]
+where $\nu \> 0 $ is a scaling factor which we will define later. \\
+There is one 2 dimensional geometric figure that has the largest isoperimetric quotient from all: the circle. 
+For a circle of radius $r>0$, we have a area of $area_c = \pi r^2 $ and a perimeter of $perimeter_c = 2 \pi r $. 
+Thus, it has an isoperimetric quotient of 
+\[
+    \alpha_{circle} = \nu \dfrac{\pi r^2}{(2 \pi r)^2} = \nu \dfrac{1}{4 \pi}.
+\]
+We want to normalise the isoperimetric quotient to always be in the interval $[0,1]$. 
+Therefore, we just have to choose $\nu = 4 \pi$.
+Since a circle always has a maximum isoperimetric quotient, we have an upper bound of $1$.
+It also has $0$ as a lower bound since both the area and perimeter of a geometric figure are always positive. \\ 
+These properties are also easy to compute for our DF cells. 
+We can use the Shoelace Formula~\ref{prop:Shoelace} for the cell area, and for getting the perimeter, we just have to add up the lengths of all cells. \\ 
+
+We can use this approach to analyse how much our cell shapes changed in our big 

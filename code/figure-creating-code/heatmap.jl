@@ -161,37 +161,47 @@ function getMatrixIndex(coords::Vector{Float64})
 
 end
 
-function createCentralDensity(matrix)
+function createCrossSection(matrix; time=0.05)
     """
-    Creates that middle cross section of the heatmap, i.e. the density along the lines x=0, y=0.
+    Creates that central cross-section plot of the heatmap, i.e. the density along the lines x=0, y=0.
 
     Args:
-        matrix: the heatmap matrix
+        matrix: the heatmap matrix for 1 time step, for each subcell it holds the number of counts of cell centres throughout all simulations
     """
+        
     matrix .= Float64.(matrix)
-    matrix = matrix ./ (NumberOfSimulations * NumberOfCells * HeatStepSize^2)
+    matrix = matrix ./ (NumberOfSimulations * NumberOfCells * HeatStepSize^2)   # get density for all cells 
 
     xMiddle = zeros(NumberOfHeatGridPoints)
     yMiddle = zeros(NumberOfHeatGridPoints)
 
+    # extract middle lines from matrix
     for i = 1:30
         for j = 15:16
-            xMiddle[i] += matrix[j, i]
-            yMiddle[i] += matrix[i, j]
+            xMiddle[i] += 0.5 * HeatStepSize * matrix[j, i]                     # multiply with 0.5 for average over both central lines  
+            yMiddle[i] += 0.5 * HeatStepSize * matrix[i, j]                     # multiply with HeatStepSize cause thats the line width
         end
     end
 
-    Middles = 0.5 .* (xMiddle + yMiddle)
+    # combine 
+    Middles = 0.5 .* (xMiddle + yMiddle)                                        # average over both directions 
 
-    heatMapName = string("middle-", simulationName, "-sampleTime", @sprintf("%.3f", 0.05))
-
-    centralplot = plot(HeatGrid, Middles,
-        xlimits=domain,
-        ylimits=(0, maximum(Middles)),
-        # clim=(0.55, 1.55),  # activate for bruna scaling 
-        dpi=500
+    
+    heatcells = HeatGrid[1:end-1] .+ 0.5*HeatStepSize
+    
+    centralplot = plot(heatcells, Middles,
+    label="Cross section",
+    xlimits=domain,
+    # ylimits=(0, maximum(Middles)),
+    dpi=500
     )
-    savefig(joinpath(heatMapsPath, "$(heatMapName).png"))
+    
+    crossSectionPath = joinpath(simPath, "crosssections")
+    heatMapName = string("middle-", simulationName, "-sampleTime", @sprintf("%.2f", time))
+    if !isdir(crossSectionPath)
+        mkpath(crossSectionPath)  # creates the directory, including intermediate folders
+    end 
+    savefig(joinpath(crossSectionPath, "$(heatMapName).png"))
 
 end
 

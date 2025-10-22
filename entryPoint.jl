@@ -4,13 +4,12 @@ This file is the entry point of my FlexibleCellModel code.
 It gets executed, whenever parameters.jl gets executed.
 It uses its parameter configuration to start the according simulation. 
 """
-# Pkg.develop(path="C:/Users/voglt/Desktop/FlexibleCellModel")
 
 println("Started entryPoint.jl")
 println("Loading all packages")
 
 
-###  OPTION 1: JUST RUN A METHOD WITHOUT PARALLELIZING
+#######  OPTION 1: JUST RUN A METHOD WITHOUT PARALLELIZING
 include("code/parameters.jl")
 include("code/cell_functionalities.jl")
 include("code/computeOverlap.jl")
@@ -27,13 +26,22 @@ energyDiaPath = joinpath(simPath, "energies-$simulationName.png")
 p = [timeStepSize, D]
 
 
-# runShow_overlap()                                         # for producing overlap figures and gifs 
-runSimulation_locations()                                   # for producing location data and heatmaps
+# runSimulation_locations()                                   # for producing location data and heatmaps
 
-###  OPTION 2: PARALLELIZED 
+#######  OPTION 2: PARALLELIZED 
 # if wanna use parallelized run, inclusions happen in startParallelizedRun.jl: 
 
 # using Pkg 
 # Pkg.activate(".")
 # Pkg.instantiate()
 # include("code/startParallelizedRun.jl")
+
+
+#######  OPTION 3: PLAYGROUND 
+
+# runShow_overlap()                                         # for producing overlap figures and gifs 
+heatmatrices = makeMatrices()
+for (t, m) in enumerate(heatmatrices)
+    time = 0.01 * (t-1) 
+    createCrossSection(m; time=time)
+end 
