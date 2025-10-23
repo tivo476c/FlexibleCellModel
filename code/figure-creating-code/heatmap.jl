@@ -161,116 +161,111 @@ function getMatrixIndex(coords::Vector{Float64})
 
 end
 
-function createCrossSection(matrices; simname="")
+function createCrossSectionAllPlots(simNames)
     """
     Creates that central cross-section plot of the heatmap, i.e. the density along the lines x=0, y=0.
-
     Args:
-        matrix: the heatmap matrix for 1 time step, for each subcell it holds the number of counts of cell centres throughout all simulations
+        - simNames:: List of strings that holds all simulation names that get printed to the plot
     """
-
-    plots = []
-
-    for (t, matrix) in enumerate(matrices) 
-        
-        time = 0.01 * (t-1)
-        matrix .= Float64.(matrix)
-
-        xMiddle = zeros(NumberOfHeatGridPoints)
-        yMiddle = zeros(NumberOfHeatGridPoints)
-
-        # extract middle lines from matrix
-        for i = 1:30
-            for j = 15:16
-                xMiddle[i] += matrix[j, i]                     
-                yMiddle[i] += matrix[i, j]                     
-            end
-        end
-
-        # combine 
-        Middles = xMiddle + yMiddle                                                   
-        Ncells = sum(Middles) 
-
-        Middles ./= Ncells * HeatStepSize                       # scale to mass = 1.0
-
-
-        heatcells = HeatGrid[1:end-1] .+ 0.5 * HeatStepSize
-
-        
-        caption = string("x\n t = ", @sprintf("%.2f", time))
-        if simname==""
-
-            centralplot = plot(heatcells, Middles,
-                title="Cross section density",
-                label="Cross section",
-                xlimits=domain,
-                ylimits=(0.0,4.0),
-                xlab=caption,
-                ylab="Density",
-                dpi=500
-            )
-
-        elseif simname=="AAAsoftSim-bachelorOverlap"
-
-            centralplot = plot(heatcells, Middles,
-                title="Cross section density",
-                label="h = 0.0",
-                color=1,
-                xlimits=domain,
-                ylimits=(0.0,4.0),
-                xlab=caption,
-                ylab="Density",
-                dpi=500
-            )
-        elseif simname=="AAAmidSim3-bachelorOverlap"
-
-            centralplot = plot(heatcells, Middles,
-                title="Cross section density",
-                label="h = 0.5",
-                color=2,
-                xlimits=domain,
-                ylimits=(0.0,4.0),
-                xlab=caption,
-                ylab="Density",
-                dpi=500
-            )
-
-        elseif simname=="AAAtest3-hard-DF-FIRSTWORKING"
-
-            centralplot = plot(heatcells, Middles,
-                title="Cross section density",
-                label="h = 1.0",
-                color=3,
-                xlimits=domain,
-                ylimits=(0.0,4.0),
-                xlab=caption,
-                ylab="Density",
-                dpi=500
-            )
-        
-        end 
-
-        crossSectionPath = joinpath(simPath, "crosssections")
-        heatMapName = string("middle-", simulationName, "-sampleTime", @sprintf("%.2f", time))
-        if !isdir(crossSectionPath)
-            mkpath(crossSectionPath)  # creates the directory, including intermediate folders
-        end
-        println("crossSectionPath = $crossSectionPath")
-        savefig(centralplot, joinpath(crossSectionPath, "$(heatMapName).png"))
-
-        push!(plots, centralplot)
+    
+    if !(isa(simNames, String) || isa(simNames, Vector{String})) 
+        return
+    end 
+    if length(simNames) < 1
+        return 
     end 
 
-    crossSectionPath = joinpath(simPath, "crosssections")
+    simNames = isa(simNames, String) ? [simNames] : simNames                    # ensure simNames is a vector of strings 
+    # gather y data, plot labels for all sims 
+    # sim index of YData is index of sim in simNames 
+    YData = []
+    Labels = []
+    for (simcount, simname) in enumerate(simNames)
 
-    anim = @animate for p in plots
+        simPath = joinpath(homedir(), "simulations", simname)
+        parameterPath = joinpath(simPath, "parameters.jl")
+        include(parameterPath)
+        heatmatrices = makeMatrices()
+        heatmatrices .= [Float64.(M) for M in heatmatrices]
+        heatmatrices = [heatmatrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]  # scale for density
+        println("\n currently in sim = $simulationName")
+        println("\n current NumberOfSimulations = $NumberOfSimulations")
+        for M in heatmatrices
+            mass = sum(M) * (HeatStepSize)^2
+            M ./= mass
+            mass = sum(M) * (HeatStepSize)^2
+            println("mass heatmeatrix = $mass")
+        end 
+        simYData = []
+        # gather y data for 1 sim 
+        for matrix in heatmatrices
+                       
+            # METHOD FOR CREATION OF CROSSES ------------------------------------------------
+            xCut = zeros(NumberOfHeatGridPoints)
+            yCut = zeros(NumberOfHeatGridPoints)
+            # extract middle lines from matrix
+            for i = 1:30
+                xCut[i] = sum(matrix[:, i])                     
+                yCut[i] = sum(matrix[i, :])                     
+            end
+            Cut = 0.5 * (xCut + yCut) * HeatStepSize
+            println("mass = $(sum(Cut)*HeatStepSize)")
+            push!(simYData, copy(Cut))
+            #-------------------------------------------------------------------------------
+
+        end 
+        simLabel = "h = $(hardness)"
+        push!(Labels, simLabel)
+        push!(YData, simYData)
+    end 
+    # Label[simIndex] = simLabel 
+    # YData[simIndex][timeIndex] 
+    # println("is 1=2: ", YData[1] == YData[2])
+    # println("is 1=3: ", YData[1] == YData[3])
+    println("")
+    
+    heatcells = HeatGrid[1:end-1] .+ 0.5 * HeatStepSize         # x grid for plots 
+
+    crossSectionPath = joinpath(homedir(), "simulations", "crosssections-collection")
+    if !isdir(crossSectionPath)
+        mkpath(crossSectionPath)  # creates the directory, including intermediate folders
+    end
+
+    PlotsCollection = []
+    for t = 1:length(YData[1])
+        # create plots for each time 
+        time = 0.01 * (t-1)
+        caption = string("x\n t = ", @sprintf("%.2f", time)) 
+        # clf()
+        centralplot = plot( 
+                            title="Cross section density",
+                            xlimits=domain,
+                            ylimits=(0.0,4.0),
+                            xlab=caption,
+                            ylab="Density",
+                            dpi=500
+                          )
+        println("length(YData) = $(length(YData))")
+        for simCount = 1:length(YData)
+            plot!(centralplot, heatcells, YData[simCount][t], color=2, label=Labels[simCount])
+        end 
+
+        time = 0.01 * (t-1)
+        crosssectionname = string("crosssection_t", @sprintf("%.2f", time))
+        savefig(centralplot, joinpath(crossSectionPath, "$(crosssectionname).png"))
+        
+        push!(PlotsCollection, centralplot)
+        # clf()
+    end 
+
+    # Now create gif from all Plots 
+    CrossAnim = @animate for p in PlotsCollection
         plot(p)
     end
     # save as GIF
     gifname="cross-section-evolution.gif"
-    gif(anim, joinpath(crossSectionPath, gifname), fps=1)
-    
-    return plots
+    gif(CrossAnim, joinpath(crossSectionPath, gifname), fps=1)
+
 end
 
 function createHeatmaps(matrices)
