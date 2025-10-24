@@ -318,7 +318,69 @@ function createHeatmaps(matrices)
         hline!(HeatGrid, c=:grey, linewidth=0.1, label=false)
         savefig(joinpath(heatMapsPath, "$(heatMapName)-nolegend.png"))
 
-
-
     end
 end
+
+
+function doAsphericityCheck()
+
+    #create path
+    aspPath = joinpath(simPath, "asphericity")
+    if !isdir(aspPath)
+        mkdir(aspPath)
+    end 
+
+    A_d, E_d, I_d = computeDesiredStates_circleCells()
+    p = timeStepSize, D, A_d, E_d, I_d 
+    u0 = initializeCells(radius)
+
+    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+    @time sol = solve(cellProblem,
+        EM(),
+        dt=timeStepSize,
+    )
+    extractedSol = extractSolution(sol)
+    # extractedSol.t[timeStep in {1,...,6}] ... time steps 
+    # extractedSol.u[timeStep in {1,...,6}] ... cell configs to that time 
+
+    # collect asphericity data 
+    AllAsphericities = []
+    for timesteps = 1:length(extractedSol.t)
+        allCells = solutionToCells(extractedSol.u[timesteps])
+
+        Asphericities_1time = []
+        for cell in allCells    
+            # cell.x for all x coords and cell.y for all y coords 
+            cell_area = areaPolygon(cell.x, cell.y)
+            cell_perimeter = sum(computeEdgeLengths(cell))
+            asphericity = 4*pi*cell_area/(cell_perimeter^2)
+            push!(Asphericities_1time, asphericity)
+        end 
+        push!(AllAsphericities, Asphericities_1time)
+    end
+    # AllAsphericities[timeStep in {1,...,6}][cell in {1,...,400}]
+
+    xLowerBound = 0.8
+    xStepSize = 0.02
+    aspValues = xLowerBound:xStepSize:1.0
+    for timestep = 1:length(extractedSol.t)
+        println("Number of Intervals = $(length(aspValues)-1)")
+        xScale  = ["$(aspValues[i]) - $(aspValues[i+1])" for i=1:length(aspValues)-1]  
+        yCounts = zeros(length(aspValues)-1)
+        for cellAsp in AllAsphericities[timestep]
+            factor = 1.0/xStepSize
+            factor = 50.0
+            yIntervalIndex = floor(Int, factor*cellAsp) - 39
+            yCounts[yIntervalIndex] += 1
+        end 
+        aspPlot = bar(xScale, yCounts, 
+                        title="Aspherictiy",
+                        xlabel="asphericity",
+                        ylabel="Number of cells",
+                        xrotation = 45,
+                        dpi=500,
+                      )
+        barname = "asphericity-chart-time$timestep.png"
+        savefig(joinpath(aspPath, barname))
+    end 
+end 

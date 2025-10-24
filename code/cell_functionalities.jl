@@ -930,7 +930,7 @@ function solutionToCells(sol::Vector{Float64})
 
     a vector C = [c1, ..., cM] of all DiscreteCells,    
     such that for all cells i = 1,...,M 
-       c[i].x = x_i, c[i].y = y_i.       
+       ci.x = x_i, ci.y = y_i.       
     """
     C = DiscreteCell[]
     if NumberOfCellWallPoints!=0

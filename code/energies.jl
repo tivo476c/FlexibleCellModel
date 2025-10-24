@@ -658,63 +658,63 @@ function bachelorOverlapForceCells(c1, c2; k=1)
     end
 
     # now add dynamic for vertices that are not part of the overlap cell 
-    for vertexListIndex in eachindex(vertexLists)
-        vertexList = vertexLists[vertexListIndex]
-        overlap = overlaps[vertexListIndex]
-        K = length(overlap.x)
-        area = areaPolygon(overlap.x, overlap.y)
-        # indices_c1, indices_c2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
-        areaGradientOverlap = areaGradientCell(overlap; NVertices=K)
+    # for vertexListIndex in eachindex(vertexLists)
+    #     vertexList = vertexLists[vertexListIndex]
+    #     overlap = overlaps[vertexListIndex]
+    #     K = length(overlap.x)
+    #     area = areaPolygon(overlap.x, overlap.y)
+    #     # indices_c1, indices_c2 = collectOverlapIndices(o, c1, c2)           # collect all vertices, that are part of the overlap. these are the vertices which get a force applied
+    #     areaGradientOverlap = areaGradientCell(overlap; NVertices=K)
 
-        for indV in eachindex(vertexList)
-            intersec = vertexList[indV]
-            if isa(intersec, Intersection)
+    #     for indV in eachindex(vertexList)
+    #         intersec = vertexList[indV]
+    #         if isa(intersec, Intersection)
 
-                # u1, u2 ∈ c1; v1, v2 ∈ c2
-                # v1, u1 are the overlap OUTside vertices of c1, c2 
-                # v2, u2 are the overlap  INside vertices of c1, c2 
-                u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
-                v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
+    #             # u1, u2 ∈ c1; v1, v2 ∈ c2
+    #             # v1, u1 are the overlap OUTside vertices of c1, c2 
+    #             # v2, u2 are the overlap  INside vertices of c1, c2 
+    #             u1, u2, outsideInd_u, insideInd_u = getInside_OutsideVertices(intersec.i, c1, vertexList)
+    #             v1, v2, outsideInd_v, insideInd_v = getInside_OutsideVertices(intersec.j, c2, vertexList)
 
-                I = [1 0; 0 1]
+    #             I = [1 0; 0 1]
 
-                areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
-                dOi = 0.5 * area^(k - 1) * areaGradient_i                                         # grad_intersection Overlap 
+    #             areaGradient_i = [areaGradientOverlap[indV], areaGradientOverlap[indV+K]]
+    #             dOi = 0.5 * area^(k - 1) * areaGradient_i                                         # grad_intersection Overlap 
                 
-                # COMPUTE u DYNAMICS 
-                f = cross2d(v1 - u1, v2 - v1)
-                g = cross2d(u2 - u1, v2 - v1)
-                t = f / g
-                dwdu1 = (1-t)*I + (g-f)/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'      # outside vertex derivative 
-                dwdu2 = t*I + f/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'              #  inside vertex derivative 
+    #             # COMPUTE u DYNAMICS 
+    #             f = cross2d(v1 - u1, v2 - v1)
+    #             g = cross2d(u2 - u1, v2 - v1)
+    #             t = f / g
+    #             dwdu1 = (1-t)*I + (g-f)/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'      # outside vertex derivative 
+    #             dwdu2 = t*I + f/g^2 * (u2 - u1) * [-(v2[2] - v1[2]); v2[1] - v1[1]]'              #  inside vertex derivative 
                 
-                du1dt = - dwdu1 * dOi 
-                du2dt = - dwdu2 * dOi
+    #             du1dt = - dwdu1 * dOi 
+    #             du2dt = - dwdu2 * dOi
 
-                r1x[outsideInd_u] += du1dt[1]
-                r1y[outsideInd_u] += du1dt[2]
-                r1x[ insideInd_u] += du2dt[1]
-                r1y[ insideInd_u] += du2dt[2]
+    #             r1x[outsideInd_u] += du1dt[1]
+    #             r1y[outsideInd_u] += du1dt[2]
+    #             r1x[ insideInd_u] += du2dt[1]
+    #             r1y[ insideInd_u] += du2dt[2]
                 
-                # NOW CHANGE v WITH u IN ORDER TO COMPUTE v dynamics  
-                f = cross2d(u1 - v1, u2 - u1)
-                g = cross2d(v2 - v1, u2 - u1)
-                t = f / g
-                dwdv1 = (1-t)*I + (g-f)/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'      # outside vertex derivative 
-                dwdv2 = t*I + f/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'              #  inside vertex derivative 
+    #             # NOW CHANGE v WITH u IN ORDER TO COMPUTE v dynamics  
+    #             f = cross2d(u1 - v1, u2 - u1)
+    #             g = cross2d(v2 - v1, u2 - u1)
+    #             t = f / g
+    #             dwdv1 = (1-t)*I + (g-f)/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'      # outside vertex derivative 
+    #             dwdv2 = t*I + f/g^2 * (v2 - v1) * [-(u2[2] - u1[2]); u2[1] - u1[1]]'              #  inside vertex derivative 
                 
-                dv1dt = - dwdv1 * dOi 
-                dv2dt = - dwdv2 * dOi
+    #             dv1dt = - dwdv1 * dOi 
+    #             dv2dt = - dwdv2 * dOi
 
-                r2x[outsideInd_v] += dv1dt[1]
-                r2y[outsideInd_v] += dv1dt[2]
-                r2x[ insideInd_v] += dv2dt[1]
-                r2y[ insideInd_v] += dv2dt[2]
+    #             r2x[outsideInd_v] += dv1dt[1]
+    #             r2y[outsideInd_v] += dv1dt[2]
+    #             r2x[ insideInd_v] += dv2dt[1]
+    #             r2y[ insideInd_v] += dv2dt[2]
     
-            end
+    #         end
 
-        end
-    end
+    #     end
+    # end
 
     return forceScalings[4] * r1x, forceScalings[4] * r1y, forceScalings[4] * r2x, forceScalings[4] * r2y
 
