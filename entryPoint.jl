@@ -39,8 +39,8 @@ p = [timeStepSize, D]
 
 #######  OPTION 3: PLAYGROUND 
 # createCrossSectionAllPlots("AAAsoftSim-bachelorOverlap")
-createCrossSectionAllPlots("AAAmidSim3-bachelorOverlap")
+# createCrossSectionAllPlots("AAAmidSim3-bachelorOverlap")
 # createCrossSectionAllPlots("AAAtest3-hard-DF-FIRSTWORKING")
-# createCrossSectionAllPlots(["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"])
+createCrossSectionAllPlots(["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"])
 
 

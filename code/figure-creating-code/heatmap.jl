@@ -79,12 +79,20 @@ function smoothenMatrix!(matrices)
 
 end
 
-function makeMatrices()
+function makeMatrices(;newSimName=nothing)
     # ONE MATRIX STORES THE ENTRIES FOR ONE SAMPLE TIME AT ALL SIMULATION ITERATIONS 
 
     matrices = [zeros(Int64, NumberOfHeatGridPoints, NumberOfHeatGridPoints) for _ in 1:NumberOfSampleTimes]
-    for file in readdir(locationsPath)
-        runPath = joinpath(locationsPath, file)
+    if newSimName==nothing 
+        readPath = locationsPath
+    else 
+        readPath = joinpath(homedir(), "simulations", newSimName, "locations")
+    end 
+    for file in readdir(readPath)
+        if contains(file, "0000001")
+            println("first file name = $file")
+        end 
+        runPath = joinpath(readPath, file)
         i = 1
         open(runPath, "r") do file_stream
             for line in eachline(file_stream)
@@ -185,16 +193,16 @@ function createCrossSectionAllPlots(simNames)
         simPath = joinpath(homedir(), "simulations", simname)
         parameterPath = joinpath(simPath, "parameters.jl")
         include(parameterPath)
-        heatmatrices = makeMatrices()
+        heatmatrices = makeMatrices(newSimName=simname)
         heatmatrices .= [Float64.(M) for M in heatmatrices]
         heatmatrices = [heatmatrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]  # scale for density
         println("\n currently in sim = $simulationName")
         println("\n current NumberOfSimulations = $NumberOfSimulations")
         for M in heatmatrices
+            # todo check why do we need this?
             mass = sum(M) * (HeatStepSize)^2
             M ./= mass
             mass = sum(M) * (HeatStepSize)^2
-            println("mass heatmeatrix = $mass")
         end 
         simYData = []
         # gather y data for 1 sim 
@@ -209,7 +217,6 @@ function createCrossSectionAllPlots(simNames)
                 yCut[i] = sum(matrix[i, :])                     
             end
             Cut = 0.5 * (xCut + yCut) * HeatStepSize
-            println("mass = $(sum(Cut)*HeatStepSize)")
             push!(simYData, copy(Cut))
             #-------------------------------------------------------------------------------
 
@@ -219,9 +226,32 @@ function createCrossSectionAllPlots(simNames)
         push!(YData, simYData)
     end 
     # Label[simIndex] = simLabel 
-    # YData[simIndex][timeIndex] 
-    # println("is 1=2: ", YData[1] == YData[2])
-    # println("is 1=3: ", YData[1] == YData[3])
+    # YData[simIndex][timeIndex][HeatMapPos]
+    println("is 1=2: ", YData[1] == YData[2])
+    println("is 1=3: ", YData[1] == YData[3])
+    # for t in 1:length(YData[1])
+    #     eq12 = YData[1][t] == YData[2][t]
+    #     eq13 = YData[1][t] == YData[3][t]
+    #     println("Is YData[1][$t] == YData[2][$t]?: $eq12") 
+    #     if !eq12 
+    #         for x in 1:30
+    #             if YData[1][t][x] != YData[2][t][x]
+    #                 println("difference in entry $x:")
+    #                 println("$(YData[1][t][x]) != $(YData[2][t][x])")
+    #             end
+    #         end 
+    #     end 
+    #     println("Is YData[1][$t] == YData[3][$t]?: $eq13")
+    #     if !eq13
+    #         for x in 1:30
+    #             if YData[1][t][x] != YData[3][t][x]
+    #                 println("difference in entry $x:")
+    #                 println("$(YData[1][t][x]) != $(YData[3][t][x])")
+    #             end
+    #         end 
+    #     end 
+    #     println("---------------------------------------")
+    # end 
     println("")
     
     heatcells = HeatGrid[1:end-1] .+ 0.5 * HeatStepSize         # x grid for plots 
@@ -247,7 +277,7 @@ function createCrossSectionAllPlots(simNames)
                           )
         println("length(YData) = $(length(YData))")
         for simCount = 1:length(YData)
-            plot!(centralplot, heatcells, YData[simCount][t], color=2, label=Labels[simCount])
+            plot!(centralplot, heatcells, YData[simCount][t], label=Labels[simCount])
         end 
 
         time = 0.01 * (t-1)
