@@ -324,7 +324,6 @@ end
 
 function doAsphericityCheck()
 
-    #create path
     aspPath = joinpath(simPath, "asphericity")
     if !isdir(aspPath)
         mkdir(aspPath)
@@ -360,27 +359,30 @@ function doAsphericityCheck()
     end
     # AllAsphericities[timeStep in {1,...,6}][cell in {1,...,400}]
 
-    xLowerBound = 0.8
-    xStepSize = 0.02
-    aspValues = xLowerBound:xStepSize:1.0
-    for timestep = 1:length(extractedSol.t)
-        println("Number of Intervals = $(length(aspValues)-1)")
-        xScale  = ["$(aspValues[i]) - $(aspValues[i+1])" for i=1:length(aspValues)-1]  
-        yCounts = zeros(length(aspValues)-1)
-        for cellAsp in AllAsphericities[timestep]
-            factor = 1.0/xStepSize
-            factor = 50.0
-            yIntervalIndex = floor(Int, factor*cellAsp) - 39
-            yCounts[yIntervalIndex] += 1
+    begin
+        xLowerBound = 0.50
+        xUpperBound = 0.95
+        Nintervals = 10
+        xStepSize = (xUpperBound - xLowerBound) / Nintervals
+        factor = xStepSize^(-1)
+        aspValues = xLowerBound:xStepSize:xUpperBound
+        for timestep = 1:length(extractedSol.t)
+            xScale  = ["$(aspValues[i]) - $(aspValues[i+1])" for i=1:length(aspValues)-1]  
+            yCounts = zeros(length(aspValues)-1)
+            for cellAsp in AllAsphericities[timestep]
+                yIntervalIndex = ceil(Int, factor*(cellAsp - xLowerBound)) 
+                yCounts[yIntervalIndex] += 1
+            end 
+            aspPlot = bar(xScale, yCounts, 
+            label=false,
+            title="Aspherictiy",
+            xlabel="asphericity",
+            ylabel="Number of cells",
+            xrotation = 45,
+            dpi=500,
+            )
+            barname = "asphericity-chart-time$timestep.png"
+            savefig(joinpath(aspPath, barname))
         end 
-        aspPlot = bar(xScale, yCounts, 
-                        title="Aspherictiy",
-                        xlabel="asphericity",
-                        ylabel="Number of cells",
-                        xrotation = 45,
-                        dpi=500,
-                      )
-        barname = "asphericity-chart-time$timestep.png"
-        savefig(joinpath(aspPath, barname))
-    end 
+    end
 end 
