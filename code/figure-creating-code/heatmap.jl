@@ -196,14 +196,7 @@ function createCrossSectionAllPlots(simNames)
         heatmatrices = makeMatrices(newSimName=simname)
         heatmatrices .= [Float64.(M) for M in heatmatrices]
         heatmatrices = [heatmatrices[i] ./ (NumberOfSimulations * NumberOfCells * (HeatStepSize)^2) for i = 1:NumberOfSampleTimes]  # scale for density
-        println("\n currently in sim = $simulationName")
-        println("\n current NumberOfSimulations = $NumberOfSimulations")
-        for M in heatmatrices
-            # todo check why do we need this?
-            mass = sum(M) * (HeatStepSize)^2
-            M ./= mass
-            mass = sum(M) * (HeatStepSize)^2
-        end 
+        println("\n currently in sim = $simulationName in createCrossSectionAllPlots")
         simYData = []
         # gather y data for 1 sim 
         for matrix in heatmatrices
@@ -227,32 +220,6 @@ function createCrossSectionAllPlots(simNames)
     end 
     # Label[simIndex] = simLabel 
     # YData[simIndex][timeIndex][HeatMapPos]
-    println("is 1=2: ", YData[1] == YData[2])
-    println("is 1=3: ", YData[1] == YData[3])
-    # for t in 1:length(YData[1])
-    #     eq12 = YData[1][t] == YData[2][t]
-    #     eq13 = YData[1][t] == YData[3][t]
-    #     println("Is YData[1][$t] == YData[2][$t]?: $eq12") 
-    #     if !eq12 
-    #         for x in 1:30
-    #             if YData[1][t][x] != YData[2][t][x]
-    #                 println("difference in entry $x:")
-    #                 println("$(YData[1][t][x]) != $(YData[2][t][x])")
-    #             end
-    #         end 
-    #     end 
-    #     println("Is YData[1][$t] == YData[3][$t]?: $eq13")
-    #     if !eq13
-    #         for x in 1:30
-    #             if YData[1][t][x] != YData[3][t][x]
-    #                 println("difference in entry $x:")
-    #                 println("$(YData[1][t][x]) != $(YData[3][t][x])")
-    #             end
-    #         end 
-    #     end 
-    #     println("---------------------------------------")
-    # end 
-    println("")
     
     heatcells = HeatGrid[1:end-1] .+ 0.5 * HeatStepSize         # x grid for plots 
 
@@ -270,12 +237,11 @@ function createCrossSectionAllPlots(simNames)
         centralplot = plot( 
                             title="Cross section density",
                             xlimits=domain,
-                            ylimits=(0.0,4.0),
+                            ylimits=(0.0,3.5),
                             xlab=caption,
                             ylab="Density",
                             dpi=500
                           )
-        println("length(YData) = $(length(YData))")
         for simCount = 1:length(YData)
             plot!(centralplot, heatcells, YData[simCount][t], label=Labels[simCount])
         end 
