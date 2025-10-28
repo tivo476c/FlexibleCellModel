@@ -264,11 +264,12 @@ function computeEdgeLengths(c::DiscreteCell)
     """
     Returns vector R^N of all edge lengths of the given cell. 
     """
-    res = zeros(N)
-    for i = 1:N-1
+    Nvertices = length(c.x)
+    res = zeros(Nvertices)
+    for i = 1:Nvertices-1
         res[i] = norm([c.x[i], c.y[i]] - [c.x[i+1], c.y[i+1]], 2)
     end
-    res[N] = norm([c.x[N], c.y[N]] - [c.x[1], c.y[1]], 2)
+    res[Nvertices] = norm([c.x[Nvertices], c.y[Nvertices]] - [c.x[1], c.y[1]], 2)
     return res
 end
 

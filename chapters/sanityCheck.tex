@@ -130,20 +130,6 @@ The resulting counts are normalised by dividing by the total number of cells $N_
 This approach provides a smooth estimate of the empirical cell density, allowing direct comparison with the corresponding solutions of the diffusion equations.
 
 Figure~\ref{fig:fig2BC12} shows the discussed graphic from~\cite{Bruna2012}. 
-% \begin{figure}
-% 	\centering
-%     \includegraphics[width=\textwidth*2/3]{sanity-check/heatmaps/fig2_BC12.png}
-%     \caption{
-%     This figure contains the following four plots, all of them are shown at time \( t=0.05 \): \newline
-%     \hspace*{0.5em}(a) shows the solution of the linear diffusion equation~\ref{eq:heat} for point particles. \newline
-%     \hspace*{0.5em}(b) shows the histogram of a Monte Carlo simulation of the point particle model. \newline
-%     \hspace*{0.5em}(c) shows the solution of the nonlinear diffusion equation~\ref{eq:hard-sphere-p} for finite-sized particles. \newline
-%     \hspace*{0.5em}(d) shows the histogram of a Monte Carlo simulation of the HSCM. \newline
-%     For the two lower plots (c) and (d), a higher diffusion rate can be observed. 
-%     The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
-%     }
-%     \label{fig:fig2BC12}
-% \end{figure}
 
 \subsection{Reproduction of reference results}
 Before running our new dynamics that include cell flexibility, we first want to guarantee that the simulations are running in the correct setup.
@@ -162,86 +148,92 @@ Figure~\ref{fig:ppHeatmaps} shows the evolution of the particle density in terms
 The results of our Monte Carlo simulation appear to be in good agreement with those of Bruna and Chapman, suggesting that our approach is robust and accurate.
 
 Next, we consider the HSCM and run the Monte Carlo simulation for a cell diameter of $\epsilon = 0.01$. 
-Figure~\ref{fig:hscmHeatmaps} shows the density evolution of the HSCM.
-%%% TODO: tell that we want to test what our model delivers 
-%%% TODO: conclude that we hopefully have matching results 
-
-% \begin{figure}[h]
-% 	\centering
-%     % \includegraphics[width=\textwidth]{sanity-check/PP-simulations/FIRST-TEST-SIMULATE-BRUNA12-PP/heatmaps/50x50/ppHeatmaps_50x50.png}
-%     \includegraphics[width=\textwidth]{sanity-check/heatmaps/ppHeatmaps_30x30.png}
-%     \caption{Heatmaps of a Monte Carlo simulation of the point particle model at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
-%     They visualise the evolution of the particle density over time. 
-%     ppHeatmaps$30$. 
-%     }
-%     % \label{fig:ppHeatmaps}
-% \end{figure}
-
-% \begin{figure}[h]
-% 	\centering
-%     % \includegraphics[width=\textwidth]{sanity-check/PP-simulations/FIRST-TEST-SIMULATE-BRUNA12-PP/heatmaps/50x50/ppHeatmaps_50x50.png}
-%     \includegraphics[width=\textwidth]{sanity-check/heatmaps/hscmHeatmaps_callback_30x30.png}
-%     \caption{Heatmaps of a Monte Carlo simulation of the hard sphere cell model at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
-%     They visualise the evolution of the particle density over time. 
-%     hscmHeatmapscallback$30$.
-%     }
-%     % \label{fig:hscmHeatmaps}
-% \end{figure}
-
-
-% \begin{figure}[h]
-% 	\centering
-%     % \includegraphics[width=\textwidth]{sanity-check/PP-simulations/FIRST-TEST-SIMULATE-BRUNA12-PP/heatmaps/50x50/ppHeatmaps_50x50.png}
-%     \includegraphics[width=\textwidth]{sanity-check/heatmaps/hscmHeatmaps_billard_30x30.png}
-%     \caption{Heatmaps of a Monte Carlo simulation of the point particle model at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
-%     They visualise the evolution of the particle density over time. 
-%     hscmHeatmapsbillard$30$.
-%     }
-%     % \label{fig:ppHeatmaps}
-% \end{figure}
-
+Figure~\ref{fig:sanityCheck} shows the density evolution of the HSCM.
 
 \begin{figure}[h!]
     \centering
-    \begin{tabular}{ccc}
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/0.png} &     % soft 0
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/0.png} &   %  mid 0
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/0.png} \\    % hard 0
+    \begin{subfigure}{0.9\textwidth}
+        \centering
+        \begin{tabular}{ccc}
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/0.png} &     % soft 0
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/0.png} &   %  mid 0
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/0.png} \\    % hard 0
 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/1.png} &     % soft 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/1.png} &   %  mid 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/1.png} \\    % hard 
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/1.png} &     % soft 
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/1.png} &   %  mid 
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/1.png} \\    % hard 
 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/2.png} &     % soft 2
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/2.png} &   %  mid 2
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/2.png} \\    % hard 2
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/2.png} &     % soft 2
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/2.png} &   %  mid 2
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/2.png} \\    % hard 2
 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/3.png} &     % soft 3
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/3.png} &   %  mid 3
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/3.png} \\    % hard 3
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/3.png} &     % soft 3
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/3.png} &   %  mid 3
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/3.png} \\    % hard 3
 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/4.png} &     % soft 4
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/4.png} &   %  mid 4
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/4.png} \\    % hard 4
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/4.png} &     % soft 4
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/4.png} &   %  mid 4
+            \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/4.png} \\    % hard 4
 
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/5.png} &     % soft 5
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/5.png} &   %  mid 5
-        \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/5.png} \\    % hard 5
+            \subcaptionbox{\scriptsize Soft ($h=0$)}{
+                \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0/5.png}
+            } &
+            \subcaptionbox{\scriptsize Mid ($h=0.5$)}{
+                \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard0-5/5.png}
+            } &
+            \subcaptionbox{\scriptsize Hard ($h=1$)}{
+                \includegraphics[width=0.25\textwidth]{sanity-check/heatmaps/spheres/hard1/5.png}
+            }
+        \end{tabular}
+    \end{subfigure}%
 
-    \end{tabular}
-    \caption{Heatmaps of a Monte Carlo simulation of the DF cell model with different hardness values at the times $t \in \{0.00, 0.01, 0.02, 0.03, 0.04, 0.05\}$. 
-    Left column shows hardness $0$, we can see hardness $0.5$ in the middle and hardness $1$ on the right.
+    \begin{subfigure}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{sanity-check/heatmaps/colorbar_horizontal.png}
+    \end{subfigure}%
+
+    \caption{Heatmaps of a Monte Carlo simulation of the DF cell model with different hardness values at the times $t \in \{0.00, 0.01,\ldots, 0.05\}$. 
+    Left column $(a)$ shows hardness $0$, we can see hardness $0.5$ in the middle $(b)$ and hardness $1$ on the right $(c)$.
     We can oberserve that the diffusion rate increases with increasing hardness.} 
 	\label{fig:sanityCheck}    
 \end{figure}
+
+% TODO:
+% - bridge to cross sections 
+% - introduce cross sections
+% - interprete these 
+
+
 \begin{figure}[h!]
     \centering
-        \includegraphics[width=0.7\textwidth]{forces/area1/energies-show-areaForce.png} 
-    \caption{The area force successfully restores the desired cell area after 5 time steps as this energy diagram shows.}
-	\label{fig:areaEnergyDiagram}    
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.00.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.01.png} \\   
+
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.02.png} &   
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.03.png} \\  
+
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.04.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.05.png} \\   
+    \end{tabular}
+    \caption{ 
+        This figure shows the evolution of the cross section density for our three Monte Carlo simulations at the sample times $t \in {0, 0.01, \ldots, 0.05}$. 
+        Initially, each simulation starts with the same distribution. 
+        Note that the scaling of the $y$-axis changes from $[0, 3.5]$ at $t = 0$ to $[0.7, 1.3]$ at $t = 0.05$, indicating diffusion in the density distribution for all hardnesses.
+        As the plots show, the higher the hardness, the faster the diffusion for $t > 0$, since we observe a lower density in the middle ($x = 0$) and a higher density near the interval borders for higher hardness values. 
+        Thus, the density distribution is already more even for higher hardnesses at $t > 0$.
+        } 
+	\label{fig:crosssections}    
 \end{figure}
 
+% TODO:
+% - write overall summery that hardness = 1 has highest diffusion rate and softer particles diffuse slower in our model 
+
+
 \subsection{Shape deformation check}
+% TODO: finish this sub section
+% - reference to all figures 
+% - write down what they say 
 In this subsection, we are going to investigate how much the cells deformed throughout our big monte carlo simulations.
 Therefore, we need to introduce a measure of how much a cell is deformed. 
 There is already some theory existing on how to measure that for two dimensional figures. 
@@ -265,3 +257,45 @@ These properties are also easy to compute for our DF cells.
 We can use the Shoelace Formula~\ref{prop:Shoelace} for the cell area, and for getting the perimeter, we just have to add up the lengths of all cells. \\ 
 
 We can use this approach to analyse how much our cell shapes changed in our big 
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_3v.png} &     
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_4v.png} \\[2em]   
+
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_6v.png} &   
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_circle.png} \\  
+
+    \end{tabular}
+    \caption{ 
+        Examples of DF cells and a circle illustrating their geometric properties. 
+        The DF cells are represented as regular polygons with $N_V \in \{3,4,6\}$ vertices. 
+        For each case, the cell shape, area, perimeter and asphericity are shown.
+        The third DF cell with $N_V = 6$ vertices corresponds to the target DF cell configuration used in our Monte Carlo simulations, exhibiting an asphericity of approximately $\alpha \approx 0.907$. 
+        As the number of vertices increases, the asphericity rises, reaching its maximum value of $\alpha = 1.0$ for the circular case.
+        } 
+	\label{fig:asp_overview}    
+\end{figure}
+
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time1.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time2.png} \\   
+
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time3.png} &   
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time4.png} \\  
+
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time5.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time6.png} \\   
+    \end{tabular}
+    \caption{ 
+        This figure illustrates how the cell asphericities change in the Monte Carlo simulations for hardnesses $h \in \{0, 0.5, 1\}$. 
+        Initially, all cells are in their desired states, as shown in the third picture of Figure~\ref{fig:asp_overview}, having an asphericity of $\alpha \approx 0.907$. 
+        For $h = 1$, we can see that all $400$ cells keep their standard asphericity of $\alpha \approx 0.907$, as no cell shape deformation is done in this setting. 
+        For the other two simulations, we can see that the cells actually change their shapes, resulting in an asphericity spread in the interval $\alpha \in [0.6, 0.95]$ for the soft model ($h = 0$) and $\alpha \in [0.85, 0.95]$ for the mid hardness model ($h = 0.5$).
+        } 
+	\label{fig:asp_charts}    
+\end{figure}

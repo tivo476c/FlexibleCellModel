@@ -403,9 +403,10 @@ function doAsphericityCheck(;simList=[""])
         )
         allLabels = repeat(["h = 0", "h = 0.5", "h = 1"], inner=Nintervals)
 
+        xlab = "Asphericity at t = $(@sprintf("%.2f", 0.01*(timestep-1)))"
         multibarplot = groupedbar(xScale, yData, 
                                     group = allLabels,
-                                    xlabel = "Asphericity",
+                                    xlabel = xlab,
                                     ylabel = "Number of cells",
                                     ylims = (0, maximum(yData) * 1.2),
                                     xrotation = 45, 
@@ -413,8 +414,8 @@ function doAsphericityCheck(;simList=[""])
                                     bar_width = 1.2, 
                                     legend =:topleft,
                                     legendfontsize = 16,
-                                    xguidefontsize = 12,     # X label font size
-                                    yguidefontsize = 12,     # Y label font size
+                                    xguidefontsize = 16,     # X label font size
+                                    yguidefontsize = 16,     # Y label font size
                                     xtickfontsize = 10,      # X tick label font size
                                     ytickfontsize = 10,      # Y tick label font size
                                     framestyle =:box,

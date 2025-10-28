@@ -46,3 +46,5 @@ p = [timeStepSize, D]
 
 
 
+######################################## now doing the plotting 
+
