@@ -1,6 +1,7 @@
 using Plots
 using Printf
 using ColorSchemes
+using StatsPlots
 
 include("../cell_functionalities.jl")
 # include("../parameters.jl")
@@ -237,7 +238,7 @@ function createCrossSectionAllPlots(simNames)
         centralplot = plot( 
                             title="Cross section density",
                             xlimits=domain,
-                            ylimits=(0.0,3.5),
+                            # ylimits=(0.0,3.5),
                             xlab=caption,
                             ylab="Density",
                             dpi=500
@@ -322,67 +323,115 @@ function createHeatmaps(matrices)
 end
 
 
-function doAsphericityCheck()
+function doAsphericityCheck(;simList=[""]) 
+    
+    if simList==[""] 
+        simList = [simulationName]
+    elseif !(isa(simList, String) || isa(simList, Vector{String})) || length(simList) < 1
+        return
+    end 
+    simList = isa(simList, String) ? [simList] : simList                    # ensure simNames is a vector of strings 
 
-    aspPath = joinpath(simPath, "asphericity")
+    aspPath = joinpath(homedir(), "simulations", "asphericities")
     if !isdir(aspPath)
         mkdir(aspPath)
     end 
 
-    A_d, E_d, I_d = computeDesiredStates_circleCells()
-    p = timeStepSize, D, A_d, E_d, I_d 
-    u0 = initializeCells(radius)
+    ######################################## collect all asphericity data 
+    AsphericitiesAllSims = []
+    for (simcount, simname) in enumerate(simList)
 
-    cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
-    @time sol = solve(cellProblem,
-        EM(),
-        dt=timeStepSize,
-    )
-    extractedSol = extractSolution(sol)
-    # extractedSol.t[timeStep in {1,...,6}] ... time steps 
-    # extractedSol.u[timeStep in {1,...,6}] ... cell configs to that time 
+        simPath = joinpath(homedir(), "simulations", simname)
+        parameterPath = joinpath(simPath, "parameters.jl")
+        include(parameterPath)
+        println("\n currently in sim = $simulationName in doAsphericityCheck")
+        simYData = []
+        # gather y data for 1 sim 
+        ### do a sim 
+        A_d, E_d, I_d = computeDesiredStates_circleCells()
+        p = timeStepSize, D, A_d, E_d, I_d 
+        u0 = initializeCells(radius)
 
-    # collect asphericity data 
-    AllAsphericities = []
-    for timesteps = 1:length(extractedSol.t)
-        allCells = solutionToCells(extractedSol.u[timesteps])
+        cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+        @time sol = solve(cellProblem,
+            EM(),
+            dt=timeStepSize,
+        )
+        extractedSol = extractSolution(sol)
 
-        Asphericities_1time = []
-        for cell in allCells    
-            # cell.x for all x coords and cell.y for all y coords 
-            cell_area = areaPolygon(cell.x, cell.y)
-            cell_perimeter = sum(computeEdgeLengths(cell))
-            asphericity = 4*pi*cell_area/(cell_perimeter^2)
-            push!(Asphericities_1time, asphericity)
-        end 
-        push!(AllAsphericities, Asphericities_1time)
-    end
-    # AllAsphericities[timeStep in {1,...,6}][cell in {1,...,400}]
+        AllAsphericities_1sim = []
+        for timesteps = 1:length(extractedSol.t)
+            allCells = solutionToCells(extractedSol.u[timesteps])
 
-    begin
-        xLowerBound = 0.50
-        xUpperBound = 0.95
-        Nintervals = 10
-        xStepSize = (xUpperBound - xLowerBound) / Nintervals
-        factor = xStepSize^(-1)
-        aspValues = xLowerBound:xStepSize:xUpperBound
-        for timestep = 1:length(extractedSol.t)
-            xScale  = ["$(aspValues[i]) - $(aspValues[i+1])" for i=1:length(aspValues)-1]  
-            yCounts = zeros(length(aspValues)-1)
-            for cellAsp in AllAsphericities[timestep]
-                yIntervalIndex = ceil(Int, factor*(cellAsp - xLowerBound)) 
-                yCounts[yIntervalIndex] += 1
+            Asphericities_1time = []
+            for cell in allCells    
+                # cell.x for all x coords and cell.y for all y coords 
+                cell_area = areaPolygon(cell.x, cell.y)
+                cell_perimeter = sum(computeEdgeLengths(cell))
+                asphericity = 4*pi*cell_area/(cell_perimeter^2)
+                push!(Asphericities_1time, asphericity)
             end 
-            aspPlot = bar(xScale, yCounts, 
-            label=false,
-            title="Aspherictiy",
-            xlabel="asphericity",
-            ylabel="Number of cells",
-            xrotation = 45,
-            dpi=500,
-            )
-            barname = "asphericity-chart-time$timestep.png"
-            savefig(joinpath(aspPath, barname))
+            push!(AllAsphericities_1sim, Asphericities_1time)
+        end
+        push!(AsphericitiesAllSims, AllAsphericities_1sim)
+    end 
+    # AsphericitiesAllSims[sim in {1,2,3}][time in {1,...,6}]
+
+    ######################################## now doing the plotting 
+    allBarPlots=[]
+
+    xLowerBound = 0.60
+    xUpperBound = 0.95
+    Nintervals = 7
+    xStepSize = (xUpperBound - xLowerBound) / Nintervals
+    factor = xStepSize^(-1)
+    aspValues = xLowerBound:xStepSize:xUpperBound
+
+    for timestep = 1:length(AsphericitiesAllSims[1])
+        yCounts = zeros(3, Nintervals)
+        for sim = 1:3
+            for cellAsp in AsphericitiesAllSims[sim][timestep]
+                yIntervalIndex = ceil(Int, factor*(cellAsp - xLowerBound)) 
+                yCounts[sim, yIntervalIndex] += 1
+            end 
         end 
+        xScale  = repeat(["$(@sprintf("%.2f", aspValues[i])) - $(@sprintf("%.2f", aspValues[i+1]))" for i=1:Nintervals], outer=3)  
+        yData = hcat(
+            yCounts[1,:],
+            yCounts[2,:],
+            yCounts[3,:]
+        )
+        allLabels = repeat(["h = 0", "h = 0.5", "h = 1"], inner=Nintervals)
+
+        multibarplot = groupedbar(xScale, yData, 
+                                    group = allLabels,
+                                    xlabel = "Asphericity",
+                                    ylabel = "Number of cells",
+                                    ylims = (0, maximum(yData) * 1.2),
+                                    xrotation = 45, 
+                                    bar_position =:dodge, 
+                                    bar_width = 1.2, 
+                                    legend =:topleft,
+                                    legendfontsize = 16,
+                                    xguidefontsize = 12,     # X label font size
+                                    yguidefontsize = 12,     # Y label font size
+                                    xtickfontsize = 10,      # X tick label font size
+                                    ytickfontsize = 10,      # Y tick label font size
+                                    framestyle =:box,
+                                    dpi=500,
+                                    size=(900,800),
+                                )
+        barname = "asphericity-chart-time$timestep.png"
+        savefig(joinpath(aspPath, barname))
+        push!(allBarPlots, multibarplot)
+    end 
+
+    # Now create gif from all Plots 
+    BarAnim = @animate for p in allBarPlots
+        plot(p)
     end
+    # save as GIF
+    gifname="multibar-evolution.gif"
+    gif(BarAnim, joinpath(aspPath, gifname), fps=1)
+
 end 
