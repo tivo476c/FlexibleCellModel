@@ -1,35 +1,64 @@
 \section{DF model validation and simulation analysis} \label{sanitycheck}
 %%% TODO: Build bridge from previous chapter 
-- we continue by making cell simulations with the DF model. 
-- in order to place our simulations to existing papers, we aim to compare our simulation results to outcomes from an established cell model from~\cite{Bruna2012}. 
+- we continue by making cell simulations with the DF model. \\
+- All of our simulations run in the Julia programming language. 
+There, we used the package `DifferentialEquations.jl' with its structure `SDEProblem()' and then solved it with the package inbuilt Euler Maruyama scheme that uses a constant time step size. \\
+- in order to place our simulations to existing papers, we aim to compare our simulation results to outcomes from an established cell model from~\cite{Bruna2012}. \\
 
 \subsection{Reference simulations: Bruna and Chapman (2012)}
-
-- The point particle and hard sphere models from~\cite{Bruna2012} were already introduced in the Introduction~\ref{intro}. 
-- We will write down the explicit cell dynamics and first marginals again with all parameters applied 
-The paper~\cite{Bruna2012} analyses these dynamics on the domain 
+- The point particle and hard sphere models from~\cite{Bruna2012} were already introduced in the Introduction~\ref{intro}. \\
+- We will write down the explicit cell dynamics and first marginals again with all parameters applied.
+- The paper~\cite{Bruna2012} analyses these dynamics on the domain 
 \[\Omega_{BC} = [-0.5, 0.5]^2,\]
 on which $N_{C} = 400$ particles are located. \\
 
 - The point particle dynamic is given by
-\begin{align*}
-	\dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C, \vec{x}_i \in \partial \Omega \\ 
-    -reflective boundary condition-
-\end{align*}
-
-
-It is known, that the marginal distribution function is given 
+\begin{equation*}
+    \begin{cases}
+        \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), & \vec{x}_i \in \Omega_{BC}^{\circ}, \\[0.5em]
+        \dfrac{\dequ \vec{x}_i(t)}{\dequ t} \cdot \vec{n} = 0, & \vec{x}_i \in \partial \Omega_{BC},
+    \end{cases}
+\end{equation*}
+for $1 \leq i \leq N_C$, where 
+\[
+    \Omega_{BC}^{\circ} = (-0.5, 0.5)^2
+\]
+denotes the interior of the domain $\Omega_{BC}$ and $\vec{n}$ is the outer normal vector at the boundary 
+\[
+    \partial \Omega_{BC} = \{(x,y) \in \Omega | x \in \{-0.5, 0.5\} \lor y \in \{-0.5, 0.5\} \}
+\]
+of the domain. 
+The first equation describes the particle dynamics in the interior of the domain, while the second specifies the reflective boundary condition imposed on the boundary of $\Omega$. \\ 
+Equation~\eqref{equ:pointparticle} shows the general first marginal of the point particle model.
+In our case, we choose the diffusion coefficient to be $D = 1$ and we do not use an external force field, i.e. $f(\vec{x}) = 0$.
+Thus, the first marginal simplifies to
 \begin{align}
-    \label{equ:marginalHeat}
-    \frac{\partial \rho}{\partial t}(\vec{x}_1, t) = \Delta_{\vec{x}_1} \rho = \nabla_{\vec{x}_1} \cdot [ \nabla_{\vec{x}_1} \rho].
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho(t; \vec{x}) , \quad \vec{x} \in \Omega, \; t>0.
+    \label{equ:marginalPP}
 \end{align}
 
-A next step that results in the hard sphere cell model (HSCM) is to give the cell particles a real size with a diameter of $0 < \epsilon \ll 1$. \\
-This changes the dynamics of the cells immense, since they now have chance to collide into each other which is a form of interaction. \\
-The authors of~\cite{Bruna2012} also did a simulation with the HSCM. 
-The setting is as similar as possible to the point particle model, because a main goal of the paper was to compare the diffusion characteristics of both models. 
 
-% mention: exclusion domain with reflective boundary -> additional dynamic in 
+
+
+- In order to transition to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. \\
+- We recall from the Introduction~\ref{intro} that the hard sphere dynamic is given by
+\begin{equation*}
+    \begin{cases}
+        \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), & \vec{x}_i \in \Omega_{BC, \epsilon}^{\circ}, \\[0.5em]
+        \dfrac{\dequ \vec{x}_i(t)}{\dequ t} \cdot \vec{n} = 0, & \vec{x}_i \in \partial \Omega_{BC, \epsilon},
+    \end{cases}
+\end{equation*}
+where we again choose $D = 1$ and $f(\vec{x}) = 0$.  \\
+- Note, that we are now working on the excluded volume domain $\Omega_{BC, \epsilon}$, defined in Equation~\eqref{equ:excludedVolumeDomain} that excludes areas where two cells would overlap. \\ 
+- This domain has a more complex boundary $\partial \Omega_{BC, \epsilon}$ that includes both the outer boundary of the domain $\Omega_{BC}$ and inner boundaries where two cells touch each other. \\  
+- Thus, we have much more reflections than in the point particle model. \\
+- When computing the first marginal of the hard sphere model, we get Equation~\eqref{equ:hardsphere}.
+In our case, this simplifies to
+\begin{align}
+	\dfrac{\partial \rho}{\partial t} = \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2), \quad \vec{x} \in \Omega, \: t>0 . 
+    \label{equ:marginalHSCM}
+\end{align}
+
 
 The initial condition of both models follows a two dimensional normal distribution with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
 The used distribution $\mathcal{N}_2 \left( 
@@ -48,17 +77,17 @@ The avoidance of cell overlaps by the following algorithm is also illustrated in
 	\end{enumerate}	
 \end{algorithm}
 
-In two dimensions it is given by:
-\begin{equation}
-    \frac{\partial \rho}{\partial t}(\vec{x}_1, t) = \nabla_{\vec{x}_1} \cdot \{\nabla_{\vec{x}_1}[\rho + \frac{\pi}{2}(N_{C} - 1)\epsilon^2 \rho^2]\}.
-    \label{eq:hard-sphere-p}
-\end{equation}
-We can see a connection to Equation~\ref{equ:marginalHeat}. 
-Let us define a diffusion coefficient $$D_{\epsilon}(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho$$ that depends on the local partical density $p$ and the cell diameter $\epsilon$. 
+
+We can see a connection between the two marginal Equations~\eqref{equ:marginalPP} and~\eqref{equ:marginalHSCM} by rewriting the first marginal of the hard sphere model. \\
+Let us define a diffusion coefficient 
+\[
+    D_{\epsilon}(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho 
+\]
+that depends on the local partical density $p$ and the cell diameter $\epsilon$. 
 For the point particles, we have $\epsilon = 0$ and $D_{\epsilon}(\rho) = 1$.
-Thus, we can rewrite the first marginal to  
+Thus, we can rewrite the first marginal of the point particles to  
 \begin{align*}
-    \frac{\partial \rho}{\partial t}(\vec{x}_1, t) = \nabla_{\vec{x}_1} \cdot [D_{\epsilon}(\rho) \nabla_{\vec{x}_1} \rho]. 
+    \frac{\partial \rho}{\partial t}(t; \vec{x}) = D_{\epsilon}(\rho) \Delta_{\vec{x}} \rho. 
 \end{align*}
 In the case of the hard spheres, where $\epsilon > 0$, we can compute
 \begin{align*}
@@ -68,7 +97,18 @@ In the case of the hard spheres, where $\epsilon > 0$, we can compute
     &= \nabla_{\vec{x}_1} \cdot [\nabla_{\vec{x}_1} \rho + \pi(N_{C}-1)\epsilon^2 \frac{1}{2}\nabla_{\vec{x}_1} \rho^2] \\
     &= \nabla_{\vec{x}_1} \cdot [\nabla_{\vec{x}_1} (\rho + \frac{\pi}{2}(N_{C}-1)\epsilon^2 \rho^2)] \\
 \end{align*}
-to recover Equation~\ref{eq:hard-sphere-p}. \\ 
+
+% \begin{align*}
+%     \frac{\partial \rho}{\partial t}(t; \vec{x}) &= D_{\epsilon}(\rho) \Delta_{\vec{x}} \rho \\  
+%     &= (1 + \pi(N_{C}-1)\epsilon^2 \rho) \Delta_{\vec{x}} \rho \\
+%     &= \nabla_{\vec{x}} \cdot [D_{\epsilon}(\rho) \nabla_{\vec{x}} \rho] \\  
+%     &= \nabla_{\vec{x}} \cdot [(1 + \pi(N_{C}-1)\epsilon^2 \rho) \nabla_{\vec{x}} \rho] \\
+%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} \rho + \pi(N_{C}-1)\epsilon^2 \rho \nabla_{\vec{x}} \rho] \\
+%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} \rho + \pi(N_{C}-1)\epsilon^2 \frac{1}{2}\nabla_{\vec{x}} \rho^2] \\
+%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} (\rho + \frac{\pi}{2}(N_{C}-1)\epsilon^2 \rho^2)] \\
+%     &= \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) \\
+% \end{align*}
+to recover Equation~\ref{equ:marginalHSCM}. \\ 
 When considering \( D_\epsilon(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho \) to be the diffusion coefficient, we can conclude that an increase in the number of cells \( N_{C} \), the cell diameter \( \epsilon \), or the local density \( \rho \) leads to an increased diffusion rate of the system.
 Overall, we conclude that the bounce effect of the HSCM enhances the diffusion rate of the system's density.
 
@@ -107,8 +147,7 @@ Before running our new dynamics that include cell flexibility, we first want to 
 Therefore, we started with recreating the Monte Carlo simulation for the point particles. 
 We always fixed the color scale to be the same as in~\cite{Bruna2012} in order to gain comparability. 
 The simulation parameters are the same as in~\cite{Bruna2012}. \\
-All of our simulations run in the Julia programming language. 
-There, we used the package `DifferentialEquations.jl' with its structure `SDEProblem()' and then solved it with the package inbuilt Euler Maruyama scheme that uses a constant time step size. \\
+
 Beside of this, all particles moved according to the two dimensional Brownian motion
 \begin{center}
 		$ \dequ \vec{x}_i(t) = \sqrt{2} \dequ \vec{B}_i(t)$, \hspace{0.5em} $1 \leq i \leq N_{C}$.

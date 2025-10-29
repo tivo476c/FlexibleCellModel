@@ -201,9 +201,11 @@ To define the new domain, we first describe the set of illegal configurations as
 	\mathcal{B}_{\epsilon} = \{(\vec{x}_1, \ldots, \vec{x}_{N_C})^T \in \Omega^{N_C} | \exists i \neq j: \: \norm[\vec{x}_i - \vec{x}_j] \leq \epsilon\}.
 \]
 Then we can define the `hollow' domain 
-\[
+\begin{equation}
 	\Omega_{\epsilon}^{N_C} = \Omega^{N_C} \setminus \mathcal{B}_{\epsilon}.
-\]
+	\label{equ:excludedVolumeDomain}	
+\end{equation}
+
 Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration looks like compared to a point particle configuration. \\
 
 
@@ -222,7 +224,7 @@ All particles in this model are distinct and can be distinguished from one anoth
 A diffusion constant, $D>0$, is again included in the model to scale the Brownian motion. \\
 The dynamics of the particles are governed by the SDE
 \begin{align*}
-	d\vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{\epsilon}^{(i)}, \: 1 \leq i \leq N_C,
+	\dequ \vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{\epsilon}^{(i)}, \: 1 \leq i \leq N_C,
 \end{align*}
 where $\Omega_{\epsilon}^{(i)} \subset \Omega$ is the factor domain for cell $i$ of the product space $\Omega_{\epsilon}^{N_C}$, in the sense of 
 \[
