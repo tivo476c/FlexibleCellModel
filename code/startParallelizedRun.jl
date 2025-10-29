@@ -20,11 +20,17 @@ println("Loading parameters")
 
     # including cell functionalities with decreasing grade of fundamentality 
     include("parameters.jl")
+    println("parameters.jl done")
     include("cell_functionalities.jl")
+    println("cell_functionalities.jl done")
     include("computeOverlap.jl")
+    println("computeOverlap.jl done")
     include("energies.jl")
+    println("energies.jl done")
     include("figure-creating-code/heatmap.jl")
-    include("simulationFunctionalities.jl")
+    println("figure-creating-code/heatmap.jl done")
+    include("simulationFunctionalities.jl")  
+    println("simulationFunctionalities.jl done")
 
     tspan = timeInterval
     simPath = joinpath(homedir(), "simulations", simulationName)

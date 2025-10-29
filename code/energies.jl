@@ -630,7 +630,7 @@ function billiardForceDFCells(c1, c2)
 
     pushVec = (2 * radius - dist) * (c_1 - c_2) / dist
 
-    scaling = 10^5
+    scaling = timeStepSize^(-1) 
 
     r1x = scaling * pushVec[1] * ones(N)
     r1y = scaling * pushVec[2] * ones(N)
