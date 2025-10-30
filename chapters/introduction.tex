@@ -188,7 +188,7 @@ How this kind of exclusion works is visualized in an one dimensional example in 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/hardsphere_exclusion.png}
-	\caption{This plot illustrates the feasible regions for cell 2 in one dimensional space, as a function of the position of cell 1. 
+	\caption{This plot illustrates the feasible regions for cell 2 in one dimensional space, dependent on the position of cell 1. 
 	The domain of interest is restricted to the one dimensional interval $[-L, L]$, with the two cells having a diameter of $\epsilon$. 
 	The red boundaries indicate the excluded regions, where neither cell can occupy a position closer than $\frac{\epsilon}{2}$ to the boundary. 
 	The red diagonal line represents the occupied region by cell 1.
@@ -226,9 +226,9 @@ The dynamics of the particles are governed by the SDE
 \begin{align*}
 	\dequ \vec{x}_i(t) = f(\vec{x}_i(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{\epsilon}^{(i)}, \: 1 \leq i \leq N_C,
 \end{align*}
-where $\Omega_{\epsilon}^{(i)} \subset \Omega$ is the factor domain for cell $i$ of the product space $\Omega_{\epsilon}^{N_C}$, in the sense of 
+where $\Omega_{\epsilon}^{(i)} \subset \Omega$ is the excluded volume domain for cell $i$, i.e. 
 \[
-	\Omega_{\epsilon}^{N_C} =  \mathop{\otimes}\limits_{i=1}^{N_C} \Omega_{\epsilon}^{(i)}. 
+	\Omega_{\epsilon}^{(i)} = \{ \vec{y} \in \Omega | \forall j \in \{1, \ldots, N_C\}\setminus\{i\} \norm[\vec{x}_j - \vec{y}] > \epsilon \}.
 \]
 The particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles. \\
 The dynamics of hard spheres share significant similarities with those of point particles, featuring both an external force $f$ and Brownian motion. 
