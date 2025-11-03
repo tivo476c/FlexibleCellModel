@@ -436,3 +436,75 @@ function doAsphericityCheck(;simList=[""])
     gif(BarAnim, joinpath(aspPath, gifname), fps=1)
 
 end 
+
+
+function saveAsphericityData(;simList=[""], Nsims=1) 
+    
+    # ReallyAllAsphericities = []
+    fileWritePath=joinpath(homedir(), "simulations", "asphericities", "aspData")
+    for sim = 1:Nsims
+        for (simcount, simname) in enumerate(simList)
+
+            simPath = joinpath(homedir(), "simulations", simname)
+            parameterPath = joinpath(simPath, "parameters.jl")
+            include(parameterPath)
+            println("\n currently in sim = $simulationName in doAsphericityCheck")
+            simYData = []
+            # gather y data for 1 sim 
+            ### do a sim 
+            A_d, E_d, I_d = computeDesiredStates_circleCells()
+            p = timeStepSize, D, A_d, E_d, I_d 
+            Asphericities1SimDone = []
+                u0 = initializeCells(radius)
+
+            cellProblem = SDEProblem(energies!, brownian_DF!, u0, timeInterval, p, noise_rate_prototype=zeros(2 * M * N, 2 * M))
+            @time sol = solve(cellProblem,
+                EM(),
+                dt=timeStepSize,
+            )
+            extractedSol = extractSolution(sol)
+
+            OneAsphericityList_1sim = []
+            for timesteps = 1:length(extractedSol.t)
+                allCells = solutionToCells(extractedSol.u[timesteps])
+                
+                Asphericities_1time = []
+                for cell in allCells    
+                    # cell.x for all x coords and cell.y for all y coords 
+                    cell_area = areaPolygon(cell.x, cell.y)
+                    cell_perimeter = sum(computeEdgeLengths(cell))
+                    asphericity = 4*pi*cell_area/(cell_perimeter^2)
+                    push!(Asphericities_1time, asphericity)
+                end 
+                push!(OneAsphericityList_1sim, Asphericities_1time)
+            end
+
+            # save OneAsphericityList_1sim to file
+            fileName="asps-$(simulationName)-sim$(sim).txt"
+
+            open(joinpath(fileWritePath, fileName), "w") do io
+                for time in 1:6
+                    for cell in 1:400
+                        value = OneAsphericityList_1sim[time][cell]
+                        @printf(io, "%.3f\n", value)
+                    end
+                end
+            end
+
+
+
+
+
+            # push!(Asphericities1SimDone, OneAsphericityList_1sim)
+            
+        end 
+        # push!(ReallyAllAsphericities, Asphericities1SimDone)
+        # *+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+
+        # ReallyAllAsphericities = [hardness in {1,2,3}][simCount in {1:Nsims}][time in {1:6}][cell in {1:400}]
+        # Asphericities1SimDone = [simCount in {1:Nsims}][time in {1:6}][cell in {1:400}]
+        # OneAsphericityList_1sim = [time in {1:6}][cell in {1:400}]
+        # Asphericities_1time = [cell in {1:400}]
+        # *+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+*+
+    end 
+
+end 

@@ -48,3 +48,6 @@ p = [timeStepSize, D]
 
 ######################################## now doing the plotting 
 
+saveAsphericityData( simList=["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"], Nsims=100)
+
+# doAsphericityCheck(simList=["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"])
