@@ -14,21 +14,14 @@ on which $N_{C} = 400$ particles are located. \\
 
 - The point particle dynamic is given by
 \begin{equation*}
-    \begin{cases}
-        \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), & \vec{x}_i \in \Omega_{BC}^{\circ}, \\[0.5em]
-        \dfrac{\dequ \vec{x}_i(t)}{\dequ t} \cdot \vec{n} = 0, & \vec{x}_i \in \partial \Omega_{BC},
-    \end{cases}
+    \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{BC}^{\circ},
 \end{equation*}
 for $1 \leq i \leq N_C$, where 
 \[
     \Omega_{BC}^{\circ} = (-0.5, 0.5)^2
 \]
-denotes the interior of the domain $\Omega_{BC}$ and $\vec{n}$ is the outer normal vector at the boundary 
-\[
-    \partial \Omega_{BC} = \{(x,y) \in \Omega | x \in \{-0.5, 0.5\} \lor y \in \{-0.5, 0.5\} \}
-\]
-of the domain. 
-The first equation describes the particle dynamics in the interior of the domain, while the second specifies the reflective boundary condition imposed on the boundary of $\Omega$. \\ 
+denotes the interior of the domain $\Omega_{BC}$. 
+We impose the reflective boundary condition on the boundary $\partial \Omega$. \\ 
 Equation~\eqref{equ:pointparticle} shows the general first marginal of the point particle model.
 In our case, we choose the diffusion coefficient to be $D = 1$ and we do not use an external force field, i.e. $f(\vec{x}) = 0$.
 Thus, the first marginal simplifies to
@@ -43,15 +36,12 @@ Thus, the first marginal simplifies to
 - In order to transition to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. \\
 - We recall from the Introduction~\ref{intro} that the hard sphere dynamic is given by
 \begin{equation*}
-    \begin{cases}
-        \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), & \vec{x}_i \in \Omega_{BC, \epsilon}^{\circ}, \\[0.5em]
-        \dfrac{\dequ \vec{x}_i(t)}{\dequ t} \cdot \vec{n} = 0, & \vec{x}_i \in \partial \Omega_{BC, \epsilon},
-    \end{cases}
+    \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{BC, \epsilon}^{\circ}, 
 \end{equation*}
 where we again choose $D = 1$ and $f(\vec{x}) = 0$.  \\
 - Note, that we are now working on the excluded volume domain $\Omega_{BC, \epsilon}$, defined in Equation~\eqref{equ:excludedVolumeDomain} that excludes areas where two cells would overlap. \\ 
 - This domain has a more complex boundary $\partial \Omega_{BC, \epsilon}$ that includes both the outer boundary of the domain $\Omega_{BC}$ and inner boundaries where two cells touch each other. \\  
-- Thus, we have much more reflections than in the point particle model. \\
+- Thus, we have much more reflections than in the point particle model, caused by the reflective boundary condition. \\
 - When computing the first marginal of the hard sphere model, we get Equation~\eqref{equ:hardsphere}.
 In our case, this simplifies to
 \begin{align}
@@ -67,6 +57,7 @@ The used distribution $\mathcal{N}_2 \left(
 \right)$ has an integral of one over $\Omega_{BC}$. \\
 We can compute this initial condition with Algorithm~\ref{alge:HSCMinitial}. 
 The avoidance of cell overlaps by the following algorithm is also illustrated in Figure~\ref{fig:hardsphere}. 
+%%% TODO: specify which julia packages where used, also cite them 
 \begin{algorithm} \textbf{Computation of the initial cell system} \label{alge:HSCMinitial}
 	\begin{enumerate} 
 		\item Generate a point $\vec{x} \sim \mathcal{N}_2 \left( 
@@ -83,7 +74,7 @@ Let us define a diffusion coefficient
 \[
     D_{\epsilon}(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho 
 \]
-that depends on the local partical density $p$ and the cell diameter $\epsilon$. 
+that depends on the local particle density $p$ and the cell diameter $\epsilon$. 
 For the point particles, we have $\epsilon = 0$ and $D_{\epsilon}(\rho) = 1$.
 Thus, we can rewrite the first marginal of the point particles to  
 \begin{align*}
@@ -98,6 +89,8 @@ In the case of the hard spheres, where $\epsilon > 0$, we can compute
     &= \nabla_{\vec{x}_1} \cdot [\nabla_{\vec{x}_1} (\rho + \frac{\pi}{2}(N_{C}-1)\epsilon^2 \rho^2)] \\
 \end{align*}
 
+%%% TODO: write down that diffusion coefficent increases with density 
+
 % \begin{align*}
 %     \frac{\partial \rho}{\partial t}(t; \vec{x}) &= D_{\epsilon}(\rho) \Delta_{\vec{x}} \rho \\  
 %     &= (1 + \pi(N_{C}-1)\epsilon^2 \rho) \Delta_{\vec{x}} \rho \\
@@ -108,7 +101,7 @@ In the case of the hard spheres, where $\epsilon > 0$, we can compute
 %     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} (\rho + \frac{\pi}{2}(N_{C}-1)\epsilon^2 \rho^2)] \\
 %     &= \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) \\
 % \end{align*}
-to recover Equation~\ref{equ:marginalHSCM}. \\ 
+to recover Equation~\eqref{equ:marginalHSCM}. \\ 
 When considering \( D_\epsilon(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho \) to be the diffusion coefficient, we can conclude that an increase in the number of cells \( N_{C} \), the cell diameter \( \epsilon \), or the local density \( \rho \) leads to an increased diffusion rate of the system.
 Overall, we conclude that the bounce effect of the HSCM enhances the diffusion rate of the system's density.
 
@@ -129,6 +122,7 @@ Overall, we conclude that the bounce effect of the HSCM enhances the diffusion r
 \end{figure}
 
 Another evidence of this behaviour is shown in Figure~\cite{fig:fig2BC12} which is originally from~\cite{Bruna2012}. \\
+% TODO: find a paper explaining monte carlo sims 
 Here, we can see two Monte Carlo simulations. 
 A Monte Carlo simulation is a computational technique that uses random sampling to model and analyse complex systems or processes that are difficult to solve analytically. 
 It repeatedly generates random inputs according to specified probability distributions and computes the resulting outcomes to estimate quantities like averages, variances, or distributions. \\
@@ -226,7 +220,7 @@ Figure~\ref{fig:sanityCheck} shows the density evolution of the HSCM.
         \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.05.png} \\   
     \end{tabular}
     \caption{ 
-        This figure shows the evolution of the cross section density for our three Monte Carlo simulations at the sample times $t \in {0, 0.01, \ldots, 0.05}$. 
+        This figure shows the evolution of the cross section density for our three Monte Carlo simulations at the sample times $t \in \{0, 0.01, \ldots, 0.05\}$. 
         Initially, each simulation starts with the same distribution. 
         Note that the scaling of the $y$-axis changes from $[0, 3.5]$ at $t = 0$ to $[0.7, 1.3]$ at $t = 0.05$, indicating diffusion in the density distribution for all hardnesses.
         As the plots show, the higher the hardness, the faster the diffusion for $t > 0$, since we observe a lower density in the middle ($x = 0$) and a higher density near the interval borders for higher hardness values. 
