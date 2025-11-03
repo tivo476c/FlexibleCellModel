@@ -51,19 +51,24 @@ In our case, this simplifies to
 
 
 The initial condition of both models follows a two dimensional normal distribution with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
-The used distribution $\mathcal{N}_2 \left( 
-\scalebox{0.7}{$\begin{pmatrix} 0 \\ 0 \end{pmatrix}$}, 
-\scalebox{0.7}{$\begin{pmatrix} 0.09^2 & 0 \\ 0 & 0.09^2 \end{pmatrix}$}
-\right)$ has an integral of one over $\Omega_{BC}$. \\
+The used distribution $\mathcal{N}_2(0, \: 0.09^2 \cdot I_2)$ has an integral of one over $\Omega_{BC}$. \\
+
+% $\mathcal{N}_2 \left( 
+% \scalebox{0.7}{$\begin{pmatrix} 0 \\ 0 \end{pmatrix}$}, 
+% \scalebox{0.7}{$\begin{pmatrix} 0.09^2 & 0 \\ 0 & 0.09^2 \end{pmatrix}$}
+% \right)$ 
+
 We can compute this initial condition with Algorithm~\ref{alge:HSCMinitial}. 
-The avoidance of cell overlaps by the following algorithm is also illustrated in Figure~\ref{fig:hardsphere}. 
+The avoidance of cell overlaps by the following algorithm is also illustrated in Figure~\ref{fig:hardsphere}. \\
 %%% TODO: specify which julia packages where used, also cite them 
+- All codes were implemented in Julia~\cite{Julia2017} \\
+- We used Distributions.jl~\cite{Distributions2021} and its function `MvNormal()' to generate the normal distributed points \\
+- The Julia package~\cite{DifferentialEquations2017} `DifferentialEquations.jl' was used to solve the SDEs with its inbuilt Euler Maruyama scheme with static time step size. \\
+- all self made plots in this thesis are created with Plots.jl~\cite{Plots2023}. \\
+- parallelisation of the monte carlo simulations was done with Julia built in `Distributed' package~\cite{Distributed2023}. \\
 \begin{algorithm} \textbf{Computation of the initial cell system} \label{alge:HSCMinitial}
 	\begin{enumerate} 
-		\item Generate a point $\vec{x} \sim \mathcal{N}_2 \left( 
-        \scalebox{0.7}{$\begin{pmatrix} 0 \\ 0 \end{pmatrix}$}, 
-        \scalebox{0.7}{$\begin{pmatrix} 0.09^2 & 0 \\ 0 & 0.09^2 \end{pmatrix}$}
-        \right)$. 
+		\item Generate a point $\vec{x} \sim \mathcal{N}_2(0, \: 0.09^2 \cdot I_2)$. 
 		\item If for all already generated centres $\vec{x}_j: \norm[\vec{x} - \vec{x}_j] > \epsilon$ is true, use $\vec{x}$ as the next cell centre, otherwise discard the point and restart with step 1 until $N_{C}$ cell centres are found. 
 	\end{enumerate}	
 \end{algorithm}
@@ -115,16 +120,16 @@ Overall, we conclude that the bounce effect of the HSCM enhances the diffusion r
     (b) shows the histogram of a Monte Carlo simulation of the point particle model. 
     (c) shows the solution of the non linear diffusion Equation~\eqref{equ:hardsphere} for finite-sized particles. 
     (d) shows the histogram of a Monte Carlo simulation of the hard sphere model. 
-    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^-5$.
+    The Monte Carlo simulations used $10^4$ simulation runs each with a time step size of $10^{-5}$.
 	We can see that the hard sphere model in (c) and (d) shows a quicker diffusion rate as the cell concentration in the centrum of the domain has already diffused more compared to the point particle model in (a) and (b). 
     }
     \label{fig:fig2BC12}
 \end{figure}
 
-Another evidence of this behaviour is shown in Figure~\cite{fig:fig2BC12} which is originally from~\cite{Bruna2012}. \\
+Another evidence of this behaviour is shown in Figure~\ref{fig:fig2BC12} which is originally from the considered paper~\cite{Bruna2012}. \\
 % TODO: find a paper explaining monte carlo sims 
 Here, we can see two Monte Carlo simulations. 
-A Monte Carlo simulation is a computational technique that uses random sampling to model and analyse complex systems or processes that are difficult to solve analytically. 
+A Monte Carlo simulation, as for example described in~\cite{Metropolis1949} is a computational technique that uses random sampling to model and analyse complex systems or processes that are difficult to solve analytically. 
 It repeatedly generates random inputs according to specified probability distributions and computes the resulting outcomes to estimate quantities like averages, variances, or distributions. \\
 In our case, the Monte Carlo simulations are used to track the positions of cell centres over time. 
 Each simulation begins from an initial configuration of cells, which is consistently generated using Algorithm~\ref{alge:HSCMinitial}. 
@@ -245,7 +250,7 @@ We call that ratio the isoperimetric quotient $\alpha$ of that geometric figure 
 \[
     \alpha_{F} = \nu \dfrac{area_{F}}{perimeter_{F}^2},  
 \]
-where $\nu \> 0 $ is a scaling factor which we will define later. \\
+where $\nu > 0 $ is a scaling factor which we will define later. \\
 There is one 2 dimensional geometric figure that has the largest isoperimetric quotient from all: the circle. 
 For a circle of radius $r>0$, we have a area of $area_c = \pi r^2 $ and a perimeter of $perimeter_c = 2 \pi r $. 
 Thus, it has an isoperimetric quotient of 
@@ -263,23 +268,41 @@ We can use this approach to analyse how much our cell shapes changed in our big
 
 \begin{figure}[h!]
     \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_3v.png} &     
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_4v.png} \\[2em]   
-
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_6v.png} &   
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asp_circle.png} \\  
-
+    \begin{tabular}{cccc}
+        \includegraphics[width=0.23\textwidth]{sanity-check/asphericity/asp_3v.png}      
+        \includegraphics[width=0.23\textwidth]{sanity-check/asphericity/asp_4v.png} 
+        \includegraphics[width=0.23\textwidth]{sanity-check/asphericity/asp_6v.png}    
+        \includegraphics[width=0.23\textwidth]{sanity-check/asphericity/asp_circle.png} \\  
     \end{tabular}
     \caption{ 
         Examples of DF cells and a circle illustrating their geometric properties. 
         The DF cells are represented as regular polygons with $N_V \in \{3,4,6\}$ vertices. 
-        For each case, the cell shape, area, perimeter and asphericity are shown.
+        For each case, the cell shape, area, perimeter and asphericity are shown in Table~\ref{table:asp_overview}.
         The third DF cell with $N_V = 6$ vertices corresponds to the target DF cell configuration used in our Monte Carlo simulations, exhibiting an asphericity of approximately $\alpha \approx 0.907$. 
-        As the number of vertices increases, the asphericity rises, reaching its maximum value of $\alpha = 1.0$ for the circular case.
-        } 
+        As the number of vertices increases, the asphericity rises, reaching its maximum value of $\alpha = 1.0$ for the circular case. 
+        }  
 	\label{fig:asp_overview}    
 \end{figure}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		\hline
+		\textbf{Cell shape} & \textbf{Area} & \textbf{Perimeter} & \textbf{Asphericity} \\
+		\hline
+		\text{Triangle} & $3.25 \times 10^{-5}$ &  $0.0260$ &  $0.605$   \\
+		\text{Square} & $5.00 \times 10^{-5}$ &  $0.0283$ &  $0.785$   \\
+		\text{Hexagon} & $6.50 \times 10^{-5}$ &  $0.0300$ &  $0.907$   \\
+		\text{Circle} & $7.85 \times 10^{-5}$ &  $0.0314$ &  $1.000$   \\
+		\hline
+	\end{tabular}
+	\caption{Geometric properties of different DF cell shapes and a circle. 
+    The asphericity values increase with the number of vertices, approaching $1$ as the shape becomes more circular. 
+    The target DF cell shape used in our Monte Carlo simulations has an asphericity of approximately $\alpha \approx 0.907$. 
+    }
+	\label{table:asp_overview}
+\end{table}
+
 
 
 \begin{figure}[h!]

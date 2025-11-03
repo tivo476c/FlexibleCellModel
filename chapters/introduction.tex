@@ -166,7 +166,7 @@ To transition from the joint probability density function to the first marginal 
 This process, which is analogous to the case of pure Brownian motion, relies on the symmetry of the system: since the particles are identical and non-interacting, the joint density is invariant under permutations of particle labels. \\
 The first marginal of the point particle model with external forces and Brownian motion is given by 
 \begin{align}
-	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t; \vec{x}) - \nabla_{\vec{x}} \cdot (\rho(t; \vec{x}) f(\vec{x}) ), \quad \vec{x} \in \Omega, \; t>0.
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t; \vec{x}) - \nabla_{\vec{x}} \cdot ( f(\vec{x}) \rho(t; \vec{x}) ), \quad \vec{x} \in \Omega, \; t>0.
 	\label{equ:pointparticle}
 \end{align}
 The structure of the resulting Equation~\eqref{equ:pointparticle} for $\rho$ mirrors that derived in the absence of external forces, with the key difference being the inclusion of a drift term due to the external force field $\mathbf{f}(\mathbf{x})$. 
@@ -228,7 +228,7 @@ The dynamics of the particles are governed by the SDE
 \end{align*}
 where $\Omega_{\epsilon}^{(i)} \subset \Omega$ is the excluded volume domain for cell $i$, i.e. 
 \[
-	\Omega_{\epsilon}^{(i)} = \{ \vec{y} \in \Omega | \forall j \in \{1, \ldots, N_C\}\setminus\{i\} \norm[\vec{x}_j - \vec{y}] > \epsilon \}.
+	\Omega_{\epsilon}^{(i)} = \{ \vec{y} \in \Omega \, | \, \forall j \in \{1, \ldots, N_C\}\setminus\{i\}:\, \norm[\vec{x}_j - \vec{y}] > \epsilon \}.
 \]
 The particles are initially randomly distributed in $\Omega^{N_C}_{\epsilon}$, ensuring that no overlap occurs between the particles. \\
 The dynamics of hard spheres share significant similarities with those of point particles, featuring both an external force $f$ and Brownian motion. 
@@ -251,7 +251,13 @@ While the point particle model is defined on the full configuration space $\Omeg
 This domain restriction encodes the physical impenetrability of finite sized particles while preserving the mathematical structure of the evolution equation. \\
 Using the method of matched asymptotic expansions, the authors also derived the probability density function $\rho$ of finding a single particle at time $t$ and position $\vec{x}$, which satisfies the equation
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = D \Delta_{\vec{x}} \rho - \nabla_{\vec{x}} \cdot (\rho f) + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2), \quad \vec{x} \in \Omega, \: t>0 .
+	\begin{split}
+		\dfrac{\partial \rho}{\partial t} 
+		&= \nabla_{\vec{x}} \cdot \{ \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2]  - f \rho \} \\
+		&= \Delta_{\vec{x}} [\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2] - \nabla_{\vec{x}} \cdot (f \rho) \\
+		&= D \Delta_{\vec{x}} \rho + \Delta_{\vec{x}} \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2 - \nabla_{\vec{x}} \cdot (f \rho)
+		, \quad \vec{x} \in \Omega, \: t>0 .
+	\end{split}
 	\label{equ:hardsphere}
 \end{align}
 Comparing Equation~\eqref{equ:hardsphere} (the first marginal distribution for hard spheres) with Equation~\eqref{equ:pointparticle} (the first marginal distribution for point particles), we observe an additional term in Equation~\eqref{equ:hardsphere}. 
