@@ -285,20 +285,28 @@ We can use this approach to analyse how much our cell shapes changed in our big
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time1.png} &     
-        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time2.png} \\   
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time1.png} &     
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time2.png} \\   
 
-        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time3.png} &   
-        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time4.png} \\  
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time3.png} &   
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time4.png} \\  
 
-        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time5.png} &     
-        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time6.png} \\   
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time5.png} &     
+        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time6.png} \\   
     \end{tabular}
     \caption{ 
         This figure illustrates how the cell asphericities change in the Monte Carlo simulations for hardnesses $h \in \{0, 0.5, 1\}$. 
+        Each simulation was performed with $400$ cells, and $50$ independent runs were conducted for each of the hard, mid, and soft simulation types.
         Initially, all cells are in their desired states, as shown in the third picture of Figure~\ref{fig:asp_overview}, having an asphericity of $\alpha \approx 0.907$. 
         For $h = 1$, we can see that all $400$ cells keep their standard asphericity of $\alpha \approx 0.907$, as no cell shape deformation is done in this setting. 
-        For the other two simulations, we can see that the cells actually change their shapes, resulting in an asphericity spread in the interval $\alpha \in [0.6, 0.95]$ for the soft model ($h = 0$) and $\alpha \in [0.85, 0.95]$ for the mid hardness model ($h = 0.5$).
+        % For the other two simulations, the simulations delivered asphericity values of $\alpha \in [0.3, 0.92]$ for the soft model ($h = 0$) and $\alpha \in [0.84, 0.92]$ for the mid hardness model ($h = 0.5$).
+        % We did not show the full soft asphericity interval for better visualisation. 
+        % We can observe that the most shape deformation happens at the beginning of the simulation at $t>0$ as we have the most cell collisions in the crowded centre. 
+        % This can be seen by the value for the cell asphericities in the last interval $[0.9, 0.92]$ increasing over time for both the soft and mid hardness simulations when not considering the initial state at $t=0$ were overlaps were prevented algorithmically.
+        For the other two simulations, the asphericity values were $\alpha \in [0.3, 0.92]$ for the soft model ($h = 0$) and $\alpha \in [0.84, 0.92]$ for the mid-hardness model ($h = 0.5$).
+        The full asphericity interval for the soft model is not shown for improved visualization.
+        We observe that the largest shape deformations occur at the beginning of the simulation ($t>0$), when the most cell collisions happen in the crowded center.
+        This is reflected by the increasing number of cell asphericities in the last interval $[0.9, 0.92]$ over time for both the soft and mid-hardness simulations, if we exclude the initial state at $t=0$ where overlaps were prevented algorithmically.
         } 
 	\label{fig:asp_charts}    
 \end{figure}

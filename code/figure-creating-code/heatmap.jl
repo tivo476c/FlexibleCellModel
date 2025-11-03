@@ -508,3 +508,131 @@ function saveAsphericityData(;simList=[""], Nsims=1)
     end 
 
 end 
+
+function createAsphericityPlot()
+    
+    aspPath = joinpath(homedir(), "simulations", "asphericities", "aspData")
+    AsphericitiesAllSims = Dict{String, Vector{Vector{Float64}}}()
+    # we needa push objects of form sim[timestep] = vector of length 400 * Nsims to guarente 
+    # AsphericitiesAllSims[sim in {1,2,3}][timestep in {1,...,6}][aspData in {1,...,400*Nsims}]  
+
+    for fileName in readdir(aspPath)
+        # skip non-.txt files
+        endswith(fileName, ".txt") || continue
+
+        fullSimPath = joinpath(aspPath, fileName)
+        # extract sim name and count sims 
+        simName = fileName[6:end-9]
+
+        # println("currently in fileName = $fileName")
+
+        data = parse.(Float64, readlines(fullSimPath))
+        data .= ifelse.(isnan.(data), 0.907, data)
+
+
+        # data is a 2400 vector now (400 cells * 6 timesteps) 
+        simData = [ data[(i-1)*400 + 1 : i*400] for i in 1:6 ]
+        # simData[timestep in {1:6}][cellAsp in {1:400}]
+
+        # extract asphericity data from file    
+        
+        # Initialize if this simName doesn't exist
+        if !haskey(AsphericitiesAllSims, simName)
+            # Create a Vector of 6 empty vectors, one per time step
+            AsphericitiesAllSims[simName] = [Float64[] for _ in 1:6]
+        end
+
+        # now add the obtained data to AsphericitiesAllSims
+        for timestep in 1:6
+            append!(AsphericitiesAllSims[simName][timestep], simData[timestep])
+        end
+
+    end 
+
+    # find number of sims  
+    NumOfSims = zeros(Int64, length(keys(AsphericitiesAllSims)))
+    for (count, simName) in enumerate(keys(AsphericitiesAllSims))
+        NumOfSims[count] = round(Int64, length(AsphericitiesAllSims[simName][1]) / 400)
+    end
+
+
+    ######################################## now doing the plotting
+
+    # what does this work with ?? 
+    # --> AsphericitiesAllSims[sim][timestep]
+
+    # transform from dictionary to array for easier indexing 
+    tempAsphericitiesAllSims = AsphericitiesAllSims
+    AsphericitiesAllSims = [
+                            tempAsphericitiesAllSims["AAAsoftSim-bachelorOverlap"],
+                            tempAsphericitiesAllSims["AAAmidSim3-bachelorOverlap"],
+                            tempAsphericitiesAllSims["AAAtest3-hard-DF-FIRSTWORKING"]
+                            ]
+
+    allBarPlots=[]
+
+    xLowerBound = 0.70
+    xUpperBound = 0.92
+    Nintervals = 11
+    xStepSize = (xUpperBound - xLowerBound) / Nintervals
+    xStepSize = round(xStepSize, digits=5)
+    factor = xStepSize^(-1)
+    aspValues = xLowerBound:xStepSize:xUpperBound
+    # println("length(AsphericitiesAllSims[1] = $(length(AsphericitiesAllSims[1]))")
+    for timestep = 1:length(AsphericitiesAllSims[1])
+        yCounts =  ones(3, Nintervals)
+        for sim = 1:3
+            for cellAsp in AsphericitiesAllSims[sim][timestep]
+                # println("cellAsp = $cellAsp in AsphericitiesAllSims[$sim][$timestep]")
+                # println("cellAsp = $cellAsp")
+                if cellAsp <= xLowerBound || cellAsp > xUpperBound
+                    continue
+                end
+                yIntervalIndex = ceil(Int, factor*(cellAsp - xLowerBound)) 
+                yCounts[sim, yIntervalIndex] += 1
+            end 
+            # scale yCounts
+            yCounts[sim, :] ./= NumOfSims[sim]
+        end 
+        # println("aspValues = $aspValues")
+        xScale  = repeat(["$(@sprintf("%.2f", aspValues[i])) - $(@sprintf("%.2f", aspValues[i+1]))" for i=1:Nintervals], outer=3)  
+        yData = hcat(
+            yCounts[1,:],
+            yCounts[2,:],
+            yCounts[3,:]
+        )
+        allLabels = repeat(["h = 0", "h = 0.5", "h = 1"], inner=Nintervals)
+
+        xlab = "Asphericity at t = $(@sprintf("%.2f", 0.01*(timestep-1)))"
+        multibarplot = groupedbar(xScale, yData, 
+                                    group = allLabels,
+                                    xlabel = xlab,
+                                    ylabel = "Number of cells",
+                                    ylims = (0, maximum(yData) * 1.2),
+                                    xrotation = 45, 
+                                    bar_position =:dodge, 
+                                    bar_width = 0.9, 
+                                    legend =:topleft,
+                                    legendfontsize = 16,
+                                    xguidefontsize = 16,     # X label font size
+                                    yguidefontsize = 16,     # Y label font size
+                                    xtickfontsize = 10,      # X tick label font size
+                                    ytickfontsize = 10,      # Y tick label font size
+                                    framestyle =:box,
+                                    dpi=500,
+                                    size=(900,800),
+                                )
+        barname = "asphericity-chart-time$timestep.png"
+        savefig(joinpath(aspPath, "barcharts", barname))
+        push!(allBarPlots, multibarplot)
+    end 
+
+    # Now create gif from all Plots 
+    BarAnim = @animate for p in allBarPlots
+        plot(p)
+    end
+    # save as GIF
+    gifname="multibar-evolution.gif"
+    gif(BarAnim, joinpath(aspPath, "barcharts", gifname), fps=1)
+
+end
