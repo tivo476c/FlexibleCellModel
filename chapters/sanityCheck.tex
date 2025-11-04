@@ -135,8 +135,21 @@ This approach provides a smooth estimate of the empirical cell density, allowing
 - to gain statistical significance, we ran $10^4$ independent Monte Carlo simulations for each model type (point particles and hard spheres).
 - parallelisation for the monte carlo simulations was done with Julia built in `Distributed' package~\cite{Distributed2023}. \\
 
-- As shown in Figure~\ref{fig:?}, our simulation results for the point particle model closely match those presented in~\cite{Bruna2012}, confirming the accuracy of our implementation. 
+- As shown in Figure~\ref{fig:comparePP}, our simulation results for the point particle model closely match those presented in~\cite{Bruna2012}, confirming the accuracy of our implementation. 
 - We always fixed the color scale to be the same as in~\cite{Bruna2012} in order to gain comparability. 
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/ppmodelSelf.png} &     
+        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/ppmodel-bruna.png} \\   
+    \end{tabular}
+    \caption{The left panel shows the heatmap obtained from our new point-particle simulation, while the right panel presents the corresponding result from~\cite{Bruna2012}. We applied the same color scale as in Bruna (2012) to both panels to facilitate direct comparison. Despite minor differences, the two heatmaps exhibit a very similar overall structure and intensity pattern.}
+    \label{fig:comparePP}
+\end{figure}
+
+
+
 
 
 % TODO: add figure of pp heatmaps and df hard=1 heatmap at t=0.05 
@@ -163,8 +176,22 @@ This approach provides a smooth estimate of the empirical cell density, allowing
 \end{simulation}
 
 For this model, we again used the monte carlo simulation approach to generate heatmaps of the cell density evolution over time. 
-Figure~\ref{fig:?} shows the results of our Monte Carlo simulation for the hard DF model at different time steps.
-- The result looks similar to those from ~\cite{Bruna2012}, confirming that our DF model can accurately replicate the behaviour of hard sphere cells when shape deformation is disabled. 
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-self.png} &     
+        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-bruna.png} \\   
+    \end{tabular}
+    \caption{The left panel displays the heatmap obtained from our hard-cell simulations, and the right panel shows the corresponding result from~\cite{Bruna2012}. The color scale was matched to that used by Bruna to enable a meaningful visual comparison. Overall, the two heatmaps display closely matching spatial patterns and intensity distributions, with only subtle variations between them.}
+    \label{fig:compareHSCM}
+\end{figure}
+
+Figure~\ref{fig:compareHSCM} shows the results of our Monte Carlo simulation for the hard DF model at different time steps.
+- We can see some differences between the two heatmaps, e.g. the slightly higher density in the middle of our simulation. 
+- it is not possible to recreate the exact same picture using different code, implementations, slightly different color schemes, Color map scaling, Interpolation method 
+- Overall, the result looks similar to those from ~\cite{Bruna2012}, confirming that our DF model can accurately replicate the behaviour of hard sphere cells when shape deformation is disabled. 
+
+
 
 \subsection{Soft DF model simulations} 
 
