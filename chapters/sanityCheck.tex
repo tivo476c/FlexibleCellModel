@@ -6,8 +6,11 @@ There, we used the package `DifferentialEquations.jl' with its structure `SDEPro
 - in order to place our simulations to existing papers, we aim to compare our simulation results to outcomes from an established cell model from~\cite{Bruna2012}. \\
 
 \subsection{Reference simulations: Bruna and Chapman (2012)}
+% short sub section overview with reference to intro 
 - The point particle and hard sphere models from~\cite{Bruna2012} were already introduced in the Introduction~\ref{intro}. \\
 - We will write down the explicit cell dynamics and first marginals again with all parameters applied.
+
+%%% Bruna setup: domain, particle dynamic, first marginal for pp 
 - The paper~\cite{Bruna2012} analyses these dynamics on the domain 
 \[\Omega_{BC} = [-0.5, 0.5]^2,\]
 on which $N_{C} = 400$ particles are located. \\
@@ -31,7 +34,7 @@ Thus, the first marginal simplifies to
 \end{align}
 which is expressed in divergence form.
 
-
+% Transistion to hard sphere model
 - In order to transition to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. \\
 - We recall from the Introduction~\ref{intro} that the hard sphere dynamic is given by
 \begin{equation*}
@@ -44,27 +47,16 @@ where we again choose $D = 1$ and $f(\vec{x}) = 0$.  \\
 - When computing the first marginal of the hard sphere model, we get Equation~\eqref{equ:hardsphere}.
 In our case, this simplifies to
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2], \quad \vec{x} \in \Omega, \: t>0 . 
+	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2], \quad \vec{x} \in \Omega, \: t>0 . 
     \label{equ:marginalHSCM}
 \end{align}
 
-
+% initial condition 
 The initial condition of both models follows a two dimensional normal distribution with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
 The used distribution $\mathcal{N}_2(0, \: 0.09^2 \cdot I_2)$ has an integral of one over $\Omega_{BC}$. \\
-
-% $\mathcal{N}_2 \left( 
-% \scalebox{0.7}{$\begin{pmatrix} 0 \\ 0 \end{pmatrix}$}, 
-% \scalebox{0.7}{$\begin{pmatrix} 0.09^2 & 0 \\ 0 & 0.09^2 \end{pmatrix}$}
-% \right)$ 
-
 We can compute this initial condition with Algorithm~\ref{alge:HSCMinitial}. 
 The avoidance of cell overlaps by the following algorithm is also illustrated in Figure~\ref{fig:hardsphere}. \\
-%%% TODO: specify which julia packages where used, also cite them 
-- All codes were implemented in Julia~\cite{Julia2017} \\
-- We used Distributions.jl~\cite{Distributions2021} and its function `MvNormal()' to generate the normal distributed points \\
-- The Julia package~\cite{DifferentialEquations2017} `DifferentialEquations.jl' was used to solve the SDEs with its inbuilt Euler Maruyama scheme with static time step size. \\
-- all self made plots in this thesis are created with Plots.jl~\cite{Plots2023}. \\
-- parallelisation of the monte carlo simulations was done with Julia built in `Distributed' package~\cite{Distributed2023}. \\
+
 \begin{algorithm} \textbf{Computation of the initial cell system} \label{alge:HSCMinitial}
 	\begin{enumerate} 
 		\item Generate a point $\vec{x} \sim \mathcal{N}_2(0, \: 0.09^2 \cdot I_2)$. 
@@ -72,25 +64,7 @@ The avoidance of cell overlaps by the following algorithm is also illustrated in
 	\end{enumerate}	
 \end{algorithm}
 
-% The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive nonlinear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator.
-% This term encodes the excluded-volume interaction between finite-sized particles, which biases motion away from regions of high density.
-% Consequently, the effective collective diffusion increases with both particle number \(N_C\) and particle size \(\epsilon\).
-% Locally, diffusion is faster where \(\rho\) is large, since crowding produces a stronger flux toward less populated regions.
-% We can rewrite the marginal equation~\eqref{equ:marginalHSCM} to explicitly show this enhanced diffusion effect as follows: \\
-% \begin{align*}
-%     \frac{\partial \rho}{\partial t}
-%     &= \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2] \\
-%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}}\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \nabla_{\vec{x}}\rho^2] \\
-%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}}\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 2 \rho \nabla_{\vec{x}}\rho ] \\
-%     &= \nabla_{\vec{x}} \cdot [ \underbrace{(1 + \pi (N_C - 1)\epsilon^2 \rho)}_{\displaystyle = D(\epsilon, N_C, \rho)} \nabla_{\vec{x}}\rho ] 
-%     ,
-% \end{align*}
-% where we used the product rule for gradients in the second step. \\
-% We interpret \( D(\epsilon, N_C, \rho) = 1 + \pi (N_C - 1)\epsilon^2 \rho \) as an effective diffusion coefficient that depends on the cell diameter \(\epsilon\), the number of cells \(N_C\), and the local density \(\rho\). 
-% When setting \(\epsilon = 0\), we retrieve the diffusion equation for point particles in Equation~\eqref{equ:marginalPP}, i.e., \( D(0, N_C, \rho) = 1 \).
-% For $\epsilon > 0$ (and $N_C > 1$), the diffusion coefficient \( D(\epsilon, N_C, \rho) > 1 \) increases with both \(\epsilon\) and \(N_C\), leading to an enhanced diffusion rate compared to point particles.
-% This reformulation clearly illustrates how the excluded-volume interactions in the hard sphere cell model lead to faster diffusion relative to the point particle model. \\ 
-
+% comparison of first marginals 
 The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive nonlinear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator. 
 This term represents excluded-volume interactions between finite-sized particles, which especially bias motion at regions of high density and thereby accelerate the overall spread. 
 As a result, the effective collective diffusion increases with particle number \(N_C\), particle size \(\epsilon\), and local density \(\rho\). 
@@ -128,7 +102,8 @@ This reformulation clearly demonstrates how excluded-volume interactions in the 
 \end{figure}
 
 Another evidence of this behaviour is shown in Figure~\ref{fig:fig2BC12} which is originally from the considered paper~\cite{Bruna2012}. \\
-% TODO: find a paper explaining monte carlo sims 
+
+% Explanation of monte carlo method
 Here, we can see two Monte Carlo simulations. 
 A Monte Carlo simulation, as for example described in~\cite{Metropolis1949} is a computational technique that uses random sampling to model and analyse complex systems or processes that are difficult to solve analytically. 
 It repeatedly generates random inputs according to specified probability distributions and computes the resulting outcomes to estimate quantities like averages, variances, or distributions. \\
@@ -143,10 +118,60 @@ This approach provides a smooth estimate of the empirical cell density, allowing
 
 
 \subsection{Reproduction of reference results}
-Before running our new dynamics that include cell flexibility, we first want to guarantee that the simulations are running in the correct setup.
-Therefore, we started with recreating the Monte Carlo simulation for the point particles. 
-We always fixed the color scale to be the same as in~\cite{Bruna2012} in order to gain comparability. 
-The simulation parameters are the same as in~\cite{Bruna2012}. \\
+
+% my code in julia 
+- we will now switch from the theory from~\cite{Bruna2012} to our own simulations. \\ 
+- we used the Julia programming language~\cite{Julia2017} to implement all of our code 
+- Explanation why Julia was used 
+
+- Many plots throughout this thesis, e.g. Figure~\ref{fig:exclusion1d}, were created with the Julia package Plots.jl~\cite{Plots2023}. % just put this in small side sentence somewhere 
+
+- we started with the implementation of the simplest model: point particles. 
+- we choose all simulation parameters, like domain or Number of particles, as described in the previous subsection to gain comparability. 
+- the $N_C = 400$ particles where initialised in $\Omega = [-0.5, 0.5]^2$ with Algorithm~\ref{alge:HSCMinitial}, using the function `MvNormal()' from the package `Distributions.jl'~\cite{Distributions2021} to generate the normal distributed points 
+- each particle moved according to the point particle dynamic with $D = 1$ and reflective boundary conditions on $\partial \Omega$.  
+- For solving the SDEs, we used the Julia package `DifferentialEquations.jl'~\cite{DifferentialEquations2017} with its inbuilt Euler Maruyama scheme that uses a constant time step size. \\
+- we then used Monte Carlo simulations with our self made code to generate heatmaps that can be compared to Figure~\ref{fig:fig2BC12} (b). \\
+- to gain statistical significance, we ran $10^4$ independent Monte Carlo simulations for each model type (point particles and hard spheres).
+- parallelisation for the monte carlo simulations was done with Julia built in `Distributed' package~\cite{Distributed2023}. \\
+
+- As shown in Figure~\ref{fig:?}, our simulation results for the point particle model closely match those presented in~\cite{Bruna2012}, confirming the accuracy of our implementation. 
+- We always fixed the color scale to be the same as in~\cite{Bruna2012} in order to gain comparability. 
+
+
+% TODO: add figure of pp heatmaps and df hard=1 heatmap at t=0.05 
+
+% Now transition to df model  
+- Having successfully validated our implementation with the point particle model, we proceeded to mimic the hard sphere cell model (HSCM) as described in~\cite{Bruna2012}. 
+- Therefore, we use our DF model. 
+- In this thesis, cells are modelled as regular hexagons with $N_V = 6$ vertices. 
+- we choose this number of vertices to enable shape deformation on these six vertices per cell while still being computationally efficient, as we ran ten thousands of cell simulations for the Monte Carlo simulations this research. 
+- Like in the considered hard sphere model from bruna and chapman, our hexagonal cells have a diameter of $\epsilon = 0.01$, in the sense of the distance between two opposite vertices.
+- For now, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dfmodel}), as we want to mirror the dynamic of the hard spheres.  
+- Since no shape deformation is allowed, we can neglect all shape preserving forces from the DF model and only use the bounce overlap force. 
+
+\begin{simulation} \textbf{Hard DF model}
+
+    \begin{center}
+		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}$
+	\end{center} 
+
+    \begin{align*}
+			\F^{i}(\vec{C}) = \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C})
+	\end{align*}
+
+\end{simulation}
+
+For this model, we again used the monte carlo simulation approach to generate heatmaps of the cell density evolution over time. 
+Figure~\ref{fig:?} shows the results of our Monte Carlo simulation for the hard DF model at different time steps.
+- The result looks similar to those from ~\cite{Bruna2012}, confirming that our DF model can accurately replicate the behaviour of hard sphere cells when shape deformation is disabled. 
+
+\subsection{Soft DF model simulations} 
+
+
+% TODO: introduce simulations for hardness 0 and 0.5 
+% show results in that huge figure with heatmaps and cross sections 
+% interprate those results 
 
 Beside of this, all particles moved according to the two dimensional Brownian motion
 \begin{center}

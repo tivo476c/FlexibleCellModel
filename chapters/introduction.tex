@@ -74,13 +74,14 @@ The particle movement can be modelled using the following SDE, which describes t
 	$\dequ \vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C$,
 \end{center}
 where the constant $D > 0$ represents the diffusion coefficient which proportionally scales the speed of the particle movements by scaling the random fluctuations. \\
+At the domain boundary, the reflective boundary condition is used. \\
 The term $\dequ \vec{B}_i(t) $ represents the stochastic increment of a two dimensional Wiener process (Brownian motion) associated with particle $i$. 
 It models the random, unpredictable fluctuations in the particle's position over time. \\
 For infinitesimally small time intervals $ \dequ t $, the increment $ \dequ \vec{B}_i(t) $ is normally distributed with mean zero and covariance $ \dequ t \cdot I_2$, where $I_2$ denotes the $2 \times 2$ identity matrix. \\  
 This dynamic is fundamental and widely used in SDEs across various fields, including modelling particle diffusion~\cite{Bruna2012}, biological systems such as cell migration and also financial markets. \\ 
 % TODO: add external force term f(x) to motion equation for modelling environmental influences or chemical gradients.
 
-The stochastic dynamics of individual particles—governed by Brownian motion and external forces—naturally give rise to a probability density function that characterises the collective behaviour of the entire system through a mean field description. 
+The stochastic dynamics of individual particles, governed by Brownian motion and external forces, naturally give rise to a probability density function that characterises the collective behaviour of the entire system through a mean field description. 
 This density function serves as the fundamental mean field that encapsulates the averaged influence of all particles, enabling a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution where individual fluctuations are replaced by deterministic evolution of the ensemble density. \\
 When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
 The first marginal density function $\rho(t; \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ and time $t > 0$. 
@@ -253,8 +254,8 @@ Using the method of matched asymptotic expansions, the authors also derived the 
 \begin{align}
 	\begin{split}
 		\dfrac{\partial \rho}{\partial t} 
-		&= \nabla_{\vec{x}} \cdot \{ D \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2]  - f \rho \} \\
-		&= D \Delta_{\vec{x}} \rho + D \frac{\pi}{2} (N_C - 1)\epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f \rho)
+		&= \nabla_{\vec{x}} \cdot \{ D \nabla_{\vec{x}}[\rho + \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2]  - f \rho \} \\
+		&= D \Delta_{\vec{x}} \rho + D \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f \rho)
 		, \quad \vec{x} \in \Omega, \: t>0 .
 	\end{split}
 	\label{equ:hardsphere}
