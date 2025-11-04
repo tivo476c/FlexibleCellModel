@@ -26,19 +26,19 @@ overlapForceType = overlapForceTypes[1]
 forceScalings = [areaForceFactor, edgeForceFactor, interiorAngleForceFactor, overlapForceFactor]
 
 ## Simulation time parameters: 
-timeStepSize = 10^(-5)
+timeStepSize = 0.5 * 10^(-5)
 T = 0.05
 # T = 20*timeStepSize
 timeInterval = (0.0, T)
 
-NumberOfSimulations = 10^4
+NumberOfSimulations = round(Int64, 6*10^3)
 NumberOfSampleTimes = 6        # must be 2 at least
 sampleTimes = [T * k / (NumberOfSampleTimes - 1) for k = 0:NumberOfSampleTimes-1]
 # sampleTimesRange = 0:T/(NumberOfSampleTimes-1):T
 
 ## Simulation name 
 # simulationName = "drift-$(floor(Int64, log10(areaForceFactor)))-$(floor(Int64,log10(edgeForceFactor)))-$(floor(Int64, log10(interiorAngleForceFactor)))-$(floor(Int64,log10(overlapForceFactor)))"
-simulationName = "softSim3-bachelorOverlap"
+simulationName = "softSim-half-dt"
 
 
 ## Space Discretisation for heatmap 
