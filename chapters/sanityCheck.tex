@@ -26,11 +26,10 @@ Equation~\eqref{equ:pointparticle} shows the general first marginal of the point
 In our case, we choose the diffusion coefficient to be $D = 1$ and we do not use an external force field, i.e. $f(\vec{x}) = 0$.
 Thus, the first marginal simplifies to
 \begin{align}
-	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \Delta_{\vec{x}} \rho(t; \vec{x}) , \quad \vec{x} \in \Omega, \; t>0.
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \nabla_{\vec{x}} \cdot  \nabla_{\vec{x}} \rho(t; \vec{x}) , \quad \vec{x} \in \Omega, \; t>0,
     \label{equ:marginalPP}
 \end{align}
-
-
+which is expressed in divergence form.
 
 
 - In order to transition to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. \\
@@ -45,7 +44,7 @@ where we again choose $D = 1$ and $f(\vec{x}) = 0$.  \\
 - When computing the first marginal of the hard sphere model, we get Equation~\eqref{equ:hardsphere}.
 In our case, this simplifies to
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2), \quad \vec{x} \in \Omega, \: t>0 . 
+	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2], \quad \vec{x} \in \Omega, \: t>0 . 
     \label{equ:marginalHSCM}
 \end{align}
 
@@ -73,42 +72,44 @@ The avoidance of cell overlaps by the following algorithm is also illustrated in
 	\end{enumerate}	
 \end{algorithm}
 
-
-We can see a connection between the two marginal Equations~\eqref{equ:marginalPP} and~\eqref{equ:marginalHSCM} by rewriting the first marginal of the hard sphere model. \\
-Let us define a diffusion coefficient 
-\[
-    D_{\epsilon}(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho 
-\]
-that depends on the local particle density $p$ and the cell diameter $\epsilon$. 
-For the point particles, we have $\epsilon = 0$ and $D_{\epsilon}(\rho) = 1$.
-Thus, we can rewrite the first marginal of the point particles to  
-\begin{align*}
-    \frac{\partial \rho}{\partial t}(t; \vec{x}) = D_{\epsilon}(\rho) \Delta_{\vec{x}} \rho. 
-\end{align*}
-In the case of the hard spheres, where $\epsilon > 0$, we can compute
-\begin{align*}
-    \frac{\partial \rho}{\partial t}(\vec{x}_1, t) &= \nabla_{\vec{x}_1} \cdot [D_{\epsilon}(\rho) \nabla_{\vec{x}_1} \rho] \\  
-    &= \nabla_{\vec{x}_1} \cdot [(1 + \pi(N_{C}-1)\epsilon^2 \rho) \nabla_{\vec{x}_1} \rho] \\
-    &= \nabla_{\vec{x}_1} \cdot [\nabla_{\vec{x}_1} \rho + \pi(N_{C}-1)\epsilon^2 \rho \nabla_{\vec{x}_1} \rho] \\
-    &= \nabla_{\vec{x}_1} \cdot [\nabla_{\vec{x}_1} \rho + \pi(N_{C}-1)\epsilon^2 \frac{1}{2}\nabla_{\vec{x}_1} \rho^2] \\
-    &= \nabla_{\vec{x}_1} \cdot [\nabla_{\vec{x}_1} (\rho + \frac{\pi}{2}(N_{C}-1)\epsilon^2 \rho^2)] \\
-\end{align*}
-
-%%% TODO: write down that diffusion coefficent increases with density 
-
+% The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive nonlinear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator.
+% This term encodes the excluded-volume interaction between finite-sized particles, which biases motion away from regions of high density.
+% Consequently, the effective collective diffusion increases with both particle number \(N_C\) and particle size \(\epsilon\).
+% Locally, diffusion is faster where \(\rho\) is large, since crowding produces a stronger flux toward less populated regions.
+% We can rewrite the marginal equation~\eqref{equ:marginalHSCM} to explicitly show this enhanced diffusion effect as follows: \\
 % \begin{align*}
-%     \frac{\partial \rho}{\partial t}(t; \vec{x}) &= D_{\epsilon}(\rho) \Delta_{\vec{x}} \rho \\  
-%     &= (1 + \pi(N_{C}-1)\epsilon^2 \rho) \Delta_{\vec{x}} \rho \\
-%     &= \nabla_{\vec{x}} \cdot [D_{\epsilon}(\rho) \nabla_{\vec{x}} \rho] \\  
-%     &= \nabla_{\vec{x}} \cdot [(1 + \pi(N_{C}-1)\epsilon^2 \rho) \nabla_{\vec{x}} \rho] \\
-%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} \rho + \pi(N_{C}-1)\epsilon^2 \rho \nabla_{\vec{x}} \rho] \\
-%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} \rho + \pi(N_{C}-1)\epsilon^2 \frac{1}{2}\nabla_{\vec{x}} \rho^2] \\
-%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}} (\rho + \frac{\pi}{2}(N_{C}-1)\epsilon^2 \rho^2)] \\
-%     &= \Delta_{\vec{x}} \rho + \frac{\pi}{2} (N_C - 1) \epsilon^2 \Delta_{\vec{x}} (\rho^2) \\
+%     \frac{\partial \rho}{\partial t}
+%     &= \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2] \\
+%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}}\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \nabla_{\vec{x}}\rho^2] \\
+%     &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}}\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 2 \rho \nabla_{\vec{x}}\rho ] \\
+%     &= \nabla_{\vec{x}} \cdot [ \underbrace{(1 + \pi (N_C - 1)\epsilon^2 \rho)}_{\displaystyle = D(\epsilon, N_C, \rho)} \nabla_{\vec{x}}\rho ] 
+%     ,
 % \end{align*}
-to recover Equation~\eqref{equ:marginalHSCM}. \\ 
-When considering \( D_\epsilon(\rho) = 1 + \pi(N_{C}-1)\epsilon^2 \rho \) to be the diffusion coefficient, we can conclude that an increase in the number of cells \( N_{C} \), the cell diameter \( \epsilon \), or the local density \( \rho \) leads to an increased diffusion rate of the system.
-Overall, we conclude that the bounce effect of the HSCM enhances the diffusion rate of the system's density.
+% where we used the product rule for gradients in the second step. \\
+% We interpret \( D(\epsilon, N_C, \rho) = 1 + \pi (N_C - 1)\epsilon^2 \rho \) as an effective diffusion coefficient that depends on the cell diameter \(\epsilon\), the number of cells \(N_C\), and the local density \(\rho\). 
+% When setting \(\epsilon = 0\), we retrieve the diffusion equation for point particles in Equation~\eqref{equ:marginalPP}, i.e., \( D(0, N_C, \rho) = 1 \).
+% For $\epsilon > 0$ (and $N_C > 1$), the diffusion coefficient \( D(\epsilon, N_C, \rho) > 1 \) increases with both \(\epsilon\) and \(N_C\), leading to an enhanced diffusion rate compared to point particles.
+% This reformulation clearly illustrates how the excluded-volume interactions in the hard sphere cell model lead to faster diffusion relative to the point particle model. \\ 
+
+The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive nonlinear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator. 
+This term represents excluded-volume interactions between finite-sized particles, which especially bias motion at regions of high density and thereby accelerate the overall spread. 
+As a result, the effective collective diffusion increases with particle number \(N_C\), particle size \(\epsilon\), and local density \(\rho\). 
+We can rewrite Equation~\eqref{equ:marginalHSCM} to explicitly show this enhanced diffusion effect as follows:
+\begin{align*}
+    \frac{\partial \rho}{\partial t}
+    &= \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2] \\
+    &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}}\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \nabla_{\vec{x}}\rho^2] \\
+    &= \nabla_{\vec{x}} \cdot [\nabla_{\vec{x}}\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 2 \rho \nabla_{\vec{x}}\rho ] \\
+    &= \nabla_{\vec{x}} \cdot [ \underbrace{(1 + \pi (N_C - 1)\epsilon^2 \rho)}_{\displaystyle = D(\epsilon, N_C, \rho)} \nabla_{\vec{x}}\rho ] 
+    ,
+\end{align*}
+where we used the product rule for gradients in the third line. 
+Here, 
+\[ D(\epsilon, N_C, \rho) = 1 + \pi (N_C - 1)\epsilon^2 \rho \] 
+acts as an effective diffusion coefficient that depends on the particle size, total particle number, and local concentration. 
+For $\epsilon = 0$, we recover Equation~\eqref{equ:marginalPP}, corresponding to point particles with $D=1$ and for $\epsilon > 0$, we obtain Equation~\eqref{equ:marginalHSCM} as shown in the computation. 
+This reformulation clearly demonstrates how excluded-volume interactions in the hard-sphere cell model lead to an enhanced diffusion rate compared to the point-particle case.
+
 
 \begin{figure}[h!]
 	\centering

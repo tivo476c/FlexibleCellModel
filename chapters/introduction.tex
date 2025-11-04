@@ -253,9 +253,8 @@ Using the method of matched asymptotic expansions, the authors also derived the 
 \begin{align}
 	\begin{split}
 		\dfrac{\partial \rho}{\partial t} 
-		&= \nabla_{\vec{x}} \cdot \{ \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2]  - f \rho \} \\
-		&= \Delta_{\vec{x}} [\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2] - \nabla_{\vec{x}} \cdot (f \rho) \\
-		&= D \Delta_{\vec{x}} \rho + \Delta_{\vec{x}} \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2 - \nabla_{\vec{x}} \cdot (f \rho)
+		&= \nabla_{\vec{x}} \cdot \{ D \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2]  - f \rho \} \\
+		&= D \Delta_{\vec{x}} \rho + D \frac{\pi}{2} (N_C - 1)\epsilon^2 \Delta_{\vec{x}} (\rho^2) - \nabla_{\vec{x}} \cdot (f \rho)
 		, \quad \vec{x} \in \Omega, \: t>0 .
 	\end{split}
 	\label{equ:hardsphere}
