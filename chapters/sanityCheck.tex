@@ -148,31 +148,29 @@ This approach provides a smooth estimate of the empirical cell density, allowing
     \label{fig:comparePP}
 \end{figure}
 
-
-
-
-
-% TODO: add figure of pp heatmaps and df hard=1 heatmap at t=0.05 
-
 % Now transition to df model  
 - Having successfully validated our implementation with the point particle model, we proceeded to mimic the hard sphere cell model (HSCM) as described in~\cite{Bruna2012}. 
 - Therefore, we use our DF model. 
 - In this thesis, cells are modelled as regular hexagons with $N_V = 6$ vertices. 
 - we choose this number of vertices to enable shape deformation on these six vertices per cell while still being computationally efficient, as we ran ten thousands of cell simulations for the Monte Carlo simulations this research. 
 - Like in the considered hard sphere model from bruna and chapman, our hexagonal cells have a diameter of $\epsilon = 0.01$, in the sense of the distance between two opposite vertices.
-- For now, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dfmodel}), as we want to mirror the dynamic of the hard spheres.  
+- For now, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dynamics}), as we want to mirror the dynamic of the hard spheres.  
 - Since no shape deformation is allowed, we can neglect all shape preserving forces from the DF model and only use the bounce overlap force. 
 
-\begin{simulation} \textbf{Hard DF model}
-
+\begin{simulation} \textbf{Hard DF model - Monte Carlo simulation setup}
+    This DF model simulation with hardness $h=1$ uses the following setup:
     \begin{center}
-		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}$
+		$\dequ C_i(t) = 10^5 F_i^{(\bar{O})}(\vec{C}) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},$
 	\end{center} 
-
-    \begin{align*}
-			\F^{i}(\vec{C}) = \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C})
-	\end{align*}
-
+    where 
+    \[
+	e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
+	\]
+	which allow us to distribute a two dimensional Brownian motion \[\dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T\] to the $x$ and $y$ coordinates of a cell's vertices, respectively.
+    - We apply the reflective boundary condition on $\partial \Omega$.
+    - We use the Euler Maruyama scheme to solve the SDEs with a constant time step size of $\Delta t = 10^{-5}$
+    - We ran $10^4$ simulations for statistical significance.
+    - We solved the SDE on the time interval $[0, 0.05]$.
 \end{simulation}
 
 For this model, we again used the monte carlo simulation approach to generate heatmaps of the cell density evolution over time. 
@@ -193,23 +191,70 @@ Figure~\ref{fig:compareHSCM} shows the results of our Monte Carlo simulation for
 
 
 
-\subsection{Soft DF model simulations} 
+\subsection{DF model simulations with deformable cells} 
 
+After confirming that our implementation correctly reproduces the macroscopic dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalize the model to account for cell deformability. \\ 
+In biological systems, cell-cell interactions are rarely perfectly hard; instead, cells can locally deform upon contact, redistributing internal stresses and slightly modifying their effective motion. 
+To capture this behaviour, we relax the hard-sphere constraint by introducing a soft deformable force that acts when two cells are sufficiently close to each other. \\
+This modification leads to an extended stochastic description in which the overlap force $F_i^{(\hat{O})}(\vec{C})$, defined in \ref{force:deformingOverlap}, supplements the purely repulsive (bounce) force $F_i^{(\bar{O})}(\vec{C})$ (\ref{force:bounceOverlap}), whenever we use a hardness $h < 1$.
+The resulting system of SDEs describes the coupled motion of deformable cells under diffusion and interaction forces, thereby forming the soft DF model. 
+In the following, we derive two SDE formulation, called soft and mid DF model, and discuss their relation to the non-deformable case, the hard DF model. \\ 
+The soft DF model corresponds to the extreme case of fully deformable cells without any hard-core repulsion, i.e. with hardness $h = 0$. 
+It is governed by the consecutive SDE.  
+\begin{simulation} \textbf{Soft DF model - Monte Carlo simulation setup}
+    This DF model simulation with hardness $h=0$ uses the following setup:
+    \begin{center}
+		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},$
+	\end{center} 
+    where the deterministic force $\F^{i}(\vec{C}(t))$ is defined As
+    \begin{align*}
+		\begin{split}
+			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C})
+		\end{split}
+	\end{align*}
+    The force scalings are chosen as in Table~\ref{table:forcescalings}. 
+    - We apply the reflective boundary condition on $\partial \Omega$.
+    - We use the Euler Maruyama scheme to solve the SDEs with a constant time step size of $\Delta t = 10^{-5}$
+    - We ran $10^4$ simulations for statistical significance.
+    - We solved the SDE on the time interval $[0, 0.05]$.
+\end{simulation}
 
-% TODO: introduce simulations for hardness 0 and 0.5 
-% show results in that huge figure with heatmaps and cross sections 
-% interprate those results 
+While the soft DF model introduces deformability by allowing overlapping interactions, it is instructive to consider an intermediate configuration that gradually transitions between the purely hard and fully deformable regimes. 
+To this end, we define a mid DF model, which retains the fundamental features of the hard-sphere dynamics, but introduces a limited degree of deformation.  \\
+In this setup, the deforming overlap force is partially active, providing a tunable stiffness that bridges the discontinuous transition between entirely rigid and fully soft cell interactions.
+This intermediate formulation allows us to quantify the influence of deformability in a controlled manner by smoothly varying the stiffness parameter. \\
+This not only aids in verifying the robustness of our implementation but also clarifies how emergent macroscopic properties evolve with cell stiffness.
+The corresponding stochastic representation, referred to as the mid DF model SDE, incorporates both the bounce and deforming overlap forces with an intermediate weighting. 
+The formulation reads as follows:
 
-Beside of this, all particles moved according to the two dimensional Brownian motion
-\begin{center}
-		$ \dequ \vec{x}_i(t) = \sqrt{2} \dequ \vec{B}_i(t)$, \hspace{0.5em} $1 \leq i \leq N_{C}$.
-\end{center}
-% TODO: write more about that its succesful 
-Figure~\ref{fig:ppHeatmaps} shows the evolution of the particle density in terms of heatmaps for different time steps. 
-The results of our Monte Carlo simulation appear to be in good agreement with those of Bruna and Chapman, suggesting that our approach is robust and accurate.
+\begin{simulation} \textbf{Mid DF model - Monte Carlo simulation setup}
+    This DF model simulation with hardness $h=0.5$ uses the following setup:
+    \begin{center}
+		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},$
+	\end{center} 
+    where the deterministic force $\F^{i}(\vec{C}(t))$ is defined As
+    \begin{align}
+		\begin{split}
+			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \\
+			& 0.5 \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + 0.5 \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C})
+		\end{split}
+	\end{align}
+    The force scalings are chosen as in Table~\ref{table:forcescalings}. 
+    - We apply the reflective boundary condition on $\partial \Omega$.
+    - We use the Euler Maruyama scheme to solve the SDEs with a constant time step size of $\Delta t = 10^{-5}$
+    - We ran $10^4$ simulations for statistical significance.
+    - We solved the SDE on the time interval $[0, 0.05]$.
+\end{simulation}
 
-Next, we consider the HSCM and run the Monte Carlo simulation for a cell diameter of $\epsilon = 0.01$. 
-Figure~\ref{fig:sanityCheck} shows the density evolution of the HSCM.
+Having established the three DF model formulations — the hard, mid, and soft variants — we now turn to a direct visual comparison of their collective dynamics. \\
+Figure~\ref{fig:dfHeatmaps} presents one of the central results of this work, illustrating the temporal evolution of the cell density for each model side by side. 
+Each panel shows the corresponding heatmap representation of the simulated particle distribution, normalised to unit mass, thus enabling a direct comparison of the spatial spreading behaviour under the different interaction assumptions. \\
+This figure highlights how progressively relaxing the rigidity constraint from the hard to the soft DF model alters the emergent cell dynamics. 
+The hard DF system, governed by strictly repulsive collisions, shows the fastest diffusion rate of our three models. 
+In contrast, the soft DF model, that only uses cell deformation for overlap degeneration, exhibits a narrower spatial distributions due to the missing push dynamic from the bounce overlap force in case of cell overlap. 
+The mid DF configuration naturally occupies an intermediate regime, demonstrating a gradual transition in diffusion rate. \\
+Together, these visualisations provide an intuitive understanding of how cell deformability influences the macroscopic evolution of the system and serve as a qualitative validation of the modelling framework. 
+We therefore proceed by analysing these results in greater detail in the following discussion. 
 
 \begin{figure}[h!]
     \centering
@@ -256,66 +301,105 @@ Figure~\ref{fig:sanityCheck} shows the density evolution of the HSCM.
     \caption{Heatmaps of a Monte Carlo simulation of the DF cell model with different hardness values at the times $t \in \{0.00, 0.01,\ldots, 0.05\}$. 
     Left column $(a)$ shows hardness $0$, we can see hardness $0.5$ in the middle $(b)$ and hardness $1$ on the right $(c)$.
     We can oberserve that the diffusion rate increases with increasing hardness.} 
-	\label{fig:sanityCheck}    
+	\label{fig:dfHeatmaps}    
 \end{figure}
 
-% TODO:
-% - bridge to cross sections 
-% - introduce cross sections
-% - interprete these 
+Having compared the full spatial density evolution through heatmaps, we next consider a reduced one-dimensional representation of the cell density to facilitate quantitative comparison between models. 
+To this end, we introduce cross-section plots, which provide averaged density profiles extracted from the two-dimensional simulation domain~$\Omega$. \\
+The procedure is as follows. 
+Starting from the discrete density field obtained from a DF simulation, the quadratic domain~$\Omega$ is subdivided into $N_H \times N_H$ sub squares, where $N_H \in \N$ defines the spatial resolution with a corresponding step size $\Delta x = 1 / N_H$, as $\Omega$ has a side length of $1$. \\
+For each vertical line across the domain, we compute the integrated density by summing the density values of all subsquares along that line, multiplied by the step size~$\Delta x$. 
+This yields a vector of length~$N_H$ representing the average cell density per vertical line. \\
+The same operation is then repeated along all horizontal lines to obtain a second vector. 
+The final one-dimensional density profile is obtained as the arithmetic mean of the two vectors, thereby combining information from both orientations to reduce sampling bias. \\
 
+The resulting averaged density vector $\rho_{\mathrm{cross}}$ is then plotted against the spatial coordinate in $[-0.5, 0.5]$, providing a concise visualisation of the overall distribution of cells along the domain. \\
+By construction, the cross-section profile is normalised to unit mass,
+\[
+\sum_{i=1}^{N_H} \rho_{\mathrm{cross}}(x_i)\, \Delta x = 1,
+\]
+ensuring direct comparability between simulations with different model parameters or deformability assumptions. \\
+This representation offers a clear and compact way to quantify the spread and peak structure of the cell population, complementing the qualitative insights from the heatmaps. 
+The cross-section plots for our three DF model variants at different time points are shown in Figure~\ref{fig:crosssections}. \\ 
 
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.00.png} &     
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.01.png} \\   
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx16/crosssection_t0.00.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx16/crosssection_t0.01.png} \\   
 
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.02.png} &   
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.03.png} \\  
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx16/crosssection_t0.02.png} &   
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx16/crosssection_t0.03.png} \\  
 
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.04.png} &     
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/crosssection_t0.05.png} \\   
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx16/crosssection_t0.04.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx16/crosssection_t0.05.png} \\   
     \end{tabular}
-    \caption{ 
-        This figure shows the evolution of the cross section density for our three Monte Carlo simulations at the sample times $t \in \{0, 0.01, \ldots, 0.05\}$. 
-        Initially, each simulation starts with the same distribution. 
-        Note that the scaling of the $y$-axis changes from $[0, 3.5]$ at $t = 0$ to $[0.7, 1.3]$ at $t = 0.05$, indicating diffusion in the density distribution for all hardnesses.
-        As the plots show, the higher the hardness, the faster the diffusion for $t > 0$, since we observe a lower density in the middle ($x = 0$) and a higher density near the interval borders for higher hardness values. 
-        Thus, the density distribution is already more even for higher hardnesses at $t > 0$.
-        } 
+    \caption{
+        Temporal evolution of the cross-section density for the three DF models at sample times $t \in \{0, 0.01, \ldots, 0.05\}$. 
+        Each curve represents the spatially averaged one-dimensional density, normalised to unit mass. 
+        The progressive flattening of the profiles illustrates the diffusive spreading of the cell population, with harder models exhibiting a faster redistribution of density over time.
+        }
+ 
 	\label{fig:crosssections}    
 \end{figure}
 
-% TODO:
-% - write overall summery that hardness = 1 has highest diffusion rate and softer particles diffuse slower in our model 
+The cross-section plots allow for a more direct quantitative comparison of the density evolution across the three DF models. Initially, all simulations start from an identical spatial distribution, ensuring that any subsequent differences arise solely from the respective interaction rules. 
+Note that the scaling of the $y$-axis changes from $[0, 3.5]$ at $t = 0$ to $[0.7, 1.3]$ at $t = 0.05$, reflecting the diffusive spreading of the density field in all cases. \\
+As the plots reveal, increasing the hardness of the model leads to a faster redistribution of the density over time. 
+For $t > 0$, higher hardness values correspond to a lower density at the centre ($x = 0$) and an increased density towards the boundaries of the interval. 
+Consequently, the density profile becomes more uniform more rapidly for harder interactions, indicating enhanced effective diffusion within the system. \\
+This behaviour aligns with the expected dynamics, as stronger repulsive constraints promote faster homogenisation of the cell population. 
+The same trend is evident in the heatmap visualisations from Figure~\ref{fig:dfHeatmaps}, where the harder DF models display a visibly faster outward spread of density from the centre. \\
+In summary, the consistent diffusion trends across hardness regimes validate our DF model implementations and motivate the subsequent extension to deformable cell shapes.
 
 
 \subsection{Shape deformation check}
-% TODO: finish this sub section
-% - reference to all figures 
-% - write down what they say 
-In this subsection, we are going to investigate how much the cells deformed throughout our big monte carlo simulations.
-Therefore, we need to introduce a measure of how much a cell is deformed. 
-There is already some theory existing on how to measure that for two dimensional figures. 
-A basic approach is to study the ratio between cell area and cell perimeter. 
-We call that ratio the isoperimetric quotient $\alpha$ of that geometric figure $F$, i.e. 
+
+In this final subsection, we focus on analysing the deformation aspect of our model, which represents the key novel feature introduced in the DF model. 
+While the previous sections examined how cell hardness influences collective diffusion behaviour, we now turn our attention to the question of how individual cells change their shape during our simulations. \\
+To quantify this, we require a consistent measure of cell deformation that can be evaluated throughout our large-scale Monte Carlo simulations. 
+Several approaches have been proposed in the literature for characterising the shape of two-dimensional objects, such as the method used by~\cite{miyazawa2010} in the context of analysing animal colour patterns. \\
+A simple yet effective measure is based on the ratio between a cell's area and its perimeter, which reflects how close its shape is to an ideal circle. 
+We denote this quantity as the asphericity~$\alpha$ of a geometric figure~$F$, defined as
 \[
-    \alpha_{F} = \nu \dfrac{area_{F}}{perimeter_{F}^2},  
+    \alpha_{F} = \nu \frac{\mathrm{area}_{F}}{\mathrm{perimeter}_{F}^{2}},
 \]
-where $\nu > 0 $ is a scaling factor which we will define later. \\
-There is one 2 dimensional geometric figure that has the largest isoperimetric quotient from all: the circle. 
-For a circle of radius $r>0$, we have a area of $area_c = \pi r^2 $ and a perimeter of $perimeter_c = 2 \pi r $. 
-Thus, it has an isoperimetric quotient of 
+where the normalisation constant~$\nu$ ensures that a perfect circle yields $\alpha_{F} = 1$. 
+Lower values of~$\alpha_{F}$ therefore indicate stronger deviations from circularity, corresponding to more pronounced cell deformation. \\ 
+
+The circle is the only two-dimensional geometric figure that attains the maximal asphericity value of $1$.  
+For a circle of radius $r>0$ we have $\mathrm{area}_c = \pi r^2$ and $\mathrm{perimeter}_c = 2\pi r$. Hence
 \[
-    \alpha_{circle} = \nu \dfrac{\pi r^2}{(2 \pi r)^2} = \nu \dfrac{1}{4 \pi}.
+    \alpha_{\mathrm{circle}} \;=\; \nu \frac{\pi r^2}{(2\pi r)^2} \;=\; \nu \frac{1}{4\pi}.
 \]
-We want to normalise the isoperimetric quotient to always be in the interval $[0,1]$. 
-Therefore, we just have to choose $\nu = 4 \pi$.
-Since a circle always has a maximum isoperimetric quotient, we have an upper bound of $1$.
-It also has $0$ as a lower bound since both the area and perimeter of a geometric figure are always positive. \\ 
-These properties are also easy to compute for our DF cells. 
-We can use the Shoelace Formula~\ref{prop:Shoelace} for the cell area, and for getting the perimeter, we just have to add up the lengths of all cells. \\ 
+We choose the normalisation constant $\nu=4\pi$ so that the quotient is confined to the interval $[0,1]$ and a perfect circle satisfies $\alpha_{\mathrm{circle}}=1$. \\
+The classical isoperimetric inequality states that for any (sufficiently regular) planar region $F$ with area $A$ and perimeter $P$ one has
+\[
+    P^2 \;\geq\; 4\pi A,
+\]
+with equality if and only if $F$ is a circle. 
+Dividing by $P^2$ and multiplying by the factor $4\pi$ gives
+\[
+    4\pi\,\frac{A}{P^2} \;\leq\; 1,
+\]
+and therefore $\alpha_F \leq 1$ for every region $F$, with $\alpha_F=1$ only for the circle. 
+The lower bound $0$ is trivial since both area and perimeter are positive for any non-degenerate region, and hence $\alpha_F\in[0,1]$. \\
+
+The fact that a circle has the largest possible ratio between area and perimeter is a classical result known as the isoperimetric inequality. 
+It states that for any closed two-dimensional shape with area $A$ and perimeter $P$, the inequality
+\[
+    P^2 \geq 4\pi A
+\]
+holds, with equality only for the circle~\cite{???}. 
+In other words, among all shapes with the same perimeter, the circle encloses the largest area. 
+Using this relation, we find that the asphericity
+\[
+    \alpha = 4\pi \frac{A}{P^2}
+\]
+is always bounded between $0$ and $1$, where $\alpha = 1$ corresponds to a perfect circle and smaller values indicate increasing deformation. \\
+In our simulations, the asphericity is straightforward to compute from the discrete cell geometry. 
+The cell area is obtained using the Shoelace formula (Proposition~\ref{prop:Shoelace}), while the perimeter is calculated by summing the Euclidean lengths of the successive edges of the polygonal cell boundary. 
+The resulting value is normalised by the constant factor $4\pi$, ensuring that perfectly circular cells have $\alpha = 1$, and deviations below this value quantify the degree of deformation. 
 
 We can use this approach to analyse how much our cell shapes changed in our big 
 
@@ -375,10 +459,6 @@ We can use this approach to analyse how much our cell shapes changed in our big
         Each simulation was performed with $400$ cells, and $50$ independent runs were conducted for each of the hard, mid, and soft simulation types.
         Initially, all cells are in their desired states, as shown in the third picture of Figure~\ref{fig:asp_overview}, having an asphericity of $\alpha \approx 0.907$. 
         For $h = 1$, we can see that all $400$ cells keep their standard asphericity of $\alpha \approx 0.907$, as no cell shape deformation is done in this setting. 
-        % For the other two simulations, the simulations delivered asphericity values of $\alpha \in [0.3, 0.92]$ for the soft model ($h = 0$) and $\alpha \in [0.84, 0.92]$ for the mid hardness model ($h = 0.5$).
-        % We did not show the full soft asphericity interval for better visualisation. 
-        % We can observe that the most shape deformation happens at the beginning of the simulation at $t>0$ as we have the most cell collisions in the crowded centre. 
-        % This can be seen by the value for the cell asphericities in the last interval $[0.9, 0.92]$ increasing over time for both the soft and mid hardness simulations when not considering the initial state at $t=0$ were overlaps were prevented algorithmically.
         For the other two simulations, the asphericity values were $\alpha \in [0.3, 0.92]$ for the soft model ($h = 0$) and $\alpha \in [0.84, 0.92]$ for the mid-hardness model ($h = 0.5$).
         The full asphericity interval for the soft model is not shown for improved visualization.
         We observe that the largest shape deformations occur at the beginning of the simulation ($t>0$), when the most cell collisions happen in the crowded center.

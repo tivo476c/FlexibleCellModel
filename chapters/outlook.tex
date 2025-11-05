@@ -5,6 +5,7 @@ This modification would naturally lead to cell-specific energies and correspondi
 Incorporating such heterogeneity could allow the model to capture more complex biological behaviors, such as differentiation, cell-type-specific migration, or adaptive responses to environmental cues. 
 - incorporate external force $f$,
 
+
 - curved surfaces 
 - 3d 
 - cell division 
@@ -15,3 +16,20 @@ Incorporating such heterogeneity could allow the model to capture more complex b
 - new shapes  
 -  Additionally, many vertex models incorporate rules that govern changes in connection among vertices, and therefore allow for changes in cell neighbor relationships.
 ->  These approximations are suitable in the case of tightly packed cell sheets, where the intercellular space is negligible, and is based on experimental observations that cells in epithelial tissues are often arranged in polygonal or polyhedral structures (19) and can move around relative to other cells (20)
+- mention that doing the cross section plot with a finer spatial resolution shows oscillations that are numerical artifacts 
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.00.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.01.png} \\   
+
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.02.png} &   
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.03.png} \\  
+
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.04.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.05.png} \\   
+    \end{tabular}
+    \caption{ } 
+	\label{fig:crosssections30}    
+\end{figure}

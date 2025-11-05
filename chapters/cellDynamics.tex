@@ -913,7 +913,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	
 \end{proposition}
 
-\begin{proposition} \textbf{Deforming overlap force} \\
+\begin{proposition} \textbf{Deforming overlap force} \label{force:deformingOverlap}\\
 	Each overlap cell $D \in \Omega_{C_i,C_m}$ is a list of vertices, that form the overlap, just like a DF cell. \\
 	The deforming overlap gradient is then given by 
 	\begin{align}
@@ -1061,7 +1061,7 @@ But we need the following assumptions:
 	\item We can compute the cell centre $\vec{x} = \frac{1}{N_V}\sum\limits_{j = 1}^{N_v} \vec{v}_j$ which will be used to determine the distance between two cells. 
 \end{enumerate}
 
-\begin{definition}\textbf{Bounce overlap force} \\
+\begin{definition}\textbf{Bounce overlap force} \label{force:bounceOverlap}\\
 	Let us consider two DF cells $C_i$ and $C_l$, with centres at $\vec{x}_i$ and $\vec{x}_l$, respectively. 
 	We assume that each cell has a fixed radius $r > 0$.
 	We define the vector $\dequ \bar{o}_{i,l} \in \mathbb{R}^2$, which is applied equally to all vertices of cell $C_i$, representing the repulsive overlap force caused by cell $C_l$. 
