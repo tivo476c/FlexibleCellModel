@@ -39,7 +39,7 @@ p = [timeStepSize, D]
 
 
 #######  OPTION 3: PLAYGROUND 
-# createCrossSectionAllPlots("AAAsoftSim-bachelorOverlap")
+createCrossSectionAllPlots(["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"])
 # createCrossSectionAllPlots("AAAmidSim3-bachelorOverlap")
 # createCrossSectionAllPlots("AAAtest3-hard-DF-FIRSTWORKING")
 # doAsphericityCheck(simList=["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"])
@@ -51,4 +51,4 @@ p = [timeStepSize, D]
 # saveAsphericityData( simList=["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"], Nsims=100)
 
 # doAsphericityCheck(simList=["AAAsoftSim-bachelorOverlap", "AAAmidSim3-bachelorOverlap", "AAAtest3-hard-DF-FIRSTWORKING"])
-createAsphericityPlot()
+# createAsphericityPlot()

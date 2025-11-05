@@ -206,7 +206,7 @@ function createCrossSectionAllPlots(simNames)
             xCut = zeros(NumberOfHeatGridPoints)
             yCut = zeros(NumberOfHeatGridPoints)
             # extract middle lines from matrix
-            for i = 1:30
+            for i = 1:NumberOfHeatGridPoints
                 xCut[i] = sum(matrix[:, i])                     
                 yCut[i] = sum(matrix[i, :])                     
             end
