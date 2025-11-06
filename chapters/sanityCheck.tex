@@ -1,21 +1,24 @@
 \section{DF model validation and simulation analysis} \label{sanitycheck}
 %%% TODO: Build bridge from previous chapter 
-- we continue by making cell simulations with the DF model. \\
-- All of our simulations run in the Julia programming language. 
-There, we used the package `DifferentialEquations.jl' with its structure `SDEProblem()' and then solved it with the package inbuilt Euler Maruyama scheme that uses a constant time step size. \\
-- in order to place our simulations to existing papers, we aim to compare our simulation results to outcomes from an established cell model from~\cite{Bruna2012}. \\
+
+In this chapter, we continue by performing and analysing cell simulations based on the DF model. 
+The chapter is structured into four subsections: we first introduce the reference model from~\cite{Bruna2012}, followed by a reproduction of their published results to validate our implementation. 
+We then extend the analysis to simulations involving deformable cells and finally conclude with a quantitative assessment of cell shape deformation.  \\
+In order to position our simulations within the context of established modelling approaches, we first aim to compare our DF model results with those of the well-studied cell interaction model introduced by Bruna and Chapman (2012)~\cite{Bruna2012}. 
+In the following subsection, we briefly summarise the theoretical formulation of that reference model before presenting our numerical reproduction of their findings. 
+
 
 \subsection{Reference simulations: Bruna and Chapman (2012)}
-% short sub section overview with reference to intro 
-- The point particle and hard sphere models from~\cite{Bruna2012} were already introduced in the Introduction~\ref{intro}. \\
-- We will write down the explicit cell dynamics and first marginals again with all parameters applied.
 
-%%% Bruna setup: domain, particle dynamic, first marginal for pp 
-- The paper~\cite{Bruna2012} analyses these dynamics on the domain 
-\[\Omega_{BC} = [-0.5, 0.5]^2,\]
-on which $N_{C} = 400$ particles are located. \\
+The point particle and hard sphere models from~\cite{Bruna2012} were already introduced in Section~\ref{intro}. 
+In the following, we restate the explicit cell dynamics and corresponding first marginals, using specified parameters from the reference paper~\cite{Bruna2012}, to set the stage for our subsequent numerical reproduction. \\
+The paper~\cite{Bruna2012} investigates its problem on the square domain
+\[
+    \Omega_{BC} = [-0.5, 0.5]^2,
+\]
+in which $N_{C} = 400$ particles are located.  
 
-- The point particle dynamic is given by
+The point particle dynamics are defined by
 \begin{equation*}
     \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{BC}^{\circ},
 \end{equation*}
@@ -24,38 +27,36 @@ for $1 \leq i \leq N_C$, where
     \Omega_{BC}^{\circ} = (-0.5, 0.5)^2
 \]
 denotes the interior of the domain $\Omega_{BC}$. 
-We impose the reflective boundary condition on the boundary $\partial \Omega$. \\ 
-Equation~\eqref{equ:pointparticle} shows the general first marginal of the point particle model.
-In our case, we choose the diffusion coefficient to be $D = 1$ and we do not use an external force field, i.e. $f(\vec{x}) = 0$.
-Thus, the first marginal simplifies to
+Reflective boundary conditions are imposed on the boundary $\partial \Omega_{BC}$ to prevent particles from leaving the domain.  \\
+Equation~\eqref{equ:pointparticle} provides the general form of the first marginal of the point particle model. 
+In this case, we set the diffusion coefficient to $D = 1$ and omit any external force field, i.e. $f(\vec{x}) = 0$. Consequently, the first marginal simplifies to
 \begin{align}
-	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \nabla_{\vec{x}} \cdot  \nabla_{\vec{x}} \rho(t; \vec{x}) , \quad \vec{x} \in \Omega, \; t>0,
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \nabla_{\vec{x}} \cdot  \nabla_{\vec{x}} \rho(t; \vec{x}), \quad \vec{x} \in \Omega_{BC}, \; t>0,
     \label{equ:marginalPP}
 \end{align}
-which is expressed in divergence form.
+which is expressed in divergence form and represents the diffusion of independent Brownian particles within the confined domain. \\
 
-% Transistion to hard sphere model
-- In order to transition to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. \\
-- We recall from the Introduction~\ref{intro} that the hard sphere dynamic is given by
+In order to transition from the point particle system to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. 
+As recalled from the introduction, Section~\ref{intro}, the hard sphere dynamics are defined by
 \begin{equation*}
-    \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{BC, \epsilon}^{\circ}, 
+    \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{BC, \epsilon}^{\circ},
 \end{equation*}
-where we again choose $D = 1$ and $f(\vec{x}) = 0$.  \\
-- Note, that we are now working on the excluded volume domain $\Omega_{BC, \epsilon}$, defined in Equation~\eqref{equ:excludedVolumeDomain} that excludes areas where two cells would overlap. \\ 
-- This domain has a more complex boundary $\partial \Omega_{BC, \epsilon}$ that includes both the outer boundary of the domain $\Omega_{BC}$ and inner boundaries where two cells touch each other. \\  
-- Thus, we have much more reflections than in the point particle model, caused by the reflective boundary condition. \\
-- When computing the first marginal of the hard sphere model, we get Equation~\eqref{equ:hardsphere}.
-In our case, this simplifies to
+where we again choose $D = 1$ and $f(\vec{x}) = 0$.  
+
+Here, $\Omega_{BC, \epsilon}$ denotes the excluded volume domain, as defined in Equation~\eqref{equ:excludedVolumeDomain}, which excludes regions where two cells would overlap. 
+This domain possesses a more complex boundary $\partial \Omega_{BC, \epsilon}$, comprising both the external boundary of $\Omega_{BC}$ and additional excluded areas arising from the finite size of the cells.
+Consequently, the reflective boundary condition leads to a significantly higher number of reflections compared to the point particle model.  \\
+When computing the first marginal of the hard sphere model, we obtain Equation~\eqref{equ:hardsphere}. 
+In our specific setting, this expression simplifies to
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2], \quad \vec{x} \in \Omega, \: t>0 . 
+	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}} \left[\rho + \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2\right], \quad \vec{x} \in \Omega_{BC}, \; t>0,
     \label{equ:marginalHSCM}
 \end{align}
-
-% initial condition 
-The initial condition of both models follows a two dimensional normal distribution with the addition that the distance of each cell centre to all others is at least $\epsilon$.  
-The used distribution $\mathcal{N}_2(0, \: 0.09^2 \cdot I_2)$ has an integral of one over $\Omega_{BC}$. \\
-We can compute this initial condition with Algorithm~\ref{alge:HSCMinitial}. 
-The avoidance of cell overlaps by the following algorithm is also illustrated in Figure~\ref{fig:hardsphere}. \\
+which accounts for the additional diffusive correction caused by volume exclusion between cells. \\
+The initial condition for both the point particle and hard sphere models follows a two-dimensional normal distribution, subject to the constraint that the distance between any two cell centres is at least $\epsilon$. 
+The employed distribution $\mathcal{N}_2(0, \, 0.09^2 \cdot I_2)$ is normalised to have an integral of one over $\Omega_{BC}$. 
+This initial condition is computed using Algorithm~\ref{alge:HSCMinitial}, which iteratively samples non-overlapping cell positions. 
+The resulting spatial configuration, illustrating how cell overlaps are avoided, is shown in Figure~\ref{fig:hardsphere}.
 
 \begin{algorithm} \textbf{Computation of the initial cell system} \label{alge:HSCMinitial}
 	\begin{enumerate} 
@@ -65,8 +66,8 @@ The avoidance of cell overlaps by the following algorithm is also illustrated in
 \end{algorithm}
 
 % comparison of first marginals 
-The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive nonlinear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator. 
-This term represents excluded-volume interactions between finite-sized particles, which especially bias motion at regions of high density and thereby accelerate the overall spread. 
+The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive non linear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator. 
+This term represents excluded-volume interactions between finite-sized particles, which especially bias motion at regions of high density and thereby accelerate the overall spread. \\
 As a result, the effective collective diffusion increases with particle number \(N_C\), particle size \(\epsilon\), and local density \(\rho\). 
 We can rewrite Equation~\eqref{equ:marginalHSCM} to explicitly show this enhanced diffusion effect as follows:
 \begin{align*}
@@ -82,8 +83,7 @@ Here,
 \[ D(\epsilon, N_C, \rho) = 1 + \pi (N_C - 1)\epsilon^2 \rho \] 
 acts as an effective diffusion coefficient that depends on the particle size, total particle number, and local concentration. 
 For $\epsilon = 0$, we recover Equation~\eqref{equ:marginalPP}, corresponding to point particles with $D=1$ and for $\epsilon > 0$, we obtain Equation~\eqref{equ:marginalHSCM} as shown in the computation. 
-This reformulation clearly demonstrates how excluded-volume interactions in the hard-sphere cell model lead to an enhanced diffusion rate compared to the point-particle case.
-
+This reformulation clearly demonstrates how excluded-volume interactions in the hard-sphere cell model lead to an enhanced diffusion rate compared to the point-particle case. \\
 
 \begin{figure}[h!]
 	\centering
@@ -101,42 +101,45 @@ This reformulation clearly demonstrates how excluded-volume interactions in the 
     \label{fig:fig2BC12}
 \end{figure}
 
-Another evidence of this behaviour is shown in Figure~\ref{fig:fig2BC12} which is originally from the considered paper~\cite{Bruna2012}. \\
-
+Another evidence of this behaviour is shown in Figure~\ref{fig:fig2BC12} which is originally from the considered paper~\cite{Bruna2012}.
+Here, we can see the result of the application of the first marginal dynamics from Equation~\eqref{equ:marginalPP} and Equation~\eqref{equ:marginalHSCM} alongside heatmaps generated from two Monte Carlo simulations. \\
 % Explanation of monte carlo method
-Here, we can see two Monte Carlo simulations. 
 A Monte Carlo simulation, as for example described in~\cite{Metropolis1949} is a computational technique that uses random sampling to model and analyse complex systems or processes that are difficult to solve analytically. 
 It repeatedly generates random inputs according to specified probability distributions and computes the resulting outcomes to estimate quantities like averages, variances, or distributions. \\
 In our case, the Monte Carlo simulations are used to track the positions of cell centres over time. 
 Each simulation begins from an initial configuration of cells, which is consistently generated using Algorithm~\ref{alge:HSCMinitial}. 
-After initialization, the prescribed dynamics - either the point particle model or the hard sphere model - are applied, and the positions of the cell centres are recorded at a fixed time point, $t=0.05$. \\
+After initialisation, the prescribed dynamics - either the point particle model or the hard sphere model - are applied, and the positions of the cell centres are recorded at a fixed time point, $t=0.05$. \\
 To visualise the results, we construct heatmaps representing the spatial distribution of cells at the final time. 
 This is done by discretizing the domain into a uniform grid of sub squares. 
 For each sub square, we count how many cells fall within it across all simulations. 
-The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a sub square. This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: \[\sum\limits_{i \: \in \text{ sub squares}} \text{value}_i \cdot \text{area}_i = 1. \]
+The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a sub square. This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: 
+\[
+    \sum\limits_{i \: \in \text{ sub squares}} \text{value}_i \cdot \text{area}_i = 1. 
+\]
 This approach provides a smooth estimate of the empirical cell density, allowing direct comparison with the corresponding solutions of the diffusion equations.
 
 
 \subsection{Reproduction of reference results}
+We now proceed to apply our own implementation of the DF model to reproduce the reference results, thereby validating the correctness and reliability of our simulation code.
+All simulations were conducted in the Julia programming language~\cite{Julia2017}, using the package `DifferentialEquations.jl'~\cite{DifferentialEquations2017}. 
+The stochastic differential equation system was defined through the `SDEProblem()' structure and solved via the built-in Euler–Maruyama integration scheme with a constant time-step size. 
+This approach provides both flexibility and numerical reliability for large-scale stochastic simulations. 
+Julia offers significant advantages for our purpose due to its high computational performance, native support for parallelisation, and clear syntax that allows for a concise yet expressive implementation of mathematical models. 
+Moreover, the `DifferentialEquations.jl' ecosystem is highly optimised for stochastic and deterministic solvers alike, ensuring efficient and reproducible numerical experiments. 
+Many of the visualisations throughout this thesis, for instance Figure~\ref{fig:exclusion1d}, were created using the Julia package `Plots.jl'~\cite{Plots2023}. \\
 
-% my code in julia 
-- we will now switch from the theory from~\cite{Bruna2012} to our own simulations. \\ 
-- we used the Julia programming language~\cite{Julia2017} to implement all of our code 
-- Explanation why Julia was used 
-
-- Many plots throughout this thesis, e.g. Figure~\ref{fig:exclusion1d}, were created with the Julia package Plots.jl~\cite{Plots2023}. % just put this in small side sentence somewhere 
-
-- we started with the implementation of the simplest model: point particles. 
-- we choose all simulation parameters, like domain or Number of particles, as described in the previous subsection to gain comparability. 
-- the $N_C = 400$ particles where initialised in $\Omega = [-0.5, 0.5]^2$ with Algorithm~\ref{alge:HSCMinitial}, using the function `MvNormal()' from the package `Distributions.jl'~\cite{Distributions2021} to generate the normal distributed points 
-- each particle moved according to the point particle dynamic with $D = 1$ and reflective boundary conditions on $\partial \Omega$.  
-- For solving the SDEs, we used the Julia package `DifferentialEquations.jl'~\cite{DifferentialEquations2017} with its inbuilt Euler Maruyama scheme that uses a constant time step size. \\
-- we then used Monte Carlo simulations with our self made code to generate heatmaps that can be compared to Figure~\ref{fig:fig2BC12} (b). \\
-- to gain statistical significance, we ran $10^4$ independent Monte Carlo simulations for each model type (point particles and hard spheres).
-- parallelisation for the monte carlo simulations was done with Julia built in `Distributed' package~\cite{Distributed2023}. \\
-
-- As shown in Figure~\ref{fig:comparePP}, our simulation results for the point particle model closely match those presented in~\cite{Bruna2012}, confirming the accuracy of our implementation. 
-- We always fixed the color scale to be the same as in~\cite{Bruna2012} in order to gain comparability. 
+We began with the implementation of the simplest case: the point particle model. 
+All simulation parameters, such as the domain, number of particles, and diffusion coefficients, were chosen as described in the previous subsection to ensure full comparability with the reference setup from~\cite{Bruna2012}. 
+Specifically, we simulated $N_C = 400$ particles within the domain $\Omega = [-0.5, 0.5]^2$, initialised according to Algorithm~\ref{alge:HSCMinitial}. 
+The initial positions were drawn from a two-dimensional normal distribution $\mathcal{N}_2(0, \, 0.09^2 \cdot I_2)$ using the function `MvNormal()' provided by the `Distributions.jl' package~\cite{Distributions2021}. 
+Each particle then evolved according to the point particle dynamics with diffusion coefficient $D = 1$ and reflective boundary conditions on $\partial \Omega$. 
+The stochastic differential equations were solved with `DifferentialEquations.jl'~\cite{DifferentialEquations2017} using its inbuilt Euler-Maruyama scheme with a constant time step. \\
+We performed $10^4$ independent Monte Carlo simulations to obtain statistically significant results. 
+Parallelisation of the Monte Carlo runs was achieved through Julia's built-in `Distributed' package~\cite{Distributed2023}, ensuring efficient use of computational resources. \\
+Using our self-developed simulation framework, we generated two-dimensional heatmaps representing the cell density distributions over time. 
+These results are directly comparable to Figure~\ref{fig:fig2BC12}(b) from~\cite{Bruna2012}. 
+As shown in Figure~\ref{fig:comparePP}, the outcomes of our point particle simulations closely replicate the reference results, confirming the correctness and reliability of our numerical implementation. 
+To ensure direct comparability, we fixed the colour scale in our visualisations to match that used in~\cite{Bruna2012}. \\
 
 \begin{figure}[h!]
     \centering
@@ -148,46 +151,59 @@ This approach provides a smooth estimate of the empirical cell density, allowing
     \label{fig:comparePP}
 \end{figure}
 
-% Now transition to df model  
-- Having successfully validated our implementation with the point particle model, we proceeded to mimic the hard sphere cell model (HSCM) as described in~\cite{Bruna2012}. 
-- Therefore, we use our DF model. 
-- In this thesis, cells are modelled as regular hexagons with $N_V = 6$ vertices. 
-- we choose this number of vertices to enable shape deformation on these six vertices per cell while still being computationally efficient, as we ran ten thousands of cell simulations for the Monte Carlo simulations this research. 
-- Like in the considered hard sphere model from bruna and chapman, our hexagonal cells have a diameter of $\epsilon = 0.01$, in the sense of the distance between two opposite vertices.
-- For now, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dynamics}), as we want to mirror the dynamic of the hard spheres.  
-- Since no shape deformation is allowed, we can neglect all shape preserving forces from the DF model and only use the bounce overlap force. 
 
-\begin{simulation} \textbf{Hard DF model - Monte Carlo simulation setup}
-    This DF model simulation with hardness $h=1$ uses the following setup:
+Having successfully validated our implementation with the point particle model, we proceeded to mimic the hard sphere cell model (HSCM) as described in~\cite{Bruna2012}. 
+To this end, we employed our DF model framework. 
+In this thesis, cells are represented as regular hexagons with $N_V = 6$ vertices. 
+This choice allows for potential shape deformation at each vertex while maintaining computational efficiency, which is essential given the tens of thousands of Monte Carlo simulations performed. \\
+Consistent with the hard sphere model, the hexagonal cells have a diameter of $\epsilon = 0.01$, defined as the distance between two opposite vertices. 
+To replicate the dynamics of hard spheres, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dynamics}). 
+Consequently, all shape-preserving forces from the DF model can be neglected, and only the bounce overlap force is applied. \\
+
+\begin{simulation} \textbf{Hard DF Model – Monte Carlo Simulation Setup} \\
+    In this simulation, each cell \(C_i = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_6)\) represents a list of vertices.
+    The desired cell shape is given as a regular hexagon with a diameter of \(\epsilon = 0.01\), defined as the distance between two opposite vertices.
+    The dynamic of the cells, significant for hardness $h=1$, is governed by the SDE
     \begin{center}
-		$\dequ C_i(t) = 10^5 F_i^{(\bar{O})}(\vec{C}) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},$
-	\end{center} 
-    where 
+        $\dequ C_i(t) = 10^5 \cdot F_i^{(\bar{O})}(\vec{C}) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} + \dequ B_i^{y}(t) \: e_{N_V}^{y}, \quad 1 \leq i \leq 400$,
+    \end{center}
+    where the vectors
     \[
-	e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
-	\]
-	which allow us to distribute a two dimensional Brownian motion \[\dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T\] to the $x$ and $y$ coordinates of a cell's vertices, respectively.
-    - We apply the reflective boundary condition on $\partial \Omega$.
-    - We use the Euler Maruyama scheme to solve the SDEs with a constant time step size of $\Delta t = 10^{-5}$
-    - We ran $10^4$ simulations for statistical significance.
-    - We solved the SDE on the time interval $[0, 0.05]$.
+        e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad 
+        e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
+    \]
+    distribute a two-dimensional Brownian motion 
+    \[
+        \dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T
+    \] 
+    to the \(x\) and \(y\) coordinates of the cell vertices.  \\
+    Reflective boundary conditions are applied collectively to each cell: if the centre
+    \[
+        \vec{c}_i = \frac{1}{6} \sum_{k=1}^{6} \vec{v}^{\:i}_k,
+    \]
+    of a cell crosses the domain boundary \(\partial \Omega\), the entire cell is pushed back into the interior \(\Omega^{\circ}\).  \\
+    The SDEs are solved using the Euler–Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
+    A total of $10^4$ independent Monte Carlo simulations were performed to ensure statistical significance. 
+    The simulations were carried out on the time interval \([0, 0.05]\).
 \end{simulation}
 
-For this model, we again used the monte carlo simulation approach to generate heatmaps of the cell density evolution over time. 
+
+Using this setup, we generated heatmaps representing the evolution of cell density over time. 
+Figure~\ref{fig:compareHSCM} compares our simulation results with the corresponding results from~\cite{Bruna2012}.  
+
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
         \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-self.png} &     
         \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-bruna.png} \\   
     \end{tabular}
-    \caption{The left panel displays the heatmap obtained from our hard-cell simulations, and the right panel shows the corresponding result from~\cite{Bruna2012}. The color scale was matched to that used by Bruna to enable a meaningful visual comparison. Overall, the two heatmaps display closely matching spatial patterns and intensity distributions, with only subtle variations between them.}
+    \caption{Comparison of hard-cell simulations: the left panel shows the heatmap obtained from our DF model implementation, and the right panel shows the corresponding result from~\cite{Bruna2012}. The colour scale was matched to that used in the reference for a meaningful visual comparison. Overall, the two heatmaps display closely matching spatial patterns, with only minor variations.}
     \label{fig:compareHSCM}
 \end{figure}
 
-Figure~\ref{fig:compareHSCM} shows the results of our Monte Carlo simulation for the hard DF model at different time steps.
-- We can see some differences between the two heatmaps, e.g. the slightly higher density in the middle of our simulation. 
-- it is not possible to recreate the exact same picture using different code, implementations, slightly different color schemes, Color map scaling, Interpolation method 
-- Overall, the result looks similar to those from ~\cite{Bruna2012}, confirming that our DF model can accurately replicate the behaviour of hard sphere cells when shape deformation is disabled. 
+As evident from Figure~\ref{fig:compareHSCM}, our simulation reproduces the general spatial patterns and density evolution of the hard sphere model. 
+Minor differences, such as a slightly higher density in the domain centre, are expected due to variations in implementation, interpolation methods, and colour map scaling. 
+Overall, the results confirm that our DF model accurately captures the behaviour of hard sphere cells when shape deformation is disabled, providing a solid foundation for subsequent simulations with deformable cells.
 
 
 
@@ -200,23 +216,30 @@ This modification leads to an extended stochastic description in which the overl
 The resulting system of SDEs describes the coupled motion of deformable cells under diffusion and interaction forces, thereby forming the soft DF model. 
 In the following, we derive two SDE formulation, called soft and mid DF model, and discuss their relation to the non-deformable case, the hard DF model. \\ 
 The soft DF model corresponds to the extreme case of fully deformable cells without any hard-core repulsion, i.e. with hardness $h = 0$. 
-It is governed by the consecutive SDE.  
-\begin{simulation} \textbf{Soft DF model - Monte Carlo simulation setup}
-    This DF model simulation with hardness $h=0$ uses the following setup:
+It is governed by the consecutive SDE.  \\
+
+\begin{simulation} \textbf{Soft DF model - Monte Carlo simulation setup} \\
+    In this simulation, each cell \(C_i = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_6)\) represents a list of vertices.
+    The desired cell shape is given as a regular hexagon with a diameter of \(\epsilon = 0.01\), defined as the distance between two opposite vertices.
+    The dynamic of the cells, significant for hardness $h=0$, is governed by the SDE
     \begin{center}
-		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},$
-	\end{center} 
-    where the deterministic force $\F^{i}(\vec{C}(t))$ is defined As
+        $\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}, \quad 1 \leq i \leq 400$,
+    \end{center}
+    where the deterministic force $\F^{i}(\vec{C}(t))$ is defined as
     \begin{align*}
 		\begin{split}
-			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C})
+			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}).
 		\end{split}
-	\end{align*}
-    The force scalings are chosen as in Table~\ref{table:forcescalings}. 
-    - We apply the reflective boundary condition on $\partial \Omega$.
-    - We use the Euler Maruyama scheme to solve the SDEs with a constant time step size of $\Delta t = 10^{-5}$
-    - We ran $10^4$ simulations for statistical significance.
-    - We solved the SDE on the time interval $[0, 0.05]$.
+	\end{align*}  
+    The force scalings are chosen as in Table~\ref{table:forcescalings}. \\
+    Reflective boundary conditions are applied collectively to each cell: if the centre
+    \[
+        \vec{c}_i = \frac{1}{6} \sum_{k=1}^{6} \vec{v}^{\:i}_k,
+    \]
+    of a cell crosses the domain boundary \(\partial \Omega\), the entire cell is pushed back into the interior \(\Omega^{\circ}\).  \\
+    The SDEs are solved using the Euler–Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
+    A total of $10^4$ independent Monte Carlo simulations were performed to ensure statistical significance. 
+    The simulations were carried out on the time interval \([0, 0.05]\). \\
 \end{simulation}
 
 While the soft DF model introduces deformability by allowing overlapping interactions, it is instructive to consider an intermediate configuration that gradually transitions between the purely hard and fully deformable regimes. 
@@ -225,26 +248,34 @@ In this setup, the deforming overlap force is partially active, providing a tuna
 This intermediate formulation allows us to quantify the influence of deformability in a controlled manner by smoothly varying the stiffness parameter. \\
 This not only aids in verifying the robustness of our implementation but also clarifies how emergent macroscopic properties evolve with cell stiffness.
 The corresponding stochastic representation, referred to as the mid DF model SDE, incorporates both the bounce and deforming overlap forces with an intermediate weighting. 
-The formulation reads as follows:
+The formulation reads as follows: \\
 
-\begin{simulation} \textbf{Mid DF model - Monte Carlo simulation setup}
-    This DF model simulation with hardness $h=0.5$ uses the following setup:
+\begin{simulation} \textbf{Mid DF model - Monte Carlo simulation setup} \\
+    In this simulation, each cell \(C_i = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_6)\) represents a list of vertices.
+    The desired cell shape is given as a regular hexagon with a diameter of \(\epsilon = 0.01\), defined as the distance between two opposite vertices.
+    The dynamic of the cells, significant for hardness $h=0.5$, is governed by the SDE
     \begin{center}
-		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},$
-	\end{center} 
-    where the deterministic force $\F^{i}(\vec{C}(t))$ is defined As
-    \begin{align}
+        $\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}, \quad 1 \leq i \leq 400$,
+    \end{center}
+    where the deterministic force $\F^{i}(\vec{C}(t))$ is defined as
+    \begin{align*}
 		\begin{split}
 			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \\
 			& 0.5 \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + 0.5 \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C})
 		\end{split}
-	\end{align}
-    The force scalings are chosen as in Table~\ref{table:forcescalings}. 
-    - We apply the reflective boundary condition on $\partial \Omega$.
-    - We use the Euler Maruyama scheme to solve the SDEs with a constant time step size of $\Delta t = 10^{-5}$
-    - We ran $10^4$ simulations for statistical significance.
-    - We solved the SDE on the time interval $[0, 0.05]$.
+	\end{align*}  
+    The force scalings are chosen as in Table~\ref{table:forcescalings}. \\
+    Reflective boundary conditions are applied collectively to each cell: if the centre
+    \[
+        \vec{c}_i = \frac{1}{6} \sum_{k=1}^{6} \vec{v}^{\:i}_k,
+    \]
+    of a cell crosses the domain boundary \(\partial \Omega\), the entire cell is pushed back into the interior \(\Omega^{\circ}\).  \\
+    The SDEs are solved using the Euler–Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
+    A total of $10^4$ independent Monte Carlo simulations were performed to ensure statistical significance. 
+    The simulations were carried out on the time interval \([0, 0.05]\). \\
 \end{simulation}
+
+
 
 Having established the three DF model formulations — the hard, mid, and soft variants — we now turn to a direct visual comparison of their collective dynamics. \\
 Figure~\ref{fig:dfHeatmaps} presents one of the central results of this work, illustrating the temporal evolution of the cell density for each model side by side. 
@@ -362,17 +393,18 @@ Several approaches have been proposed in the literature for characterising the s
 A simple yet effective measure is based on the ratio between a cell's area and its perimeter, which reflects how close its shape is to an ideal circle. 
 We denote this quantity as the asphericity~$\alpha$ of a geometric figure~$F$, defined as
 \[
-    \alpha_{F} = \nu \frac{\mathrm{area}_{F}}{\mathrm{perimeter}_{F}^{2}},
+    \alpha_{F} = 4 \pi \frac{\mathrm{area}_{F}}{\mathrm{perimeter}_{F}^{2}},
 \]
-where the normalisation constant~$\nu$ ensures that a perfect circle yields $\alpha_{F} = 1$. 
+where the scaling factor $4 \pi$ ensures that a perfect circle yields $\alpha_{\text{c}} = 1$. 
 Lower values of~$\alpha_{F}$ therefore indicate stronger deviations from circularity, corresponding to more pronounced cell deformation. \\ 
 
-The circle is the only two-dimensional geometric figure that attains the maximal asphericity value of $1$.  
-For a circle of radius $r>0$ we have $\mathrm{area}_c = \pi r^2$ and $\mathrm{perimeter}_c = 2\pi r$. Hence
+The circle is the only two dimensional geometric figure that attains the maximal asphericity value of $1$.  
+For a circle of radius $r>0$ we have $\text{area}_{\text{c}} = \pi r^2$ and $\text{perimeter}_\text{c} = 2\pi r$. 
+Hence
 \[
-    \alpha_{\mathrm{circle}} \;=\; \nu \frac{\pi r^2}{(2\pi r)^2} \;=\; \nu \frac{1}{4\pi}.
+    \alpha_{\text{c}} \;=\; 4 \pi \frac{\pi r^2}{(2\pi r)^2} \;=\; 1.
 \]
-We choose the normalisation constant $\nu=4\pi$ so that the quotient is confined to the interval $[0,1]$ and a perfect circle satisfies $\alpha_{\mathrm{circle}}=1$. \\
+
 The classical isoperimetric inequality states that for any (sufficiently regular) planar region $F$ with area $A$ and perimeter $P$ one has
 \[
     P^2 \;\geq\; 4\pi A,
@@ -382,26 +414,39 @@ Dividing by $P^2$ and multiplying by the factor $4\pi$ gives
 \[
     4\pi\,\frac{A}{P^2} \;\leq\; 1,
 \]
-and therefore $\alpha_F \leq 1$ for every region $F$, with $\alpha_F=1$ only for the circle. 
-The lower bound $0$ is trivial since both area and perimeter are positive for any non-degenerate region, and hence $\alpha_F\in[0,1]$. \\
-
-The fact that a circle has the largest possible ratio between area and perimeter is a classical result known as the isoperimetric inequality. 
-It states that for any closed two-dimensional shape with area $A$ and perimeter $P$, the inequality
-\[
-    P^2 \geq 4\pi A
-\]
-holds, with equality only for the circle~\cite{???}. 
-In other words, among all shapes with the same perimeter, the circle encloses the largest area. 
-Using this relation, we find that the asphericity
-\[
-    \alpha = 4\pi \frac{A}{P^2}
-\]
-is always bounded between $0$ and $1$, where $\alpha = 1$ corresponds to a perfect circle and smaller values indicate increasing deformation. \\
-In our simulations, the asphericity is straightforward to compute from the discrete cell geometry. 
+and therefore $\alpha_F \leq 1$ for every region $F$, with $\alpha_F=1$ only for the circle. \\
+We can conclude that the asphericity of a two dimensional figure is always bounded between $0$ and $1$.
+The lower bound $0$ is trivial since both area and perimeter are positive for any non degenerate region, and hence $\alpha_F\in[0,1]$. \\
+In our simulations, the asphericity is straightforward to compute from the DF cell geometry. 
 The cell area is obtained using the Shoelace formula (Proposition~\ref{prop:Shoelace}), while the perimeter is calculated by summing the Euclidean lengths of the successive edges of the polygonal cell boundary. 
-The resulting value is normalised by the constant factor $4\pi$, ensuring that perfectly circular cells have $\alpha = 1$, and deviations below this value quantify the degree of deformation. 
+The resulting value is normalised by the constant factor $4\pi$, ensuring that perfectly circular cells have $\alpha = 1$, and deviations below this value quantify the degree of deformation. \\ 
+In our simulations, the desired cell shape is a regular hexagon with a diameter of $\epsilon = 0.01$. 
+Since a perfectly circular cell cannot be represented with a finite number of vertices $N_V < \infty$, the theoretical maximum asphericity of $\alpha = 1$ cannot be attained numerically. \\
+For any DF cell configuration with $N_V = 6$ vertices, the highest possible asphericity is achieved by this regular hexagonal shape. 
+This is a classical geometric result, analogous to the proof of the isoperimetric inequality, and it can be generalised to polygons with any number of vertices $N_V \geq 3$. 
+Geometrically, this means that, for a fixed number of vertices, the regular polygon is the shape that most closely approximates a circle.  \\
 
-We can use this approach to analyse how much our cell shapes changed in our big 
+For any regular polygon $P_{N_V}$ with $N_V$ vertices, we have a cell perimeter of  
+\[
+    P_{P_{N_V}} = N_V * l,
+\]
+where $l>0$ denotes its edge length and an area of 
+\[
+    A_{P_{N_V}} = \frac{P_{P_{N_V}}^2}{4 N_v} \frac{\pi}{N_V}.
+\] 
+This yields an asphericity of 
+\begin{align*}    
+    \alpha_{P_{N_V}} 
+    &= 4 \pi \frac{\frac{P_{P_{N_V}}^2}{4 N_v} \cot\left(\frac{\pi}{N_V}\right)}{(N_V * l)^2} \\
+    &= \frac{\pi}{N_V} \cot\left(\frac{\pi}{ N_V}\right).
+\end{align*}
+Thus, for our desired regular hexagon with $N_V = 6$ vertices, we have an asphericity of 
+\[
+    \alpha_{P_{6}} = \frac{\pi}{6} \cot\left(\frac{\pi}{ 6}\right) = \frac{\pi}{6} \sqrt{3} \approx 0.907.
+\]
+Figure~\ref{fig:asp_overview} and Table~\ref{table:asp_overview} illustrate the asphericity values for different DF cell shapes, including our target regular hexagon configuration, alongside a perfect circle for reference. 
+There, we can also see an indictation that as the number of vertices increases, the asphericity approaches $1$, consistent with the geometric interpretation that polygons with more vertices better approximate a circular shape.
+
 
 \begin{figure}[h!]
     \centering
@@ -440,7 +485,11 @@ We can use this approach to analyse how much our cell shapes changed in our big
 	\label{table:asp_overview}
 \end{table}
 
+We apply the asphericity measure to monitor cell shape changes during our Monte Carlo simulations of the DF model with varying hardness values. For each of the soft, mid, and hard configurations, we tracked the asphericity of all $400$ cells throughout the simulation, recording their values at the sample times $t \in \{0, 0.01, \ldots, 0.05\}$. 
+Each simulation setup was repeated for $50$ independent runs to obtain statistically robust averages of the asphericity evolution.  
 
+Figure~\ref{fig:asp_charts} presents a multi-bar plot showing the distributions of cell asphericity at these time points for the three different hardness settings. 
+This visualisation allows for a direct comparison of how cell deformability evolves under varying interaction stiffness, highlighting the dynamic effects of increasing hardness on the preservation or loss of cell circularity over time.
 
 \begin{figure}[h!]
     \centering
@@ -454,15 +503,24 @@ We can use this approach to analyse how much our cell shapes changed in our big
         \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time5.png} &     
         \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time6.png} \\   
     \end{tabular}
-    \caption{ 
-        This figure illustrates how the cell asphericities change in the Monte Carlo simulations for hardnesses $h \in \{0, 0.5, 1\}$. 
-        Each simulation was performed with $400$ cells, and $50$ independent runs were conducted for each of the hard, mid, and soft simulation types.
-        Initially, all cells are in their desired states, as shown in the third picture of Figure~\ref{fig:asp_overview}, having an asphericity of $\alpha \approx 0.907$. 
-        For $h = 1$, we can see that all $400$ cells keep their standard asphericity of $\alpha \approx 0.907$, as no cell shape deformation is done in this setting. 
-        For the other two simulations, the asphericity values were $\alpha \in [0.3, 0.92]$ for the soft model ($h = 0$) and $\alpha \in [0.84, 0.92]$ for the mid-hardness model ($h = 0.5$).
-        The full asphericity interval for the soft model is not shown for improved visualization.
-        We observe that the largest shape deformations occur at the beginning of the simulation ($t>0$), when the most cell collisions happen in the crowded center.
-        This is reflected by the increasing number of cell asphericities in the last interval $[0.9, 0.92]$ over time for both the soft and mid-hardness simulations, if we exclude the initial state at $t=0$ where overlaps were prevented algorithmically.
-        } 
+    \caption{Distributions of cell asphericity over time for the DF simulations with hardness values $h \in \{0, 0.5, 1\}$.
+        Each setup consists of $400$ cells averaged over $50$ independent runs. 
+        Initially, all cells have $\alpha \approx 0.907$, corresponding to the regular hexagonal shape. 
+        While the hard model maintains this value throughout, the soft and mid-hardness simulations exhibit a broader range of asphericities, reflecting increasing shape deformation at lower hardness.}
 	\label{fig:asp_charts}    
 \end{figure}
+
+The asphericity analysis clearly demonstrates the influence of the hardness parameter on the degree of cell deformation during the simulations. 
+For the hard configuration ($h = 1$), all cells retain their initial asphericity of $\alpha \approx 0.907$ throughout, confirming that no shape deformation occurs when only the non-deforming bounce overlap force is active. \\
+In contrast, the soft and mid-hardness simulations display a broader distribution of asphericity values, indicating that cells experience measurable deformation during interactions. 
+The soft model ($h = 0$) shows the widest spread of values, reaching down to $\alpha \approx 0.3$. 
+The apshericity values below $0.7$ where reached in the $50$ simulations of the soft DF model, and can not be seen in Figure~\ref{fig:asp_charts}, since it was limited to the range $[0.7, 0.92]$ for better visual clarity.
+However, the mid-hardness model ($h = 0.5$) remains closer to the undeformed state with $\alpha \in [0.84, 0.92]$.  \\
+The most pronounced deformations occur early in the simulation ($t>0$), when the cell density is highest in the central region and collisions are most frequent. 
+Over time, the number of cells returning towards their original asphericity increases, as reflected by the growing proportion of cells in the last interval $[0.9, 0.92]$. 
+This relaxation behaviour suggests that deformation is largely transient and driven by local crowding effects rather than permanent structural changes. \\
+In summary, the observed deformation behaviour aligns well with the theoretical expectations of the DF model. 
+The results confirm that cell deformability decreases with increasing hardness, and that deformation primarily occurs during periods of high local cell density. 
+The consistency between the expected and simulated trends indicates that the implementation of the deformable cell interactions and the corresponding Monte Carlo setup are both correct and robust. Consequently, the DF model faithfully captures the transition from rigid to deformable cell dynamics across the investigated hardness range.
+
+
