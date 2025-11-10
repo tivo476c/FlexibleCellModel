@@ -2,7 +2,7 @@ using Distributions
 using Plots
 
 N = 400         # number of cells 
-ld = 0.2       # desired needle length 
+ld = 0.2        # desired needle length 
 L = 0.5         # half domain length 
 
 
@@ -11,11 +11,11 @@ C = rand(Truncated(Normal(0, 0.09), -L, L), 2 * N)  # full cell vector with [N*x
 
 # now do the dynamic: 
 
-dt = 1e-5
-NumberOfTimeSteps = 1e2
+dt = 1e-2
+NumberOfTimeSteps = 2e2
 T = NumberOfTimeSteps * dt
 # numSteps = Int(T / dt)
-NumberOfSampleTimes = 11
+NumberOfSampleTimes = 6
 sol = [zeros(2 * N) for i in 1:NumberOfSampleTimes]
 
 timestep = 0
@@ -30,8 +30,8 @@ while timestep <= T
         v2 = C[cell+N]
         l = abs(v1 - v2)
 
-        C[cell] += dt * (-sign(v1 - v2) * abs(l - ld))
-        C[cell+N] += dt * (sign(v1 - v2) * abs(l - ld))
+        C[cell] += dt * (-sign(v1 - v2) * (l - ld)^1)
+        C[cell+N] += dt * (sign(v1 - v2) * (l - ld)^1)
 
     end
 
@@ -47,6 +47,11 @@ while timestep <= T
 
 end
 
+
+for i = 1:length(sol)
+    midCellLength = 1.0/N * sum(abs.(sol[i][1:N] - sol[i][N+1:2*N]))
+    println("midCellLength = $midCellLength at t=$i")
+end 
 
 savePath = joinpath(homedir(), "simulations", "density", "needles", "histograms")
 # if !isdir(savePath)
