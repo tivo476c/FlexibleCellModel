@@ -13,34 +13,36 @@ end
 # PDE dynamic of needle density 
 function density_equ(du, u, p, t)
     # du and u must be vectors 
-    uMatrix = reshape(u, Nx, Nx)
     dt, D, ld = p
     dx = 1.0 / Nx
+    uMatrix = reshape(u, Nx, Nx)
+    ghostM = zeros(Nx + 2, Nx + 2)
+    ghostM[2:Nx+1, 2:Nx+1] = uMatrix
+    # copy upper and lower rows and columns
+    # upper row 
+    ghostM[1, 2:Nx+1] = uMatrix[1, :]
+    # left column
+    ghostM[2:Nx+1, 1] = uMatrix[:, 1]
+    # lower row 
+    ghostM[Nx+2, 2:Nx+1] = uMatrix[Nx, :]
+    # right column
+    ghostM[2:Nx+1, Nx+2] = uMatrix[:, Nx]
 
-    res = zeros(Nx,Nx)
-    # outer values where uMatrix[:,Nx+1] is not defined 
-    # we apply reflective BC 
-    for i = 1:Nx-1 
-        alpha = -(abs(dx*i- dx*Nx) - ld) 
-        # first we do the right boundary: 
-        res[i,Nx] = uMatrix[i,Nx] + dt * (2*uMatrix[i,Nx] - alpha / dx * (uMatrix[i,Nx] - uMatrix[i+1,Nx]))
-        # second we do the lower boundary: 
-        res[Nx,i] = uMatrix[Nx,i] + dt * (2*uMatrix[Nx,i] - alpha / dx * (uMatrix[Nx,i+1] - uMatrix[Nx,i]))
-    end 
-    res[Nx,Nx] = uMatrix[Nx,Nx] + dt * (2*uMatrix[Nx,Nx])
-    # inner values with no problems 
-    for i = 1:Nx-1
-        for j = 1:Nx-1  
+    res = zeros(Nx, Nx)
+    for i = 1:Nx
+        for j = 1:Nx
 
-            if i >= j
-                alpha = abs(dx*i- dx*j) - ld 
-            else 
-                alpha = -(abs(dx*i- dx*j) - ld) 
-            end 
-            res[i,j] += uMatrix[i,j] + dt * (2*uMatrix[i,j] - alpha / dx * (uMatrix[i,j+1] - uMatrix[i+1,j]))
+            if j >= i
+                alpha = abs(dx * i - dx * j) - ld
+            else
+                alpha = -(abs(dx * i - dx * j) - ld)
+            end
 
-        end 
-    end 
+            # res[i, j] = uMatrix[i, j] + dt * (2 * uMatrix[i, j] - alpha / (2 * dx) * (-ghostM[i+1, j+2] + ghostM[i+1, j] + ghostM[i+2, j+1] - ghostM[i, j+1]))
+            res[i, j] = uMatrix[i, j] + dt * (-alpha / (2 * dx) * (-ghostM[i+1, j+2] + ghostM[i+1, j] + ghostM[i+2, j+1] - ghostM[i, j+1]))
+
+        end
+    end
 
     res = vec(res)
     for i = 1:length(du)
@@ -82,7 +84,7 @@ println("last mass = $(sum(sol[end])* dx^2)")
 
 tit = string("N_2(0,0.09^2) performing needle density equation \n with no BC \n\n")
 savePath = joinpath(homedir(), "simulations", "density", "needles", "density-evo")
-climits = (0, maximum([maximum(sol.u[t]) for t=1:7]))
+climits = (0, maximum([maximum(sol.u[t]) for t = 1:7]))
 for t = 1:7
     t = round(Int64, t)
     u_T = reshape(sol.u[t], Nx, Nx)
@@ -98,4 +100,4 @@ for t = 1:7
 
     name = "density-t$t.png"
     savefig(joinpath(savePath, name))
-end 
+end

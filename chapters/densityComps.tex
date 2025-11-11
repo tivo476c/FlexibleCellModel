@@ -107,3 +107,66 @@ We compute:
 \[ \Rightarrow  0 = \partial_t \rho - \nabla(\rho_v),\]
 where $\rho$ is the density function of $\mu$ such that \[ \mu(dx) = \rho(x) dx. \]
 question: what is the space we integrate above? (i gues $\R^{2N}$)
+
+\subsection{1d needle cells}
+- cells have two vertices which are in 1d 
+\begin{align*}
+    C = {v_1, v_2}, \quad v_1, v_2 \in \R 
+\end{align*}
+We assume $v_1 \neq v_2$ and that the order of vertices does not change throughout the simulation as we do not want to model cells with negative length. 
+
+we impose the energy per cell
+\begin{align*}
+    E(C) = \tfrac{1}{2}| |v_1 - v_2| - E_d |^2,
+\end{align*}
+where $E_d$ is the desired edge length of each cell. 
+- we apply the dynamics
+
+\begin{align*}
+    \frac{d v_1}{dt} 
+    &= - \nabla_{v_1} E(C) \\
+    &= - \nabla_{v_1} \tfrac{1}{2}| |v_1 - v_2| - E_d |^2 \\
+    &= - (|v_1 - v_2| - E_d) \nabla_{v_1} |v_1 - v_2|  \\
+    &= - sgn(v_1 - v_2) (|v_1 - v_2| - E_d),   \\
+\end{align*}
+
+\begin{align*}
+    \frac{d v_2}{dt} 
+    &=  sgn(v_1 - v_2) (|v_1 - v_2| - E_d),  \\
+\end{align*}
+yielding the overall cell dynamic
+\begin{align*}
+    \frac{d C}{dt} = F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha}(-1, 1)^T.
+\end{align*}
+
+We need for the following statement that 
+\begin{align*}
+    \nabla_{v_1} \cdot \alpha 
+    &= \nabla_{v_1} \cdot (sgn(v_1 - v_2) (|v_1 - v_2| - E_d)) \\
+    &= (\nabla_{v_1} \cdot sgn(v_1 - v_2)) (|v_1 - v_2| - E_d) 
+      +  sgn(v_1 - v_2)(\nabla_{v_1} \cdot (|v_1 - v_2| - E_d) ) \\
+    &= 0 + sgn(v_1 - v_2)(\nabla_{v_1} \cdot (|v_1 - v_2|) ) \\
+    &= sgn(v_1 - v_2) sgn(v_1 - v_2) \\
+    &= 1,
+\end{align*}
+and 
+\begin{align*}
+    \nabla_{v_2} \cdot \alpha 
+    &= \nabla_{v_2} \cdot (sgn(v_1 - v_2) (|v_1 - v_2| - E_d)) \\
+    &= (\nabla_{v_2} \cdot sgn(v_1 - v_2)) (|v_1 - v_2| - E_d) 
+      +  sgn(v_1 - v_2)(\nabla_{v_2} \cdot (|v_1 - v_2| - E_d) ) \\
+    &= 0 + sgn(v_1 - v_2)(\nabla_{v_2} \cdot (|v_1 - v_2|) ) \\
+    &= sgn(v_1 - v_2) (- sgn(v_1 - v_2)) \\
+    &= -1,
+\end{align*}
+We compute the divergence 
+\begin{align*}
+    \nabla_C \cdot (\mu F) 
+    &= \nabla_{v_1} \cdot (\mu F_1)  + \nabla_{v_2} \cdot (\mu F_2) \\
+    &= (\nabla_{v_1} \cdot \mu) F_1 + \mu (\nabla_{v_1} \cdot F_1) + (\nabla_{v_2} \cdot \mu) F_2 + \mu (\nabla_{v_2} \cdot F_2) \\
+    &= - (\nabla_{v_1} \cdot \mu) \alpha - \mu (\nabla_{v_1} \cdot \alpha) + (\nabla_{v_2} \cdot \mu) \alpha + \mu (\nabla_{v_2} \cdot \alpha) \\
+    &= - (\nabla_{v_1} \cdot \mu) \alpha - \mu + (\nabla_{v_2} \cdot \mu) \alpha - \mu \\
+    &= - 2 \mu + \alpha(- \nabla_{v_1} \cdot \mu + \nabla_{v_2} \cdot \mu)   \\
+\end{align*}
+where we have $F = (F_1, F_2)^T$. 
+
