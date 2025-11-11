@@ -72,6 +72,7 @@ for sampleTime = 1:NumberOfSampleTimes
         ylims=(-L, L),
         dpi=500,
     )
+
     name = "histogram_t$(sampleTime).png"
     savefig(joinpath(savePath, name))
 

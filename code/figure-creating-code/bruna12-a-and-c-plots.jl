@@ -76,6 +76,7 @@ for i = 1:Nx
         end
     end
 end
+
 HeatProblem = ODEProblem(heat_equ, vec(u0), tspan, p)
 @time sol = solve(HeatProblem, Tsit5(); saveat=[0, 0.01, 0.02, 0.03, 0.04, T])
 # @time sol = solve(HeatProblem, Tsit5())
