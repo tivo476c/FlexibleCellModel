@@ -3,16 +3,16 @@ using Plots
 
 N = 400         # number of cells 
 ld = 0.2        # desired needle length 
-L = 0.5         # half domain length 
+L = 0.5         # usual initial vertex position 
 
 
 # initialize all vertices 
-C = rand(Truncated(Normal(0, 0.09), -L, L), 2 * N)  # full cell vector with [N*x, N*y] (first all x coords, then all y coords)
+C = rand(Truncated(Normal(L, 0.09), 0, 2*L), 2 * N)  # full cell vector with [N*x, N*y] (first all x coords, then all y coords)
 
 # now do the dynamic: 
 
-dt = 1e-2
-NumberOfTimeSteps = 2e2
+dt = 1e-3
+NumberOfTimeSteps = 1e3
 T = NumberOfTimeSteps * dt
 # numSteps = Int(T / dt)
 NumberOfSampleTimes = 6
@@ -59,17 +59,19 @@ savePath = joinpath(homedir(), "simulations", "density", "needles", "histograms"
 # end
 
 for sampleTime = 1:NumberOfSampleTimes
-
+    v1string = L"v_1"
+    timestring = "t = $(round((sampleTime-1)*sampleTimeFactor*dt, sigdigits=3))"
+    xlab = "$v1string\n$timestring"
     scatterplt = scatter(
-        sol[sampleTime][1:N],
+        sol[sampleTime][1:N] ,
         sol[sampleTime][N+1:2*N],
-        xlab="v1\nt=$(round((sampleTime-1)*sampleTimeFactor*dt, sigdigits=3))",
-        ylab="v2",
+        xlab=xlab,
+        ylab=L"v_2",
         lab="cells",
         aspect_ratio=:equal,
         legend=:topleft,
-        xlims=(-L, L),
-        ylims=(-L, L),
+        xlims=(0, 2*L),
+        ylims=(0, 2*L),
         dpi=500,
     )
 
