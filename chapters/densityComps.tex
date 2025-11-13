@@ -170,3 +170,78 @@ We compute the divergence
 \end{align*}
 where we have $F = (F_1, F_2)^T$. 
 
+Thus, we can conclude in the mean field limit, where we let $N_C \rightarrow \infty$, that the density $\rho$ evolves according to the provided
+\begin{align*}
+    \partial_t \rho + 2 \rho - \alpha(- \nabla_{v_1} \cdot \rho + \nabla_{v_2} \cdot \rho) = 0. 
+\end{align*}
+
+In order to illustrate this model, we again made two simulations.
+In the first simulation, we used $N_C = 400$ needle cells. 
+Each of the $400$ cells gets initialized as 
+\begin{center}
+    $
+    C_i = (v^{i}_1, v^{i}_2) ~ N_2((0.5,0.5)^T, 0.09^2 \cdot I_2), \quad 1 \leq i \leq 400.
+    $
+\end{center}
+Then we apply the dynamic 
+\begin{align*}
+    \frac{d C}{dt} = F(C) = sgn(v_1 - v_2) (|v_1 - v_2| - E_d)(-1, 1)^T,
+\end{align*}
+where we used an desired edge length of $E_d = 0.2$.
+We solve this PDE with a self implemented Explicit Euler scheme with time step size $\Delta t = 10^{-3}$ on the time interval $[0, 1]$, yielding $100$ time steps. 
+We can see the results in Figure~\ref{fig:needle400}. \\
+
+\begin{figure}[h!]
+    \centering
+    
+    \begin{tabular}{ccc}
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t1.png} &    
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t2.png} &  
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t3.png} \\   
+
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t4.png} &    
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t5.png} &  
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t6.png} \\    
+    \end{tabular}
+
+    \caption{} 
+	\label{fig:needle400}    
+\end{figure}
+
+Afterwards, we showed the according dynamic in the mean field limit. 
+We used an initial condition of $N_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ in the domain $\Omega = [0.0, 1.0]^2$. 
+On this initial state we applied the PDE 
+\begin{align*}
+    \partial_t \rho  = \nabla_{v_1} \cdot (\rho (- sgn(v_1 - v_2) (|v_1 - v_2| - E_d)))  + \nabla_{v_2} \cdot (\rho sgn(v_1 - v_2) (|v_1 - v_2| - E_d)),
+\end{align*}
+that comes from an earlier state of our computation of the evolution of the density. 
+We discretised: 
+% TODO: fix this
+% \begin{align*}
+%     \Omega &\rightarrow (A_{ij})_{i,j = 1}^{500} \text{sub squares}, \\
+%     \text{density} \rho &\rightarrow \rho_{ij}^k \text{density value on A_{ij} at time step k \in \N}, \\
+%     \partial_t \rho &\rightarrow \frac{\rho_{ij}^{k+1} - \rho_{ij}^k}{\Delta t}, \\ 
+%     \text{alpha} \rho &\rightarrow \alpha_{ij}^k \text{\alpha value on A_{ij} at time step k \in \N}, \\
+%     \nabla_{v_1} \cdot (\rho (- \alpha)) &\rightarrow \frac{- \rho_{i,j+1}^k \alpha_{i,j+1}^k + \rho_{i,j-1}\alpha_{i,j-1}^k}{2 \Delta x},  \\
+%     \nabla_{v_2} \cdot (\rho  \alpha) &\rightarrow \frac{ \rho_{i+1,j}^k \alpha_{i+1,j}^k - \rho_{i-1,j}\alpha_{i-1,j}^k}{2 \Delta x}, 
+% \end{align*}
+where $\Delta x = 1/500$.
+Figure~\ref{fig:needle-limit} shows the resulting evolution. 
+
+\begin{figure}[h!]
+    \centering
+    
+    \begin{tabular}{ccc}
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t1.png} &    
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t2.png} &   
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t3.png} \\   
+
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t4.png} & 
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t5.png} &   
+        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t6.png} \\  
+    \end{tabular}
+
+    \caption{} 
+	\label{fig:needle-limit}    
+\end{figure}
+
