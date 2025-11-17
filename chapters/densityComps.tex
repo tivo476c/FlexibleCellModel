@@ -35,7 +35,7 @@ As $\mu^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot 
 Instead, we try to visualise it meaningfully by using histograms as approximations in Figure~\ref{fig:muTransition}.
 This is also a good connection from the previus section, where we also used histograms to show the results of the monte carlo simulations. 
 
-% TODO: add a figure that tries to visualise the transition as N -> infty (just use my heatmaps with 1 simulation and different amounts of particles, colorschale) 
+
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=15cm]{density/muplot_combined.png}
@@ -111,7 +111,7 @@ question: what is the space we integrate above? (i gues $\R^{2N}$)
 \subsection{1d needle cells}
 - cells have two vertices which are in 1d 
 \begin{align*}
-    C = {v_1, v_2}, \quad v_1, v_2 \in \R 
+    C = \{v_1, v_2\}, \quad v_1, v_2 \in \R 
 \end{align*}
 We assume $v_1 \neq v_2$ and that the order of vertices does not change throughout the simulation as we do not want to model cells with negative length. 
 
@@ -195,13 +195,13 @@ We can see the results in Figure~\ref{fig:needle400}. \\
     \centering
     
     \begin{tabular}{ccc}
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t1.png} &    
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t2.png} &  
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t3.png} \\   
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t1.png} &    
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t2.png} &  
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t3.png} \\   
 
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t4.png} &    
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t5.png} &  
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/histograms/histogram_t6.png} \\    
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t4.png} &    
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t5.png} &  
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t6.png} \\    
     \end{tabular}
 
     \caption{} 
@@ -212,7 +212,7 @@ Afterwards, we showed the according dynamic in the mean field limit.
 We used an initial condition of $N_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ in the domain $\Omega = [0.0, 1.0]^2$. 
 On this initial state we applied the PDE 
 \begin{align*}
-    \partial_t \rho  = \nabla_{v_1} \cdot (\rho (- sgn(v_1 - v_2) (|v_1 - v_2| - E_d)))  + \nabla_{v_2} \cdot (\rho sgn(v_1 - v_2) (|v_1 - v_2| - E_d)),
+    \partial_t \rho  = \nabla_{v_1} \cdot (\rho (- \sgn(v_1 - v_2) (|v_1 - v_2| - E_d)))  + \nabla_{v_2} \cdot (\rho \sgn(v_1 - v_2) (|v_1 - v_2| - E_d)),
 \end{align*}
 that comes from an earlier state of our computation of the evolution of the density. 
 We discretised: 
@@ -225,20 +225,20 @@ We discretised:
 %     \nabla_{v_1} \cdot (\rho (- \alpha)) &\rightarrow \frac{- \rho_{i,j+1}^k \alpha_{i,j+1}^k + \rho_{i,j-1}\alpha_{i,j-1}^k}{2 \Delta x},  \\
 %     \nabla_{v_2} \cdot (\rho  \alpha) &\rightarrow \frac{ \rho_{i+1,j}^k \alpha_{i+1,j}^k - \rho_{i-1,j}\alpha_{i-1,j}^k}{2 \Delta x}, 
 % \end{align*}
-where $\Delta x = 1/500$.
+where $\Delta x = \tfrac{1}{500}$.
 Figure~\ref{fig:needle-limit} shows the resulting evolution. 
 
 \begin{figure}[h!]
     \centering
     
     \begin{tabular}{ccc}
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t1.png} &    
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t2.png} &   
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t3.png} \\   
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t1-equal-scale.png} &    
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t2-equal-scale.png} &   
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t3-equal-scale.png} \\   
 
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t4.png} & 
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t5.png} &   
-        \includegraphics[width=0.3\textwidth]{sanity-check/needles/density-evo/equal-scale-density-t6.png} \\  
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t4-equal-scale.png} & 
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t5-equal-scale.png} &   
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t6-equal-scale.png} \\  
     \end{tabular}
 
     \caption{} 
