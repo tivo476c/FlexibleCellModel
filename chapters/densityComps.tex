@@ -1,22 +1,23 @@
 \section{Density computations} \label{density}
-In the previous chapter, we studied Monte Carlo simulations of our DF model and visualised the resulting particle distributions as heatmaps at different time points. 
-These simulations provided valuable insight into the statistical behavior of the system for finite numbers of cells. \\
-In this chapter, we pursue a different approach: instead of extracting approximate density fields from stochastic simulations, we aim to compute the underlying density distribution function \( \rho \) that describes the limiting behavior of the system as the number of cells \( N_C \to \infty \). 
-More precisely, we seek the density \( \rho \) such that the limiting measure \( \mu \) satisfies \( \dequ \mu = \rho(x) \dequ x \). 
-Of course, this density will depent on the desired cell state, i.e. the number of vertices and its shape, as well as on the forces we apply on the vertices as the dynamic and their scalings. \\ 
-As a starting point for this analytical treatment, we consider the empirical measure \( \mu^{N_C} \), which encodes the particle configuration at finite \( N_C \), and study its convergence to the continuous measure \( \mu \). \\
-The empirical measure $\mu^{N_C} \in \mathcal{P}(\R^{2})$ is the starting point of this computation. \\
-% TODO: reconsider: arent we using the cell vertices instead of the cells' centre points? 
-Let $\{\vec{x}_i\}_{i=1}^{N_C} \subset \R^2$ be the set of all cells' centre points. 
-We define $\mu^{N_C}$ as:  
+
+In the previous chapter, we employed Monte Carlo simulations to validate the microscopic cell model and to illustrate the qualitative behaviour emerging from the underlying gradient-flow dynamics. 
+While such simulations provide valuable empirical insight, they do not yet reveal the macroscopic, continuum-level structure of the system. \\
+In this chapter, we therefore develop a systematic framework to pass from individual cell dynamics to a description in terms of probability measures and densities. 
+We introduce the empirical measure associated with large ensembles of simulated cells, explain its convergence to the first marginal of the $N_C$-cell system, and analyse the subsequent mean-field limit as $N_C \rightarrow \infty$. \\
+%TODO: in the end really write down what we have done: 
+This leads naturally to a deterministic transport equation for the limiting cell density, which provides a mathematically transparent interpretation of the collective dynamics. 
+We illustrate this approach with explicit examples, comparing particle-based simulations and their mean-field counterparts and discuss how these ideas extend to higher-dimensional cell models. \\ 
+%now introduce empirical measure: 
+- for our point particle monte carlo simulations, we can define the empirical measure 
 \begin{align*}
-    \mu^{N_C}: \mathcal{B}(\R^2) \rightarrow [0,1]  \\
-    \mu^{N_C}(A) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A),
+    &\mu^{(N_C, N_S)}_t: \mathcal{B}(\R^2) \: \longrightarrow \: [0,1],  \\
+    A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{\vec{x}_i^{\:(s)}(t)}(A),
 \end{align*}
-where $\mathcal{B}(\R^2)$ is the Borel sigma-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
+where $N_C$ is again the number of cells in each simulation, $N_S$ denotes the number of simulations in the Monte Carlo simulation and $\vec{x}_i^{\:(s)}(t) \in \Omega \subset \R^2$ is the location of point particle $1 \leq i \leq N_C$ in simulation $1 \leq s \leq N_S$ and at time $t \in [0, T]$.   \\
+$\mathcal{B}(\R^2)$ is the Borel sigma-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
 \begin{align*}
-    \delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \rightarrow \{0,1\}  \\
-    \delta_{\vec{x}_i(t)}(A) = \begin{cases}
+    &\delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \: \longrightarrow \: \{0,1\},  \\
+    A \: \longmapsto \: &\delta_{\vec{x}_i(t)}(A) = \begin{cases}
         1 & \text{if } \vec{x}_i(t) \in A, \\
         0 & \text{if } \vec{x}_i(t) \notin A.
    \end{cases}
@@ -25,7 +26,40 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
 \[
 \int_{\R^2} \phi(x) \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
 \]
-For a set $A \in \mathcal{B}(\R^2)$, $\mu^{N_C}(A)$ is the relative proportion of the $N_C$ particles that are located in $A$. \\
+
+- For a set $A \in \mathcal{B}(\R^2)$, $\mu^{(N_C, N_S)}_t(A)$ is the relative proportion of the $N_C$ particles that are located in $A$ at time $t$, throughout all $N_S$ simulations. \\
+- Our heatmaps from Chapter~\ref{sanitycheck} use sets $\{A_{lc}\}_{l,c=1}^{N_H}$ for the visualisation of that empirical measure, where ${N_H}^2$ is the number of sub squares we divide $\Omega$ into.  \\
+- Any sub square $A_{lc}$ of the original domain $\Omega = [-0.5, 0.5]^2$ has side length $\dfrac{1}{N_H}$. \\
+- As we increase $N_H$, we get a finer approximation of $\Omega$. \\ 
+
+- The law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\rho(t; \vec{x})$, if the following requirements are met:
+% TODO: describe the requirements in more detail, tell why they are met 
+\begin{itemize}
+    \item the first marginal $\rho(t; \vec{x})$ exists, 
+    \item the simulations are independent and identically distributed (iid),
+    \item the expected value $\int_{\Omega} \phi(\vec{x}) \rho(t; \vec{x}) \dequ x < \infty $, 
+\end{itemize}
+We call this limit, where $N_S \rightarrow \infty$, the Monte Carlo limit. \\ 
+
+- But there is also a further limit to consider: the mean field limit. 
+- Here, we let the number of cells $N_C \rightarrow \infty$. 
+- In the mean field limit, we can study the transition from the microscopic model view, that uses a finite number of cells, $N_C < \infty$, to a macroscopic model view where we consider the whole system's density without individual cells, as $N_C \rightarrow \infty$.
+- As $N_C \rightarrow \infty$, our first marginal $\rho$ converges to the mean field density $\bar{\rho}$
+\begin{center}
+    $
+    \rho \xrightarrow {N_C \to \infty } \bar{\rho}.
+    $
+\end{center}
+% TODO: explain condition further and why it works for us 
+- The condition for this is that the cell interaction is `symmetrical' and `weak', e.g. 
+\begin{align*}
+    \frac{\dequ \vec{x}_i(t)}{\dequ t} = \dfrac{1}{N_C} \sum_{j=1}^{N_C} f(\vec{x}_i(t), \vec{x}_j(t)),
+\end{align*}
+such that the influence of each other cell is in $\mathcal{O}(\dfrac{1}{N_C})$. 
+
+\subsection{old stuff}
+
+
 For a finite $N_C \in \N$, $\mu^{N_C}$ is a discrete measure that only has its mass divided on the exact particle locations. 
 As we increase the number of particles, $\mu^{N_C}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N_C}$ as we divide through $N_C$.
 This process is quite simular to the transition from a sum to an according integral:

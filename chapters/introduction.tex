@@ -89,8 +89,8 @@ It provides a coarse grained view of the system, capturing how the spatial distr
 In order to compute the first marginal, we have to start with the joint probability density function. 
 This function, denoted by 
 \begin{align*}
-	P : \R_{+} \times \Omega^{N_c} &\longrightarrow  \R_+, \\	
-	(t; \vec{x}_1, \ldots, \vec{x}_{N_C}) &\longmapsto  P(t; \vec{x}_1, \ldots, \vec{x}_{N_C}).
+	P : \R_{+} \times \Omega^{N_c} \: &\longrightarrow \:  \R_+, \\	
+	(t; \vec{x}_1, \ldots, \vec{x}_{N_C}) \: &\longmapsto \: P(t; \vec{x}_1, \ldots, \vec{x}_{N_C}).
 \end{align*}	
 $P(t; \vec{x}_1, \ldots, \vec{x}_{N_C})$ tells the probability that the whole cell configuration is in the given state $\vec{x}_1, \ldots, \vec{x}_{N_C} \in \Omega$ at time $t$. 
 It is defined on the high dimensional configuration space $\R_{+} \times (\Omega)^{N_c} \subset \R \times (\R^2)^{N_C}$ and fulfils
@@ -121,8 +121,8 @@ This marginalisation process effectively averages out the influence of the other
 Due to the indistinguishability of the particles, this marginal is the same for any particle and represents the macroscopic distribution of the system.
 By integrating out all particles but one, we find $\rho$ acting on a much lower dimensional space 
 \begin{align*}
-	\rho : \R_{+} \times \Omega &\longrightarrow  \R_+, \\	
-	(t; \vec{x}) &\longmapsto  \rho(t; \vec{x}_1). 
+	\rho : \R_{+} \times \Omega \: &\longrightarrow \:  \R_+, \\	
+	(t; \vec{x}) \: &\longmapsto \: \rho(t; \vec{x}_1). 
 \end{align*}	
 
 In the setting of our point particle model, the first marginal $\rho$ satisfies the partial differential equation:
@@ -137,8 +137,8 @@ The same diffusion constant $D>0$ is used in the SDE for particle movement and t
 If we wish to model additional dynamics for our point particles - such as directed motion towards a food source or response to a chemical gradient - we must incorporate an external force into the system. 
 This force is modelled by a vector valued function $f(\vec{x})$, which depends on the particle's position $\vec{x}$ and represents the influence of external cues, such as chemotactic gradients or mechanical drag \\
 \begin{align*}
-	f : \Omega &\longrightarrow \R^2, \\
-	\vec{x} &\longmapsto f(\vec{x}). 
+	f : \Omega \: &\longrightarrow \: \R^2, \\
+	\vec{x} \: &\longmapsto \:f(\vec{x}). 
 \end{align*}
 This force modifies the stochastic dynamics by introducing a deterministic drift component, enabling the particles to exhibit non-random, directed movement in response to their environment.
 This yields a new particle dynamic 
@@ -147,8 +147,8 @@ This yields a new particle dynamic
 \end{center}
 We define a multidimensional function
 \begin{align*}
-	F : \Omega^{N_C} &\longrightarrow {(\R^2)}^{N_C}, \\
-	\vec{X} &\longmapsto F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T,
+	F : \Omega^{N_C} \: &\longrightarrow \: {(\R^2)}^{N_C}, \\
+	\vec{X} \: &\longmapsto \:F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T,
 \end{align*}
 that gathers the external dynamics for all particles. \\
 With that new external force, the diffusion behaviour changes. 
@@ -327,8 +327,8 @@ They begin from the stochastic Langevin dynamics for $N_C$ interacting particles
 \end{align*}
 where 
 \begin{align*}
-	\Phi: \Omega^{N_C} &\longrightarrow \R, \\
-	\vec{X} &\longmapsto \Phi(\vec{X}) = \sum\limits_{i \neq j} u\left( \dfrac{\norm[\vec{x}_i - \vec{x}_j]}{\epsilon} \right), 
+	\Phi: \Omega^{N_C} \: &\longrightarrow \: \R, \\
+	\vec{X} \: &\longmapsto \:\Phi(\vec{X}) = \sum\limits_{i \neq j} u\left( \dfrac{\norm[\vec{x}_i - \vec{x}_j]}{\epsilon} \right), 
 \end{align*}
 is total interaction potential energy of the $N_C$ particle system. \\
 

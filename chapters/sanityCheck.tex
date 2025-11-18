@@ -112,11 +112,13 @@ After initialisation, the prescribed dynamics - either the point particle model 
 To visualise the results, we construct heatmaps representing the spatial distribution of cells at the final time. 
 This is done by discretizing the domain into a uniform grid of sub squares. 
 For each sub square, we count how many cells fall within it across all simulations. 
-The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a sub square. This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: 
+The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a sub square. 
+This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: 
 \[
     \sum\limits_{i \: \in \text{ sub squares}} \text{value}_i \cdot \text{area}_i = 1. 
 \]
-This approach provides a smooth estimate of the empirical cell density, allowing direct comparison with the corresponding solutions of the diffusion equations.
+By the Law of Large Numbers, these heatmaps converge to the first marginal distribution as both the number of independent simulations increases and the spatial discretisation of $\Omega$ is refined.
+This procedure, detailed in Section~\ref{density}, yields a smooth and consistent estimate of the empirical cell density, enabling a direct comparison with the corresponding solutions of the continuum diffusion equations.
 
 
 \subsection{Reproduction of reference results}
