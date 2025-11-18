@@ -32,14 +32,14 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
 - Any sub square $A_{lc}$ of the original domain $\Omega = [-0.5, 0.5]^2$ has side length $\dfrac{1}{N_H}$. \\
 - As we increase $N_H$, we get a finer approximation of $\Omega$. \\ 
 
-- The law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\rho(t; \vec{x})$, if the following requirements are met:
+- The law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\bar{\rho}(t; \vec{x})$, if the following requirements are met:
 % TODO: describe the requirements in more detail, tell why they are met 
 \begin{itemize}
     \item the first marginal $\rho(t; \vec{x})$ exists, 
     \item the simulations are independent and identically distributed (iid),
     \item the expected value $\int_{\Omega} \phi(\vec{x}) \rho(t; \vec{x}) \dequ x < \infty $, 
 \end{itemize}
-We call this limit, where $N_S \rightarrow \infty$, the Monte Carlo limit. \\ 
+We call the limit $N_S \rightarrow \infty$ Monte Carlo limit. \\ 
 
 - But there is also a further limit to consider: the mean field limit. 
 - Here, we let the number of cells $N_C \rightarrow \infty$. 
@@ -55,107 +55,116 @@ We call this limit, where $N_S \rightarrow \infty$, the Monte Carlo limit. \\
 \begin{align*}
     \frac{\dequ \vec{x}_i(t)}{\dequ t} = \dfrac{1}{N_C} \sum_{j=1}^{N_C} f(\vec{x}_i(t), \vec{x}_j(t)),
 \end{align*}
-such that the influence of each other cell is in $\mathcal{O}(\dfrac{1}{N_C})$. 
+such that the influence of each other cell is in $\mathcal{O}(\tfrac{1}{N_C})$. \\
 
-\subsection{old stuff}
+% TODO: explain that figure illustrating the mean field limit transition 
+% For a finite $N_C \in \N$, $\mu^{N_C}$ is a discrete measure that only has its mass divided on the exact particle locations. 
+% As we increase the number of particles, $\mu^{N_C}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N_C}$ as we divide through $N_C$.
+% This process is quite simular to the transition from a sum to an according integral:
+% \[ \sum\limits_{i=1}^{N_C} \frac{1}{N_C} f(x_i) \xrightarrow{N \to \infty} \int f(x) \dequ x,  \]
+% where we can also see a transition from a discrete starting problem, having discrete points ${x_i}$, to a continious integral where $x \in (a,b)$. 
+% As $\mu^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot directly plot it as a function. 
+% Instead, we try to visualise it meaningfully by using histograms as approximations in Figure~\ref{fig:muTransition}.
+% This is also a good connection from the previus section, where we also used histograms to show the results of the monte carlo simulations. 
 
+% \begin{figure}
+% 	\begin{center}
+% 		\includegraphics[width=15cm]{density/muplot_combined.png}
+% 		\caption{
+%             Visualisation of empirical measures $\mu^{N_C}$ for increasing numbers of cells, alongside the corresponding theoretical density. 
+%             This visualisation illustrates the transition \( \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\). \\
+%             All cell configurations are sampled from the same initial condition described in the previous chapter: a two-dimensional normal distribution \( \mathcal{N}_2((0,0), \sigma^2 I_2) \) with \( \sigma = 0.09 \). 
+%             In the first three subplots, the domain \([-0.5, 0.5]^2\) is discretised into square bins of side length \(\frac{1}{50}\). 
+%             Each bin \( A \) corresponds to a measurable set in the definition of the empirical measure \( \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{x_i}(A) \), where the color intensity encodes the number of cells in that bin. \\
+%             The first subplot shows a realisation with \( N_C = 20 \) cells, the second with \( N_C = 200 \), and the third with \( N_C = 20{.}000 \). 
+%             We observe that as \( N_C \) increases, the empirical measure \( \mu^{N_C} \) becomes a smoother approximation of the underlying density. 
+%             The color scale is fixed across all subplots to allow direct visual comparison.
+%             The fourth panel displays the exact density function of the initial distribution, \( \rho(x) = \frac{1}{2\pi\sigma^2} \exp\left( -\frac{\|x\|^2}{2\sigma^2} \right) \), with \( \sigma = 0.09 \). 
+%          }
+% 		\label{fig:muTransition}
+% 	\end{center}
+% \end{figure}
 
-For a finite $N_C \in \N$, $\mu^{N_C}$ is a discrete measure that only has its mass divided on the exact particle locations. 
-As we increase the number of particles, $\mu^{N_C}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N_C}$ as we divide through $N_C$.
-This process is quite simular to the transition from a sum to an according integral:
-\[ \sum\limits_{i=1}^{N_C} \frac{1}{N_C} f(x_i) \xrightarrow{N \to \infty} \int f(x) \dequ x,  \]
-where we can also see a transition from a discrete starting problem, having discrete points ${x_i}$, to a continious integral where $x \in (a,b)$. 
-As $\mu^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot directly plot it as a function. 
-Instead, we try to visualise it meaningfully by using histograms as approximations in Figure~\ref{fig:muTransition}.
-This is also a good connection from the previus section, where we also used histograms to show the results of the monte carlo simulations. 
+% The distribution from the fourth subplot in Figure~\ref{fig:muTransition} is aimed to be computed for the dynamics of our DF cell model. 
 
-
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=15cm]{density/muplot_combined.png}
-		\caption{
-            Visualisation of empirical measures $\mu^{N_C}$ for increasing numbers of cells, alongside the corresponding theoretical density. 
-            This visualisation illustrates the transition \( \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\). \\
-            All cell configurations are sampled from the same initial condition described in the previous chapter: a two-dimensional normal distribution \( \mathcal{N}_2((0,0), \sigma^2 I_2) \) with \( \sigma = 0.09 \). 
-            In the first three subplots, the domain \([-0.5, 0.5]^2\) is discretised into square bins of side length \(\frac{1}{50}\). 
-            Each bin \( A \) corresponds to a measurable set in the definition of the empirical measure \( \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{x_i}(A) \), where the color intensity encodes the number of cells in that bin. \\
-            The first subplot shows a realisation with \( N_C = 20 \) cells, the second with \( N_C = 200 \), and the third with \( N_C = 20{.}000 \). 
-            We observe that as \( N_C \) increases, the empirical measure \( \mu^{N_C} \) becomes a smoother approximation of the underlying density. 
-            The color scale is fixed across all subplots to allow direct visual comparison.
-            The fourth panel displays the exact density function of the initial distribution, \( \rho(x) = \frac{1}{2\pi\sigma^2} \exp\left( -\frac{\|x\|^2}{2\sigma^2} \right) \), with \( \sigma = 0.09 \). 
-         }
-		\label{fig:muTransition}
-	\end{center}
-\end{figure}
-
-The distribution from the fourth subplot in Figure~\ref{fig:muTransition} is aimed to be computed for the dynamics of our DF cell model. 
-
-In the end, we want to achieve:
-\[ \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\]
-by letting the number of cells go to infinity. \\
-
-\subsection{Transition $\mu^{N_C} \xrightarrow{N_C \to \infty} \mu$ }
+% In the end, we want to achieve:
+% \[ \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\]
+% by letting the number of cells go to infinity. \\
 
 
-\subsection{General energy computation}
+% now: computation of mean field density PDE 
+- Next, we will show how the PDE for the mean field density temporal evolution can be computed generally, if the particle dynamic is given by the gradient flow of a given energy. 
 
-Lets define our cell centres with:
-\begin{gather*}
-    \vec{X} = (\vec{x}_1, \ldots, \vec{x}_N) \in \R^{2N} \text{(vector of all cell centres)}, \\
-    \text{for } \vec{x}_i \in \R^2, \; 1 \leq i \leq N. \\
-\end{gather*}
+% Lets define our cell centres with:
+% \begin{gather*}
+%     \vec{X}(t) = (\vec{x}_1(t), \ldots, \vec{x}_{N_C}(t)) \in \R^{2 N_C}. \\
+% \end{gather*}
 
-The energy that gets used for our cell dynamic shall be: 
-\begin{gather*}
-    E: \R^2 \rightarrow \R \\ 
-    E(\vec{x}_i) = \frac{1}{2} |\vec{x}_i|^2. \\
-    \nabla_{(\vec{x}_i)} E(\vec{x}_i): \R^2 \rightarrow \R^2 \\
-    \nabla_{(\vec{x}_i)} E(\vec{x}_i) = |\vec{x}_i| . \\
-\end{gather*}
+We use a cell wise energy  
+\begin{align*}
+    E: \R^{2} \: &\longrightarrow \:  \R, \\ 
+    \vec{x} \: &\longmapsto \: E(\vec{x}).
+\end{align*}
 
 We define the dynamic of a particle $\vec{x}_i$ via: \\
-\[ \dfrac{\dequ \vec{x}_i}{\dequ t} = - \nabla_{\vec{x}_i} E(\vec{x}_i) \in \R^{2}. \]
+\[ 
+    \dfrac{\dequ \vec{x}_i}{\dequ t} = - \nabla E(\vec{x}_i) \in \R^{2}. 
+\]
 
-We define the probability measure:\\
-(question: is $\mu$ defined on a single particle [$\mu^{N_C} \in \mathcal{P}(\R^2)$] or on the whole particle system [$\mu^{N_C} \in \mathcal{P}(\R^{2N})$]) \\
-(question: what does $\mu$ say? \\
-Its 1 when the particle is at a given location? vs Its 1 when the particle system is at a given configuration?)
-
-
-\[ \mu: \R^2 \rightarrow [0,\infty)  \]
-$\mu$ is the density of cell system.
-$\mu^N$ is the empirical measure. 
-It takes a subset $A \subset \R^2$ as an argument and gives the relative number of particles that are inside of $A$. 
-
-Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ (??) be a test function. 
+Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function. 
 Its gradient field is $ \nabla \phi : \R^2 \rightarrow \R^2$. 
 We compute: 
 \begin{align*}
-    \frac{\dequ}{\dequ t} \int \phi \dequ \mu^N 
-    &= \frac{\dequ}{\dequ t} (\frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(\vec{x}_i)) \\
-    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i) \cdot \nabla E(\vec{x}_i) \\
-    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \int \nabla \phi(x) \cdot \nabla E(x) \dequ \delta_{\vec{x}_i} \\
-    &= - \int \nabla \phi(x) \cdot \nabla E(x) \dequ \mu^N \dequ x \\
-    &= \int \phi(x)  \nabla \cdot ( \mu^N(\nabla E(x))) \dequ x \\
+    \frac{\dequ}{\dequ t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_S)}_t
+    &= \frac{\dequ}{\dequ t} \left[\frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \phi(\vec{x}_i^{\: (s)})\right] \\
+    &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}) \cdot \nabla E(\vec{x}_i^{\: (s)}) \\
+    % &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \int_{\Omega} \nabla \phi(x) \cdot \nabla_{\vec{x}_i^{\: (s)}} E(\vec{X}) \: \dequ \delta_{\vec{x}_i^{\: (s)}} \\
+    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_S)}_t \\
+    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \mu^{(N_C, N_S)}_t \nabla E(x)) \: \dequ \mu^{(N_C, N_S)}_t. \\
 \end{align*}
-\[ \Rightarrow  0 = \partial_t \rho - \nabla(\rho_v),\]
-where $\rho$ is the density function of $\mu$ such that \[ \mu(dx) = \rho(x) dx. \]
-question: what is the space we integrate above? (i gues $\R^{2N}$)
+% TODO: what is \mu^{(N_C, N_S)}_t \nabla E(x) from last line above 
+This computation yields the continuity equation for our empirical measure $\mu^{(N_C, N_S)}_t$
+\begin{align*}
+    \frac{\dequ \mu^{(N_C, N_S)}_t}{\dequ t} + \nabla \cdot (\mu^{(N_C, N_S)}_t E) = 0.
+\end{align*}
+If we let $N_C \rightarrow \infty$ and assume convergence 
+\begin{align*}
+    \mu^{(N_C, N_S)}_t \xrightarrow {N_C, N_S \to \infty} \bar{\rho} \: \dequ x,
+\end{align*} 
+we obtain the PDE for the macroscopic density
+\begin{align}
+    \frac{\dequ \bar{\rho}}{\dequ t} + \nabla \cdot (\bar{\rho} E) = 0.
+    \label{equ:meanfieldPDE}
+\end{align}
+
+If we want to apply this computation on our DF model, we must adapt our empirical measure. 
+In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
+Thus, we need to use these vertices for our measure, instead of the particle locations, e.g.
+\begin{align*}
+    &\mu^{(N_C, N_S)}_t: \mathcal{B}(\R^2) \: \longrightarrow \: [0,1],  \\
+    A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_V N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{j=1}^{N_V} \sum\limits_{s=1}^{N_S} \delta_{\vec{v}_i^{\:(j, s)}(t)}(A),
+\end{align*}
+where $\vec{v}_i^{\:(j, s)}(t)$ is the $j$th vertex of cell $i$ at time $t$ in simulation $s$. \\ 
+However, PDE~\eqref{equ:meanfieldPDE} for the mean field density remains the same.  
+
+
 
 \subsection{1d needle cells}
-- cells have two vertices which are in 1d 
+% TODOs: formulate everything, figure captions, formatting
+In order to demonstrate how the preceding computations can be applied in practice, we begin with a lower dimensional example. 
+In this setting, each cell consists of two vertices situated in one spatial dimension, 
 \begin{align*}
     C = \{v_1, v_2\}, \quad v_1, v_2 \in \R 
 \end{align*}
-We assume $v_1 \neq v_2$ and that the order of vertices does not change throughout the simulation as we do not want to model cells with negative length. 
-
-we impose the energy per cell
+where we assume $v_1 \neq v_2$ and that their ordering remains fixed throughout the simulation. 
+This ensures that cells do not attain negative length. \\
+Our dynamic naturally fulfils this condition, as we use the cell wise energy 
 \begin{align*}
-    E(C) = \tfrac{1}{2}| |v_1 - v_2| - E_d |^2,
+    E(C) = \tfrac{1}{2} \left| |v_1 - v_2| - E_d  \right|^2,
 \end{align*}
 where $E_d$ is the desired edge length of each cell. 
-- we apply the dynamics
-
+This energy lets each needle cell to recover a length of $E_d$. \\
+Applying gradient flow dynamics yields
 \begin{align*}
     \frac{d v_1}{dt} 
     &= - \nabla_{v_1} E(C) \\
@@ -163,17 +172,20 @@ where $E_d$ is the desired edge length of each cell.
     &= - (|v_1 - v_2| - E_d) \nabla_{v_1} |v_1 - v_2|  \\
     &= - sgn(v_1 - v_2) (|v_1 - v_2| - E_d),   \\
 \end{align*}
-
+and 
 \begin{align*}
     \frac{d v_2}{dt} 
-    &=  sgn(v_1 - v_2) (|v_1 - v_2| - E_d),  \\
+    &=  sgn(v_1 - v_2) (|v_1 - v_2| - E_d).  \\
 \end{align*}
-yielding the overall cell dynamic
+The resulting cell dynamics take the compact form
 \begin{align*}
-    \frac{d C}{dt} = F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha}(-1, 1)^T.
+    \frac{d C}{dt} = F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
+        -1 \\ 
+        1
+    \end{pmatrix}.
 \end{align*}
 
-We need for the following statement that 
+For the subsequent derivation we require the computations 
 \begin{align*}
     \nabla_{v_1} \cdot \alpha 
     &= \nabla_{v_1} \cdot (sgn(v_1 - v_2) (|v_1 - v_2| - E_d)) \\
@@ -193,38 +205,37 @@ and
     &= sgn(v_1 - v_2) (- sgn(v_1 - v_2)) \\
     &= -1,
 \end{align*}
-We compute the divergence 
-\begin{align*}
-    \nabla_C \cdot (\mu F) 
-    &= \nabla_{v_1} \cdot (\mu F_1)  + \nabla_{v_2} \cdot (\mu F_2) \\
-    &= (\nabla_{v_1} \cdot \mu) F_1 + \mu (\nabla_{v_1} \cdot F_1) + (\nabla_{v_2} \cdot \mu) F_2 + \mu (\nabla_{v_2} \cdot F_2) \\
-    &= - (\nabla_{v_1} \cdot \mu) \alpha - \mu (\nabla_{v_1} \cdot \alpha) + (\nabla_{v_2} \cdot \mu) \alpha + \mu (\nabla_{v_2} \cdot \alpha) \\
-    &= - (\nabla_{v_1} \cdot \mu) \alpha - \mu + (\nabla_{v_2} \cdot \mu) \alpha - \mu \\
-    &= - 2 \mu + \alpha(- \nabla_{v_1} \cdot \mu + \nabla_{v_2} \cdot \mu)   \\
-\end{align*}
-where we have $F = (F_1, F_2)^T$. 
 
-Thus, we can conclude in the mean field limit, where we let $N_C \rightarrow \infty$, that the density $\rho$ evolves according to the provided
+With these identities at hand, we compute the divergence
 \begin{align*}
-    \partial_t \rho + 2 \rho - \alpha(- \nabla_{v_1} \cdot \rho + \nabla_{v_2} \cdot \rho) = 0. 
+    \nabla_C \cdot (\bar{\rho} F) 
+    &= \nabla_{v_1} \cdot (\bar{\rho} F_1)  + \nabla_{v_2} \cdot (\bar{\rho} F_2) \\
+    &= (\nabla_{v_1} \cdot \bar{\rho}) F_1 + \bar{\rho} (\nabla_{v_1} \cdot F_1) + (\nabla_{v_2} \cdot \bar{\rho}) F_2 + \bar{\rho} (\nabla_{v_2} \cdot F_2) \\
+    &= - (\nabla_{v_1} \cdot \bar{\rho}) \alpha - \bar{\rho} (\nabla_{v_1} \cdot \alpha) + (\nabla_{v_2} \cdot \bar{\rho}) \alpha + \bar{\rho} (\nabla_{v_2} \cdot \alpha) \\
+    &= - (\nabla_{v_1} \cdot \bar{\rho}) \alpha - \bar{\rho} + (\nabla_{v_2} \cdot \bar{\rho}) \alpha - \bar{\rho} \\
+    &= - 2 \bar{\rho} + \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho})   \\
 \end{align*}
-
-In order to illustrate this model, we again made two simulations.
-In the first simulation, we used $N_C = 400$ needle cells. 
-Each of the $400$ cells gets initialized as 
+where $F = (F_1, F_2)^T$.  \\
+Consequently, in the mean field limit $N_C \rightarrow \infty$, the density $\bar{\rho}$ satisfies
+\begin{align*}
+    \partial_t \bar{\rho} + 2 \bar{\rho} - \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}) = 0,
+\end{align*}
+according to Equation~\eqref{equ:meanfieldPDE}. \\
+To illustrate this model, we present two corresponding simulations.  
+First, we consider a finite system of $N_C = 400$ needle cells.  
+Each cell is initialised according to
 \begin{center}
     $
-    C_i = (v^{i}_1, v^{i}_2) ~ N_2((0.5,0.5)^T, 0.09^2 \cdot I_2), \quad 1 \leq i \leq 400.
+    C_i = (v^{i}_1, v^{i}_2) \sim N_2((0.5,0.5)^T, 0.09^2 \cdot I_2), \quad 1 \leq i \leq 400.
     $
 \end{center}
-Then we apply the dynamic 
+We then evolve the system under the dynamics
 \begin{align*}
     \frac{d C}{dt} = F(C) = sgn(v_1 - v_2) (|v_1 - v_2| - E_d)(-1, 1)^T,
 \end{align*}
-where we used an desired edge length of $E_d = 0.2$.
-We solve this PDE with a self implemented Explicit Euler scheme with time step size $\Delta t = 10^{-3}$ on the time interval $[0, 1]$, yielding $100$ time steps. 
-We can see the results in Figure~\ref{fig:needle400}. \\
-
+using a desired edge length of $E_d = 0.2$.  
+The resulting ODE system is integrated with an explicit Euler method using a time step of $\Delta t = 10^{-3}$ over the interval $[0,1]$, giving $100$ time steps.  
+The corresponding evolution is displayed in Figure~\ref{fig:needle400}. \\
 \begin{figure}[h!]
     \centering
     
@@ -242,25 +253,29 @@ We can see the results in Figure~\ref{fig:needle400}. \\
 	\label{fig:needle400}    
 \end{figure}
 
-Afterwards, we showed the according dynamic in the mean field limit. 
-We used an initial condition of $N_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ in the domain $\Omega = [0.0, 1.0]^2$. 
-On this initial state we applied the PDE 
+
+
+Subsequently, we examine the associated mean field dynamics.  
+We choose an initial condition given by $N_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ on the domain $\Omega = [0.0, 1.0]^2$ and evolve it using the PDE
 \begin{align*}
-    \partial_t \rho  = \nabla_{v_1} \cdot (\rho (- \sgn(v_1 - v_2) (|v_1 - v_2| - E_d)))  + \nabla_{v_2} \cdot (\rho \sgn(v_1 - v_2) (|v_1 - v_2| - E_d)),
+    \partial_t \bar{\rho}  = \nabla_{v_1} \cdot (- \bar{\rho} \alpha)  + \nabla_{v_2} \cdot (\bar{\rho} \alpha),
 \end{align*}
-that comes from an earlier state of our computation of the evolution of the density. 
-We discretised: 
+which arises from the earlier derivation of the density evolution equation.  
+The discretisation is given by
 % TODO: fix this
-% \begin{align*}
-%     \Omega &\rightarrow (A_{ij})_{i,j = 1}^{500} \text{sub squares}, \\
-%     \text{density} \rho &\rightarrow \rho_{ij}^k \text{density value on A_{ij} at time step k \in \N}, \\
-%     \partial_t \rho &\rightarrow \frac{\rho_{ij}^{k+1} - \rho_{ij}^k}{\Delta t}, \\ 
-%     \text{alpha} \rho &\rightarrow \alpha_{ij}^k \text{\alpha value on A_{ij} at time step k \in \N}, \\
-%     \nabla_{v_1} \cdot (\rho (- \alpha)) &\rightarrow \frac{- \rho_{i,j+1}^k \alpha_{i,j+1}^k + \rho_{i,j-1}\alpha_{i,j-1}^k}{2 \Delta x},  \\
-%     \nabla_{v_2} \cdot (\rho  \alpha) &\rightarrow \frac{ \rho_{i+1,j}^k \alpha_{i+1,j}^k - \rho_{i-1,j}\alpha_{i-1,j}^k}{2 \Delta x}, 
-% \end{align*}
-where $\Delta x = \tfrac{1}{500}$.
-Figure~\ref{fig:needle-limit} shows the resulting evolution. 
+\begin{align*}
+    \Omega \: &\longrightarrow \: \{A_{ij}\}_{i,j = 1}^{500} \text{ sub squares}, \\[0.5em]
+    \bar{\rho} \: &\longrightarrow \: \bar{\rho}_{ij}^{\: k} \text{ density value on } A_{ij} \text{ at time step } k \in \N, \\[0.5em]
+    \partial_t \bar{\rho} \: &\longrightarrow \: \frac{\bar{\rho}_{ij}^{\: k+1} - \bar{\rho}_{ij}^{\: k}}{\Delta t}, \\[0.5em] 
+    \alpha \: &\longrightarrow \: \alpha_{ij}^k \text{ value on } A_{ij} \text{ at time step } k \in \N, \\[0.5em]
+    \nabla_{v_1} \cdot (- \bar{\rho} \alpha) \: &\longrightarrow \: \frac{- \bar{\rho}_{i,j+1}^{\: k} \alpha_{i,j+1}^k + \bar{\rho}_{i,j-1}^{\: k} \alpha_{i,j-1}^k}{2 \Delta x},  \\[0.5em]
+    \nabla_{v_2} \cdot (\bar{\rho} \alpha) \: &\longrightarrow \: \frac{ \bar{\rho}_{i+1,j}^{\: k} \alpha_{i+1,j}^k - \bar{\rho}_{i-1,j}^{\: k} \alpha_{i-1,j}^k}{2 \Delta x}, 
+\end{align*}
+with grid spacing $\Delta x = \tfrac{1}{500}$.  
+The resulting dynamics are shown in Figure~\ref{fig:needle-limit}.
+
+
+
 
 \begin{figure}[h!]
     \centering
