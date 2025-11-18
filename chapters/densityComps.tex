@@ -125,7 +125,7 @@ We compute:
 % TODO: what is \mu^{(N_C, N_S)}_t \nabla E(x) from last line above 
 This computation yields the continuity equation for our empirical measure $\mu^{(N_C, N_S)}_t$
 \begin{align*}
-    \frac{\dequ \mu^{(N_C, N_S)}_t}{\dequ t} + \nabla \cdot (\mu^{(N_C, N_S)}_t E) = 0.
+    \frac{\dequ \mu^{(N_C, N_S)}_t}{\dequ t} + \nabla \cdot (\mu^{(N_C, N_S)}_t \, \nabla E) = 0.
 \end{align*}
 If we let $N_C \rightarrow \infty$ and assume convergence 
 \begin{align*}
@@ -133,7 +133,7 @@ If we let $N_C \rightarrow \infty$ and assume convergence
 \end{align*} 
 we obtain the PDE for the macroscopic density
 \begin{align}
-    \frac{\dequ \bar{\rho}}{\dequ t} + \nabla \cdot (\bar{\rho} E) = 0.
+    \frac{\dequ \bar{\rho}}{\dequ t} + \nabla \cdot (\bar{\rho} \, \nabla E) = 0.
     \label{equ:meanfieldPDE}
 \end{align}
 
@@ -226,7 +226,7 @@ First, we consider a finite system of $N_C = 400$ needle cells.
 Each cell is initialised according to
 \begin{center}
     $
-    C_i = (v^{i}_1, v^{i}_2) \sim N_2((0.5,0.5)^T, 0.09^2 \cdot I_2), \quad 1 \leq i \leq 400.
+    C_i = (v^{i}_1, v^{i}_2) \sim \mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot I_2), \quad 1 \leq i \leq 400.
     $
 \end{center}
 We then evolve the system under the dynamics
@@ -234,8 +234,15 @@ We then evolve the system under the dynamics
     \frac{d C}{dt} = F(C) = sgn(v_1 - v_2) (|v_1 - v_2| - E_d)(-1, 1)^T,
 \end{align*}
 using a desired edge length of $E_d = 0.2$.  
-The resulting ODE system is integrated with an explicit Euler method using a time step of $\Delta t = 10^{-3}$ over the interval $[0,1]$, giving $100$ time steps.  
-The corresponding evolution is displayed in Figure~\ref{fig:needle400}. \\
+The resulting ODE system is integrated with an explicit Euler method using a time step of $\Delta t = 10^{-3}$ over the interval $[0,1]$, giving $100$ time steps. \\
+Figure~\ref{fig:needle400} visualises the evolution of the one dimensional needle cell system. 
+Each cell is represented by a blue point in the $(v_1,v_2)$ plane, where the horizontal axis corresponds to the position of the first vertex and the vertical axis to that of the second vertex. 
+Such a representation is only possible in this lower-dimensional setting, since the full vertex configuration of a cell can be embedded in $\R^2$. \\
+At initial time, the $N_C = 400$ cells are sampled from the distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. 
+As time progresses, the dynamics drive each cell towards its desired edge length $E_d = 0.2$. 
+In the scatter plot, this manifests as a gradual migration of points towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, corresponding to cells whose vertex separation has achieved the prescribed value. 
+By the final time, all cells lie precisely on these two diagonals, confirming that the system converges to a configuration in which every cell has relaxed to the target length. \\
+
 \begin{figure}[h!]
     \centering
     
@@ -249,14 +256,17 @@ The corresponding evolution is displayed in Figure~\ref{fig:needle400}. \\
         \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t6.png} \\    
     \end{tabular}
 
-    \caption{} 
+    \caption{Scatter plots showing the evolution of $N_C = 400$ one dimensional needle cells at times $t \in \{0.0, 0.2, \ldots, 1.0\}$. 
+    Each blue point represents a single cell, with the horizontal axis indicating the location of the first vertex $v_1$ and the vertical axis the location of the second vertex $v_2$. 
+    The initial conditions are drawn from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. The dynamics aim to achieve a desired edge length of $E_d = 0.2$, corresponding to the two diagonal lines defined by $|v_1 - v_2| = 0.2$.}
+
 	\label{fig:needle400}    
 \end{figure}
 
 
 
 Subsequently, we examine the associated mean field dynamics.  
-We choose an initial condition given by $N_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ on the domain $\Omega = [0.0, 1.0]^2$ and evolve it using the PDE
+We choose an initial condition given by $\mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ on the domain $\Omega = [0.0, 1.0]^2$ and evolve it using the PDE
 \begin{align*}
     \partial_t \bar{\rho}  = \nabla_{v_1} \cdot (- \bar{\rho} \alpha)  + \nabla_{v_2} \cdot (\bar{\rho} \alpha),
 \end{align*}
@@ -272,9 +282,14 @@ The discretisation is given by
     \nabla_{v_2} \cdot (\bar{\rho} \alpha) \: &\longrightarrow \: \frac{ \bar{\rho}_{i+1,j}^{\: k} \alpha_{i+1,j}^k - \bar{\rho}_{i-1,j}^{\: k} \alpha_{i-1,j}^k}{2 \Delta x}, 
 \end{align*}
 with grid spacing $\Delta x = \tfrac{1}{500}$.  
-The resulting dynamics are shown in Figure~\ref{fig:needle-limit}.
 
+Figure~\ref{fig:needle-limit} illustrates the evolution of the cell density in the mean field limit. 
+The initial distribution is given by $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$, forming a concentrated region in the centre of the domain. 
+Under the action of the mean field PDE, the density is gradually transported towards the two diagonal lines characterised by $|v_1 - v_2| = 0.2$, mirroring the behaviour observed in the finite-particle simulation from Figure~\ref{fig:needle400}. 
+As time evolves, the solution develops sharp ridges along these diagonals, and by the final time almost all mass is concentrated on there, indicating convergence towards the desired edge length in the continuum description.
 
+During the evolution, small oscillations appear in the region between the two diagonals. 
+These artefacts are purely numerical and originate from the central difference discretisation used for the spatial derivatives. They can be removed by employing an upwind scheme, which would provide the correct directional bias in the discretisation of the fluxes and thereby suppress non-physical oscillations. 
 
 
 \begin{figure}[h!]
@@ -290,7 +305,9 @@ The resulting dynamics are shown in Figure~\ref{fig:needle-limit}.
         \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t6-equal-scale.png} \\  
     \end{tabular}
 
-    \caption{} 
+    \caption{Evolution of the mean field density starting from the initial distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$. 
+    The PDE dynamics transport the density towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, along which the mass becomes concentrated over time. 
+    The plots display the density at successive time instances and include small oscillations between the diagonals arising from the central-difference discretisation; these could be removed through an upwind treatment of the spatial gradients.}
 	\label{fig:needle-limit}    
 \end{figure}
 
