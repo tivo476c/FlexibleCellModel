@@ -6,7 +6,9 @@ In this chapter, we therefore develop a systematic framework to pass from indivi
 We introduce the empirical measure associated with large ensembles of simulated cells, explain its convergence to the first marginal of the $N_C$-cell system, and analyse the subsequent mean-field limit as $N_C \rightarrow \infty$. \\
 %TODO: in the end really write down what we have done: 
 This leads naturally to a deterministic transport equation for the limiting cell density, which provides a mathematically transparent interpretation of the collective dynamics. 
-We illustrate this approach with explicit examples, comparing particle-based simulations and their mean-field counterparts and discuss how these ideas extend to higher-dimensional cell models. \\ 
+We illustrate this approach with an explicit low dimensional needle cell example. 
+Afterwards, we compute the mean field PDEs for our DF model with sorely the area, edge or interior angle force applied, respectively. 
+Unfortunately, we did not manage to do the same for our interaction term in this thesis, as there was not enough time. 
 %now introduce empirical measure: 
 - for our point particle monte carlo simulations, we can define the empirical measure 
 \begin{align*}
@@ -32,13 +34,27 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
 - Any sub square $A_{lc}$ of the original domain $\Omega = [-0.5, 0.5]^2$ has side length $\dfrac{1}{N_H}$. \\
 - As we increase $N_H$, we get a finer approximation of $\Omega$. \\ 
 
-- The law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\bar{\rho}(t; \vec{x})$, if the following requirements are met:
-% TODO: describe the requirements in more detail, tell why they are met 
+- The law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\rho(t; \vec{x})$, if the following requirements are met:
 \begin{itemize}
     \item the first marginal $\rho(t; \vec{x})$ exists, 
     \item the simulations are independent and identically distributed (iid),
-    \item the expected value $\int_{\Omega} \phi(\vec{x}) \rho(t; \vec{x}) \dequ x < \infty $, 
+    \item the expected value $\int_{\Omega} \phi(\vec{x}) \rho(t; \vec{x}) \dequ x < \infty $.
 \end{itemize}
+% TODO: check these
+The particle dynamics are well-posed, so the distribution of particle positions at time $t$ exists and is a probability measure. 
+Therefore, its projection onto the first endpoint—the first marginal—also exists. \\
+Each simulation run uses an independent random seed and samples the initial particle configuration independently from the same distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 I_2)$. 
+The subsequent dynamics are deterministic given the initial state, so the entire trajectories remain independent across simulations. 
+Since all simulations start from the same distribution and evolve under the same deterministic flow, they are identically distributed. 
+Thus, the collection of simulation outcomes $\{X^{(s)}_t\}_{s=1}^{N_S}$ forms an iid family for every fixed time $t$. \\
+The initial distribution is Gaussian on a bounded domain and therefore admits finite moments of all orders. 
+Moreover, the particle dynamics are smooth and preserve finiteness of expectations as no singularities or blow-up mechanisms are present. 
+Hence, for any test function $\phi \in C_c^\infty(\Omega)$ we have 
+\[
+    \int_\Omega \phi(\vec{x}) \rho(t;\vec{x}) \, \mathrm{d}x < \infty,
+\]
+ensuring that expectations of observables remain finite for all times. \\
+
 We call the limit $N_S \rightarrow \infty$ Monte Carlo limit. \\ 
 
 - But there is also a further limit to consider: the mean field limit. 
@@ -120,12 +136,12 @@ We compute:
     &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}) \cdot \nabla E(\vec{x}_i^{\: (s)}) \\
     % &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \int_{\Omega} \nabla \phi(x) \cdot \nabla_{\vec{x}_i^{\: (s)}} E(\vec{X}) \: \dequ \delta_{\vec{x}_i^{\: (s)}} \\
     &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_S)}_t \\
-    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \mu^{(N_C, N_S)}_t \nabla E(x)) \: \dequ \mu^{(N_C, N_S)}_t. \\
+    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \mu^{(N_C, N_S)}_t \nabla E(x)) \: \dequ x. \\
 \end{align*}
 % TODO: what is \mu^{(N_C, N_S)}_t \nabla E(x) from last line above 
 This computation yields the continuity equation for our empirical measure $\mu^{(N_C, N_S)}_t$
 \begin{align*}
-    \frac{\dequ \mu^{(N_C, N_S)}_t}{\dequ t} + \nabla \cdot (\mu^{(N_C, N_S)}_t \, \nabla E) = 0.
+    \frac{\partial \mu^{(N_C, N_S)}_t}{\partial t} + \nabla \cdot (\mu^{(N_C, N_S)}_t \, \nabla E) = 0.
 \end{align*}
 If we let $N_C \rightarrow \infty$ and assume convergence 
 \begin{align*}
@@ -133,7 +149,7 @@ If we let $N_C \rightarrow \infty$ and assume convergence
 \end{align*} 
 we obtain the PDE for the macroscopic density
 \begin{align}
-    \frac{\dequ \bar{\rho}}{\dequ t} + \nabla \cdot (\bar{\rho} \, \nabla E) = 0.
+    \frac{\partial \bar{\rho}}{\partial t} + \nabla \cdot (\bar{\rho} \, \nabla E) = 0.
     \label{equ:meanfieldPDE}
 \end{align}
 
@@ -166,7 +182,7 @@ where $E_d$ is the desired edge length of each cell.
 This energy lets each needle cell to recover a length of $E_d$. \\
 Applying gradient flow dynamics yields
 \begin{align*}
-    \frac{d v_1}{dt} 
+    \frac{\dequ v_1}{\dequ t} 
     &= - \nabla_{v_1} E(C) \\
     &= - \nabla_{v_1} \tfrac{1}{2}| |v_1 - v_2| - E_d |^2 \\
     &= - (|v_1 - v_2| - E_d) \nabla_{v_1} |v_1 - v_2|  \\
@@ -174,12 +190,12 @@ Applying gradient flow dynamics yields
 \end{align*}
 and 
 \begin{align*}
-    \frac{d v_2}{dt} 
+    \frac{\dequ v_2}{\dequ t} 
     &=  sgn(v_1 - v_2) (|v_1 - v_2| - E_d).  \\
 \end{align*}
 The resulting cell dynamics take the compact form
 \begin{align*}
-    \frac{d C}{dt} = F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
+    \frac{\dequ C}{\dequ t} = F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
         -1 \\ 
         1
     \end{pmatrix}.
@@ -218,7 +234,7 @@ With these identities at hand, we compute the divergence
 where $F = (F_1, F_2)^T$.  \\
 Consequently, in the mean field limit $N_C \rightarrow \infty$, the density $\bar{\rho}$ satisfies
 \begin{align*}
-    \partial_t \bar{\rho} + 2 \bar{\rho} - \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}) = 0,
+    \frac{\partial \bar{\rho}}{\partial t} + 2 \bar{\rho} - \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}) = 0,
 \end{align*}
 according to Equation~\eqref{equ:meanfieldPDE}. \\
 To illustrate this model, we present two corresponding simulations.  
@@ -268,7 +284,7 @@ By the final time, all cells lie precisely on these two diagonals, confirming th
 Subsequently, we examine the associated mean field dynamics.  
 We choose an initial condition given by $\mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ on the domain $\Omega = [0.0, 1.0]^2$ and evolve it using the PDE
 \begin{align*}
-    \partial_t \bar{\rho}  = \nabla_{v_1} \cdot (- \bar{\rho} \alpha)  + \nabla_{v_2} \cdot (\bar{\rho} \alpha),
+    \frac{\partial \bar{\rho}}{\partial t}  = \nabla_{v_1} \cdot (- \bar{\rho} \alpha)  + \nabla_{v_2} \cdot (\bar{\rho} \alpha),
 \end{align*}
 which arises from the earlier derivation of the density evolution equation.  
 The discretisation is given by
@@ -311,3 +327,256 @@ These artefacts are purely numerical and originate from the central difference d
 	\label{fig:needle-limit}    
 \end{figure}
 
+\subsection{DF edge energy mean field density} 
+- After the lower dimensional example, we now want to continue with our DF model. 
+- Let us consider DF cells as lists of two dimensional vertices, e.g.
+\begin{align*}
+    C = (\vec{v}_1, \ldots, \vec{v}_{N_V}).
+\end{align*}
+We restrict our energy to the edge energy from Equation~\ref{eq:edgeEnergy}, i.e.
+\begin{align*}
+    E_2(C) =  \sum\limits_{j=1}^{N_V} \tfrac{1}{2} |E^j_{C} - E^{j}_d|^2,
+\end{align*}
+with actual edge length $E^j_{C} = \norm[\vec{v}_j - \vec{v}_{j+1}]$ and desired length $E^{j}_d$ at edge $j$.
+In order to compute the mean field density of this system, we need to compute 
+\begin{align*}
+    \nabla_C \cdot (\bar{\rho} \, \nabla_C E_2(C))
+    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} E_2(C)) \\
+    &= \sum\limits_{j=1}^{N_V} (\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C)).
+\end{align*}
+We already computed the energy gradient in Equation~\eqref{gradient:edge}.
+It is given by 
+\begin{align*}
+    \nabla_{\vec{v}_j} E_2(C) &=  \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} 
+    + \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix}.
+\end{align*}
+For the following computation, we use the derivatives
+\begin{align*}
+    \frac{\dequ}{ \dequ v_j^x} E^{j-1}_{C} 
+    &= \frac{\dequ}{ \dequ v_j^x} \norm[\vec{v}_{j-1} - \vec{v}_{j}] \\
+    &= \frac{\dequ}{ \dequ v_j^x} \left[ \left( (v_{j-1}^x - v_{j}^x)^2 + (v_{j-1}^y - v_{j}^y)^2 \right)^{\tfrac{1}{2}} \right] \\
+    &= \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \frac{\dequ}{ \dequ v_j^x} \left[ (v_{j-1}^x - v_{j}^x)^2 + (v_{j-1}^y - v_{j}^y)^2 \right] \\
+    &= - \dfrac{v_{j-1}^x - v_j^x}{ \norm[\vec{v}_{j-1} - \vec{v}_{j}] } \\
+    &= \dfrac{v_j^x - v_{j-1}^x}{ E^{j-1}_{C} }, 
+\end{align*}
+and similarly 
+\begin{center}
+    $
+    \frac{\dequ}{ \dequ v_j^x} E^{j}_{C}   = \dfrac{v_j^x - v_{j+1}^x}{ E^{j}_{C} },  \quad 
+    \frac{\dequ}{ \dequ v_j^y} E^{j-1}_{C} = \dfrac{v_j^y - v_{j-1}^y}{ E^{j-1}_{C} },  \quad
+    \frac{\dequ}{ \dequ v_j^y} E^{j}_{C}   = \dfrac{v_j^y - v_{j+1}^y}{ E^{j}_{C} }.  
+    $
+\end{center}
+We also need 
+\begin{align*}
+    \frac{\dequ}{ \dequ v_j^x} \left[  \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \right]
+    &= \frac{\dequ}{ \dequ v_j^x} \left[  1 - \frac{E^{j-1}_d}{E^{j-1}_C} \right] \\
+    &= - E^{j-1}_d \frac{\dequ}{ \dequ v_j^x} \left[ (E^{j-1}_C)^{-1} \right] \\
+    &= - E^{j-1}_d (-(E^{j-1}_C)^{-2}) \frac{\dequ}{ \dequ v_j^x} \left[ E^{j-1}_C \right] \\
+    &= \frac{E^{j-1}_d}{(E^{j-1}_C)^{2}} \dfrac{v_j^x - v_{j-1}^x}{ E^{j-1}_{C} } \\
+    &= \frac{E^{j-1}_d}{(E^{j-1}_C)^{3}} (v_j^x - v_{j-1}^x),
+\end{align*}
+and, respectively 
+\begin{center}
+    $
+    \frac{\dequ}{ \dequ v_j^x} \left[  \frac{E^{j}_C - E^{j}_d}{E^{j}_C} \right]       = \frac{E^{j  }_d}{(E^{j  }_C)^{3}} (v_j^x - v_{j+1}^x),  \quad 
+    \frac{\dequ}{ \dequ v_j^y} \left[  \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \right] = \frac{E^{j-1}_d}{(E^{j-1}_C)^{3}} (v_j^y - v_{j-1}^y),  
+    $
+\end{center}
+\begin{center}
+    $
+    \frac{\dequ}{ \dequ v_j^y} \left[  \frac{E^{j}_C - E^{j}_d}{E^{j}_C} \right]       = \frac{E^{j  }_d}{(E^{j  }_C)^{3}} (v_j^y - v_{j+1}^y).  
+    $
+\end{center}
+% TODO: do computation d/dv2x [(E1 - Ed)/E1] 
+
+
+We continue with the computation of the second derivative of the first summand in the first derivative of the edge energy
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} \right] = \\
+    &= \frac{\dequ}{\dequ v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{x} - v_{j-1}^{x}) \right] 
+      + \frac{\dequ}{\dequ v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{y} - v_{j-1}^{y}) \right] \\
+    &= \frac{\dequ}{\dequ v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{x} - v_{j-1}^{x})  
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\dequ}{\dequ v_j^x} \left[(v_{j}^{x} - v_{j-1}^{x})\right] \\
+    &\;\;\;\; + \frac{\dequ}{\dequ v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{y} - v_{j-1}^{y}) 
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\dequ}{\dequ v_j^y} \left[ (v_{j}^{y} - v_{j-1}^{y}) \right] \\ 
+    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{x} - v_{j-1}^{x}) (v_{j}^{x} - v_{j-1}^{x})  
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\
+    &\;\;\;\; + \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{y} - v_{j-1}^{y}) (v_{j}^{y} - v_{j-1}^{y}) 
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\ 
+    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (\underbrace{(v_{j}^{x} - v_{j-1}^{x})^2 + (v_{j}^{y} - v_{j-1}^{y})^2}_{\displaystyle = (E^{j-1}_{C})^2}) + \dfrac{2(E^{j-1}_{C}- E_d^{j-1})}{E^{j-1}_{C}} \\
+    &= \frac{E_d^{j-1}}{E^{j-1}_{C}} + \dfrac{2(E^{j-1}_{C} - E_d^{j-1})}{E^{j-1}_{C}} \\
+    &= \frac{2 E^{j-1}_{C} - E_d^{j-1}}{E^{j-1}_{C}} \\
+    &= 2 - \frac{E_d^{j-1}}{E^{j-1}_{C}}.
+\end{align*}
+The computation for the second summand is analogous and it yields 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix} \right] = 2 - \frac{E_d^j}{E^j_C}.
+\end{align*}
+Overall, we get 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C) &= 4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}.
+\end{align*}
+With that result, we can finally compute the searched divergence 
+\begin{align*}
+    \nabla_C \cdot (\bar{\rho} \, \nabla_C E_2(C))
+    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} E_2(C)) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C))\right) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}) \right)   \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C)\right) + \bar{\rho} \, (4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C}),
+\end{align*}
+because 
+\begin{align*}
+    \sum\limits_{j=1}^{N_V} (4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}) = 4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C},
+\end{align*}
+as we still use circular indexing, e.g. $E^0_C = E^{N_V}_C$.  \\
+
+We can conclude that the mean field density PDE for our DF model with pure edge energy is given by 
+\begin{align}
+    \frac{\partial \bar{\rho}}{\partial t} + \sum\limits_{j=1}^{N_V} (\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C}) = 0,
+\end{align}
+where 
+\begin{align*}
+    \nabla_{\vec{v}_j} E_2(C) &=  \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} 
+    + \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix}.
+\end{align*}
+
+\subsection{DF area energy mean field density} 
+Now, we want to compute the mean field density of a DF system with pure area energy 
+\begin{align*}
+    A_2(C) = \frac{1}{2} |A_{C} - A_d|^2, 
+\end{align*}
+defined at Equation~\eqref{eq:areaEnergy} with $k=2$.
+In order to compute the mean field density of this system, we need to compute 
+\begin{align*}
+    \nabla_C \cdot (\bar{\rho} \, \nabla_C A_2(C))
+    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} A_2(C)) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} A_2(C))\right).
+\end{align*}
+
+The area gradient is given by 
+\begin{align*}
+    \nabla_{\vec{v}_j} A_2(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
+\end{align*} 
+in Equation~\eqref{gradient:area}. \\
+We compute the second derivative 
+\begin{align*}
+    \nabla_{\vec{v}_j} &\cdot \nabla_{\vec{v}_j} A_2(C) 
+    = \nabla_{\vec{v}_j} \cdot \left[ \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix} \right] \\[0.5em]
+    &= \dfrac{1}{2}  \left( \frac{\partial}{\partial v_j^x} \left[ (A_{C} - A_d)(v_{j+1}^{y} - v_{j-1}^{y}) \right] + \frac{\partial}{\partial v_j^y} \left[ (A_{C} - A_d)(v_{j-1}^{x} - v_{j+1}^{x}) \right] \right) \\[0.5em]
+    &= \dfrac{1}{2}  \left((v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ A_{C} \right] + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[ A_{C} \right] \right) \\[0.5em]
+    &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ \frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})\right] + \\
+    & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[\frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})  \right] \Biggr) \\[0.5em]
+    &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{1}{2}\frac{\partial}{\partial v_j^x} \left[ (v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y) \right] + \\
+    & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{1}{2}\frac{\partial}{\partial v_j^y} \left[(v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y)  \right] \Biggr) \\[0.5em]
+    &= \dfrac{1}{4}  \left(  (v_{j+1}^{y} - v_{j-1}^{y}) \left( v_{j+1}^y - v_{j-1}^y \right) +  (v_{j-1}^{x} - v_{j+1}^{x}) (v_{j-1}^{x} - v_{j+1}^{x}) \right) \\[0.5em]
+    &= \dfrac{1}{4} \left(  (v_{j+1}^{y} - v_{j-1}^{y})^2 +  (v_{j-1}^{x} - v_{j+1}^{x})^2 \right) \\[0.5em]
+    &= \dfrac{1}{4} \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2.
+\end{align*}
+
+With this computation, we can write down the divergence $\nabla_C \cdot (\bar{\rho} \, \nabla_C A_2(C))$ as 
+\begin{align*}
+    \nabla_C \cdot (\bar{\rho} \, \nabla_C A_2(C))
+    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} A_2(C)) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} A_2(C))\right) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \dfrac{\bar{\rho}}{4} \, \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2 \right). \\
+\end{align*}
+
+Overall, we get the mean field PDE for the isolated area energy given as 
+\begin{align}
+    \frac{\partial \bar{\rho}}{\partial t} + \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \dfrac{\bar{\rho}}{4} \, \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2 \right) = 0,
+\end{align}
+where 
+\begin{align*}
+    \nabla_{\vec{v}_j} A_2(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}.
+\end{align*} 
+
+\subsection{DF interior angle energy mean field density} 
+In this subsection, we study the case with pure interior angle energy applied, i.e. 
+\begin{align*}
+    I_2(C) = \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^j_{C} - I^{j}_d |^2, 
+\end{align*}
+from Equation~\eqref{eq:intAngleEnergy} with $k=2$. \\
+Next, we are looking for  
+\begin{align*}
+    \nabla_C \cdot (\bar{\rho} \, \nabla_C I_2(C))
+    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} I_2(C)) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} I_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C))\right).
+\end{align*}
+In Chapter~\ref{dynamics}, we already computed the first derivative as 
+\begin{align*}
+    \begin{split}
+        \nabla_{\vec{v}_j} I_2(C) &=  (I^{j-1}_{C} - I^{j-1}_d) \left( 
+                - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+            \right) \\[0.5em] 
+        &+ (I^{j}_{C} - I^{j}_d) \Biggl( 
+            \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
+            v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+            v_{j}^{x} - v_{j-1}^{x}
+            \end{pmatrix} \\
+        &\hspace{2cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+            v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+            v_{j}^{x} - v_{j+1}^{x}
+            \end{pmatrix} 
+            \Biggr) \\[0.5em] 
+        &+ (I^{j+1}_{C} - I^{j+1}_d) \left( 
+            \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+            v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+            v_{j}^{x} - v_{j+1}^{x}
+            \end{pmatrix} 
+            \right), %\\[0.5em] 
+    \end{split}
+\end{align*}
+in Equation~\eqref{gradient:angle}. \\
+
+TODO: write down computation for second derivative. 
+We get the second derivative 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) = \frac{2}{E_{j-1}^2} &\left[ 1 + 2(I_C^{j-1} - I_d^{j-1} + I_C^{j} - I_d^{j})(v_j^x - v_{j-1}^x)(v_j^y - v_{j-1}^y) \right] \\
+    + \frac{2}{E_{j}^2} &\left[ 1 - 2 (I_C^{j} - I_d^{j} + I_C^{j+1} - I_d^{j+1})(v_{j}^x - v_{j+1}^x)(v_j^y - v_{j+1}^y) \right] \\
+    -  \frac{2}{E_{j-1}^2 E_{j}^2} &\left[ (v_j^x - v_{j-1}^x)(v_{j}^x - v_{j+1}^x) + (v_j^y - v_{j-1}^y)(v_j^y - v_{j+1}^y)  \right].
+\end{align*}
+
+We can conclude the mean field PDE for pure interior angle energy 
+\begin{align}
+    \frac{\partial \bar{\rho}}{\partial t} + \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} I_2(C) + \bar{\rho}\; \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) \right) = 0,
+\end{align}
+where 
+\begin{align*}
+    \nabla_{\vec{v}_j} I_2(C) &=  (I^{j-1}_{C} - I^{j-1}_d) \left( 
+            - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
+                v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                v_{j}^{x} - v_{j-1}^{x}
+            \end{pmatrix} 
+        \right) \\[0.5em] 
+    &+ (I^{j}_{C} - I^{j}_d) \Biggl( 
+        \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
+        v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+        v_{j}^{x} - v_{j-1}^{x}
+        \end{pmatrix} \\
+    &\hspace{2cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+        v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+        v_{j}^{x} - v_{j+1}^{x}
+        \end{pmatrix} 
+        \Biggr) \\[0.5em] 
+    &+ (I^{j+1}_{C} - I^{j+1}_d) \left( 
+        \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+        v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+        v_{j}^{x} - v_{j+1}^{x}
+        \end{pmatrix} 
+        \right), %\\[0.5em] 
+\end{align*} 
+and 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) = \frac{2}{E_{j-1}^2} &\left[ 1 + 2(I_C^{j-1} - I_d^{j-1} + I_C^{j} - I_d^{j})(v_j^x - v_{j-1}^x)(v_j^y - v_{j-1}^y) \right] \\
+    + \frac{2}{E_{j}^2} &\left[ 1 - 2 (I_C^{j} - I_d^{j} + I_C^{j+1} - I_d^{j+1})(v_{j}^x - v_{j+1}^x)(v_j^y - v_{j+1}^y) \right] \\
+    -  \frac{2}{E_{j-1}^2 E_{j}^2} &\left[ (v_j^x - v_{j-1}^x)(v_{j}^x - v_{j+1}^x) + (v_j^y - v_{j-1}^y)(v_j^y - v_{j+1}^y)  \right].
+\end{align*}
