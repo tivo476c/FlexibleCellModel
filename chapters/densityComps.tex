@@ -41,19 +41,23 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
     \item the expected value $\int_{\Omega} \phi(\vec{x}) \rho(t; \vec{x}) \dequ x < \infty $.
 \end{itemize}
 % TODO: check these
-The particle dynamics are well-posed, so the distribution of particle positions at time $t$ exists and is a probability measure. 
-Therefore, its projection onto the first endpoint—the first marginal—also exists. \\
-Each simulation run uses an independent random seed and samples the initial particle configuration independently from the same distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 I_2)$. 
-The subsequent dynamics are deterministic given the initial state, so the entire trajectories remain independent across simulations. 
-Since all simulations start from the same distribution and evolve under the same deterministic flow, they are identically distributed. 
-Thus, the collection of simulation outcomes $\{X^{(s)}_t\}_{s=1}^{N_S}$ forms an iid family for every fixed time $t$. \\
-The initial distribution is Gaussian on a bounded domain and therefore admits finite moments of all orders. 
-Moreover, the particle dynamics are smooth and preserve finiteness of expectations as no singularities or blow-up mechanisms are present. 
-Hence, for any test function $\phi \in C_c^\infty(\Omega)$ we have 
-\[
-    \int_\Omega \phi(\vec{x}) \rho(t;\vec{x}) \, \mathrm{d}x < \infty,
-\]
-ensuring that expectations of observables remain finite for all times. \\
+- 1st: ? \\
+% The particle dynamics are well-posed, so the distribution of particle positions at time $t$ exists and is a probability measure. 
+% Therefore, its projection onto the first endpoint—the first marginal—also exists. \\
+% - 1st point why? \\
+- 2nd: all sims are run with same initial distribution and dynamic, the sims are run without interaction between two sims \\
+% Each simulation run uses an independent random seed and samples the initial particle configuration independently from the same distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 I_2)$. 
+% The subsequent dynamics are deterministic given the initial state, so the entire trajectories remain independent across simulations. 
+% Since all simulations start from the same distribution and evolve under the same deterministic flow, they are identically distributed. 
+% Thus, the collection of simulation outcomes $\{X^{(s)}_t\}_{s=1}^{N_S}$ forms an iid family for every fixed time $t$. \\
+- 3rd: Gaussian + smooth dynamic that preserve finiteness \\
+% The initial distribution is Gaussian on a bounded domain and therefore admits finite moments of all orders. 
+% Moreover, the particle dynamics are smooth and preserve finiteness of expectations as no singularities or blow-up mechanisms are present. 
+% Hence, for any test function $\phi \in C_c^\infty(\Omega)$ we have 
+% \[
+%     \int_\Omega \phi(\vec{x}) \rho(t;\vec{x}) \, \mathrm{d}x < \infty,
+% \]
+% ensuring that expectations of observables remain finite for all times. \\
 
 We call the limit $N_S \rightarrow \infty$ Monte Carlo limit. \\ 
 
@@ -67,11 +71,12 @@ We call the limit $N_S \rightarrow \infty$ Monte Carlo limit. \\
     $
 \end{center}
 % TODO: explain condition further and why it works for us 
-- The condition for this is that the cell interaction is `symmetrical' and `weak', e.g. 
-\begin{align*}
-    \frac{\dequ \vec{x}_i(t)}{\dequ t} = \dfrac{1}{N_C} \sum_{j=1}^{N_C} f(\vec{x}_i(t), \vec{x}_j(t)),
-\end{align*}
-such that the influence of each other cell is in $\mathcal{O}(\tfrac{1}{N_C})$. \\
+- whats the condition? \\
+% - The condition for this is that the cell interaction is `symmetrical' and `weak', e.g. 
+% \begin{align*}
+%     \frac{\dequ \vec{x}_i(t)}{\dequ t} = \dfrac{1}{N_C} \sum_{j=1}^{N_C} f(\vec{x}_i(t), \vec{x}_j(t)),
+% \end{align*}
+% such that the influence of each other cell is in $\mathcal{O}(\tfrac{1}{N_C})$. \\
 
 % TODO: explain that figure illustrating the mean field limit transition 
 % For a finite $N_C \in \N$, $\mu^{N_C}$ is a discrete measure that only has its mass divided on the exact particle locations. 

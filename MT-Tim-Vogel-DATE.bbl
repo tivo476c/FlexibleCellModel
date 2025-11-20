@@ -16,6 +16,18 @@ Maria Bruna, S.~Jonathan Chapman, and Martin Robinson.
 \newblock Diffusion of particles with short-range interactions.
 \newblock {\em SIAM Journal on Applied Mathematics}, 77(6):2294--2316, 2017.
 
+\bibitem[BEKS17]{Julia2017}
+Jeff Bezanson, Alan Edelman, Stefan Karpinski, and Viral~B Shah.
+\newblock Julia: A fresh approach to numerical computing.
+\newblock {\em SIAM {R}eview}, 59(1):65--98, 2017.
+
+\bibitem[BPA{\etalchar{+}}21]{Distributions2021}
+Mathieu Besançon, Theodore Papamarkou, David Anthoff, Alex Arslan, Simon
+  Byrne, Dahua Lin, and John Pearson.
+\newblock Distributions.jl: Definition and modeling of probability
+  distributions in the juliastats ecosystem.
+\newblock {\em Journal of Statistical Software}, 98(16):1--30, 2021.
+
 \bibitem[BSY{\etalchar{+}}18]{Boromand2018}
 Arman Boromand, Alexandra Signoriello, Fangfu Ye, Corey~S. O'Hern, and Mark~D.
   Shattuck.
@@ -28,6 +40,13 @@ Danfeng Cai, Shann-Ching Chen, Mohit Prasad, Li~He, Xiaobo Wang, Valerie
 \newblock Mechanical feedback through e-cadherin promotes direction sensing
   during collective cell migration.
 \newblock {\em Cell}, 157(5):1146--1159, 2014.
+
+\bibitem[CSR{\etalchar{+}}23]{Plots2023}
+Simon Christ, Daniel Schwabeneder, Christopher Rackauckas, Michael~Krabbe
+  Borregaard, and Thomas Breloff.
+\newblock Plots.jl -- a user extendable plotting api for the julia programming
+  language.
+\newblock 2023.
 
 \bibitem[CV15]{clark2015}
 Andrew~G Clark and Danijela~Matic Vignjevic.
@@ -91,6 +110,18 @@ M~Cristina Marchetti, Jean-Fran{\c{c}}ois Joanny, Sriram Ramaswamy,
 \newblock Hydrodynamics of soft active matter.
 \newblock {\em Reviews of modern physics}, 85(3):1143--1189, 2013.
 
+\bibitem[MOK10]{miyazawa2010}
+Seita Miyazawa, Michitoshi Okamoto, and Shigeru Kondo.
+\newblock Blending of animal colour patterns by hybridization.
+\newblock {\em Nature communications}, 1(1):66, 2010.
+
+\bibitem[MU49]{Metropolis1949}
+Nicholas Metropolis and S.~Ulam.
+\newblock The monte carlo method.
+\newblock {\em Journal of the American Statistical Association},
+  44(247):335--341, 1949.
+\newblock PMID: 18139350.
+
 \bibitem[PJJ15]{prost2015}
 Jacques Prost, Frank J{\"u}licher, and Jean-Fran{\c{c}}ois Joanny.
 \newblock Active gel physics.
@@ -100,6 +131,28 @@ Jacques Prost, Frank J{\"u}licher, and Jean-Fran{\c{c}}ois Joanny.
 Pere Roca-Cusachs, Vito Conte, and Xavier Trepat.
 \newblock Quantifying forces in cell biology.
 \newblock {\em Nature cell biology}, 19(7):742--751, 2017.
+
+\bibitem[RN17]{DifferentialEquations2017}
+Christopher Rackauckas and Qing Nie.
+\newblock Differentialequations.jl – a performant and feature-rich ecosystem
+  for solving differential equations in julia.
+\newblock {\em The Journal of Open Research Software}, 5(1), 2017.
+\newblock Exported from https://app.dimensions.ai on 2019/05/05.
+
+\bibitem[Sho14]{Shoelace2014}
+ShoelaceFormula.
+\newblock Green’s theorem and area of polygons.
+\newblock blogoverflow, June 2014.
+\newblock Published by: apnorton. URL:
+  https://math.blogoverflow.com/2014/06/04/greens-theorem-and-area-of-polygons/.
+  LAst accessed on 23.11.2023.
+
+\bibitem[Sho22]{ShoelaceFigure2022}
+ShoelaceIlustration.
+\newblock Deriving the trapezoid formula.
+\newblock URL: https://commons.wikimedia.org/wiki/File:Trapez-formel-prinz.svg,
+  January 2022.
+\newblock Published by user 'Ag2gaeh'. Last accessed on 23.11.2023.
 
 \bibitem[TWA{\etalchar{+}}09]{trepat2009}
 Xavier Trepat, Michael~R Wasserman, Thomas~E Angelini, Emil Millet, David~A
@@ -116,6 +169,11 @@ Tim Vogel.
 RB~Vaughan and JP~Trinkaus.
 \newblock Movements of epithelial cell sheets in vitro.
 \newblock {\em Journal of cell science}, 1(4):407--413, 1966.
+
+\bibitem[Wri23]{Distributed2023}
+James Wrigley.
+\newblock Distributed.jl.
+\newblock 2023.
 
 \bibitem[WV21]{wenzel2021}
 Dennis Wenzel and Axel Voigt.
