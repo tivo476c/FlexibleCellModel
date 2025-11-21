@@ -33,8 +33,12 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
 - Our heatmaps from Chapter~\ref{sanitycheck} use sets $\{A_{lc}\}_{l,c=1}^{N_H}$ for the visualisation of that empirical measure, where ${N_H}^2$ is the number of sub squares we divide $\Omega$ into.  \\
 - Any sub square $A_{lc}$ of the original domain $\Omega = [-0.5, 0.5]^2$ has side length $\dfrac{1}{N_H}$. \\
 - As we increase $N_H$, we get a finer approximation of $\Omega$. \\ 
-
-- The law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\rho(t; \vec{x})$, if the following requirements are met:
+% todo: check this explanation: 
+% The expected value of the empirical measure coincides with the first marginal because the empirical measure is simply the average of indicator functions that describe whether each cell lies in a given set. 
+% Since all cells are identically distributed in our model, each of these indicator functions has the same expectation, namely the probability that a single cell is located in that set at time $t$. 
+% By linearity of expectation, the expectation of the empirical measure is therefore exactly this probability as well. 
+% In other words, the empirical measure is an unbiased estimator of the first marginal distribution, which is why its Monte Carlo limit recovers the true density. 
+- The weak law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\rho(t; \vec{x})$, if the following requirements are met:
 \begin{itemize}
     \item the first marginal $\rho(t; \vec{x})$ exists, 
     \item the simulations are independent and identically distributed (iid),
