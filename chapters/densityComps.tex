@@ -138,7 +138,11 @@ We define the dynamic of a particle $\vec{x}_i$ via: \\
 
 Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function. 
 Its gradient field is $ \nabla \phi : \R^2 \rightarrow \R^2$. \\
-We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}(x) \dequ x $) and compute: 
+We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}(x) \dequ x $) and we have convergence 
+\begin{align*}
+    \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t,
+\end{align*}  
+then we can compute  
 \begin{align*}
     \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_S)}_t
     &= \frac{\partial}{\partial t} \left[\frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \phi(\vec{x}_i^{\: (s)})\right] \\
@@ -146,33 +150,56 @@ We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \r
     % &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \int_{\Omega} \nabla \phi(x) \cdot \nabla_{\vec{x}_i^{\: (s)}} E(\vec{X}) \: \dequ \delta_{\vec{x}_i^{\: (s)}} \\
     &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_S)}_t \\
     &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C}(x) \: \dequ x \\
-    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \rho_t^{N_C}(x) \nabla E(x)) \: \dequ x. \\
+    &\xrightarrow{N_C \rightarrow \infty} - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
+    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
 \end{align*}
 % TODO: what is \mu^{(N_C, N_S)}_t \nabla E(x) from last line above 
 This computation yields the continuity equation 
 \begin{align*}
-    \frac{\partial \rho_t^{N_C}}{\partial t} + \nabla \cdot (\rho_t^{N_C} \, \nabla E) = 0.
-\end{align*}
-If we assume convergence 
-\begin{align*}
-    \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t,
-\end{align*} 
-we obtain the PDE for the macroscopic density
-\begin{align}
     \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \cdot (\bar{\rho}_t \, \nabla E) = 0.
-    \label{equ:meanfieldPDE}
-\end{align}
+\end{align*}
 
 If we want to apply this computation on our DF model, we must adapt our empirical measure. 
 In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
 Thus, we need to use $\delta_{C_i}$ that uses high dimensional subsets $A \subset \R^{2 N_V}$ ,i.e.
 \begin{align*}
-    &\mu^{(N_C, N_S)}_t: \mathcal{B}(\R^{2 N_V}) \: \longrightarrow \: [0,1],  \\
-    A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{C_i^s(t)}(A),
+    &\mu^{(N_C, N_V, N_S)}_t: \mathcal{B}(\R^{2 N_V}) \: \longrightarrow \: [0,1],  \\
+    A \: \longmapsto \: &\mu^{(N_C, N_V, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{C_i^s(t)}(A),
 \end{align*}
 where $C_i^s(t) = (\vec{v}^{\:i,s}_1, \ldots, \vec{v}^{\:i,s}_{N_V})$ is cell $i$ at time $t$ in simulation $s$. \\ 
-
-
+We use a cell wise energy 
+\begin{align*}
+    E: \R^{2 N_V} \rightarrow \R, 
+\end{align*}
+with gradient 
+\begin{align*}
+    \nabla E: \R^{2 N_V} \rightarrow \R^{2 N_V}.
+\end{align*}
+Later on, we want to insert the three shape preserving energies, i.e. the area, edge and interior angle energy, that all have the above attributes.
+We can derive the mean field PDE for this setup as follows. 
+Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher dimensional space $\R^{2N_V}$.
+We assume that the empirical measure $\mu^{(N_C, N_V, N_S)}_t$ has density $\rho_t^{N_C, N_V}$ that converges to the mean field density $\bar{\rho}_t$, as $N_C \rightarrow \infty$.
+Then, we compute
+\begin{align*}
+    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_V, N_S)}_t
+    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \phi(C_i^s(t))\right] \\
+    &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \nabla \phi(C_i^s(t)) \cdot \nabla E(C_i^s(t)) \\
+    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_V, N_S)}_t \\
+    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C, N_V}(x) \: \dequ x \\
+    &\xrightarrow{N_C \rightarrow \infty} - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
+    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
+\end{align*}
+Again, we can conclude  
+\begin{align*}
+    \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \cdot (\bar{\rho}_t \, \nabla E) = 0.
+    % \label{equ:meanfieldPDE}
+\end{align*}
+We can use the product rule to obtain 
+\begin{align}
+    \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \bar{\rho}_t \cdot \nabla E + \bar{\rho}_t \nabla \cdot \nabla E  = 0.
+    \label{equ:meanfieldPDE}
+\end{align}
+As we already computed the energy gradients for our forces, we only need to compute their second derivatives in order to give the mean field PDE.
 
 \subsection{1d needle cells}
 % TODOs: formulate everything, figure captions, formatting
