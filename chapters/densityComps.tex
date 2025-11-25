@@ -1,16 +1,16 @@
 \section{Density computations} \label{density}
 
-In the previous chapter, we employed Monte Carlo simulations to validate the microscopic cell model and to illustrate the qualitative behaviour emerging from the underlying gradient-flow dynamics. 
-While such simulations provide valuable empirical insight, they do not yet reveal the macroscopic, continuum-level structure of the system. \\
+In the previous chapter, we employed Monte Carlo simulations to validate the microscopic cell model and to illustrate the qualitative behaviour emerging from the underlying gradient flow dynamics. 
+While such simulations provide valuable empirical insight, they do not yet reveal the macroscopic, continuum level structure of the system. \\
 In this chapter, we therefore develop a systematic framework to pass from individual cell dynamics to a description in terms of probability measures and densities. 
-We introduce the empirical measure associated with large ensembles of simulated cells, explain its convergence to the first marginal of the $N_C$-cell system, and analyse the subsequent mean-field limit as $N_C \rightarrow \infty$. \\
+We introduce the empirical measure associated with large ensembles of simulated cells, explain its convergence to the first marginal of the $N_C$ cell system, and analyse the subsequent mean-field limit as $N_C \rightarrow \infty$. \\
 %TODO: in the end really write down what we have done: 
 This leads naturally to a deterministic transport equation for the limiting cell density, which provides a mathematically transparent interpretation of the collective dynamics. 
 We illustrate this approach with an explicit low dimensional needle cell example. 
 Afterwards, we compute the mean field PDEs for our DF model with sorely the area, edge or interior angle force applied, respectively. 
 Unfortunately, we did not manage to do the same for our interaction term in this thesis, as there was not enough time. 
 %now introduce empirical measure: 
-- for our point particle monte carlo simulations, we can define the empirical measure 
+For our point particle monte carlo simulations, we can define the empirical measure 
 \begin{align*}
     &\mu^{(N_C, N_S)}_t: \mathcal{B}(\R^2) \: \longrightarrow \: [0,1],  \\
     A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{\vec{x}_i^{\:(s)}(t)}(A),
@@ -28,132 +28,77 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
 \[
 \int_{\R^2} \phi(x) \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
 \]
+For a set $A \in \mathcal{B}(\mathbb{R}^2)$, the quantity $\mu^{(N_C, N_S)}_t(A)$ denotes the relative proportion of the $N_C$ particles that lie in $A$ at time $t$, averaged over all $N_S$ simulations.\\
+The heatmaps in Chapter~\ref{sanitycheck} are obtained by evaluating this empirical measure on a family of subsets $\{A_{ij}\}_{i,j=1}^{N_H}$, where $N_H^2$ is the number of sub squares into which we partition the domain $\Omega = [-0.5, 0.5]^2$.  
+Each subsquare $A_{ij}$ has side length $\tfrac{1}{N_H}$, and increasing $N_H$ yields an increasingly fine spatial resolution of~$\Omega$.\\
+If, in addition, we let $N_S \to \infty$, then by the Central Limit Theorem the empirical heatmaps converge to their expectation, which coincides with the first marginal distribution of the system, since the simulations are independent and identically distributed.  
+In our computations we used $10\,000$ simulations to ensure a reliable numerical approximation of this first marginal. \\
 
-- For a set $A \in \mathcal{B}(\R^2)$, $\mu^{(N_C, N_S)}_t(A)$ is the relative proportion of the $N_C$ particles that are located in $A$ at time $t$, throughout all $N_S$ simulations. \\
-- Our heatmaps from Chapter~\ref{sanitycheck} use sets $\{A_{lc}\}_{l,c=1}^{N_H}$ for the visualisation of that empirical measure, where ${N_H}^2$ is the number of sub squares we divide $\Omega$ into.  \\
-- Any sub square $A_{lc}$ of the original domain $\Omega = [-0.5, 0.5]^2$ has side length $\dfrac{1}{N_H}$. \\
-- As we increase $N_H$, we get a finer approximation of $\Omega$. \\ 
-% todo: check this explanation: 
-% The expected value of the empirical measure coincides with the first marginal because the empirical measure is simply the average of indicator functions that describe whether each cell lies in a given set. 
-% Since all cells are identically distributed in our model, each of these indicator functions has the same expectation, namely the probability that a single cell is located in that set at time $t$. 
-% By linearity of expectation, the expectation of the empirical measure is therefore exactly this probability as well. 
-% In other words, the empirical measure is an unbiased estimator of the first marginal distribution, which is why its Monte Carlo limit recovers the true density. 
-- The weak law of large numbers yields that the empirical measure $\mu^{(N_C, N_S)}_t$ converges to the first marginal distribution $\rho(t; \vec{x})$, if the following requirements are met:
-\begin{itemize}
-    \item the first marginal $\rho(t; \vec{x})$ exists, 
-    \item the simulations are independent and identically distributed (iid),
-    \item the expected value $\int_{\Omega} \phi(\vec{x}) \rho(t; \vec{x}) \dequ x < \infty $.
-\end{itemize}
-% TODO: check these
-- 1st: ? \\
-% The particle dynamics are well-posed, so the distribution of particle positions at time $t$ exists and is a probability measure. 
-% Therefore, its projection onto the first endpoint—the first marginal—also exists. \\
-% - 1st point why? \\
-- 2nd: all sims are run with same initial distribution and dynamic, the sims are run without interaction between two sims \\
-% Each simulation run uses an independent random seed and samples the initial particle configuration independently from the same distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 I_2)$. 
-% The subsequent dynamics are deterministic given the initial state, so the entire trajectories remain independent across simulations. 
-% Since all simulations start from the same distribution and evolve under the same deterministic flow, they are identically distributed. 
-% Thus, the collection of simulation outcomes $\{X^{(s)}_t\}_{s=1}^{N_S}$ forms an iid family for every fixed time $t$. \\
-- 3rd: Gaussian + smooth dynamic that preserve finiteness \\
-% The initial distribution is Gaussian on a bounded domain and therefore admits finite moments of all orders. 
-% Moreover, the particle dynamics are smooth and preserve finiteness of expectations as no singularities or blow-up mechanisms are present. 
-% Hence, for any test function $\phi \in C_c^\infty(\Omega)$ we have 
-% \[
-%     \int_\Omega \phi(\vec{x}) \rho(t;\vec{x}) \, \mathrm{d}x < \infty,
-% \]
-% ensuring that expectations of observables remain finite for all times. \\
+There is also a further limit to consider: the mean field limit. 
+Here, we let the number of cells $N_C \rightarrow \infty$. 
+In the mean field limit, we can study the transition from the microscopic model view, that uses a finite number of cells, $N_C < \infty$, to a macroscopic model view where we consider the whole system's density without individual cells. \\
+Figure~\ref{fig:muTransition} illustrates how empirical particle distributions converge towards their underlying mean field density as the number of particles increases.  
+The first three panels depict empirical measures obtained from samples of size $N_C \in \{20, 200, 20\,000\}$, drawn independently from the same Gaussian distribution $\mathcal{N}_2((0,0), 0.09^2 I_2)$.
+To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\) sub squares, on which the empirical measure
+\[
+    \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i}(A)
+\]
+is evaluated and displayed as a heatmap. \\
+As the particle number grows, the empirical distribution becomes progressively smoother and more faithful to the true underlying density.  
+For small \(N_C\), random fluctuations dominate the visual appearance, while for larger \(N_C\) these fluctuations average out, and the heatmap increasingly resembles the continuous Gaussian density shown in the fourth panel.  \\
 
-We call the limit $N_S \rightarrow \infty$ Monte Carlo limit. \\ 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=15cm]{density/muplot_combined.png}
+		\caption{Empirical measures for increasing particle numbers \(N_C \in \{20, 200, 20\,000\}\), compared with the limiting density \( \mathcal{N}_2((0,0), 0.09^2 \cdot I_2) \) shown in the fourth panel.  
+        Particles are sampled i.i.d.\ from the same distribution, and the empirical measure \( \mu^{N_C} \) is visualised on a \(50 \times 50\) grid of sub squares.  
+        As \(N_C\) increases, the empirical heatmaps become smoother and converge to the Gaussian density, demonstrating the transition towards the mean field limit.  
+        A consistent colour scale allows direct comparison across all subplots.
+        }
+		\label{fig:muTransition}
+	\end{center}
+\end{figure}
 
-- But there is also a further limit to consider: the mean field limit. 
-- Here, we let the number of cells $N_C \rightarrow \infty$. 
-- In the mean field limit, we can study the transition from the microscopic model view, that uses a finite number of cells, $N_C < \infty$, to a macroscopic model view where we consider the whole system's density without individual cells, as $N_C \rightarrow \infty$.
-- As $N_C \rightarrow \infty$, our first marginal $\rho$ converges to the mean field density $\bar{\rho}$
-\begin{center}
-    $
-    \rho \xrightarrow {N_C \to \infty } \bar{\rho}.
-    $
-\end{center}
-% TODO: explain condition further and why it works for us 
-- whats the condition? \\
-% - The condition for this is that the cell interaction is `symmetrical' and `weak', e.g. 
-% \begin{align*}
-%     \frac{\dequ \vec{x}_i(t)}{\dequ t} = \dfrac{1}{N_C} \sum_{j=1}^{N_C} f(\vec{x}_i(t), \vec{x}_j(t)),
-% \end{align*}
-% such that the influence of each other cell is in $\mathcal{O}(\tfrac{1}{N_C})$. \\
-
-% TODO: explain that figure illustrating the mean field limit transition 
-% For a finite $N_C \in \N$, $\mu^{N_C}$ is a discrete measure that only has its mass divided on the exact particle locations. 
-% As we increase the number of particles, $\mu^{N_C}$ will spread out \,-\, having more particle locations to cover with each particle having a lower influence on the result of $\mu^{N_C}$ as we divide through $N_C$.
-% This process is quite simular to the transition from a sum to an according integral:
-% \[ \sum\limits_{i=1}^{N_C} \frac{1}{N_C} f(x_i) \xrightarrow{N \to \infty} \int f(x) \dequ x,  \]
-% where we can also see a transition from a discrete starting problem, having discrete points ${x_i}$, to a continious integral where $x \in (a,b)$. 
-% As $\mu^N$ is a measure that lives on sets $A \in \mathcal{B}(\R^d)$, we cannot directly plot it as a function. 
-% Instead, we try to visualise it meaningfully by using histograms as approximations in Figure~\ref{fig:muTransition}.
-% This is also a good connection from the previus section, where we also used histograms to show the results of the monte carlo simulations. 
-
-% \begin{figure}
-% 	\begin{center}
-% 		\includegraphics[width=15cm]{density/muplot_combined.png}
-% 		\caption{
-%             Visualisation of empirical measures $\mu^{N_C}$ for increasing numbers of cells, alongside the corresponding theoretical density. 
-%             This visualisation illustrates the transition \( \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\). \\
-%             All cell configurations are sampled from the same initial condition described in the previous chapter: a two-dimensional normal distribution \( \mathcal{N}_2((0,0), \sigma^2 I_2) \) with \( \sigma = 0.09 \). 
-%             In the first three subplots, the domain \([-0.5, 0.5]^2\) is discretised into square bins of side length \(\frac{1}{50}\). 
-%             Each bin \( A \) corresponds to a measurable set in the definition of the empirical measure \( \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{x_i}(A) \), where the color intensity encodes the number of cells in that bin. \\
-%             The first subplot shows a realisation with \( N_C = 20 \) cells, the second with \( N_C = 200 \), and the third with \( N_C = 20{.}000 \). 
-%             We observe that as \( N_C \) increases, the empirical measure \( \mu^{N_C} \) becomes a smoother approximation of the underlying density. 
-%             The color scale is fixed across all subplots to allow direct visual comparison.
-%             The fourth panel displays the exact density function of the initial distribution, \( \rho(x) = \frac{1}{2\pi\sigma^2} \exp\left( -\frac{\|x\|^2}{2\sigma^2} \right) \), with \( \sigma = 0.09 \). 
-%          }
-% 		\label{fig:muTransition}
-% 	\end{center}
-% \end{figure}
-
-% The distribution from the fourth subplot in Figure~\ref{fig:muTransition} is aimed to be computed for the dynamics of our DF cell model. 
-
-% In the end, we want to achieve:
-% \[ \mu^{N_C} \xrightarrow{N_C \to \infty} \mu\]
-% by letting the number of cells go to infinity. \\
-
+For the following discussion, we assume that the first marginal distributions of the DF model converge to a mean field density, that is,
+\[
+    \rho^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}.
+\]
+In the preceding chapters, we wrote $\rho$ for the first marginal, as the mean field limit was not under consideration.  
+To emphasise the dependence on the number of cells $N_C$, we adopt the notation $\rho^{N_C}$ throughout this chapter. \\
+A rigorous analysis establishing this convergence remains an interesting direction for future work. \\ 
 
 % now: computation of mean field density PDE 
-- Next, we will show how the PDE for the mean field density temporal evolution can be computed generally, if the particle dynamic is given by the gradient flow of a given energy. 
-
-% Lets define our cell centres with:
-% \begin{gather*}
-%     \vec{X}(t) = (\vec{x}_1(t), \ldots, \vec{x}_{N_C}(t)) \in \R^{2 N_C}. \\
-% \end{gather*}
-
-We use a cell wise energy  
+Next, we will show how the PDE for the mean field density temporal evolution can be computed generally for a point particle model, if the particle dynamic is given by the gradient flow of a given energy. 
+For $N_C$ point particles $\vec{x}_i(t) \in \R^2$, we use a cell wise energy  
 \begin{align*}
     E: \R^{2} \: &\longrightarrow \:  \R, \\ 
     \vec{x} \: &\longmapsto \: E(\vec{x}).
 \end{align*}
 
-We define the dynamic of a particle $\vec{x}_i$ via: \\
+We define the dynamic of a particle $\vec{x}_i$ via \\
 \[ 
-    \dfrac{\dequ \vec{x}_i}{\dequ t} = - \nabla E(\vec{x}_i) \in \R^{2}. 
+    \dfrac{\dequ \vec{x}_i(t)}{\dequ t} = - \nabla E(\vec{x}_i(t)) \in \R^{2}, \quad 1 \leq i \leq N_C. 
 \]
-
-Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function. 
-Its gradient field is $ \nabla \phi : \R^2 \rightarrow \R^2$. \\
+We consider the empirical measure 
+\[
+    \mu_t^{N_C}(A) = \tfrac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A)
+\]
+Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function with gradient field $ \nabla \phi : \R^2 \rightarrow \R^2$. \\
 We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}(x) \dequ x $) and we have convergence 
 \begin{align*}
-    \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t,
+    \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t.
 \end{align*}  
-then we can compute  
+Then, we can compute  
 \begin{align*}
-    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_S)}_t
-    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \phi(\vec{x}_i^{\: (s)})\right] \\
-    &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}) \cdot \nabla E(\vec{x}_i^{\: (s)}) \\
-    % &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \int_{\Omega} \nabla \phi(x) \cdot \nabla_{\vec{x}_i^{\: (s)}} E(\vec{X}) \: \dequ \delta_{\vec{x}_i^{\: (s)}} \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_S)}_t \\
+    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{N_C}_t
+    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \phi(\vec{x}_i^{\: (s)})\right] \\
+    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}) \cdot \nabla E(\vec{x}_i^{\: (s)}) \\
+    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{N_C}_t \\
     &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C}(x) \: \dequ x \\
     &\xrightarrow{N_C \rightarrow \infty} - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
     &= \int_{\Omega} \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
 \end{align*}
-% TODO: what is \mu^{(N_C, N_S)}_t \nabla E(x) from last line above 
+
 This computation yields the continuity equation 
 \begin{align*}
     \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \cdot (\bar{\rho}_t \, \nabla E) = 0.
@@ -161,12 +106,12 @@ This computation yields the continuity equation
 
 If we want to apply this computation on our DF model, we must adapt our empirical measure. 
 In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
-Thus, we need to use $\delta_{C_i}$ that uses high dimensional subsets $A \subset \R^{2 N_V}$ ,i.e.
+Thus, we need to use $\delta_{C_i}$ that uses high dimensional subsets $A \subset \R^{2 N_V}$, i.e.
 \begin{align*}
-    &\mu^{(N_C, N_V, N_S)}_t: \mathcal{B}(\R^{2 N_V}) \: \longrightarrow \: [0,1],  \\
-    A \: \longmapsto \: &\mu^{(N_C, N_V, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{C_i^s(t)}(A),
+    &\mu^{(N_C, N_V)}_t: \mathcal{B}(\R^{2 N_V}) \: \longrightarrow \: [0,1],  \\
+    A \: \longmapsto \: &\mu^{(N_C, N_V)}_t(A) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \delta_{C_i(t)}(A),
 \end{align*}
-where $C_i^s(t) = (\vec{v}^{\:i,s}_1, \ldots, \vec{v}^{\:i,s}_{N_V})$ is cell $i$ at time $t$ in simulation $s$. \\ 
+where $C_i(t) = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_{N_V})$ is cell $i$ at time $t$. \\ 
 We use a cell wise energy 
 \begin{align*}
     E: \R^{2 N_V} \rightarrow \R, 
@@ -178,30 +123,30 @@ with gradient
 Later on, we want to insert the three shape preserving energies, i.e. the area, edge and interior angle energy, that all have the above attributes.
 We can derive the mean field PDE for this setup as follows. 
 Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher dimensional space $\R^{2N_V}$.
-We assume that the empirical measure $\mu^{(N_C, N_V, N_S)}_t$ has density $\rho_t^{N_C, N_V}$ that converges to the mean field density $\bar{\rho}_t$, as $N_C \rightarrow \infty$.
+We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t$, as $N_C \rightarrow \infty$.
 Then, we compute
 \begin{align*}
-    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_V, N_S)}_t
-    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \phi(C_i^s(t))\right] \\
-    &= - \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_C} \nabla \phi(C_i^s(t)) \cdot \nabla E(C_i^s(t)) \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_V, N_S)}_t \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C, N_V}(x) \: \dequ x \\
+    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_V)}_t
+    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(C_i(t))\right] \\
+    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \nabla \phi(C_i(t)) \cdot \nabla E(C_i(t)) \\
+    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_V)}_t \\
+    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{(N_C, N_V)}(x) \: \dequ x \\
     &\xrightarrow{N_C \rightarrow \infty} - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
     &= \int_{\Omega} \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
 \end{align*}
 Again, we can conclude  
-\begin{align*}
+\begin{align}
     \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \cdot (\bar{\rho}_t \, \nabla E) = 0.
-    % \label{equ:meanfieldPDE}
-\end{align*}
+    \label{equ:meanfieldPDE}
+\end{align}
 We can use the product rule to obtain 
 \begin{align}
     \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \bar{\rho}_t \cdot \nabla E + \bar{\rho}_t \nabla \cdot \nabla E  = 0.
-    \label{equ:meanfieldPDE}
+    \label{equ:meanfieldPDE-productRule}
 \end{align}
-As we already computed the energy gradients for our forces, we only need to compute their second derivatives in order to give the mean field PDE.
+As we already computed the energy gradients for our forces, we only need to compute their second derivatives in order to give the according mean field PDE.
 
-\subsection{1d needle cells}
+\subsection{1d needles example}
 % TODOs: formulate everything, figure captions, formatting
 In order to demonstrate how the preceding computations can be applied in practice, we begin with a lower dimensional example. 
 In this setting, each cell consists of two vertices situated in one spatial dimension, 
@@ -231,7 +176,7 @@ and
 \end{align*}
 The resulting cell dynamics take the compact form
 \begin{align*}
-    \frac{\partial C}{\partial t} = F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
+    \frac{\partial C}{\partial t} = - \nabla_C E(C) =F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
         -1 \\ 
         1
     \end{pmatrix}.
@@ -343,25 +288,20 @@ As time evolves, the solution develops sharp ridges along these diagonals, and b
 During the evolution, small oscillations appear in the region between the two diagonals. 
 These artefacts are purely numerical and originate from the central difference discretisation used for the spatial derivatives. They can be removed by employing an upwind scheme, which would provide the correct directional bias in the discretisation of the fluxes and thereby suppress non-physical oscillations. 
 
-% Both simulations show exclusion effects, similar to the earlier example for hard discs in Figure~\ref{fig:hardsphere}. 
-% There, the diagonal line through the domain was excluded, as particles in that region would overlap.
-% The exclusion was hard coded, initially by preventing cell overlaps and preserved by the dynamic that does not permit cell overlaps. \\
-% In our needle example, we do not exclude this area initially. 
-% This model allows states, that differ from the desired state, were the needles have length $E_d$.
-% Over time, we can observe that the dynamic favours cell states with according edge length, reproducing the diagonal line where no cells are located in. 
-% This is a softer kind restriction. 
-Both simulations exhibit \emph{exclusion effects} that closely resemble the behaviour observed in the earlier hard--disc model shown in Figure~\ref{fig:hardsphere}.
-In the hard--disc example, the diagonal region of the domain was inaccessible because any placement of the second disc in that area would necessarily lead to overlap with the first disc. This exclusion was \emph{enforced explicitly}: overlap was prohibited both by the initial configuration and by the dynamics, which strictly prevented discs from entering the forbidden region.
-
-In contrast, the needle model does \emph{not} impose such exclusions a priori. Initially, cell configurations violating the desired edge length $E_d$ are allowed.
+% reference to hard disc exclusion
+Both simulations exhibit exclusion effects that closely resemble the behaviour observed in the earlier hard disc model shown in Figure~\ref{fig:hardsphere}.
+In the hard disc example, the diagonal region of the domain was inaccessible because any placement of the second disc in that area would necessarily lead to overlap with the first disc. 
+This exclusion was enforced explicitly: overlap was prohibited both by the initial configuration and by the dynamics, which strictly prevented discs from entering the forbidden region. \\ 
+The geometric volume exclusion in the hard disc system corresponds to the desired state constraint in the needle model: whereas discs must avoid overlaps, needles are driven toward configurations in which their length equals $E_d$, and both mechanisms create analogous forbidden regions in the state space.
+The needle model does not impose such exclusions a priori. 
+Initially, needle cell configurations with lengths unequal to $E_d$ are allowed. 
 Nevertheless, the dynamics, driven by the energy term
 \[
-    E(C) = \tfrac12 \,\lvert\, |v_1 - v_2| - E_d \,\rvert^2 ,
+    E(C) = \tfrac{1}{2} ||v_1 - v_2| - E_d |^2 ,
 \]
-naturally steer the system toward states where the needle length matches $E_d$.
-As the evolution proceeds, the density gradually depletes along the diagonal region of the $(v_1,v_2)$--space, reproducing the same ``forbidden'' diagonal line that appeared in the hard--disc case.
-
-Thus, while the hard--disc model exhibits a \emph{hard exclusion} (geometric non-overlap), the needle system develops a \emph{soft exclusion}: the dynamics energetically penalize undesirable configurations until the system self-organizes into a feasible state.
+naturally steer the system toward states where the needle length matches $E_d$. 
+As the evolution proceeds, the density gradually depletes along the diagonal region of the $(v_1, v_2)$ space, reproducing the same `forbidden' diagonal line that appeared in the hard-disc case. \\
+Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap), the needle system develops a soft exclusion: the dynamics energetically penalize undesirable configurations until the system self organises into a feasible state.
 
 
 
@@ -395,13 +335,7 @@ We restrict our energy to the edge energy from Equation~\eqref{eq:edgeEnergy}, i
     E_2(C) =  \sum\limits_{j=1}^{N_V} \tfrac{1}{2} |E^j_{C} - E^{j}_d|^2,
 \end{align*}
 with actual edge length $E^j_{C} = \norm[\vec{v}_j - \vec{v}_{j+1}]$ and desired length $E^{j}_d$ at edge $j$.
-In order to compute the mean field density of this system, we need to compute 
-\begin{align*}
-    \nabla_C \cdot (\bar{\rho} \, \nabla_C E_2(C))
-    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} E_2(C)) \\
-    &= \sum\limits_{j=1}^{N_V} (\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C)).
-\end{align*}
-We already computed the energy gradient in Equation~\eqref{gradient:edge}.
+In order to compute the mean field density of this system and express Equation~\ref{equ:meanfieldPDE-productRule} for this setup, we only need to compute $\nabla \cdot \nabla  E_2(C)$, as we already computed the energy gradient in Equation~\eqref{gradient:edge}. 
 It is given by 
 \begin{align*}
     \nabla_{\vec{v}_j} E_2(C) &=  \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
