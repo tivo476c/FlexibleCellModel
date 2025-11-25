@@ -343,6 +343,27 @@ As time evolves, the solution develops sharp ridges along these diagonals, and b
 During the evolution, small oscillations appear in the region between the two diagonals. 
 These artefacts are purely numerical and originate from the central difference discretisation used for the spatial derivatives. They can be removed by employing an upwind scheme, which would provide the correct directional bias in the discretisation of the fluxes and thereby suppress non-physical oscillations. 
 
+% Both simulations show exclusion effects, similar to the earlier example for hard discs in Figure~\ref{fig:hardsphere}. 
+% There, the diagonal line through the domain was excluded, as particles in that region would overlap.
+% The exclusion was hard coded, initially by preventing cell overlaps and preserved by the dynamic that does not permit cell overlaps. \\
+% In our needle example, we do not exclude this area initially. 
+% This model allows states, that differ from the desired state, were the needles have length $E_d$.
+% Over time, we can observe that the dynamic favours cell states with according edge length, reproducing the diagonal line where no cells are located in. 
+% This is a softer kind restriction. 
+Both simulations exhibit \emph{exclusion effects} that closely resemble the behaviour observed in the earlier hard--disc model shown in Figure~\ref{fig:hardsphere}.
+In the hard--disc example, the diagonal region of the domain was inaccessible because any placement of the second disc in that area would necessarily lead to overlap with the first disc. This exclusion was \emph{enforced explicitly}: overlap was prohibited both by the initial configuration and by the dynamics, which strictly prevented discs from entering the forbidden region.
+
+In contrast, the needle model does \emph{not} impose such exclusions a priori. Initially, cell configurations violating the desired edge length $E_d$ are allowed.
+Nevertheless, the dynamics, driven by the energy term
+\[
+    E(C) = \tfrac12 \,\lvert\, |v_1 - v_2| - E_d \,\rvert^2 ,
+\]
+naturally steer the system toward states where the needle length matches $E_d$.
+As the evolution proceeds, the density gradually depletes along the diagonal region of the $(v_1,v_2)$--space, reproducing the same ``forbidden'' diagonal line that appeared in the hard--disc case.
+
+Thus, while the hard--disc model exhibits a \emph{hard exclusion} (geometric non-overlap), the needle system develops a \emph{soft exclusion}: the dynamics energetically penalize undesirable configurations until the system self-organizes into a feasible state.
+
+
 
 \begin{figure}[h!]
     \centering
