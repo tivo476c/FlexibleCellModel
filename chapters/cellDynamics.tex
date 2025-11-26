@@ -57,7 +57,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\end{center} 
 	where $\vec{v}_{N + 1} = \vec{v}_1$. \\
 	Proof. 	\\
-	An illustration supporting the proof is provided in \ref{fig:shoelace}, which is where the idea of the proof comes from. 
+	An illustration supporting the proof is provided in Figure\ref{fig:shoelace}, which is where the idea of the proof comes from. 
 	Without loss of generality, we may assume that all coordinates are positive.
 	If this is not initially the case, the entire polygon can be translated into the positive quadrant without affecting its area. \\
 	For each $1 \leq j \leq N$ the edge $\overline{ \vec{v}_j \: \vec{v}_{j+1}}$ is associated with the area $T_j$ of the trapeze that arises when connecting the line segment vertically with the $x$ axis. 
@@ -71,24 +71,28 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\begin{center}
 		$A_C = \sum\limits_{j = 1}^{N} T_j = \frac{1}{2} \sum\limits_{j = 1}^{N} (v_j^{y} + v_{j+1}^{y})(v_j^{x} - v_{j+1}^{x}) = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^{x} v_{j+1}^{y} - v_{j+1}^{x} v_j^{y}) $.
 	\end{center} 
-	\begin{figure}
-		\begin{center}
-			\includegraphics[width=8cm]{bachelors-thesis/shoelace_new.png}
-			\caption{
-				This figure shows a geometrical interpretation of the shoelace formula.
-				The green arrows, which point from right to left, represent positive trapezoidal areas that contribute positively to the total area of the polygon.
-				In contrast, the red arrows point from left to right and represent negative areas that are subtracted in the computation.
-				The vertical black lines divide the plot into subregions.
-				Within each subregion, green arrows are counted with plus signs and red arrows with minus signs.
-				We observe that the subregions lying outside the polygon contain an equal number of plus and minus signs, indicating that their net contribution to the area is zero.
-				In contrast, the subregions inside the polygon always have one more plus sign than minus signs, meaning their area is counted exactly once in the total.
-				Overall, this illustrates that the method correctly computes the area of the polygon.
-				Source:~\cite{ShoelaceFigure2022}}
-			\label{fig:shoelace}
-		\end{center}
-	\end{figure}
-	\qed
+\qed
 \end{proposition}
+
+\FloatBarrier   % prevents floats from passing this point
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=8cm]{bachelors-thesis/shoelace_new.png}
+		\caption{
+			This figure shows a geometrical interpretation of the shoelace formula.
+			The green arrows, which point from right to left, represent positive trapezoidal areas that contribute positively to the total area of the polygon.
+			In contrast, the red arrows point from left to right and represent negative areas that are subtracted in the computation.
+			The vertical black lines divide the plot into subregions.
+			Within each subregion, green arrows are counted with plus signs and red arrows with minus signs.
+			We observe that the subregions lying outside the polygon contain an equal number of plus and minus signs, indicating that their net contribution to the area is zero.
+			In contrast, the subregions inside the polygon always have one more plus sign than minus signs, meaning their area is counted exactly once in the total.
+			Overall, this illustrates that the method correctly computes the area of the polygon.
+			Source:~\cite{ShoelaceFigure2022}}
+		\label{fig:shoelace}
+	\end{center}
+\end{figure}
+	
 
 With the Shoelace formula we are able to easily compute all cell areas at all times in the simulation. 
 This enables us to implement the gradient flow over the area energy. 
@@ -102,6 +106,35 @@ The energy $A_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$ for $k \in \N_{\geq 1}$, 
 \end{definition}
 
 To maintain the cell area during the simulation, we evaluate the gradient flow of the area energy which indicates the direction of motion for each vertex for preserving the cell area.
+\begin{figure}[t!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.5\textwidth]{forces/area1/t0.png} &
+        \includegraphics[width=0.5\textwidth]{forces/area1/t1.png} \\
+        \includegraphics[width=0.5\textwidth]{forces/area1/t2.png} &
+        \includegraphics[width=0.5\textwidth]{forces/area1/t5.png} \\
+    \end{tabular}
+    \caption{The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4\times 10^{8}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
+	Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4\times 10^{8} \nabla_{\vec{v}} A_2(C)$ for all vertices.
+	The initial cell area is $A_C = 1\times 10^{-5}$, while the desired cell area is set to $6.5\times 10^{-5}$.\\
+	We deliberately chose an irregular cell shape, since small vertical changes to the vertices lead to large changes in area.
+	Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+	The area force successfully restores the desired cell area after 5 time steps, which is also reflected Figure~\ref{fig:areaEnergyDiagram}.}
+	\label{fig:areaForce}    
+\end{figure}
+\FloatBarrier   % prevents floats from passing this point
+\vspace{3cm}
+\text{ }
+
+
+\begin{figure}[t!]
+    \centering
+	\includegraphics[width=0.7\textwidth]{forces/area1/energies-show-areaForce.png} 
+    \caption{The area force successfully restores the desired cell area after 5 time steps as this energy diagram shows.}
+	\label{fig:areaEnergyDiagram}    
+\end{figure}
+
+\vspace{3cm}
 
 \begin{proposition} \textbf{Area force} \label{force:area}\\
 	The area force $F_{k}^{(A)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
@@ -115,7 +148,6 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 		\label{gradient:area}
 	\end{align}
 	for all $1 \leq j \leq N_V$.\\
-
 
 	Proof.\\
 	Choose $1 \leq j \leq N_V$.  
@@ -138,34 +170,11 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 	Remember that $A_d$ is just an independent constant. 
 	\qed
 \end{proposition}
+
 It is also valid to write $F_{j}^{(A)}(\vec{C})$ instead of $F_{j}^{(A)}(C)$, since $C$ is included in $\vec{C}$. 
+Figure~\ref{fig:areaForce} illustrates how the area force acts on a cell to either expand or contract it toward the desired target area.\\ 
 
 
-\begin{figure}[h!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/area1/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/area1/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/area1/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/area1/t5.png} \\
-    \end{tabular}
-    \caption{The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4\times 10^{8}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
-	Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4\times 10^{8} \nabla_{\vec{v}} A_2(C)$ for all vertices.
-	The initial cell area is $A_C = 1\times 10^{-5}$, while the desired cell area is set to $6.5\times 10^{-5}$.\\
-	We deliberately chose an irregular cell shape, since small vertical changes to the vertices lead to large changes in area.
-	Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-	The area force successfully restores the desired cell area after 5 time steps, which is also reflected Figure~\ref{fig:areaEnergyDiagram}.}
-	\label{fig:areaForce}    
-\end{figure}
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/area1/energies-show-areaForce.png} 
-    \caption{The area force successfully restores the desired cell area after 5 time steps as this energy diagram shows.}
-	\label{fig:areaEnergyDiagram}    
-\end{figure}
-Figure~\ref{fig:areaForce} illustrates how the area force acts on a cell to either expand or contract it toward the desired target area.
-
-    
 \subsection{Edge force}
 The next force we would like to model is the edge force. 
 It acts on the cells' edges and aims to maintain their lengths.
@@ -193,9 +202,38 @@ The according energy for this edge is:
 \end{definition}
 
 Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $e_{j}$ and $e_{j-1}$, we get the total edge force on $\vec{v}_j$ with: 
+An isolated application of the edge force can be seen in Figure~\ref{fig:edgeForce}.  
+
+\begin{figure}[t!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t5.png} \\
+    \end{tabular}
+    \caption{The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
+		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3\times 10^{4} \nabla_{\vec{v}} E_2(C)$ for all vertices.\\
+		The initial edge length of the top edge is $E_C^2 = 1\times 10^{-3}$, while the desired edge lengths are all set to $5\times 10^{-3}$.\\
+		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}} to view the associated animation (GIF).\\
+		The edge force nearly restores the desired edge lengths after 5 time steps, which can also be observed in Figure~\ref{fig:edgeEnergyDiagram}.
+		}
+		\label{fig:edgeForce}
+\end{figure}
+\FloatBarrier   % prevents floats from passing this point
+\vspace{3cm}
+\text{ }
+
+\begin{figure}[t!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/edge1/energies-show-edgeForce.png} 
+    \caption{This energy diagram shows that the edge force nearly restores the desired edge lengths after 5 time steps.}
+	\label{fig:edgeEnergyDiagram}    
+\end{figure}
+
+\vspace{3cm}
 
 \begin{proposition} \textbf{Edge force} \\
-
 	The edge force $F_{k}^{(E)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
 	\begin{align*}
 		F_{k}^{(E)}(C) 
@@ -260,7 +298,10 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 			\partial_{v_{j}^{x}} (v_{j}^{x} - v_{j+1}^{x})^2 \\[0.5em]
 			\partial_{v_{j}^{y}} (v_{j}^{y} - v_{j+1}^{y})^2
 		\end{pmatrix} \\[0.5em]
-		&= \sgn(E^{j}_C - E^{j}_d) \frac{|E^{j}_C - E^{j}_d|^{k-1}}{2 E^{j}_C} \begin{pmatrix}
+	\end{align*}
+		
+	\begin{align*}
+		\hspace{2.5cm}&= \sgn(E^{j}_C - E^{j}_d) \frac{|E^{j}_C - E^{j}_d|^{k-1}}{2 E^{j}_C} \begin{pmatrix}
 			2(v_{j}^{x} - v_{j+1}^{x}) \\[0.5em]
 			2(v_{j}^{y} - v_{j+1}^{y})
 		\end{pmatrix} \\[0.5em]
@@ -273,31 +314,7 @@ Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $
 	\qed  
 \end{proposition}
 
-An isolated application of the edge force can be seen in Figure~\ref{fig:edgeForce}.  
-
-\begin{figure}[h!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/edge1/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/edge1/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/edge1/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/edge1/t5.png} \\
-    \end{tabular}
-    \caption{The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
-		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3\times 10^{4} \nabla_{\vec{v}} E_2(C)$ for all vertices.\\
-		The initial edge length of the top edge is $E_C^2 = 1\times 10^{-3}$, while the desired edge lengths are all set to $5\times 10^{-3}$.\\
-		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}} to view the associated animation (GIF).\\
-		The edge force nearly restores the desired edge lengths after 5 time steps, which can also be observed in Figure~\ref{fig:edgeEnergyDiagram}.
-		}
-		\label{fig:edgeForce}
-\end{figure}
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/edge1/energies-show-edgeForce.png} 
-    \caption{This energy diagram shows that the edge force nearly restores the desired edge lengths after 5 time steps.}
-	\label{fig:edgeEnergyDiagram}    
-\end{figure}
-
+\FloatBarrier 
 \subsection{Interior angle force}
 % mention scaling factor of /360 for interior angle force 
 The combined application of the area and edge forces revealed instabilities in unfavorable configurations, where self-intersections of the cell edges occurred. 
@@ -324,6 +341,7 @@ A better alternative is to use the $\atanxy$ function, as it remains reliably st
 
 The $\atanxy(\vec{v})$ function computes the angle of a vector $\vec{v}$ with respect to the positive $x$ axis. \\
 With this, we can compute the angles 
+
 \begin{center}
 	
 	$\theta_1 = \atanxy( \vec{v}_{j-1} - \vec{v_j} )$, \\
@@ -357,6 +375,33 @@ It is $$\atanxy(\vec{v}) = \arctan\!\left(\frac{v^{y}}{v^{x}} \right) + \text{co
 We just compute the gradient of $\arctan(\frac{v^{y}}{v^{x}})$ instead. \\
 Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
 However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
+
+\begin{figure}
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{forces/angle1/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/angle1/t3.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/angle1/t5.png} &
+        \includegraphics[width=0.45\textwidth]{forces/angle1/t19.png} \\
+    \end{tabular}
+    \caption{The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1\times 10^{-1}$, at times $t \in \{0, 3\times 10^{-5}, 5\times 10^{-5}, 19\times 10^{-5}\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1\times 10^{-1} \nabla_{\vec{v}} I_2(C)$ for all vertices.\\
+			At the vertex with initial position $\vec{v}_1 = (0.003, 0.0)^T$, the starting interior angle is $306.9°$, while all desired interior angles are $120°$.\\
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			As seen in Figure~\ref{fig:angleEnergyDiagram}, the interior angle force requires more time to reach the target configuration. 
+			This slower convergence is due to the reduced force scaling, which was necessary to avoid stability issues encountered at higher force scaling values. }
+	\label{fig:angleForce}
+\end{figure}
+
+\begin{figure}
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/angle1/energies-show-intAngleForce.png} 
+    \caption{The interior angle force is able to minimize the interior angle energy over time.}
+	\label{fig:angleEnergyDiagram}    
+\end{figure}
+
+\FloatBarrier
+
 
 \begin{proposition} \textbf{Interior angle force} \label{prop:intAngleForce} \\
 
@@ -589,28 +634,8 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angle force.
 
-\begin{figure}[h!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/angle1/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/angle1/t3.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/angle1/t5.png} &
-        \includegraphics[width=0.5\textwidth]{forces/angle1/t19.png} \\
-    \end{tabular}
-    \caption{The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1\times 10^{-1}$, at times $t \in \{0, 3\times 10^{-5}, 5\times 10^{-5}, 19\times 10^{-5}\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1\times 10^{-1} \nabla_{\vec{v}} I_2(C)$ for all vertices.\\
-			At the vertex with initial position $\vec{v}_1 = (0.003, 0.0)^T$, the starting interior angle is $306.9°$, while all desired interior angles are $120°$.\\
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-			As seen in Figure~\ref{fig:angleEnergyDiagram}, the interior angle force requires more time to reach the target configuration. 
-			This slower convergence is due to the reduced force scaling, which was necessary to avoid stability issues encountered at higher force scaling values. }
-	\label{fig:angleForce}
-\end{figure}
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/angle1/energies-show-intAngleForce.png} 
-    \caption{The interior angle force is able to minimize the interior angle energy over time.}
-	\label{fig:angleEnergyDiagram}    
-\end{figure}
+
+\FloatBarrier
 
 \subsection{Overlap force}
 % explain the algorithm
@@ -756,10 +781,13 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{center}
 	where $(a^x, a^y)^T \times (b^x, b^y)^T = a^x b^y - a^y b^x$ denotes the two dimensional cross product. \\
 \end{definition}
-
-\begin{figure}
+\FloatBarrier
+\vspace{1.5cm}
+\text{}
+\FloatBarrier
+\begin{figure}[h!]
 	\begin{center}
-		\includegraphics[width=14cm]{forces/adjacentVertices.pdf}
+		\includegraphics[width=0.7\textwidth]{forces/adjacentVertices.pdf}
 		\caption{
 			Here, we can see a DF cell setup with two cells having an overlap. 
 			The intersection points $\vec{w}_1$ and $\vec{w}_2$ are marked green. 
@@ -776,10 +804,10 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	In this proposition, we compute the needed partial derivatives. \\
 	We define the following auxiliary terms:
 	\begin{align*}
-		f &= \tu \\[1em]
-		g &= \tl\\[1em]
-		t &= \frac{f}{g} \\[1em]
-		w &= \vec{v}_{\text{out}}^{\: i} + t(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \\[1em]
+		f &= \tu, \quad 
+		g &= \tl,\\[1em]
+		t &= \frac{f}{g}, \quad 
+		w &= \vec{v}_{\text{out}}^{\: i} + t(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i})
 	\end{align*}
 	It is sufficient to just compute the partial derivatives with respect to $\vec{v}_{\text{in}}^{\: i}$ and $\vec{v}_{\text{out}}^{\: i}$.
 	If we want the dynamic for the vertices of the other cell, we just switch the arrangement of the arguments (switch $\vec{v}_{\text{in}}^{\: i}$ with $\vec{v}_{\text{in}}^{\: j}$ and $\vec{v}_{\text{out}}^{\: i}$ with $\vec{v}_{\text{out}}^{\: j}$) and then use the same partial derivatives as for the first cell. \\
@@ -881,17 +909,19 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\dfrac{\partial w_1}{\partial v_{\text{out}}^{i, y}} = 0 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, y}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + 0, \\[0.5em]
 		\dfrac{\partial w_2}{\partial v_{\text{out}}^{i, x}} = 0 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, x}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) + 0, &\quad 
 		\dfrac{\partial w_2}{\partial v_{\text{out}}^{i, y}} = 1 + \dfrac{\partial t}{\partial v_{\text{out}}^{i, y}}(v_{\text{in}}^{i, y}- v_{\text{out}}^{i, y}) - t, \\[0.5em]
-		\Rightarrow D_{\vec{v}_{\text{out}}^{\: i}} w = (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{out}}^{\: i}} t)^T \\[0.5em]
-		= (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{g - f}{g^2} \begin{pmatrix}
+	% \end{align*}
+	% \begin{align*}
+		 \Rightarrow D_{\vec{v}_{\text{out}}^{\: i}} w = (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &(\nabla_{\vec{v}_{\text{out}}^{\: i}} t)^T \\[0.5em]
+		 = (1-t)I_2 + (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) &\left(\dfrac{g - f}{g^2} \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
-		\end{pmatrix}\right)^T \\[0.5em]
-		= (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
+		\end{pmatrix}\right)^T \\%[0.5em]
+		 = (1-t)I_2 + \dfrac{g - f}{g^2}(\vec{v}_{\text{in}}^{\: i} - &\vec{v}_{\text{out}}^{\: i}) \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
-		\end{pmatrix}^T, \\[0.5em]
+		\end{pmatrix}^T, %\\[0.5em]
 	\end{align*}
-	
+
 	\begin{align*}
 		\dfrac{\partial w_1}{\partial v_{\text{in}}^{i, x}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, x}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + t, &\quad 
 		\dfrac{\partial w_1}{\partial v_{\text{in}}^{i, y}} = \dfrac{\partial t}{\partial v_{\text{in}}^{i, y}}(v_{\text{in}}^{i, x}- v_{\text{out}}^{i, x}) + 0, \\[0.5em]
@@ -938,8 +968,36 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		$F_{k, i}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
 		$F_{k, i}^{\hat{(O)}}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))^T$. 
 	\end{center}
+	\FloatBarrier
+	\begin{figure}[h!]
+		\centering
+		\begin{tabular}{cc}
+			\includegraphics[width=0.45\textwidth]{forces/defOverlap1/t0.png} &
+			\includegraphics[width=0.45\textwidth]{forces/defOverlap1/t1.png} \\
+			\includegraphics[width=0.45\textwidth]{forces/defOverlap1/t2.png} &
+			\includegraphics[width=0.45\textwidth]{forces/defOverlap1/t3.png} \\
+		\end{tabular}
+		\caption{
+			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6\times 10^{4} \nabla_{\vec{v}} \hat{O}_1(C_1, C_2)$ for all vertices.
+			The overlap area $D$ is indicated below each plot.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			Initially, the overlap area is $3\times 10^{-5}$, which is relatively large compared to the cell area of $6.5\times 10^{-5}$. 
+			However, it is completely resolved after just two time steps, as also illustrated in the energy diagram in Figure~\ref{fig:defOverlapEnergyDiagram}.
+			}
+			\label{fig:overlapForce}
+	\end{figure}
+	\FloatBarrier
+	\begin{figure}[h!]
+		\centering
+        \includegraphics[width=0.7\textwidth]{forces//defOverlap1/energies-show-DeformaingOverlapForce.png} 
+		\caption{The deforming overlap force resolves the overlap in two time steps.}
+		\label{fig:defOverlapEnergyDiagram}    
+	\end{figure}
+	\FloatBarrier
 
-	Proof. \\
+	
+	Proof of Proposition~\ref{force:deformingOverlap}. \\
 	%TODO: change from A_D^k to (A_D)^k
 	Although we did not noted it like this before, we must be aware that $A_D$ is actually dependent on all overlap vertices, e.g. $A_D = A(D)$.
 	We will also use that notation in the coming computation. 
@@ -1017,33 +1075,13 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\qed
 \end{proposition}
 
-Figure \ref{fig:overlapForce} illustrates the interaction between two overlapping cells, highlighting the effect of the overlap force on their vertices.
+Figure~\ref{fig:overlapForce} illustrates the interaction between two overlapping cells, highlighting the effect of the overlap force on their vertices.
 
-\begin{figure}[h!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/defOverlap1/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/defOverlap1/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/defOverlap1/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/defOverlap1/t3.png} \\
-    \end{tabular}
-    \caption{
-			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6\times 10^{4} \nabla_{\vec{v}} \hat{O}_1(C_1, C_2)$ for all vertices.
-			The overlap area $D$ is indicated below each plot.
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-			Initially, the overlap area is $3\times 10^{-5}$, which is relatively large compared to the cell area of $6.5\times 10^{-5}$. 
-			However, it is completely resolved after just two time steps, as also illustrated in the energy diagram in Figure~\ref{fig:defOverlapEnergyDiagram}.
-		}
-	\label{fig:deformingOverlapForce}
-\end{figure}
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces//defOverlap1/energies-show-DeformaingOverlapForce.png} 
-    \caption{The deforming overlap force resolves the overlap in two time steps.}
-	\label{fig:defOverlapEnergyDiagram}    
-\end{figure}
 
+
+
+
+\FloatBarrier
 
 \subsubsection*{Bounce overlap force} 
 While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially—leaving cells temporarily stuck together, relying on random Brownian motion to diffuse apart. 
@@ -1060,6 +1098,11 @@ But we need the following assumptions:
 	\item The cells have a radius of $r \in \R_{>0}$.
 	\item We can compute the cell centre $\vec{x} = \frac{1}{N_V}\sum\limits_{j = 1}^{N_v} \vec{v}_j$ which will be used to determine the distance between two cells. 
 \end{enumerate}
+
+
+
+
+
 
 \begin{definition}\textbf{Bounce overlap force} \label{force:bounceOverlap}\\
 	Let us consider two DF cells $C_i$ and $C_l$, with centres at $\vec{x}_i$ and $\vec{x}_l$, respectively. 
@@ -1085,13 +1128,40 @@ But we need the following assumptions:
 	\[
 	F^{(\bar{O})}_i(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l).
 	\]
-
 \end{definition}
+
+\FloatBarrier   % prevents floats from passing this point
+\begin{figure}[b!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t3.png} \\
+    \end{tabular}
+    \caption{The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1\times 10^{5}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
+			In this case, we have $\frac{\dequ C_i}{\dequ t} = 1\times 10^{5} \: F_i^{\bar{O}}(C_1, C_2)$ for both cells.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. 
+			The corresponding energy development is illustrated in Figure~\ref{fig:bounceOverlapEnergyDiagram}.
+		}
+	\label{fig:bounceOverlapForce}   
+\end{figure}
+
+\begin{figure}[t!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/bounceOverlap1/energies-show-bounceOverlapForce.png} 
+    \caption{The overlap energy reaches zero after one iteration.}
+	\label{fig:bounceOverlapEnergyDiagram}    
+\end{figure}
+
+
 In order to achieve a similarly fast degeneration of the overlap as in~\cite{Bruna2012}, we need to scale the force with the scaling factor 
 \(
 \alpha^{(\bar{O})} = 10^5
 \)
 as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$. 
+The according dynamic is shown in Figure~\ref{fig:bounceOverlapForce}.
 
 %TODO: insert figure of Bounce overlap force 
 To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how `hard' the cells are. 
@@ -1109,29 +1179,6 @@ For $h = 1$, the dynamics are identical to the original HSCM model, as we will s
 By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
 In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
 In the limiting case $h = 0$, we recover the DF dynamics without the bounce overlap force term.
-
-\begin{figure}[h!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/bounceOverlap1/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/bounceOverlap1/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/bounceOverlap1/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/bounceOverlap1/t3.png} \\
-    \end{tabular}
-    \caption{The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1\times 10^{5}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
-			In this case, we have $\frac{\dequ C_i}{\dequ t} = 1\times 10^{5} \: F_i^{\bar{O}}(C_1, C_2)$ for both cells.
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. 
-			The corresponding energy development is illustrated in Figure~\ref{fig:bounceOverlapEnergyDiagram}.
-		}
-	\label{fig:bounceOverlapForce}   
-\end{figure}
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/bounceOverlap1/energies-show-bounceOverlapForce.png} 
-    \caption{The overlap energy reaches zero after one iteration.}
-	\label{fig:bounceOverlapEnergyDiagram}    
-\end{figure}
 
 
 
@@ -1197,20 +1244,21 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	But for the deforming overlap force, we choose $k=1$ we want it to have a strong impact whenever a small overlap arises. 
 	This configuration seems to be the best to model the physics we would like to achieve. 
 	With that we can write down the cell wise formulated DF SDE:
-	\begin{center}
-		$\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}.$
-	\end{center} 
+	\begin{align}
+		\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}.
+		\label{equ:cellwiseDFpde}
+	\end{align} 
 
 
 \end{definition}
 
-\begin{figure}[h!]
+\begin{figure}[]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/allforces_hard/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/allforces_hard/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/allforces_hard/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/allforces_hard/t3.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/allforces_hard/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/allforces_hard/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/allforces_hard/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/allforces_hard/t3.png} \\
     \end{tabular}
     \caption{
 		This simulation shows two DF cells evolving according to the dynamics for $i = 1, 2$
@@ -1225,22 +1273,15 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\label{fig:allForces-hard}
 \end{figure}
 
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/allforces_hard/energies-show-allForces-hard1.png} 
-    \caption{The bounce overlap force eliminates the overlap within a single time step.
-			 The energy diagram shows that the overlap energy drops to zero immediately, while the other energies remain constant at zero as the cell shapes do not change.}
-	\label{fig:allForces-hardEnergyDiagram}    
-\end{figure}
 
 
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/allforces_0-5/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/allforces_0-5/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/allforces_0-5/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/allforces_0-5/t3.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/allforces_0-5/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/allforces_0-5/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/allforces_0-5/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/allforces_0-5/t3.png} \\
     \end{tabular}
     \caption{
 			This simulation shows two DF cells again evolving according to the dynamics $i=1,2$ $\frac{\dequ C_i}{\dequ t} = \F^i(C_1, C_2)$, with hardness $h=0.5$, force scalings as listed in Table~\ref{table:forcescalings}, and without Brownian motion.
@@ -1254,22 +1295,16 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\label{fig:allForces-half} 
 \end{figure}
 
-\begin{figure}[h!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/allforces_0-5/energies-show-allForces-hard5e-1.png} 
-    \caption{The energy diagram shows that the overlap energy drops to zero immediately, while the shape preserving energies increase initially as the cells deform to resolve the overlap.
-			 By time step~10, the cell shapes are nearly restored, which is reflected in the decrease of these energies.}
-	\label{fig:allForces-halfEnergyDiagram}
-\end{figure}
+
 
 
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.5\textwidth]{forces/allforces_soft/t0.png} &
-        \includegraphics[width=0.5\textwidth]{forces/allforces_soft/t1.png} \\
-        \includegraphics[width=0.5\textwidth]{forces/allforces_soft/t2.png} &
-        \includegraphics[width=0.5\textwidth]{forces/allforces_soft/t3.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/allforces_soft/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/allforces_soft/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/allforces_soft/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/allforces_soft/t3.png} \\
     \end{tabular}
     \caption{This simulation shows two DF cells evolving according to the dynamics for $i=1,2$ $\frac{\dequ C_i}{\dequ t} = \F^i(C_1, C_2)$, with hardness $h=0$, force 		scalings as listed in Table~\ref{table:forcescalings} and without Brownian motion.
 			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-soft.gif}{\textit{here}} to view the corresponding animation (GIF).
@@ -1282,7 +1317,25 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 			}
 	\label{fig:allForces-soft}
 \end{figure}
+
 \begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/allforces_hard/energies-show-allForces-hard1.png} 
+    \caption{The bounce overlap force eliminates the overlap within a single time step.
+			 The energy diagram shows that the overlap energy drops to zero immediately, while the other energies remain constant at zero as the cell shapes do not change.}
+	\label{fig:allForces-hardEnergyDiagram}    
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/allforces_0-5/energies-show-allForces-hard5e-1.png} 
+    \caption{The energy diagram shows that the overlap energy drops to zero immediately, while the shape preserving energies increase initially as the cells deform to resolve the overlap.
+			 By time step~10, the cell shapes are nearly restored, which is reflected in the decrease of these energies.}
+	\label{fig:allForces-halfEnergyDiagram}
+\end{figure}
+
+
+\begin{figure}[t!]
     \centering
         \includegraphics[width=0.7\textwidth]{forces/allforces_soft/energies-show-allForces-hard0.png} 
     \caption{The energy diagram shows that the overlap energy drops initially but then increases again as the cells deform to restore their shapes.
@@ -1290,6 +1343,3 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 			 But overall, the total energy converges to a low level, indicating that the system stabilizes over time.} 
 	\label{fig:allForces-softEnergyDiagram}    
 \end{figure}
-
-
-

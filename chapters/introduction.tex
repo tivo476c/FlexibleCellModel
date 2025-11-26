@@ -186,7 +186,7 @@ This is due to the fact that particles cannot occupy the same space simultaneous
 How this kind of exclusion works is visualized in an one dimensional example in Figure~\ref{fig:exclusion1d}.  
 
 
-\begin{figure}[h!]
+\begin{figure}[b!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/hardsphere_exclusion.png}
 	\caption{This plot illustrates the feasible regions for cell 2 in one dimensional space, dependent on the position of cell 1. 
@@ -211,7 +211,7 @@ Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration loo
 
 
 
-\begin{figure}[h!]
+\begin{figure}[b!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{intro/hardsphere.eps}
 	\caption{An illustration from~\cite{Bruna2012} of the point particles on the left and the hard sphere particles on the right. We can see areas where the centre of the particles cannot be located, as they would overlap with other particles being marked red. 
@@ -614,8 +614,9 @@ This thesis introduces the Discrete Form (DF) cell model, a vertex based framewo
 The DF model incorporates shape preserving forces (area, edge, interior angle energies) and interaction forces (deforming and bounce overlap forces) derived as gradient flows of energy functionals, allowing for cell deformation like in~\cite{Boromand2018, Fletcher14,wenzel2021,Happel2023} and ensuring evolution towards lower-energy configurations. 
 This allows representation of a wide range of desired cell shapes. \\
 The core contribution of this thesis is a non confluent DF model that systematically investigates how cellular deformability, controlled by a hardness parameter $h \in [0,1]$, influences the overall diffusivity of the cell system, enabling a transition from hard disc like to soft disc-like behaviour. 
-\subsection{Thesis overview} 
-Building upon the foundations laid in the Bachelor's thesis~\cite{Vogel2023}, significant improvements were made, including bug fixes, code parallelization, and reformulation of forces for stable large-scale simulations (detailed in Sections~\ref{model} and~\ref{dynamics}). \\
+
+\subsection{Abstract} 
+Building upon the foundations laid in the Bachelor's thesis~\cite{Vogel2023}, significant improvements were made, including bug fixes, code parallelisation, and reformulation of forces for stable large-scale simulations (detailed in Sections~\ref{model} and~\ref{dynamics}). \\
 Chapter~\ref{sanitycheck} presents a rigorous validation by recreating the diffusion dynamics of the point particle and hard sphere models from~\cite{Bruna2012} through extensive Monte Carlo simulations with varying hardness ($h \in \{0, 0.5, 1\}$), representing soft, intermediate, and hard cell behaviours. \\
 Subsequently, Chapter~\ref{density} analyses the resulting density dynamics. 
 By connecting to the frameworks of~\cite{Bruna2012, Bruna2017, Boromand2018}, this work provides a unified perspective on cell dynamics spanning rigid to deformable regimes. 

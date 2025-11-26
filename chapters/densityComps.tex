@@ -47,7 +47,7 @@ is evaluated and displayed as a heatmap. \\
 As the particle number grows, the empirical distribution becomes progressively smoother and more faithful to the true underlying density.  
 For small \(N_C\), random fluctuations dominate the visual appearance, while for larger \(N_C\) these fluctuations average out, and the heatmap increasingly resembles the continuous Gaussian density shown in the fourth panel.  \\
 
-\begin{figure}
+\begin{figure}[b!]
 	\begin{center}
 		\includegraphics[width=15cm]{density/muplot_combined.png}
 		\caption{Empirical measures for increasing particle numbers \(N_C \in \{20, 200, 20\,000\}\), compared with the limiting density \( \mathcal{N}_2((0,0), 0.09^2 \cdot I_2) \) shown in the fourth panel.  
@@ -235,32 +235,10 @@ The resulting ODE system is integrated with an explicit Euler method using a tim
 Figure~\ref{fig:needle400} visualises the evolution of the one dimensional needle cell system. 
 Each cell is represented by a blue point in the $(v_1,v_2)$ plane, where the horizontal axis corresponds to the position of the first vertex and the vertical axis to that of the second vertex. 
 Such a representation is only possible in this lower-dimensional setting, since the full vertex configuration of a cell can be embedded in $\R^2$. \\
-At initial time, the $N_C = 400$ cells are sampled from the distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. 
+At initial time, the $N_C = 400$ cells are sampled from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. 
 As time progresses, the dynamics drive each cell towards its desired edge length $E_d = 0.2$. 
 In the scatter plot, this manifests as a gradual migration of points towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, corresponding to cells whose vertex separation has achieved the prescribed value. 
 By the final time, all cells lie precisely on these two diagonals, confirming that the system converges to a configuration in which every cell has relaxed to the target length. \\
-
-\begin{figure}[h!]
-    \centering
-    
-    \begin{tabular}{ccc}
-        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t1.png} &    
-        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t2.png} &  
-        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t3.png} \\   
-
-        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t4.png} &    
-        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t5.png} &  
-        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t6.png} \\    
-    \end{tabular}
-
-    \caption{Scatter plots showing the evolution of $N_C = 400$ one dimensional needle cells at times $t \in \{0.0, 0.2, \ldots, 1.0\}$. 
-    Each blue point represents a single cell, with the horizontal axis indicating the location of the first vertex $v_1$ and the vertical axis the location of the second vertex $v_2$. 
-    The initial conditions are drawn from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. The dynamics aim to achieve a desired edge length of $E_d = 0.2$, corresponding to the two diagonal lines defined by $|v_1 - v_2| = 0.2$.}
-
-	\label{fig:needle400}    
-\end{figure}
-
-
 
 Subsequently, we examine the associated mean field dynamics.  
 We choose an initial condition given by $\mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ on the domain $\Omega = [0.0, 1.0]^2$ and evolve it using the PDE
@@ -279,6 +257,48 @@ The discretisation is given by
     \nabla_{v_2} \cdot (\bar{\rho} \alpha) \: &\longrightarrow \: \frac{ \bar{\rho}_{i+1,j}^{\: k} \alpha_{i+1,j}^k - \bar{\rho}_{i-1,j}^{\: k} \alpha_{i-1,j}^k}{2 \Delta x}, 
 \end{align*}
 with grid spacing $\Delta x = \tfrac{1}{500}$.  
+\FloatBarrier
+\begin{figure}[b!]
+    \centering
+    
+    \begin{tabular}{ccc}
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t1.png} &    
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t2.png} &  
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t3.png} \\   
+
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t4.png} &    
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t5.png} &  
+        \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t6.png} \\    
+    \end{tabular}
+
+    \caption{Scatter plots showing the evolution of $N_C = 400$ one dimensional needle cells at times $t \in \{0.0, 0.2, \ldots, 1.0\}$. 
+    Each blue point represents a single cell, with the horizontal axis indicating the location of the first vertex $v_1$ and the vertical axis the location of the second vertex $v_2$. 
+    The initial conditions are drawn from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. The dynamics aim to achieve a desired edge length of $E_d = 0.2$, corresponding to the two diagonal lines defined by $|v_1 - v_2| = 0.2$.}
+
+	\label{fig:needle400}    
+\end{figure}
+\newpage
+\FloatBarrier
+\begin{figure}[h!]
+    \centering
+    
+    \begin{tabular}{ccc}
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t1-equal-scale.png} &    
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t2-equal-scale.png} &   
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t3-equal-scale.png} \\   
+
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t4-equal-scale.png} & 
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t5-equal-scale.png} &   
+        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t6-equal-scale.png} \\  
+    \end{tabular}
+
+    \caption{Evolution of the mean field density starting from the initial distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$. 
+    The PDE dynamics transport the density towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, along which the mass becomes concentrated over time. 
+    The plots display the density at successive time instances and include small oscillations between the diagonals arising from the central-difference discretisation; these could be removed through an upwind treatment of the spatial gradients.}
+	\label{fig:needle-limit}    
+\end{figure}
+
+
 
 Figure~\ref{fig:needle-limit} illustrates the evolution of the cell density in the mean field limit. 
 The initial distribution is given by $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$, forming a concentrated region in the centre of the domain. 
@@ -305,24 +325,7 @@ Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap
 
 
 
-\begin{figure}[h!]
-    \centering
-    
-    \begin{tabular}{ccc}
-        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t1-equal-scale.png} &    
-        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t2-equal-scale.png} &   
-        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t3-equal-scale.png} \\   
 
-        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t4-equal-scale.png} & 
-        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t5-equal-scale.png} &   
-        \includegraphics[width=0.3\textwidth]{density/needles/density-evo/alphamu/equal scale/density-t6-equal-scale.png} \\  
-    \end{tabular}
-
-    \caption{Evolution of the mean field density starting from the initial distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$. 
-    The PDE dynamics transport the density towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, along which the mass becomes concentrated over time. 
-    The plots display the density at successive time instances and include small oscillations between the diagonals arising from the central-difference discretisation; these could be removed through an upwind treatment of the spatial gradients.}
-	\label{fig:needle-limit}    
-\end{figure}
 
 \subsection{DF edge energy mean field density} \label{subection:edgePDE}
 - After the lower dimensional example, we now want to continue with our DF model. 

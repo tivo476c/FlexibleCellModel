@@ -32,6 +32,7 @@
 \usepackage{enumitem}
 \usepackage{booktabs}   
 \usepackage{subfiles}
+\usepackage{placeins}
 
 
 
@@ -69,6 +70,9 @@
 %\newcommand{\qed}{\hfill \ensuremath{\Box}}
 \setlength{\parindent}{0em} 
 
+\hyphenation{heat-maps}
+\hyphenation{heat-map}
+
 %% ----------------------------- START OF DOCUMENT ----------------------------------------- 
 
 \begin{document}
@@ -84,20 +88,20 @@
 %\listoftables
 
 
-
-\include{chapters/nomenclature}
-\include{chapters/mathConventions}
-% \include{chapters/overview-bachelor}
+\newpage
+\input{chapters/nomenclature}
+\newpage
+\input{chapters/mathConventions}% \include{chapters/overview-bachelor}
 % \include{chapters/overview-master}
+\include{chapters/todos}					
 \include{chapters/introduction}
-% \include{chapters/todos}					
 \include{chapters/cellModel}					
 \include{chapters/cellDynamics}					
 \include{chapters/sanityCheck}					
 \include{chapters/densityComps}					
 % \include{chapters/}							% add further section in here
 % \include{chapters/conclusion}
-% \include{chapters/outlook}					
+\include{chapters/outlook}					
 % \include{chapters/listOfTestCases}
 % \include{chapters/appendix}
 
