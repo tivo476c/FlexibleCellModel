@@ -88,21 +88,45 @@ We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \r
 \begin{align*}
     \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t.
 \end{align*}  
-Then, we can compute  
+First, we consider 
+\begin{align}
+    \begin{split}
+        \frac{\dequ}{\dequ t} \int \phi(x) \: \dequ \mu^{N_C}_t
+        &= \frac{\dequ}{\dequ t} \int \phi(x) \: \rho_t^{N_C}(x) \: \dequ x \\
+        &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(x) \: \bar{\rho}_t(x) \: \dequ x \\
+        &= \int \phi(x) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t(x)\right] \: \dequ x,
+    \end{split}
+    \label{equ:leftSideMeanFieldPDE}
+\end{align}
+using first the density $\rho_t^{N_C}$ of $\mu_t^{N_C}$ and then convergence $\rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t$. \\
+Then, we use the definition of the empirical measure to obtain 
+\begin{align}
+    \begin{split}
+        \frac{\dequ}{\dequ t} \int \phi(x) \: \dequ \mu^{N_C}_t
+        &= \frac{\dequ}{\dequ t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \phi(\vec{x}_i^{\: (s)}(t))\right] \\
+        &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}(t)) \cdot \nabla E(\vec{x}_i^{\: (s)}(t)) \\
+        &= - \int \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{N_C}_t \\
+        &= - \int \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C}(x) \: \dequ x \\
+        &\xrightarrow{N_C \rightarrow \infty} - \int \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
+        &= \int \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
+    \end{split}
+    \label{equ:rightSideMeanFieldPDE}
+\end{align}
+We consider the difference from Equations~\eqref{equ:leftSideMeanFieldPDE} and \eqref{equ:rightSideMeanFieldPDE} for $N_C \rightarrow \infty$
 \begin{align*}
-    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{N_C}_t
-    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \phi(\vec{x}_i^{\: (s)})\right] \\
-    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}) \cdot \nabla E(\vec{x}_i^{\: (s)}) \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{N_C}_t \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C}(x) \: \dequ x \\
-    &\xrightarrow{N_C \rightarrow \infty} - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
-    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
+    0 
+    &= \int \phi(x) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t(x)\right] \: \dequ x - \int \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x \\
+    &= \int \phi(x) \left( \frac{\partial}{\partial t} \left[\bar{\rho}_t(x)\right] -  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \right) \: \dequ x.
 \end{align*}
 
-This computation yields the continuity equation 
-\begin{align*}
-    \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \cdot (\bar{\rho}_t \, \nabla E) = 0.
-\end{align*}
+As this holds true for any $\phi \in C_c^{\infty}(\R^{2}, \R)$, we obtain the mean field PDE 
+\begin{align}
+    \frac{\partial \bar{\rho}_t(x)}{\partial t} -  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) = 0.
+\end{align}
+For a force function $F(C) = - \nabla_C E(C)$, the we get the formulation
+\begin{align}
+    \frac{\partial \bar{\rho}_t(x)}{\partial t} +  \nabla \cdot ( \bar{\rho}_t(x) F(x)) = 0.
+\end{align}
 
 If we want to apply this computation on our DF model, we must adapt our empirical measure. 
 In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
@@ -123,28 +147,32 @@ with gradient
 Later on, we want to insert the three shape preserving energies, i.e. the area, edge and interior angle energy, that all have the above attributes.
 We can derive the mean field PDE for this setup as follows. 
 Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher dimensional space $\R^{2N_V}$.
-We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t$, as $N_C \rightarrow \infty$.
-Then, we compute
+We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t^{\:N_V}$, as $N_C \rightarrow \infty$.
+Similarly to the last calculation, we observe 
 \begin{align*}
-    \frac{\partial}{\partial t} \int_{\Omega} \phi \: \dequ \mu^{(N_C, N_V)}_t
-    &= \frac{\partial}{\partial t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(C_i(t))\right] \\
-    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \nabla \phi(C_i(t)) \cdot \nabla E(C_i(t)) \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{(N_C, N_V)}_t \\
-    &= - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{(N_C, N_V)}(x) \: \dequ x \\
-    &\xrightarrow{N_C \rightarrow \infty} - \int_{\Omega} \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
-    &= \int_{\Omega} \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
+    \begin{split}
+        \frac{\dequ}{\dequ t} \int \phi(C) \: \dequ \mu^{(N_C, N_V)}_t
+        &= \frac{\dequ}{\dequ t} \int \phi(C) \: \rho_t^{(N_C, N_V)}(C) \: \dequ C \\
+        &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(C) \: \bar{\rho}_t^{\:N_V}(C) \: \dequ C \\
+        &= \int \phi(C) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t^{\:N_V}(C)\right] \: \dequ C,
+    \end{split}
 \end{align*}
-Again, we can conclude  
+and 
+\begin{align*}
+    \frac{\dequ}{\dequ t} \int \phi(C) \: \dequ \mu^{(N_C, N_V)}_t
+    &= \frac{\dequ}{\dequ t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(C_i(t))\right] \\
+    &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \nabla \phi(C_i(t)) \cdot \nabla E(C_i(t)) \\
+    &= - \int \nabla \phi(C) \cdot \nabla E(C) \: \dequ \mu^{(N_C, N_V)}_t \\
+    &= - \int \nabla \phi(C) \cdot \nabla E(C) \: \rho_t^{(N_C, N_V)}(C) \: \dequ C \\
+    &\xrightarrow{N_C \rightarrow \infty} - \int \nabla \phi(C) \cdot \nabla E(C) \: \bar{\rho}_t^{\:N_V}(C) \: \dequ C \\
+    &= \int \phi(C)  \nabla \cdot ( \bar{\rho}_t^{\:N_V}(C) \nabla E(C)) \: \dequ C. \\
+\end{align*}
+We can conclude, with the same derivation as before, that   
 \begin{align}
-    \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \cdot (\bar{\rho}_t \, \nabla E) = 0.
+    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \nabla E(C)) = 0.
     \label{equ:meanfieldPDE}
 \end{align}
-We can use the product rule to obtain 
-\begin{align}
-    \frac{\partial \bar{\rho}_t}{\partial t} + \nabla \bar{\rho}_t \cdot \nabla E + \bar{\rho}_t \nabla \cdot \nabla E  = 0.
-    \label{equ:meanfieldPDE-productRule}
-\end{align}
-As we already computed the energy gradients for our forces, we only need to compute their second derivatives in order to give the according mean field PDE.
+
 
 \subsection{1d needles example}
 % TODOs: formulate everything, figure captions, formatting
