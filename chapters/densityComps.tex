@@ -357,8 +357,12 @@ We can conclude, with the same derivation as before, that
 \end{align}
 
 Now, we want to consider our energies individually, before we take a look at a combined system. 
-
-First, we consider pure scaled \textbf{area energy}, i.e.
+We define the vector of all vertex coordinates of cell C as 
+\begin{align*}
+    V_C = (v_1^x, v_1^y, \ldots, v_{N_V}^x, v_{N_V}^y)^T \in \R^{2 N_V}.
+\end{align*}
+\subsubsection*{Area energy}
+First, we consider pure scaled area energy, i.e.
 \begin{align*}
     E_A(C) = \alpha_{A} A_2(C) = \frac{\alpha_{A}}{2} |A_{C} - A_d|^2, 
 \end{align*}
@@ -403,9 +407,11 @@ Thus, we can write down the cell wise gradient as
             -1 &  0 &  0 & 0 & 0 & 0  \; \cdots \; 1 &  0 &  0 & 0 \\
         \end{pmatrix}}_{= M_A} \underbrace{\begin{pmatrix} v_1^x \\ v_1^y \\ v_2^x \\ v_2^y \\ \vdots \\ v_{N_V-1}^x \\ v_{N_V-1}^y \\ v_{N_V}^x \\ v_{N_V}^y\end{pmatrix}}_{= V_C}. \\
     \end{split}
+    \label{eq:cGradArea}
 \end{align}
 
-Now, we want to consider the exckusive scaled \textbf{edge energy}, i.e.
+\subsubsection*{Edge energy}
+Now, we want to consider the exclusive scaled edge energy, i.e.
 \begin{align*}
     E_E(C) = \alpha_{E} E_2(C) = \frac{\alpha_{E}}{2} \sum\limits_{j=1}^{N_V} |E^j_{C} - E^{j}_d|^2,
 \end{align*}
@@ -471,14 +477,12 @@ and
 \end{align*}
 We can conclude a cell wise edge energy gradient as 
 \begin{align}
-    \begin{split}
-        &\nabla_C E_E(C) 
-        =  \alpha_{E} \left(  D_{E-} M_{E-} + D_{E} M_{E} \right) V_C.
-    \end{split}
+    \nabla_C E_E(C) = \alpha_{E} \left(  D_{E-} M_{E-} + D_{E} M_{E} \right) V_C.
+    \label{eq:cGradEdge}
 \end{align}
 
-
-Next, we consider a system with pure scaled \textbf{interior angle energy}, i.e. 
+\subsubsection*{Interior angle energy}
+Next, we consider a system with pure scaled interior angle energy, i.e. 
 \begin{align*}
     E_I(C) = \alpha_{I} I_2(C) = \frac{\alpha_{I}}{2} \sum\limits_{j=1}^{N_V} | I^j_{C} - I^{j}_d |^2
 \end{align*}
@@ -554,10 +558,19 @@ Finally, we put together  missing vertex terms with matrices $M_{I-}, M_{I+} \in
 \end{align*} 
 We can write down the cell wise interior angle gradient as 
 \begin{align}
-    \begin{split}
-        \nabla_C E_I(C) = \alpha_I \Bigl( & - D_{I-} B_I M_{I-}  + D_I \left(  B_I M_{I-}  - B_{I+}  M_{I+}   \right) 
-                                      + D_{I+} B_{I+} M_{I+}  \Bigr) V_C.
-    \end{split}
+    \nabla_C E_I(C) = \alpha_I \left(  - D_{I-} B_I M_{I-}  + D_I \left(  B_I M_{I-}  - B_{I+}  M_{I+} \right) + D_{I+} B_{I+} M_{I+}  \right) V_C.
+    \label{eq:cGradAngle}
 \end{align}
+
+\subsubsection*{Shape preserving energies}
+If we now consider a combination of the three shape preserving energies, i.e.
+\begin{align*}
+    E_{\text{shape}}(C) = E_A(C) + E_E(C) + E_I(C),
+\end{align*}
+we can use the linearity of the gradient to easily write down 
+\begin{align}
+    \nabla_C E_{\text{shape}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C).
+\end{align} 
+The three gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge} and \eqref{eq:cGradAngle}.
 
 
