@@ -358,19 +358,19 @@ We can conclude, with the same derivation as before, that
 
 Now, we want to consider our energies individually, before we take a look at a combined system. 
 
-We consider pure scaled area energy, e.g.
+First, we consider pure scaled \textbf{area energy}, i.e.
 \begin{align*}
-    E(C) = \alpha_{A} A_2(C) = \frac{\alpha_{A}}{2} |A_{C} - A_d|^2, 
+    E_A(C) = \alpha_{A} A_2(C) = \frac{\alpha_{A}}{2} |A_{C} - A_d|^2, 
 \end{align*}
-with $A_2(C)$ defined at Equation~\eqref{eq:areaEnergy} with $k=2$. 
+with $A_2(C)$ defined at Equation~\eqref{eq:areaEnergy} with $k=2$. \\
 This energy has the gradient 
 \begin{align*}
-    \nabla_C E(C) 
-    &=  \begin{pmatrix}  \nabla_{\vec{v}_1} \\ \vdots \\  \nabla_{\vec{v}_{N_V}} \end{pmatrix} E(C),
+    \nabla_C E_A(C) 
+    &=  \begin{pmatrix}  \nabla_{\vec{v}_1} \\ \vdots \\  \nabla_{\vec{v}_{N_V}} \end{pmatrix} E_A(C),
 \end{align*}
 with 
 \begin{align*}
-    \nabla_{\vec{v}_j} E(C) 
+    \nabla_{\vec{v}_j} E_A(C) 
     &= \alpha_{A} \nabla_{\vec{v}_j} A_2(C) \\
     &= \dfrac{\alpha_{A}}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
 \end{align*}
@@ -378,337 +378,186 @@ where we used
 \begin{align*}
     \nabla_{\vec{v}_j} A_2(C) &= \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
 \end{align*}
-from Equation~\eqref{gradient:area}.
-Equation~\eqref{equ:meanfieldPDE} yields 
-\begin{align*}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \nabla E(C)) = 0
-\end{align*}
+from Equation~\eqref{gradient:area}. \\
+Thus, we can write down the cell wise gradient as 
+\begin{align}
+    \begin{split}
+        &\nabla_C E_A(C) 
+        =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) 
+        \begin{pmatrix}   
+            v_{2}^{y} - v_{N_V}^{y} \\[0.5em]  v_{N_V}^{x} - v_{2}^{x} \\ 
+            v_{3}^{y} - v_{1  }^{y} \\[0.5em]  v_{1  }^{x} - v_{3}^{x} \\ 
+            \vdots \\  
+            v_{N_V}^{y} - v_{N_V-2}^{y} \\[0.5em]  v_{N_V-2}^{x} - v_{N_V}^{x}\\  
+            v_{1}^{y} - v_{N_V-1}^{y} \\[0.5em]  v_{N_V-1}^{x} - v_{1}^{x} 
+        \end{pmatrix} \\[0.5em]
+        &=  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) \underbrace{\begin{pmatrix} 
+            0 &  0 &  0 & 1 & 0  & 0  \; \cdots \; 0 & 0 & 0 & -1 \\
+            0 &  0 & -1 & 0 & 0  & 0  \; \cdots \; 0 & 0 & 1 & 0 \\
+            0 & -1 &  0 & 0 & 0  & 1  \; \cdots \; 0 & 0 & 0 & 0 \\
+            1 &  0 &  0 & 0 & -1 & 0  \; \cdots \; 0 & 0 & 0 & 0 \\[0.5em]
+            &    &    &   &   \hspace{1cm}    \vdots     &     &   &   & \\[0.5em]
+            0  &  0 &  0 & 0 & 0 & 0 \; \cdots \; 0 &  0 &  0 & 1 \\
+            0  &  0 &  0 & 0 & 0 & 0  \; \cdots \; 0 &  0 & -1 & 0 \\
+            0  &  1 &  0 & 0 & 0 & 0  \; \cdots \; 0 & -1 &  0 & 0 \\
+            -1 &  0 &  0 & 0 & 0 & 0  \; \cdots \; 1 &  0 &  0 & 0 \\
+        \end{pmatrix}}_{= M_A} \underbrace{\begin{pmatrix} v_1^x \\ v_1^y \\ v_2^x \\ v_2^y \\ \vdots \\ v_{N_V-1}^x \\ v_{N_V-1}^y \\ v_{N_V}^x \\ v_{N_V}^y\end{pmatrix}}_{= V_C}. \\
+    \end{split}
+\end{align}
 
-
-
-\subsection{DF edge energy mean field density} \label{subection:edgePDE}
-- After the lower dimensional example, we now want to continue with our DF model. 
-- Let us consider DF cells as lists of two dimensional vertices, e.g.
+Now, we want to consider the exckusive scaled \textbf{edge energy}, i.e.
 \begin{align*}
-    C_i = (\vec{v}_1^{\: i}, \ldots, \vec{v}_{N_V}^{\: i}).
-\end{align*}
-We restrict our energy to the edge energy from Equation~\eqref{eq:edgeEnergy}, i.e.
-\begin{align*}
-    E_2(C) =  \sum\limits_{j=1}^{N_V} \tfrac{1}{2} |E^j_{C} - E^{j}_d|^2,
+    E_E(C) = \alpha_{E} E_2(C) = \frac{\alpha_{E}}{2} \sum\limits_{j=1}^{N_V} |E^j_{C} - E^{j}_d|^2,
 \end{align*}
 with actual edge length $E^j_{C} = \norm[\vec{v}_j - \vec{v}_{j+1}]$ and desired length $E^{j}_d$ at edge $j$.
-In order to compute the mean field density of this system and express Equation~\ref{equ:meanfieldPDE-productRule} for this setup, we only need to compute $\nabla \cdot \nabla  E_2(C)$, as we already computed the energy gradient in Equation~\eqref{gradient:edge}. 
-It is given by 
+We took $E_2(C)$ from Equation~\eqref{eq:edgeEnergy} with $k=2$. 
+In this case we can compute the gradient as 
+\begin{align*}
+    \nabla_C E_E(C) 
+    &=  \begin{pmatrix}  \nabla_{\vec{v}_1} \\ \vdots \\  \nabla_{\vec{v}_{N_V}} \end{pmatrix} E_E(C),
+\end{align*}
+with 
+\begin{align*}
+    \nabla_{\vec{v}_j} E_E(C) 
+    &= \alpha_{E} \nabla_{\vec{v}_j} E_2(C) \\
+    &= \alpha_{E} \left( \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} 
+    + \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix} \right) ,
+\end{align*}
+where we used 
 \begin{align*}
     \nabla_{\vec{v}_j} E_2(C) &=  \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
     \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} 
     + \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
-    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix}.
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix},
 \end{align*}
-For the following computation, we use the derivatives
+from Equation~\eqref{gradient:edge}. \\
+If we define matrices for the prefactors: $D_E, D_{E-} \in \R^{2 N_V \times 2 N_V}$ as
 \begin{align*}
-    \frac{\partial}{ \partial v_j^x} E^{j-1}_{C} 
-    &= \frac{\partial}{ \partial v_j^x} \norm[\vec{v}_{j-1} - \vec{v}_{j}] \\
-    &= \frac{\partial}{ \partial v_j^x} \left[ \left( (v_{j-1}^x - v_{j}^x)^2 + (v_{j-1}^y - v_{j}^y)^2 \right)^{\tfrac{1}{2}} \right] \\
-    &= \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \frac{\partial}{ \partial v_j^x} \left[ (v_{j-1}^x - v_{j}^x)^2 + (v_{j-1}^y - v_{j}^y)^2 \right] \\
-    &= - \dfrac{v_{j-1}^x - v_j^x}{ \norm[\vec{v}_{j-1} - \vec{v}_{j}] } \\
-    &= \dfrac{v_j^x - v_{j-1}^x}{ E^{j-1}_{C} }, 
+    D_E = \diag[\frac{E_C^{1} - E_d^{1}}{E_C^{1}}, \frac{E_C^{1} - E_d^{1}}{E_C^{1}},  \ldots, \frac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \frac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}],
 \end{align*}
-and similarly 
-\begin{center}
-    $
-    \dfrac{\partial}{ \partial v_j^x} E^{j}_{C}   = \dfrac{v_j^x - v_{j+1}^x}{ E^{j}_{C} },  \quad 
-    \dfrac{\partial}{ \partial v_j^y} E^{j-1}_{C} = \dfrac{v_j^y - v_{j-1}^y}{ E^{j-1}_{C} },  \quad
-    \dfrac{\partial}{ \partial v_j^y} E^{j}_{C}   = \dfrac{v_j^y - v_{j+1}^y}{ E^{j}_{C} }.  
-    $
-\end{center}
-We also need 
+and 
 \begin{align*}
-    \frac{\partial}{ \partial v_j^x} \left[  \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \right]
-    &= \frac{\partial}{ \partial v_j^x} \left[  1 - \frac{E^{j-1}_d}{E^{j-1}_C} \right] \\
-    &= - E^{j-1}_d \frac{\partial}{ \partial v_j^x} \left[ (E^{j-1}_C)^{-1} \right] \\
-    &= - E^{j-1}_d (-(E^{j-1}_C)^{-2}) \frac{\partial}{ \partial v_j^x} \left[ E^{j-1}_C \right] \\
-    &= \frac{E^{j-1}_d}{(E^{j-1}_C)^{2}} \dfrac{v_j^x - v_{j-1}^x}{ E^{j-1}_{C} } \\
-    &= \frac{E^{j-1}_d}{(E^{j-1}_C)^{3}} (v_j^x - v_{j-1}^x),
+    D_{E-} = \diag[\tfrac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \tfrac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \tfrac{E_C^{1} - E_d^{1}}{E_C^{1}}, \tfrac{E_C^{1} - E_d^{1}}{E_C^{1}},  \ldots, \tfrac{E_C^{N_V-1} - E_d^{N_V-1}}{E_C^{N_V-1}}].
 \end{align*}
-and, respectively 
-\begin{center}
-    $\dfrac{\partial}{ \partial v_j^x} \left[  \dfrac{E^{j}_C - E^{j}_d}{E^{j}_C} \right]       = \dfrac{E^{j  }_d}{(E^{j  }_C)^{3}} (v_j^x - v_{j+1}^x)$,  \quad 
-    $\dfrac{\partial}{ \partial v_j^y} \left[  \dfrac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \right] = \dfrac{E^{j-1}_d}{(E^{j-1}_C)^{3}} (v_j^y - v_{j-1}^y)$, \\ 
-    $\dfrac{\partial}{ \partial v_j^y} \left[  \dfrac{E^{j}_C - E^{j}_d}{E^{j}_C} \right]       = \dfrac{E^{j  }_d}{(E^{j  }_C)^{3}} (v_j^y - v_{j+1}^y)$.  
-\end{center}
-% TODO: do computation d/dv2x [(E1 - Ed)/E1] 
-
-
-We continue with the computation of the second derivative of the first summand in the first derivative of the edge energy
+And rewrite the following parts as  
 \begin{align*}
-    \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} \right] = \\
-    &= \frac{\partial}{\partial v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{x} - v_{j-1}^{x}) \right] 
-      + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{y} - v_{j-1}^{y}) \right] \\
-    &= \frac{\partial}{\partial v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{x} - v_{j-1}^{x})  
-    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\partial}{\partial v_j^x} \left[(v_{j}^{x} - v_{j-1}^{x})\right] \\
-    &\;\;\;\; + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{y} - v_{j-1}^{y}) 
-    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\partial}{\partial v_j^y} \left[ (v_{j}^{y} - v_{j-1}^{y}) \right] \\ 
-    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{x} - v_{j-1}^{x}) (v_{j}^{x} - v_{j-1}^{x})  
-    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\
-    &\;\;\;\; + \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{y} - v_{j-1}^{y}) (v_{j}^{y} - v_{j-1}^{y}) 
-    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\ 
-    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (\underbrace{(v_{j}^{x} - v_{j-1}^{x})^2 + (v_{j}^{y} - v_{j-1}^{y})^2}_{\displaystyle = (E^{j-1}_{C})^2}) + \dfrac{2(E^{j-1}_{C}- E_d^{j-1})}{E^{j-1}_{C}} \\
-    &= \frac{E_d^{j-1}}{E^{j-1}_{C}} + \dfrac{2(E^{j-1}_{C} - E_d^{j-1})}{E^{j-1}_{C}} \\
-    &= \frac{2 E^{j-1}_{C} - E_d^{j-1}}{E^{j-1}_{C}} \\
-    &= 2 - \frac{E_d^{j-1}}{E^{j-1}_{C}}.
+    M_E = \begin{pmatrix}
+        1 & 0 & -1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        0 & 1 & 0 & -1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        0 & 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        0 & 0 & 0 & 1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+          &   &   &    \vdots  &   &   & \\[0.5em]
+        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 & 0 & 0 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: 0 & 1 &  0 & 0 \\ 
+        -1 & 0 & 0 & 0 \: \cdots \: 0 & 0 &  1 & 0 \\ 
+        0 & -1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & 1 \\ 
+    \end{pmatrix} \in \R^{2N_V \times 2 N_V},
 \end{align*}
-The computation for the second summand is analogous and it yields 
+and 
 \begin{align*}
-    \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
-    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix} \right] = 2 - \frac{E_d^j}{E^j_C}.
+    M_{E-} = \begin{pmatrix}
+        1 & 0 & 0 & 0 \: \cdots \: 0 & 0 & -1 & 0 \\ 
+        0 & 1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & -1\\ 
+        -1& 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        0 & -1& 0 & 1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+          &   &   &    \vdots  &   &   & \\[0.5em]
+        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 & 0 & 0 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: 0 & 1 &  0 & 0 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: -1& 0 &  1 & 0 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: 0 & -1&  0 & 1 \\ 
+    \end{pmatrix} \in \R^{2N_V \times 2 N_V}.
 \end{align*}
-Overall, we get 
-\begin{align*}
-    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C) &= 4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}.
-\end{align*}
-With that result, we can finally compute the searched divergence 
-\begin{align*}
-    \nabla_C \cdot (\bar{\rho} \, \nabla_C E_2(C))
-    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} E_2(C)) \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C))\right) \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}) \right)   \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C)\right) + \bar{\rho} \, (4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C}),
-\end{align*}
-because 
-\begin{align*}
-    \sum\limits_{j=1}^{N_V} (4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}) = 4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C},
-\end{align*}
-as we still use circular indexing, e.g. $E^0_C = E^{N_V}_C$.  \\
-
-We can conclude that the mean field density PDE for our DF model with pure edge energy is given by 
+We can conclude a cell wise edge energy gradient as 
 \begin{align}
-    \frac{\partial \bar{\rho}}{\partial t} + \sum\limits_{j=1}^{N_V} (\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C}) = 0,
+    \begin{split}
+        &\nabla_C E_E(C) 
+        =  \alpha_{E} \left(  D_{E-} M_{E-} + D_{E} M_{E} \right) V_C.
+    \end{split}
 \end{align}
-where 
-\begin{align*}
-    \nabla_{\vec{v}_j} E_2(C) &=  \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
-    \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} 
-    + \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
-    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix}.
-\end{align*}
 
-\subsection{DF area energy mean field density} 
-Now, we want to compute the mean field density of a DF system with pure area energy 
-\begin{align*}
-    A_2(C) = \frac{1}{2} |A_{C} - A_d|^2, 
-\end{align*}
-defined at Equation~\eqref{eq:areaEnergy} with $k=2$.
-In order to compute the mean field density of this system, we need to compute 
-\begin{align*}
-    \nabla_C \cdot (\bar{\rho} \, \nabla_C A_2(C))
-    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} A_2(C)) \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} A_2(C))\right).
-\end{align*}
 
-The area gradient is given by 
+Next, we consider a system with pure scaled \textbf{interior angle energy}, i.e. 
 \begin{align*}
-    \nabla_{\vec{v}_j} A_2(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
-\end{align*} 
-in Equation~\eqref{gradient:area}. \\
-We compute the second derivative 
-\begin{align*}
-    \nabla_{\vec{v}_j} &\cdot \nabla_{\vec{v}_j} A_2(C) 
-    = \nabla_{\vec{v}_j} \cdot \left[ \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix} \right] \\[0.5em]
-    &= \dfrac{1}{2}  \left( \frac{\partial}{\partial v_j^x} \left[ (A_{C} - A_d)(v_{j+1}^{y} - v_{j-1}^{y}) \right] + \frac{\partial}{\partial v_j^y} \left[ (A_{C} - A_d)(v_{j-1}^{x} - v_{j+1}^{x}) \right] \right) \\[0.5em]
-    &= \dfrac{1}{2}  \left((v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ A_{C} \right] + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[ A_{C} \right] \right) \\[0.5em]
-    &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ \frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})\right] + \\
-    & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[\frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})  \right] \Biggr) \\[0.5em]
-    &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{1}{2}\frac{\partial}{\partial v_j^x} \left[ (v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y) \right] + \\
-    & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{1}{2}\frac{\partial}{\partial v_j^y} \left[(v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y)  \right] \Biggr) \\[0.5em]
-    &= \dfrac{1}{4}  \left(  (v_{j+1}^{y} - v_{j-1}^{y}) \left( v_{j+1}^y - v_{j-1}^y \right) +  (v_{j-1}^{x} - v_{j+1}^{x}) (v_{j-1}^{x} - v_{j+1}^{x}) \right) \\[0.5em]
-    &= \dfrac{1}{4} \left(  (v_{j+1}^{y} - v_{j-1}^{y})^2 +  (v_{j-1}^{x} - v_{j+1}^{x})^2 \right) \\[0.5em]
-    &= \dfrac{1}{4} \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2.
+    E_I(C) = \alpha_{I} I_2(C) = \frac{\alpha_{I}}{2} \sum\limits_{j=1}^{N_V} | I^j_{C} - I^{j}_d |^2
 \end{align*}
-
-With this computation, we can write down the divergence $\nabla_C \cdot (\bar{\rho} \, \nabla_C A_2(C))$ as 
-\begin{align*}
-    \nabla_C \cdot (\bar{\rho} \, \nabla_C A_2(C))
-    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} A_2(C)) \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} A_2(C))\right) \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \dfrac{\bar{\rho}}{4} \, \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2 \right). \\
-\end{align*}
-
-Overall, we get the mean field PDE for the isolated area energy given as 
-\begin{align}
-    \frac{\partial \bar{\rho}}{\partial t} + \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} A_2(C) + \dfrac{\bar{\rho}}{4} \, \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2 \right) = 0,
-\end{align}
-where 
-\begin{align*}
-    \nabla_{\vec{v}_j} A_2(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}.
-\end{align*} 
-
-\subsection{DF interior angle energy mean field density} 
-In this subsection, we study the case with pure interior angle energy applied, i.e. 
+where we used 
 \begin{align*}
     I_2(C) = \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^j_{C} - I^{j}_d |^2, 
 \end{align*}
 from Equation~\eqref{eq:intAngleEnergy} with $k=2$. \\
-Next, we are looking for  
-\begin{align*}
-    \nabla_C \cdot (\bar{\rho} \, \nabla_C I_2(C))
-    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} I_2(C)) \\
-    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} I_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C))\right).
-\end{align*}
 In Chapter~\ref{dynamics}, we already computed the first derivative as 
 \begin{align*}
     \begin{split}
         \nabla_{\vec{v}_j} I_2(C) 
-        &= \underbrace{(I^{j-1}_{C} - I^{j-1}_d) \left( 
-                - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
+        &= (I^{j-1}_{C} - I^{j-1}_d) \left( 
+                - \frac{1}{(E_C^j)^{2}} \begin{pmatrix}
                     v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
                     v_{j}^{x} - v_{j-1}^{x}
                 \end{pmatrix} 
-            \right)}_{= \psi_1(C)} \\[0.5em] 
-        &+ \underbrace{(I^{j}_{C} - I^{j}_d) \Biggl( 
-            \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
+            \right) \\[0.5em] 
+        &+(I^{j}_{C} - I^{j}_d) \Biggl( 
+            \frac{1}{(E_C^j)^{2}} \begin{pmatrix}
             v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
             v_{j}^{x} - v_{j-1}^{x}
             \end{pmatrix} 
-            - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+            - \frac{1}{(E_C^{j+1})^2} \begin{pmatrix}
             v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
             v_{j}^{x} - v_{j+1}^{x}
             \end{pmatrix} 
-            \Biggr)}_{= \psi_2(C)} \\[0.5em] 
-        &+ \underbrace{(I^{j+1}_{C} - I^{j+1}_d) \left( 
-            \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+            \Biggr) \\[0.5em] 
+        &+ (I^{j+1}_{C} - I^{j+1}_d) \left( 
+            \frac{1}{(E_C^{j+1})^2} \begin{pmatrix}
             v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
             v_{j}^{x} - v_{j+1}^{x}
             \end{pmatrix} 
-            \right)}_{= \psi_3(C)}, %\\[0.5em] 
+            \right), %\\[0.5em] 
     \end{split}
 \end{align*}
 in Equation~\eqref{gradient:angle}. \\
-
-TODO: check sims for $\psi_1$ and $\psi_3
-$
-\subsubsection*{Computation of $\nabla_{\vec{v}_j} \cdot \psi_1$}
-From the proof of Proposition~\ref{prop:intAngleForce}, we use 
+We define the matrices $D_I, D_{I-}, D_{I+} \in \R^{2N_V \times 2N_V}$ as 
 \begin{center}
-    $\dfrac{\partial }{\partial v_j^x} \left[ I_C^j - I_d^j \right] = \dfrac{v_{j-1}^y - v_{j}^y}{(E^{j-1}_C)^2}$, \quad
-    $\dfrac{\partial }{\partial v_j^y} \left[ I_C^j - I_d^j \right] = \dfrac{v_{j}^x - v_{j-1}^x}{(E^{j-1}_C)^2}$, \\
-    $\Longrightarrow \nabla_{\vec{v}_j} \left[ I_C^j - I_d^j \right] = \dfrac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-        v_{j-1}^y - v_{j}^y \\ v_{j}^x - v_{j-1}^x
-    \end{pmatrix}$.
+    $D_I = \diag[I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d, I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d]$, \\[0.5em]
+    $D_{I-} = \text{diag}\bigl(  $ {\footnotesize$I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d,\ldots, I^{N_V-1}_{C} - I^{N_V-1}_d, I^{N_V-1}_{C} - I^{N_V-1}_d$}$\bigr)$,\\[0.5em]
+    $D_{I+} = \diag[I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d]$. \\
 \end{center}
-We continue with 
-\begin{align*}
-    \frac{\partial }{\partial v_j^x} \left[ \frac{v_{j-1}^y - v_{j}^y}{(E_{j-1}^C)^2} \right]
-    &= (v_{j-1}^y - v_{j}^y) \frac{\partial }{\partial v_j^x} \left[ (E^{j-1}_C)^{-2} \right] \\
-    &= (v_{j-1}^y - v_{j}^y) \left(-2 (E^{j-1}_C)^{-3}  \frac{\partial }{\partial v_j^x} \left[ E_{j-1}^C \right] \right)\\
-    &= (v_{j-1}^y - v_{j}^y) \left(-2 (E^{j-1}_C)^{-3}  \frac{v_j^x - v_{j-1}^x}{E_C^{j-1}}\right) \\
-    &= (v_{j-1}^y - v_{j}^y) \left(-2 (E^{j-1}_C)^{-4}  (v_j^x - v_{j-1}^x)\right) \\
-    &= - \frac{2}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y), 
-\end{align*}
-where we used the derivative 
-\begin{align*}
-    \frac{\partial }{\partial v_j^x} \left[ E^{j-1}_C \right] = \frac{v_j^x - v_{j-1}^x}{E_C^{j-1}},
-\end{align*}
-computed in the previous Subsection~\ref{subection:edgePDE}. \\
-Similarly, we get 
+The terms of form $\frac{1}{(E^j_C)^2}$ and  $\frac{1}{(E^{j+1}_C)^2}$ are summerised in $B_I, B_{I+} \in \R^{2N_V \times 2N_V}$ as, 
 \begin{center}
-    $\dfrac{\partial }{\partial v_j^y} \left[ \dfrac{v_{j}^x - v_{j-1}^x}{(E_{j-1}^C)^2} \right] = - \dfrac{2}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y)
-    = \dfrac{\partial }{\partial v_j^x} \left[ \dfrac{v_{j-1}^y - v_{j}^y}{(E_{j-1}^C)^2} \right]$, \\[0.5em]
-    $\Longrightarrow \nabla_{\vec{v}_j} \cdot \left[ 
-                \dfrac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-                    v_{j}^{x} - v_{j-1}^{x}
-                \end{pmatrix} 
-             \right] = - \dfrac{4}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y) $.
+    $B_I = \diag[(E^1_C)^{-2}, (E^1_C)^{-2}, \ldots, (E^{N_V}_C)^{-2}, (E^{N_V}_C)^{-2}]$, \\[0.5em]
+    $B_{I+} = \diag[(E^2_C)^{-2}, (E^2_C)^{-2}, \ldots, (E^{N_V}_C)^{-2}, (E^{N_V}_C)^{-2}, (E^{1}_C)^{-2}, (E^{1}_C)^{-2}]$. \\[0.5em]
 \end{center}
-
-Thus, we can compute 
+Finally, we put together  missing vertex terms with matrices $M_{I-}, M_{I+} \in \R^{2N_V \times 2N_V}$ as
 \begin{align*}
-    \nabla_{\vec{v}_j} \cdot \psi_1(C) 
-    &= \nabla_{\vec{v}_j} \cdot \left[ (I^{j-1}_{C} - I^{j-1}_d) \left( 
-                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-                    v_{j}^{x} - v_{j-1}^{x}
-                \end{pmatrix} 
-            \right)\right] \\
-    &=  \left( \nabla_{\vec{v}_j}  \left[ I^{j-1}_{C} - I^{j-1}_d \right] \right) \cdot \left( 
-                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-                    v_{j}^{x} - v_{j-1}^{x}
-                \end{pmatrix} 
-            \right) \\
-        &+ (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \cdot \left[
-                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-                    v_{j}^{x} - v_{j-1}^{x}
-                \end{pmatrix} 
-            \right] \\ 
-    &=  \left(\frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-        v_{j-1}^y - v_{j}^y \\ v_{j}^x - v_{j-1}^x
-    \end{pmatrix}\right)\cdot \left( 
-                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
-                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-                    v_{j}^{x} - v_{j-1}^{x}
-                \end{pmatrix} 
-            \right) \\
-        &+ (I^{j-1}_{C} - I^{j-1}_d) \left( \dfrac{4}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y) \right) \\
-    &=  - \frac{1}{(E^{j-1}_C)^4} (\underbrace{(v_{j-1}^y - v_{j}^y)^2 + (v_{j}^x - v_{j-1}^x)^2}_{= (E^{j-1}_C)^2}) \\
-    &+ (I^{j-1}_{C} - I^{j-1}_d) \left( \dfrac{4}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y) \right) \\
-    &= - \frac{1}{(E^{j-1}_C)^2} + \dfrac{4}{(E^{j-1}_C)^{4}} (I^{j-1}_{C} - I^{j-1}_d)  (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y). 
-\end{align*}
-\subsubsection*{Computation of $\nabla_{\vec{v}_j}\cdot \psi_2$}
-
-In a similar fashion, we can also compute 
-\begin{align*}
-    \nabla_{\vec{v}_j} \cdot \psi_3(C) =  - \frac{1}{(E^{j}_C)^2} - \dfrac{4}{(E^{j}_C)^{4}} (I^{j-1}_{C} - I^{j-1}_d)  (v_j^x - v_{j+1}^x)(v_{j+1}^y - v_{j}^y)
-\end{align*}
-
-\subsubsection*{Computation of $\nabla_{\vec{v}_j} \cdot \psi_3$}
-
-\subsubsection*{Derivation of interior angle mean field PDE}
-
-
-
-
-We get the second derivative 
-\begin{align*}
-    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) = \frac{2}{E_{j-1}^2} &\left[ 1 + 2(I_C^{j-1} - I_d^{j-1} + I_C^{j} - I_d^{j})(v_j^x - v_{j-1}^x)(v_j^y - v_{j-1}^y) \right] \\
-    + \frac{2}{E_{j}^2} &\left[ 1 - 2 (I_C^{j} - I_d^{j} + I_C^{j+1} - I_d^{j+1})(v_{j}^x - v_{j+1}^x)(v_j^y - v_{j+1}^y) \right] \\
-    -  \frac{2}{E_{j-1}^2 E_{j}^2} &\left[ (v_j^x - v_{j-1}^x)(v_{j}^x - v_{j+1}^x) + (v_j^y - v_{j-1}^y)(v_j^y - v_{j+1}^y)  \right].
-\end{align*}
-
-We can conclude the mean field PDE for pure interior angle energy 
-\begin{align}
-    \frac{\partial \bar{\rho}}{\partial t} + \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} I_2(C) + \bar{\rho}\; \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) \right) = 0,
-\end{align}
-where 
-\begin{align*}
-    \nabla_{\vec{v}_j} I_2(C) &=  (I^{j-1}_{C} - I^{j-1}_d) \left( 
-            - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
-                v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-                v_{j}^{x} - v_{j-1}^{x}
-            \end{pmatrix} 
-        \right) \\[0.5em] 
-    &+ (I^{j}_{C} - I^{j}_d) \Biggl( 
-        \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
-        v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-        v_{j}^{x} - v_{j-1}^{x}
-        \end{pmatrix} \\
-    &\hspace{2cm} - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
-        v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
-        v_{j}^{x} - v_{j+1}^{x}
-        \end{pmatrix} 
-        \Biggr) \\[0.5em] 
-    &+ (I^{j+1}_{C} - I^{j+1}_d) \left( 
-        \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-        v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
-        v_{j}^{x} - v_{j+1}^{x}
-        \end{pmatrix} 
-        \right), %\\[0.5em] 
+    M_{I-} = \begin{pmatrix}
+        0 & -1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & 1 \\ 
+        1 & 0 & 0 & 0 \: \cdots \: 0 & 0 &  -1 & 0\\ 
+        0 & 1 & 0 & -1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        -1 & 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+          &   &   &    \vdots  &   &   & \\[0.5em]
+        0 & 0 & 0 & 0 \: \cdots \: 0 & -1 &  0 & 0 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 &  0 & 0 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: 0 & 1 &  0 & -1 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: -1 & 0 &  1 & 0 \\ 
+    \end{pmatrix}, \\[0.5em]
+     M_{I+} = \begin{pmatrix}
+        0 & -1 & 0 & 1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        1 & 0 & -1 & 0 \: \cdots \: 0 & 0 &  0 & 0\\ 
+        0 & 0 & 0 & -1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+        0 & 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
+          &   &   &    \vdots  &   &   & \\[0.5em]
+        0 & 0 & 0 & 0 \: \cdots \: 0 & -1 &  0 & 1 \\ 
+        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 &  -1 & 0 \\ 
+        0 & 1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & -1 \\ 
+        -1 & 0 & 0 & 0 \: \cdots \: 0 & 0 &  1 & 0 \\ 
+    \end{pmatrix}.
 \end{align*} 
-and 
-\begin{align*}
-    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) = \frac{2}{E_{j-1}^2} &\left[ 1 + 2(I_C^{j-1} - I_d^{j-1} + I_C^{j} - I_d^{j})(v_j^x - v_{j-1}^x)(v_j^y - v_{j-1}^y) \right] \\
-    + \frac{2}{E_{j}^2} &\left[ 1 - 2 (I_C^{j} - I_d^{j} + I_C^{j+1} - I_d^{j+1})(v_{j}^x - v_{j+1}^x)(v_j^y - v_{j+1}^y) \right] \\
-    -  \frac{2}{E_{j-1}^2 E_{j}^2} &\left[ (v_j^x - v_{j-1}^x)(v_{j}^x - v_{j+1}^x) + (v_j^y - v_{j-1}^y)(v_j^y - v_{j+1}^y)  \right].
-\end{align*}
+We can write down the cell wise interior angle gradient as 
+\begin{align}
+    \begin{split}
+        \nabla_C E_I(C) = \alpha_I \Bigl( & - D_{I-} B_I M_{I-}  + D_I \left(  B_I M_{I-}  - B_{I+}  M_{I+}   \right) 
+                                      + D_{I+} B_{I+} M_{I+}  \Bigr) V_C.
+    \end{split}
+\end{align}
+
+

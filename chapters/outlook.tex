@@ -35,3 +35,240 @@ Incorporating such heterogeneity could allow the model to capture more complex b
     \caption{ } 
 	\label{fig:crosssections30}    
 \end{figure}
+
+\subsection{Computation of $\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} A_2(C)$} 
+Now, we consider pure area energy 
+\begin{align*}
+    A_2(C) = \frac{1}{2} |A_{C} - A_d|^2, 
+\end{align*}
+defined at Equation~\eqref{eq:areaEnergy} with $k=2$.
+
+The area gradient is given by 
+\begin{align*}
+    \nabla_{\vec{v}_j} A_2(C) = \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
+\end{align*} 
+in Equation~\eqref{gradient:area}. \\
+We compute the second derivative 
+\begin{align*}
+    \nabla_{\vec{v}_j} &\cdot \nabla_{\vec{v}_j} A_2(C) 
+    = \nabla_{\vec{v}_j} \cdot \left[ \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix} \right] \\[0.5em]
+    &= \dfrac{1}{2}  \left( \frac{\partial}{\partial v_j^x} \left[ (A_{C} - A_d)(v_{j+1}^{y} - v_{j-1}^{y}) \right] + \frac{\partial}{\partial v_j^y} \left[ (A_{C} - A_d)(v_{j-1}^{x} - v_{j+1}^{x}) \right] \right) \\[0.5em]
+    &= \dfrac{1}{2}  \left((v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ A_{C} \right] + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[ A_{C} \right] \right) \\[0.5em]
+    &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ \frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})\right] + \\
+    & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[\frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})  \right] \Biggr) \\[0.5em]
+    &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{1}{2}\frac{\partial}{\partial v_j^x} \left[ (v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y) \right] + \\
+    & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{1}{2}\frac{\partial}{\partial v_j^y} \left[(v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y)  \right] \Biggr) \\[0.5em]
+    &= \dfrac{1}{4}  \left(  (v_{j+1}^{y} - v_{j-1}^{y}) \left( v_{j+1}^y - v_{j-1}^y \right) +  (v_{j-1}^{x} - v_{j+1}^{x}) (v_{j-1}^{x} - v_{j+1}^{x}) \right) \\[0.5em]
+    &= \dfrac{1}{4} \left(  (v_{j+1}^{y} - v_{j-1}^{y})^2 +  (v_{j-1}^{x} - v_{j+1}^{x})^2 \right) \\[0.5em]
+    &= \dfrac{1}{4} \norm[\vec{v}_{j+1} - \vec{v}_{j-1}]^2.
+\end{align*}
+
+\subsection*{Computation of $\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C)$}
+
+The gradient is given by 
+\begin{align*}
+    \nabla_{\vec{v}_j} E_2(C) &=  \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} 
+    + \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix}.
+\end{align*}
+For the following computation, we use the derivatives
+\begin{align*}
+    \frac{\partial}{ \partial v_j^x} E^{j-1}_{C} 
+    &= \frac{\partial}{ \partial v_j^x} \norm[\vec{v}_{j-1} - \vec{v}_{j}] \\
+    &= \frac{\partial}{ \partial v_j^x} \left[ \left( (v_{j-1}^x - v_{j}^x)^2 + (v_{j-1}^y - v_{j}^y)^2 \right)^{\tfrac{1}{2}} \right] \\
+    &= \frac{1}{2 \norm[\vec{v}_{j-1} - \vec{v}_{j}]} \frac{\partial}{ \partial v_j^x} \left[ (v_{j-1}^x - v_{j}^x)^2 + (v_{j-1}^y - v_{j}^y)^2 \right] \\
+    &= - \dfrac{v_{j-1}^x - v_j^x}{ \norm[\vec{v}_{j-1} - \vec{v}_{j}] } \\
+    &= \dfrac{v_j^x - v_{j-1}^x}{ E^{j-1}_{C} }, 
+\end{align*}
+and similarly 
+\begin{center}
+    $
+    \dfrac{\partial}{ \partial v_j^x} E^{j}_{C}   = \dfrac{v_j^x - v_{j+1}^x}{ E^{j}_{C} },  \quad 
+    \dfrac{\partial}{ \partial v_j^y} E^{j-1}_{C} = \dfrac{v_j^y - v_{j-1}^y}{ E^{j-1}_{C} },  \quad
+    \dfrac{\partial}{ \partial v_j^y} E^{j}_{C}   = \dfrac{v_j^y - v_{j+1}^y}{ E^{j}_{C} }.  
+    $
+\end{center}
+We also need 
+\begin{align*}
+    \frac{\partial}{ \partial v_j^x} \left[  \frac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \right]
+    &= \frac{\partial}{ \partial v_j^x} \left[  1 - \frac{E^{j-1}_d}{E^{j-1}_C} \right] \\
+    &= - E^{j-1}_d \frac{\partial}{ \partial v_j^x} \left[ (E^{j-1}_C)^{-1} \right] \\
+    &= - E^{j-1}_d (-(E^{j-1}_C)^{-2}) \frac{\partial}{ \partial v_j^x} \left[ E^{j-1}_C \right] \\
+    &= \frac{E^{j-1}_d}{(E^{j-1}_C)^{2}} \dfrac{v_j^x - v_{j-1}^x}{ E^{j-1}_{C} } \\
+    &= \frac{E^{j-1}_d}{(E^{j-1}_C)^{3}} (v_j^x - v_{j-1}^x),
+\end{align*}
+and, respectively 
+\begin{center}
+    $\dfrac{\partial}{ \partial v_j^x} \left[  \dfrac{E^{j}_C - E^{j}_d}{E^{j}_C} \right]       = \dfrac{E^{j  }_d}{(E^{j  }_C)^{3}} (v_j^x - v_{j+1}^x)$,  \quad 
+    $\dfrac{\partial}{ \partial v_j^y} \left[  \dfrac{E^{j-1}_C - E^{j-1}_d}{E^{j-1}_C} \right] = \dfrac{E^{j-1}_d}{(E^{j-1}_C)^{3}} (v_j^y - v_{j-1}^y)$, \\ 
+    $\dfrac{\partial}{ \partial v_j^y} \left[  \dfrac{E^{j}_C - E^{j}_d}{E^{j}_C} \right]       = \dfrac{E^{j  }_d}{(E^{j  }_C)^{3}} (v_j^y - v_{j+1}^y)$.  
+\end{center}
+
+We continue with the computation of the second derivative of the first summand in the first derivative of the edge energy
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} \right] = \\
+    &= \frac{\partial}{\partial v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{x} - v_{j-1}^{x}) \right] 
+      + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{y} - v_{j-1}^{y}) \right] \\
+    &= \frac{\partial}{\partial v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{x} - v_{j-1}^{x})  
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\partial}{\partial v_j^x} \left[(v_{j}^{x} - v_{j-1}^{x})\right] \\
+    &\;\;\;\; + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{y} - v_{j-1}^{y}) 
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\partial}{\partial v_j^y} \left[ (v_{j}^{y} - v_{j-1}^{y}) \right] \\ 
+    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{x} - v_{j-1}^{x}) (v_{j}^{x} - v_{j-1}^{x})  
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\
+    &\;\;\;\; + \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{y} - v_{j-1}^{y}) (v_{j}^{y} - v_{j-1}^{y}) 
+    + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\ 
+    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (\underbrace{(v_{j}^{x} - v_{j-1}^{x})^2 + (v_{j}^{y} - v_{j-1}^{y})^2}_{\displaystyle = (E^{j-1}_{C})^2}) + \dfrac{2(E^{j-1}_{C}- E_d^{j-1})}{E^{j-1}_{C}} \\
+    &= \frac{E_d^{j-1}}{E^{j-1}_{C}} + \dfrac{2(E^{j-1}_{C} - E_d^{j-1})}{E^{j-1}_{C}} \\
+    &= \frac{2 E^{j-1}_{C} - E_d^{j-1}}{E^{j-1}_{C}} \\
+    &= 2 - \frac{E_d^{j-1}}{E^{j-1}_{C}}.
+\end{align*}
+The computation for the second summand is analogous and it yields 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^j_{C} - E_d^{j}}{E^j_{C}}  
+    \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix} \right] = 2 - \frac{E_d^j}{E^j_C}.
+\end{align*}
+Overall, we get 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C) &= 4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}.
+\end{align*}
+With that result, we can finally compute the searched divergence 
+\begin{align*}
+    \nabla_C \cdot (\bar{\rho} \, \nabla_C E_2(C))
+    &= \sum\limits_{j=1}^{N_V} \nabla_{\vec{v}_j} \cdot (\bar{\rho} \, \nabla_{\vec{v}_j} E_2(C)) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} E_2(C))\right) \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C) + \bar{\rho} \, (4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}) \right)   \\
+    &= \sum\limits_{j=1}^{N_V} \left((\nabla_{\vec{v}_j} \cdot \bar{\rho}) \cdot \nabla_{\vec{v}_j} E_2(C)\right) + \bar{\rho} \, (4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C}),
+\end{align*}
+because 
+\begin{align*}
+    \sum\limits_{j=1}^{N_V} (4 - \frac{E_d^{j-1}}{E^{j-1}_{C}} - \frac{E_d^j}{E^j_C}) = 4 N_V - 2 \sum\limits_{j=1}^{N_V} \frac{E_d^j}{E^j_C},
+\end{align*}
+as we still use circular indexing, e.g. $E^0_C = E^{N_V}_C$.  \\
+
+\subsection{Computation of $\nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C)$} 
+For the energy 
+\begin{align*}
+    I_2(C) = \sum\limits_{j=1}^{N_V} \frac{1}{2}| I^j_{C} - I^{j}_d |^2, 
+\end{align*}
+from Equation~\eqref{eq:intAngleEnergy} with $k=2$, we are looking for the second derivative. \\
+In Chapter~\ref{dynamics}, we already computed the first derivative as 
+\begin{align*}
+    \begin{split}
+        \nabla_{\vec{v}_j} I_2(C) 
+        &= \underbrace{(I^{j-1}_{C} - I^{j-1}_d) \left( 
+                - \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+            \right)}_{= \psi_1(C)} \\[0.5em] 
+        &+ \underbrace{(I^{j}_{C} - I^{j}_d) \Biggl( 
+            \frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
+            v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+            v_{j}^{x} - v_{j-1}^{x}
+            \end{pmatrix} 
+            - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
+            v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+            v_{j}^{x} - v_{j+1}^{x}
+            \end{pmatrix} 
+            \Biggr)}_{= \psi_2(C)} \\[0.5em] 
+        &+ \underbrace{(I^{j+1}_{C} - I^{j+1}_d) \left( 
+            \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
+            v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
+            v_{j}^{x} - v_{j+1}^{x}
+            \end{pmatrix} 
+            \right)}_{= \psi_3(C)}, %\\[0.5em] 
+    \end{split}
+\end{align*}
+in Equation~\eqref{gradient:angle}. \\
+
+TODO: check sims for $\psi_1$ and $\psi_3$
+\subsubsection*{Computation of $\nabla_{\vec{v}_j} \cdot \psi_1$}
+From the proof of Proposition~\ref{prop:intAngleForce}, we use 
+\begin{center}
+    $\dfrac{\partial }{\partial v_j^x} \left[ I_C^j - I_d^j \right] = \dfrac{v_{j-1}^y - v_{j}^y}{(E^{j-1}_C)^2}$, \quad
+    $\dfrac{\partial }{\partial v_j^y} \left[ I_C^j - I_d^j \right] = \dfrac{v_{j}^x - v_{j-1}^x}{(E^{j-1}_C)^2}$, \\
+    $\Longrightarrow \nabla_{\vec{v}_j} \left[ I_C^j - I_d^j \right] = \dfrac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+        v_{j-1}^y - v_{j}^y \\ v_{j}^x - v_{j-1}^x
+    \end{pmatrix}$.
+\end{center}
+We continue with 
+\begin{align*}
+    \frac{\partial }{\partial v_j^x} \left[ \frac{v_{j-1}^y - v_{j}^y}{(E_{j-1}^C)^2} \right]
+    &= (v_{j-1}^y - v_{j}^y) \frac{\partial }{\partial v_j^x} \left[ (E^{j-1}_C)^{-2} \right] \\
+    &= (v_{j-1}^y - v_{j}^y) \left(-2 (E^{j-1}_C)^{-3}  \frac{\partial }{\partial v_j^x} \left[ E_{j-1}^C \right] \right)\\
+    &= (v_{j-1}^y - v_{j}^y) \left(-2 (E^{j-1}_C)^{-3}  \frac{v_j^x - v_{j-1}^x}{E_C^{j-1}}\right) \\
+    &= (v_{j-1}^y - v_{j}^y) \left(-2 (E^{j-1}_C)^{-4}  (v_j^x - v_{j-1}^x)\right) \\
+    &= - \frac{2}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y), 
+\end{align*}
+where we used the derivative 
+\begin{align*}
+    \frac{\partial }{\partial v_j^x} \left[ E^{j-1}_C \right] = \frac{v_j^x - v_{j-1}^x}{E_C^{j-1}},
+\end{align*}
+computed in the previous Subsection~\ref{subection:edgePDE}. \\
+Similarly, we get 
+\begin{center}
+    $\dfrac{\partial }{\partial v_j^y} \left[ \dfrac{v_{j}^x - v_{j-1}^x}{(E_{j-1}^C)^2} \right] = - \dfrac{2}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y)
+    = \dfrac{\partial }{\partial v_j^x} \left[ \dfrac{v_{j-1}^y - v_{j}^y}{(E_{j-1}^C)^2} \right]$, \\[0.5em]
+    $\Longrightarrow \nabla_{\vec{v}_j} \cdot \left[ 
+                \dfrac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+             \right] = - \dfrac{4}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y) $.
+\end{center}
+
+Thus, we can compute 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \psi_1(C) 
+    &= \nabla_{\vec{v}_j} \cdot \left[ (I^{j-1}_{C} - I^{j-1}_d) \left( 
+                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+            \right)\right] \\
+    &=  \left( \nabla_{\vec{v}_j}  \left[ I^{j-1}_{C} - I^{j-1}_d \right] \right) \cdot \left( 
+                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+            \right) \\
+        &+ (I^{j-1}_{C} - I^{j-1}_d) \nabla_{\vec{v}_j} \cdot \left[
+                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+            \right] \\ 
+    &=  \left(\frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+        v_{j-1}^y - v_{j}^y \\ v_{j}^x - v_{j-1}^x
+    \end{pmatrix}\right)\cdot \left( 
+                - \frac{1}{(E^{j-1}_C)^2} \begin{pmatrix}
+                    v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
+                    v_{j}^{x} - v_{j-1}^{x}
+                \end{pmatrix} 
+            \right) \\
+        &+ (I^{j-1}_{C} - I^{j-1}_d) \left( \dfrac{4}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y) \right) \\
+    &=  - \frac{1}{(E^{j-1}_C)^4} (\underbrace{(v_{j-1}^y - v_{j}^y)^2 + (v_{j}^x - v_{j-1}^x)^2}_{= (E^{j-1}_C)^2}) \\
+    &+ (I^{j-1}_{C} - I^{j-1}_d) \left( \dfrac{4}{(E^{j-1}_C)^{4}} (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y) \right) \\
+    &= - \frac{1}{(E^{j-1}_C)^2} + \dfrac{4}{(E^{j-1}_C)^{4}} (I^{j-1}_{C} - I^{j-1}_d)  (v_j^x - v_{j-1}^x)(v_{j-1}^y - v_{j}^y). 
+\end{align*}
+\subsubsection*{Computation of $\nabla_{\vec{v}_j}\cdot \psi_2$}
+
+In a similar fashion, we can also compute 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \psi_3(C) =  - \frac{1}{(E^{j}_C)^2} - \dfrac{4}{(E^{j}_C)^{4}} (I^{j-1}_{C} - I^{j-1}_d)  (v_j^x - v_{j+1}^x)(v_{j+1}^y - v_{j}^y)
+\end{align*}
+
+\subsubsection*{Computation of $\nabla_{\vec{v}_j} \cdot \psi_3$}
+
+
+
+
+
+We get the second derivative 
+\begin{align*}
+    \nabla_{\vec{v}_j} \cdot \nabla_{\vec{v}_j} I_2(C) = \frac{2}{E_{j-1}^2} &\left[ 1 + 2(I_C^{j-1} - I_d^{j-1} + I_C^{j} - I_d^{j})(v_j^x - v_{j-1}^x)(v_j^y - v_{j-1}^y) \right] \\
+    + \frac{2}{E_{j}^2} &\left[ 1 - 2 (I_C^{j} - I_d^{j} + I_C^{j+1} - I_d^{j+1})(v_{j}^x - v_{j+1}^x)(v_j^y - v_{j+1}^y) \right] \\
+    -  \frac{2}{E_{j-1}^2 E_{j}^2} &\left[ (v_j^x - v_{j-1}^x)(v_{j}^x - v_{j+1}^x) + (v_j^y - v_{j-1}^y)(v_j^y - v_{j+1}^y)  \right].
+\end{align*}
+
