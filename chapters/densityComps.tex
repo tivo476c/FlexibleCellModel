@@ -361,6 +361,9 @@ We define the vector of all vertex coordinates of cell C as
 \begin{align*}
     V_C = (v_1^x, v_1^y, \ldots, v_{N_V}^x, v_{N_V}^y)^T \in \R^{2 N_V}.
 \end{align*}
+
+
+
 \subsubsection*{Area energy}
 First, we consider pure scaled area energy, i.e.
 \begin{align*}
@@ -383,32 +386,32 @@ where we used
     \nabla_{\vec{v}_j} A_2(C) &= \dfrac{1}{2} (A_{C} - A_d) \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix},
 \end{align*}
 from Equation~\eqref{gradient:area}. \\
-Thus, we can write down the cell wise gradient as 
+We conclude the matrix $M_A \in \R^{2N_V \times 2 N_V}$ as 
+\begin{align*}
+    M_A = \begin{pmatrix}
+    \zeroblock                 & \fblock{ 0 & 1 \\ -1 & 0 } & \zeroblock                & \cdots     & \zeroblock & \fblock{ 0 & -1 \\ 1 & 0} \\
+    \fblock{ 0 & -1 \\ 1 & 0 } & \zeroblock                 & \fblock{ 0 & 1 \\ -1 & 0 }& \zeroblock & \cdots     &\zeroblock \\[1.0cm]
+    &\ddots&&\ddots&& \\[0.7cm]
+    \zeroblock  & \cdots &  \zeroblock& \fblock{ 0 & -1 \\ 1 & 0} & \zeroblock & \fblock{ 0 & 1 \\ -1 & 0 } \\ 
+    \fblock{ 0 & 1 \\ -1 & 0 }  &\zeroblock  & \cdots & \zeroblock & \fblock{ 0 & -1 \\ 1 & 0} & \zeroblock \\ 
+    \end{pmatrix},
+\end{align*}
+such that, we can write down the cell wise gradient as 
 \begin{align}
     \begin{split}
-        &\nabla_C E_A(C) 
+        \nabla_C E_A(C) 
         =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) 
         \begin{pmatrix}   
             v_{2}^{y} - v_{N_V}^{y} \\[0.5em]  v_{N_V}^{x} - v_{2}^{x} \\ 
-            v_{3}^{y} - v_{1  }^{y} \\[0.5em]  v_{1  }^{x} - v_{3}^{x} \\ 
             \vdots \\  
-            v_{N_V}^{y} - v_{N_V-2}^{y} \\[0.5em]  v_{N_V-2}^{x} - v_{N_V}^{x}\\  
             v_{1}^{y} - v_{N_V-1}^{y} \\[0.5em]  v_{N_V-1}^{x} - v_{1}^{x} 
-        \end{pmatrix} \\[0.5em]
-        &=  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) \underbrace{\begin{pmatrix} 
-            0 &  0 &  0 & 1 & 0  & 0  \; \cdots \; 0 & 0 & 0 & -1 \\
-            0 &  0 & -1 & 0 & 0  & 0  \; \cdots \; 0 & 0 & 1 & 0 \\
-            0 & -1 &  0 & 0 & 0  & 1  \; \cdots \; 0 & 0 & 0 & 0 \\
-            1 &  0 &  0 & 0 & -1 & 0  \; \cdots \; 0 & 0 & 0 & 0 \\[0.5em]
-            &    &    &   &   \hspace{1cm}    \vdots     &     &   &   & \\[0.5em]
-            0  &  0 &  0 & 0 & 0 & 0 \; \cdots \; 0 &  0 &  0 & 1 \\
-            0  &  0 &  0 & 0 & 0 & 0  \; \cdots \; 0 &  0 & -1 & 0 \\
-            0  &  1 &  0 & 0 & 0 & 0  \; \cdots \; 0 & -1 &  0 & 0 \\
-            -1 &  0 &  0 & 0 & 0 & 0  \; \cdots \; 1 &  0 &  0 & 0 \\
-        \end{pmatrix}}_{= M_A} \underbrace{\begin{pmatrix} v_1^x \\ v_1^y \\ v_2^x \\ v_2^y \\ \vdots \\ v_{N_V-1}^x \\ v_{N_V-1}^y \\ v_{N_V}^x \\ v_{N_V}^y\end{pmatrix}}_{= V_C}. \\
+        \end{pmatrix} 
+        =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) M_A V_C
     \end{split}
     \label{eq:cGradArea}
 \end{align}
+
+
 
 \subsubsection*{Edge energy}
 Now, we want to consider the exclusive scaled edge energy, i.e.
@@ -450,29 +453,19 @@ and
 And rewrite the following parts as  
 \begin{align*}
     M_E = \begin{pmatrix}
-        1 & 0 & -1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        0 & 1 & 0 & -1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        0 & 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        0 & 0 & 0 & 1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-          &   &   &    \vdots  &   &   & \\[0.5em]
-        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 & 0 & 0 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: 0 & 1 &  0 & 0 \\ 
-        -1 & 0 & 0 & 0 \: \cdots \: 0 & 0 &  1 & 0 \\ 
-        0 & -1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & 1 \\ 
+    \fblock{ 1 & 0 \\ 0 & 1 } & \fblock{ -1 & 0 \\ 0 & -1 } & \zeroblock                & \cdots     &  & \zeroblock \\[1cm]
+    &\ddots&\ddots&&& \\[0.5cm]
+    \zeroblock  & \cdots &  &\zeroblock & \fblock{ 1 & 0 \\ 0 & 1 } & \fblock{ -1 & 0 \\ 0 & -1 } \\ 
+    \fblock{ -1 & 0 \\ 0 & -1 }  &\zeroblock  & \cdots & & \zeroblock  & \fblock{ 1 & 0 \\ 0 & 1 } \\ 
     \end{pmatrix} \in \R^{2N_V \times 2 N_V},
 \end{align*}
 and 
 \begin{align*}
     M_{E-} = \begin{pmatrix}
-        1 & 0 & 0 & 0 \: \cdots \: 0 & 0 & -1 & 0 \\ 
-        0 & 1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & -1\\ 
-        -1& 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        0 & -1& 0 & 1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-          &   &   &    \vdots  &   &   & \\[0.5em]
-        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 & 0 & 0 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: 0 & 1 &  0 & 0 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: -1& 0 &  1 & 0 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: 0 & -1&  0 & 1 \\ 
+    \fblock{ 1 & 0 \\ 0 & 1 }  & \zeroblock                & \cdots     &  & \zeroblock & \fblock{ -1 & 0 \\ 0 & -1 } \\
+    \fblock{ -1 & 0 \\ 0 & -1 } &\fblock{ 1 & 0 \\ 0 & 1 } &  \zeroblock                &\cdots &      & \zeroblock \\[1cm]
+    &&\ddots&\ddots&& \\[0.7cm]
+    \zeroblock  & \cdots &  &\zeroblock & \fblock{ -1 & 0 \\ 0 & -1 } &\fblock{ 1 & 0 \\ 0 & 1 } \\ 
     \end{pmatrix} \in \R^{2N_V \times 2 N_V}.
 \end{align*}
 We can conclude a cell wise edge energy gradient as 
@@ -523,7 +516,7 @@ in Equation~\eqref{gradient:angle}. \\
 We define the matrices $D_I, D_{I-}, D_{I+} \in \R^{2N_V \times 2N_V}$ as 
 \begin{center}
     $D_I = \diag[I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d, I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d]$, \\[0.5em]
-    $D_{I-} = \text{diag}\bigl(  $ {\footnotesize$I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d,\ldots, I^{N_V-1}_{C} - I^{N_V-1}_d, I^{N_V-1}_{C} - I^{N_V-1}_d$}$\bigr)$,\\[0.5em]
+    $D_{I-} = \text{diag}\bigl(${\footnotesize$I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d,\ldots, I^{N_V-1}_{C} - I^{N_V-1}_d, I^{N_V-1}_{C} - I^{N_V-1}_d$}$\bigr)$,\\[0.5em]
     $D_{I+} = \diag[I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d]$. \\
 \end{center}
 The terms of form $\frac{1}{(E^j_C)^2}$ and  $\frac{1}{(E^{j+1}_C)^2}$ are summerised in $B_I, B_{I+} \in \R^{2N_V \times 2N_V}$ as, 
@@ -534,26 +527,16 @@ The terms of form $\frac{1}{(E^j_C)^2}$ and  $\frac{1}{(E^{j+1}_C)^2}$ are summe
 Finally, we put together  missing vertex terms with matrices $M_{I-}, M_{I+} \in \R^{2N_V \times 2N_V}$ as
 \begin{align*}
     M_{I-} = \begin{pmatrix}
-        0 & -1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & 1 \\ 
-        1 & 0 & 0 & 0 \: \cdots \: 0 & 0 &  -1 & 0\\ 
-        0 & 1 & 0 & -1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        -1 & 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-          &   &   &    \vdots  &   &   & \\[0.5em]
-        0 & 0 & 0 & 0 \: \cdots \: 0 & -1 &  0 & 0 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 &  0 & 0 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: 0 & 1 &  0 & -1 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: -1 & 0 &  1 & 0 \\ 
+    \fblock{ 0 & -1 \\ 1 & 0 }  & \zeroblock                & \cdots     &  & \zeroblock & \fblock{ 0 & 1 \\ -1 & 0 } \\
+    \fblock{ 0 & 1 \\ -1 & 0 }  & \fblock{ 0 & -1 \\ 1 & 0 }  & \zeroblock              & \cdots    &  & \zeroblock  \\
+    &&\ddots&\ddots&& \\[0.7cm]
+    \zeroblock  & \cdots &  &\zeroblock & \fblock{ 0 & 1 \\ -1 & 0 }  & \fblock{ 0 & -1 \\ 1 & 0 } \\ 
     \end{pmatrix}, \\[0.5em]
      M_{I+} = \begin{pmatrix}
-        0 & -1 & 0 & 1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        1 & 0 & -1 & 0 \: \cdots \: 0 & 0 &  0 & 0\\ 
-        0 & 0 & 0 & -1 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-        0 & 0 & 1 & 0 \: \cdots \: 0 & 0 &  0 & 0 \\ 
-          &   &   &    \vdots  &   &   & \\[0.5em]
-        0 & 0 & 0 & 0 \: \cdots \: 0 & -1 &  0 & 1 \\ 
-        0 & 0 & 0 & 0 \: \cdots \: 1 & 0 &  -1 & 0 \\ 
-        0 & 1 & 0 & 0 \: \cdots \: 0 & 0 &  0 & -1 \\ 
-        -1 & 0 & 0 & 0 \: \cdots \: 0 & 0 &  1 & 0 \\ 
+        \fblock{ 0 & -1 \\ 1 & 0 }  & \fblock{ 0 & 1 \\ -1 & 0 }  & \zeroblock              & \cdots    &  & \zeroblock  \\[1cm]
+        &&\ddots&\ddots&& \\[0.7cm]
+         \zeroblock                 & \cdots     & & \zeroblock & \fblock{ 0 & -1 \\ 1 & 0 }  & \fblock{ 0 & 1 \\ -1 & 0 } \\
+        \fblock{ 0 & 1 \\ -1 & 0 } & \zeroblock  & \cdots &  &\zeroblock   & \fblock{ 0 & -1 \\ 1 & 0 } \\ 
     \end{pmatrix}.
 \end{align*} 
 We can write down the cell wise interior angle gradient as 

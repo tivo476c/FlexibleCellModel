@@ -34,6 +34,8 @@
 \usepackage{subfiles}
 \usepackage{placeins}
 
+\usepackage{hhline}
+
 
 
 % -------------------- STRUCTURES -----------------------------
@@ -68,6 +70,18 @@
 \newcommand{\norm[1]}{\lVert#1\rVert_{_{2}}}
 \newcommand{\diag[1]}{\text{diag}\!\left(#1\right)}
 \newcommand{\infnorm[1]}{\lVert#1\rVert_{_{\infty}}}
+
+\newcommand\zeroblock{\begin{array}{@{\:}cc@{\:}}
+ 0 & 0 \\
+ 0 & 0
+\end{array}
+}
+\newcommand{\fblock}[1]{\begin{array}{|@{\:}cc@{\:}|}
+\hhline{|--|}#1 \\
+\hhline{|--|}
+\end{array}}
+
+
 %\newcommand{\qed}{\hfill \ensuremath{\Box}}
 \setlength{\parindent}{0em} 
 
