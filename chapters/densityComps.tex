@@ -1,12 +1,12 @@
-\section{Density computations} \label{density}
+\section{Mean field limit} \label{density}
 
 In the previous chapter, we employed Monte Carlo simulations to validate the microscopic cell model and to illustrate the qualitative behaviour emerging from the underlying gradient flow dynamics. 
 While such simulations provide valuable empirical insight, they do not yet reveal the macroscopic, continuum level structure of the system. \\
 In this chapter, we therefore develop a systematic framework to pass from individual cell dynamics to a description in terms of probability measures and densities. 
-We introduce the empirical measure associated with large ensembles of simulated cells, explain its convergence to the first marginal of the $N_C$ cell system, and analyse the subsequent mean-field limit as $N_C \rightarrow \infty$. \\
+We introduce the empirical measure associated with large ensembles of simulated cells, explain its convergence to the first marginal of the $N_C$ cell system, and analyse the subsequent mean field limit as $N_C \rightarrow \infty$. \\
 %TODO: in the end really write down what we have done: 
 This leads naturally to a deterministic transport equation for the limiting cell density, which provides a mathematically transparent interpretation of the collective dynamics. 
-We illustrate this approach with an explicit low dimensional needle cell example. 
+We illustrate this approach with an explicit low-dimensional needle cell example. 
 Afterwards, we compute the mean field PDEs for our DF model with sorely the area, edge or interior angle force applied, respectively. 
 Unfortunately, we did not manage to do the same for our interaction term in this thesis, as there was not enough time. 
 %now introduce empirical measure: 
@@ -16,7 +16,7 @@ For our point particle monte carlo simulations, we can define the empirical meas
     A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{\vec{x}_i^{\:(s)}(t)}(A),
 \end{align*}
 where $N_C$ is again the number of cells in each simulation, $N_S$ denotes the number of simulations in the Monte Carlo simulation and $\vec{x}_i^{\:(s)}(t) \in \Omega \subset \R^2$ is the location of point particle $1 \leq i \leq N_C$ in simulation $1 \leq s \leq N_S$ and at time $t \in [0, T]$.   \\
-$\mathcal{B}(\R^2)$ is the Borel sigma-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
+$\mathcal{B}(\R^2)$ is the Borel $\sigma$-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
 \begin{align*}
     &\delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \: \longrightarrow \: \{0,1\},  \\
     A \: \longmapsto \: &\delta_{\vec{x}_i(t)}(A) = \begin{cases}
@@ -26,7 +26,7 @@ $\mathcal{B}(\R^2)$ is the Borel sigma-algebra on $\R^2$ and \( \delta_{\vec{x}_
 \end{align*}
 For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfies
 \[
-\int_{\R^2} \phi(x) \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
+\int_{\R^2} \phi(x) \: \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
 \]
 For a set $A \in \mathcal{B}(\mathbb{R}^2)$, the quantity $\mu^{(N_C, N_S)}_t(A)$ denotes the relative proportion of the $N_C$ particles that lie in $A$ at time $t$, averaged over all $N_S$ simulations.\\
 The heatmaps in Chapter~\ref{sanitycheck} are obtained by evaluating this empirical measure on a family of subsets $\{A_{ij}\}_{i,j=1}^{N_H}$, where $N_H^2$ is the number of sub squares into which we partition the domain $\Omega = [-0.5, 0.5]^2$.  
@@ -133,7 +133,7 @@ For a force function $F(C) = - \nabla_C E(C)$, the we get the formulation
 
 \subsection{1d needles example}
 % TODOs: formulate everything, figure captions, formatting
-In order to demonstrate how the preceding computations can be applied in practice, we begin with a lower dimensional example. 
+In order to demonstrate how the preceding computations can be applied in practice, we begin with a lower-dimensional example. 
 In this setting, each cell consists of two vertices situated in one spatial dimension, 
 \begin{align*}
     C = \{v_1, v_2\}, \quad v_1, v_2 \in \R,
@@ -217,7 +217,7 @@ We then evolve the system under the dynamics
 \end{align*}
 using a desired edge length of $E_d = 0.2$.  
 The resulting ODE system is integrated with an explicit Euler method using a time step of $\Delta t = 10^{-3}$ over the interval $[0,1]$, giving $100$ time steps. \\
-Figure~\ref{fig:needle400} visualises the evolution of the one dimensional needle cell system. 
+Figure~\ref{fig:needle400} visualises the evolution of the one-dimensional needle cell system. 
 Each cell is represented by a blue point in the $(v_1,v_2)$ plane, where the horizontal axis corresponds to the position of the first vertex and the vertical axis to that of the second vertex. 
 Such a representation is only possible in this lower-dimensional setting, since the full vertex configuration of a cell can be embedded in $\R^2$. \\
 At initial time, the $N_C = 400$ cells are sampled from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. 
@@ -256,7 +256,7 @@ with grid spacing $\Delta x = \tfrac{1}{500}$.
         \includegraphics[width=0.3\textwidth]{density/needles/histograms/1/histogram_t6.png} \\    
     \end{tabular}
 
-    \caption{Scatter plots showing the evolution of $N_C = 400$ one dimensional needle cells at times $t \in \{0.0, 0.2, \ldots, 1.0\}$. 
+    \caption{Scatter plots showing the evolution of $N_C = 400$ one-dimensional needle cells at times $t \in \{0.0, 0.2, \ldots, 1.0\}$. 
     Each blue point represents a single cell, with the horizontal axis indicating the location of the first vertex $v_1$ and the vertical axis the location of the second vertex $v_2$. 
     The initial conditions are drawn from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. The dynamics aim to achieve a desired edge length of $E_d = 0.2$, corresponding to the two diagonal lines defined by $|v_1 - v_2| = 0.2$.}
 
@@ -279,7 +279,7 @@ with grid spacing $\Delta x = \tfrac{1}{500}$.
 
     \caption{Evolution of the mean field density starting from the initial distribution $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$. 
     The PDE dynamics transport the density towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, along which the mass becomes concentrated over time. 
-    The plots display the density at successive time instances and include small oscillations between the diagonals arising from the central-difference discretisation; these could be removed through an upwind treatment of the spatial gradients.}
+    The plots display the density at successive time instances and include small oscillations between the diagonals arising from the central difference discretisation; these could be removed through an upwind treatment of the spatial gradients.}
 	\label{fig:needle-limit}    
 \end{figure}
 
@@ -287,7 +287,7 @@ with grid spacing $\Delta x = \tfrac{1}{500}$.
 
 Figure~\ref{fig:needle-limit} illustrates the evolution of the cell density in the mean field limit. 
 The initial distribution is given by $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$, forming a concentrated region in the centre of the domain. 
-Under the action of the mean field PDE, the density is gradually transported towards the two diagonal lines characterised by $|v_1 - v_2| = 0.2$, mirroring the behaviour observed in the finite-particle simulation from Figure~\ref{fig:needle400}. 
+Under the action of the mean field PDE, the density is gradually transported towards the two diagonal lines characterised by $|v_1 - v_2| = 0.2$, mirroring the behaviour observed in the finite particle simulation from Figure~\ref{fig:needle400}. 
 As time evolves, the solution develops sharp ridges along these diagonals, and by the final time almost all mass is concentrated on there, indicating convergence towards the desired edge length in the continuum description.
 
 During the evolution, small oscillations appear in the region between the two diagonals. 
@@ -305,7 +305,7 @@ Nevertheless, the dynamics, driven by the energy term
     E(C) = \tfrac{1}{2} ||v_1 - v_2| - E_d |^2 ,
 \]
 naturally steer the system toward states where the needle length matches $E_d$. 
-As the evolution proceeds, the density gradually depletes along the diagonal region of the $(v_1, v_2)$ space, reproducing the same `forbidden' diagonal line that appeared in the hard-disc case. \\
+As the evolution proceeds, the density gradually depletes along the diagonal region of the $(v_1, v_2)$ space, reproducing the same `forbidden' diagonal line that appeared in the hard disc case. \\
 Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap), the needle system develops a soft exclusion: the dynamics energetically penalize undesirable configurations until the system self organises into a feasible state.
 
 
@@ -314,7 +314,7 @@ Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap
 Now, we want to apply the computation for PDE~\eqref{equ:meanFieldDerivation} on our DF model.
 Therefore, we adapt our empirical measure. 
 In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
-Thus, we need to use $\delta_{C_i}$ that uses high dimensional subsets $A \subset \R^{2 N_V}$, i.e.
+Thus, we need to use $\delta_{C_i}$ that uses high-dimensional subsets $A \subset \R^{2 N_V}$, i.e.
 \begin{align*}
     &\mu^{(N_C, N_V)}_t: \mathcal{B}(\R^{2 N_V}) \: \longrightarrow \: [0,1],  \\
     A \: \longmapsto \: &\mu^{(N_C, N_V)}_t(A) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \delta_{C_i(t)}(A),
@@ -330,7 +330,7 @@ with gradient
 \end{align*}
 Later on, we want to insert the three shape preserving energies, i.e. the area, edge and interior angle energy, that all have the above attributes.
 We can derive the mean field PDE for this setup as follows. 
-Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher dimensional space $\R^{2N_V}$.
+Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher-dimensional space $\R^{2N_V}$.
 We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t^{\:N_V}$, as $N_C \rightarrow \infty$.
 Similarly to the calculation at the beginning of this chapter, we observe 
 \begin{align*}

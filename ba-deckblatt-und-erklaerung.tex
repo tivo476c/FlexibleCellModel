@@ -132,7 +132,7 @@ Vielen Dank Mum, Dad und Willi. Ihr wart schon immer der beste Rückhalt in mein
 The diffusion of finite size particles in confined geometries is a topic of interest in physics, chemistry, and materials science, particularly when studying the behavior of molecules, nanoparticles, or other particles that are not infinitesimally small. \\
 The modeling of cells and the addition of cell dynamics to analyse the diffusion behavior will be the focus of the following thesis. \\
 First of all, some already published cell and particle models are presented in the introduction to relate the subsequent work. Then, a short overview over the different chapters is given. Figure \ref{fig:model_illus} shows some visualisations of the coming models.\\
-Although there are models in higher dimensions, we will from now on focus on those that operate on a bounded domain $\Omega \subset \R^2$ that is a subset of the two dimensional space. All models study the behavior of a number of $N \in \N$  particles. \\
+Although there are models in higher dimensions, we will from now on focus on those that operate on a bounded domain $\Omega \subset \R^2$ that is a subset of the two-dimensional space. All models study the behavior of a number of $N \in \N$  particles. \\
 The point particle model comes first. In the point particle model, one considers particles that are infinitely small. This also means that no interaction between the particles can happen, because the probability of two particles colliding is zero. The particles are initially randomly distributed in $\Omega$. Each particle's movement is described by Brownian motion. In the real world, Brownian motion is the random and continuous zigzagging movement of particles, usually suspended in a fluid medium, resulting from their collisions with surrounding molecules. Brownian motion can be mathematically modeled using stochastic differential equations (SDEs) which describe the particle's movement as a function of time while incorporating random noise terms to represent the irregular, fluctuating forces acting on the particle. Let $\vec{x}_i(t) \in \Omega$, $(1 \leq i \leq N)$, be the location of the particle $i$ at time $t > 0$. Then, the particle movement can be explained with the diffusion equation
 \begin{center}
 	$d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)}, \qquad 1 \leq i \leq N$,
@@ -153,7 +153,7 @@ The dynamic of the particles changes to
 \begin{center}
 	$d\vec{x}_i(t) = \sqrt{2D} \: dB_t^{(i)} + f(\vec{x}_i(t)) \: dt, \qquad 1 \leq i \leq N$.
 \end{center}
-In this model, the particles are initially randomly distributed in $\Omega^N_{\epsilon}$ such that no overlap between the particles occurs. As derived in \cite{Bruna2012}, the joint probability density function $P$ (joint PDF) of the $N$ particles satisfies a high dimensional Fokker-Planck equation
+In this model, the particles are initially randomly distributed in $\Omega^N_{\epsilon}$ such that no overlap between the particles occurs. As derived in \cite{Bruna2012}, the joint probability density function $P$ (joint PDF) of the $N$ particles satisfies a high-dimensional Fokker-Planck equation
 \begin{center}
 	$\dfrac{\partial P}{\partial t} = \nabla_{\vec{X}} \cdot (D \nabla_{\vec{X}} P - P \vec{F})$,
 \end{center}
@@ -197,7 +197,7 @@ where $\alpha_u$ depends on the interaction potential $u$ and $0 < \epsilon_u \l
 	\label{fig:model_illus}
 \end{figure}
 While the models presented only deal with spherical particles, in this thesis a large variety of shapes should be able to be modeled. The shape of a cell is another property that can influence the change in particle density over time in the domain. More complex shapes can be represented as in the model below, which can be assigned to the category of phase field models.  \\
-Such a model is presented in \cite{Happel2023}. Here, each cell is modeled via a two dimensional phase field variable which is a smooth, continuous function $\phi_i \in [-1, 1]$, $(1 \leq i \leq N)$. Vectors $\vec{x}$ with positive values in $\phi_i$ are interior of the cell $i$ and all vectors with a negative value are considered to be exterior. Values of $\phi_i = 0$ denote the cell wall. The dynamic for each $\phi_i$ reads
+Such a model is presented in \cite{Happel2023}. Here, each cell is modeled via a two-dimensional phase field variable which is a smooth, continuous function $\phi_i \in [-1, 1]$, $(1 \leq i \leq N)$. Vectors $\vec{x}$ with positive values in $\phi_i$ are interior of the cell $i$ and all vectors with a negative value are considered to be exterior. Values of $\phi_i = 0$ denote the cell wall. The dynamic for each $\phi_i$ reads
 \begin{align}
 	\dfrac{ \partial \phi_i}{ \partial t} + v_0(\textbf{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \dfrac{\delta F}{\delta \phi_i}, \qquad 1 \leq i \leq N \label{eq:phasefield},
 \end{align}
@@ -221,7 +221,7 @@ Hereinafter, any points $\vec{x} \in \R^d$ ($d \in \N_{>1}$) are written with a 
 \newpage
 \section{Cell definitions and area computations} \label{sec:CellDef}
 Before we are able to run programs and simulate cell behavior, we must first set a definition of what exactly a cell is, i.e. how we want to model them. Thus, this section will give such a simplified mathematical model of a cell. \\
-In this thesis, we will always consider the the two dimensional space of real numbers. Consequently, a cell will always be embedded in $\R^2$. 
+In this thesis, we will always consider the the two-dimensional space of real numbers. Consequently, a cell will always be embedded in $\R^2$. 
 Since we want to take a look at the development of the cell shape, we want a model that provides as much freedom of shape as possible. Ergo, simple discs or other static geometric forms are not versatile enough. Instead, we take a look at the following approach. \\
 \subsection{Continuous and discrete cell models} 
 In the first approach, we define a cell by its centre point and a so called radius function which takes an angle $\phi \in [0, 2\pi)$ and returns the cell radius at that point. \\
@@ -233,7 +233,7 @@ In the first approach, we define a cell by its centre point and a so called radi
 	\end{center}
 \end{figure}
 \begin{definition} \textbf{Centre radius form (CRF)} \label{def:CRF}  \\
-	For a given point $\vec{c} \in \mathbb{R}^2$ and function $r: [0, 2\pi) \rightarrow (0, \infty)$ so that $r \in C^1([0, 2\pi))$, $r(0) = r(2\pi)$ and $r'(0) = r'(2\pi)$, the tuple $(\vec{c}, r)$ describes a cell in its centre radius form (CRF) with centre point $\vec{c}$ and radius $r(\phi)$ at angle $\phi \in [0, 2\pi)$ that is taken with the $x$ axis. \\
+	For a given point $\vec{c} \in \mathbb{R}^2$ and function $r: [0, 2\pi) \rightarrow (0, \infty)$ so that $r \in C^1([0, 2\pi))$, $r(0) = r(2\pi)$ and $r'(0) = r'(2\pi)$, the tuple $(\vec{c}, r)$ describes a cell in its centre radius form (CRF) with centre point $\vec{c}$ and radius $r(\phi)$ at angle $\phi \in [0, 2\pi)$ that is taken with the $x$-axis. \\
 \end{definition}
 Since we want our cell wall to be smooth, it is a reasonable requirement to choose our radius function $r$ to be smooth as well. The boundary conditions ensure a soft transition at angle $\phi = 0$ or, respectively, $\phi = 2\pi$. 
 With this form we are able to describe and plot cells that have a star shaped form and a smooth wall. One can easily imagine that there are also cell forms which are not star shaped and which cannot be displayed with the CRF. But hereinafter, we will just focus on the wide range of shapes that can be represented by a CRF cell. \\
@@ -243,7 +243,7 @@ For every point on the cell wall $\vec{w}$, we can draw a right triangle and the
 \end{center}
 as we can see in Figure \ref{fig:SketchCompWallPoint1}.\\
 In order to obtain our first plots, we just have to save an amount of vertices using this equation and then perform a shape plot with this list of points. Figure \ref{fig:plotExamples} shows us some examples. \\
-Having established a continuous cell model, we are now also looking for a further simplification. The reason for this is that most cell dynamics in this thesis are applied on a vertex model in Section \ref{sec:energyModels}. It is straight forward to just use a sequence of vertices. First of all, we will introduce some definitions of two dimensional objects and their characteristics.\\
+Having established a continuous cell model, we are now also looking for a further simplification. The reason for this is that most cell dynamics in this thesis are applied on a vertex model in Section \ref{sec:energyModels}. It is straight forward to just use a sequence of vertices. First of all, we will introduce some definitions of two-dimensional objects and their characteristics.\\
 \begin{figure}[t!]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -273,7 +273,7 @@ Having established a continuous cell model, we are now also looking for a furthe
 	A domain $D \subset \R^2$ is said to be convex if for any two points $\vec{x}_1, \vec{x}_2 \in D$ their connection $\overline{\vec{x}_1 \: \vec{x}_2}$ lies entirely in $D$. \\ 
 \end{definition}
 \begin{definition} \textbf{Polygon} \\
-	A polygon is a closed geometric figure in the two dimensional space $\R^2$, formed by connecting a finite number of straight line segments. It can be represented be a sequence $(\vec{x}_1, \ldots, \vec{x}_N)$ of its vertices. \\
+	A polygon is a closed geometric figure in the two-dimensional space $\R^2$, formed by connecting a finite number of straight line segments. It can be represented be a sequence $(\vec{x}_1, \ldots, \vec{x}_N)$ of its vertices. \\
 	The following characteristic can be attributed to a polygon.
 	\begin{enumerate}[(i)]
 		\item A \textbf{simple} polygon is a polygon where no two line segments cross each other.
@@ -302,7 +302,7 @@ An example of switching from CRF to DF is the following. For $N \in \mathbb{N}$ 
 	$\phi_i = i \dfrac{2 \pi}{N}, \qquad 0 \leq i \leq N-1$, 
 \end{center}
 compute the according vertices $\vec{x}_1, \ldots, \vec{x}_N$ like in Figure \ref{fig:SketchCompWallPoint1} and save them in this order. \\
-It is also possible to create a matching CRF out of a given DF if it is star shaped. To do so, one has to set $\vec{c}$ as a star centre of the DF cell. Afterwards, the radius function $r$ can be obtained through a smooth interpolation between the fixed radii $r_i = \norm[\vec{c} - \vec{x}_i]$ at the corresponding angles of rising $\phi_i$ between the line $\overline{\vec{c} \: \vec{x}_i}$ and the $x$ axis. In order to obtain a radius function fulfilling Definition \ref{def:CRF}, one must also consider the smoothness requirements at the interval ends of $[0, 2 \pi]$.  \\
+It is also possible to create a matching CRF out of a given DF if it is star shaped. To do so, one has to set $\vec{c}$ as a star centre of the DF cell. Afterwards, the radius function $r$ can be obtained through a smooth interpolation between the fixed radii $r_i = \norm[\vec{c} - \vec{x}_i]$ at the corresponding angles of rising $\phi_i$ between the line $\overline{\vec{c} \: \vec{x}_i}$ and the $x$-axis. In order to obtain a radius function fulfilling Definition \ref{def:CRF}, one must also consider the smoothness requirements at the interval ends of $[0, 2 \pi]$.  \\
 Note, that the changeover from one model to another is never unique. For example, if one wants to derive a CF cell out of a CRF, there are different amounts $N$ of vertices possible. Or, if one wants to change the model from DF to CRF, there are different interpolations for $r$ possible. \\
 It is important to understand that it is not possible to draw a one to one correspondence between two cells from the different models, because one can always convert a CRF cell to a DF cell ambiguously and vice versa. 
 
@@ -319,13 +319,13 @@ That is why we now construct a similar function with the information we get from
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=8cm]{preSmoothIndicator.png}
-	\caption{Different plots of $f(x)$ for $s = 1$ (blue), $s = 5$ (orange) and $s = 50$ (green). The $x$ axis denotes the value of the argument $x$, while the $y$ axis denotes the value of $f$ at that point. }
+	\caption{Different plots of $f(x)$ for $s = 1$ (blue), $s = 5$ (orange) and $s = 50$ (green). The $x$-axis denotes the value of the argument $x$, while the $y$-axis denotes the value of $f$ at that point. }
 	\label{fig:pre_smooth_indicator}
 \end{figure}
 
 with a positive number $s \in \mathbb{R}_{>0}$.
 As we can see in Figure \ref{fig:pre_smooth_indicator}, the larger we choose $s$, the more this function looks like $\mathbbm{1}_{[-1,1]}$. \\
-For large $s$, $f$ is nearly $1$ if the term in the hyperbolic tangent is positive and nearly $0$ otherwise. Hence, we set our $s \gg 1$ and choose a different term inside of the hyperbolic tangent which is positive if and only if $\vec{x} \in C$. The following computation will give us such a term. Let $\phi_{\vec{x}}$ be the angle of rise of the line segment that connects the centre $\vec{c}$ with $\vec{x}$ in respect to the $x$ axis. The angle of rising can also be computed using the trigonometric functions. \\
+For large $s$, $f$ is nearly $1$ if the term in the hyperbolic tangent is positive and nearly $0$ otherwise. Hence, we set our $s \gg 1$ and choose a different term inside of the hyperbolic tangent which is positive if and only if $\vec{x} \in C$. The following computation will give us such a term. Let $\phi_{\vec{x}}$ be the angle of rise of the line segment that connects the centre $\vec{c}$ with $\vec{x}$ in respect to the $x$-axis. The angle of rising can also be computed using the trigonometric functions. \\
 Then, we can observe that a point $\vec{x} \in \R^2$ is in $C$ if and only if 
 \begin{center}
 	$r(\phi_{\vec{x}}) \geqslant \norm[\vec{c} - \vec{x}]$,
@@ -340,7 +340,7 @@ Thus, we establish our indicator comparable function, that we will call $\psi$, 
 	\begin{center}
 		$\psi_C: \mathbb{R}^2 \rightarrow (0,1)$, $\vec{x} \mapsto \frac{1}{2}(1 + \tanh(s[ r(\phi_{\vec{x}}) - \norm[\vec{c} - \vec{x}]]))$, 
 	\end{center}
-	where $\phi_{\vec{x}}$ is the angle of rise of the line segment that connects the centre $\vec{c}$ with $\vec{x}$ in respect to the $x$ axis. The scaling factor $s \gg 1$ determines how rapid the transition from inside and outside of the cell is if one draws the analogy to the normal indicator function.\\
+	where $\phi_{\vec{x}}$ is the angle of rise of the line segment that connects the centre $\vec{c}$ with $\vec{x}$ in respect to the $x$-axis. The scaling factor $s \gg 1$ determines how rapid the transition from inside and outside of the cell is if one draws the analogy to the normal indicator function.\\
 \end{definition}
 \begin{figure}[t!]
 	\centering
@@ -390,7 +390,7 @@ For now, we want to take a look at the area calculation of the discrete model. F
 	where $\vec{x}_{N + 1} := \vec{x}_1$. \\
 	Proof. 	\\
 	An illustration of the proof is given in Figure \ref{fig:shoelace}, which is where the idea of the proof comes from. We can assume without the loss of generality that all coordinates are positive. Otherwise we could move the figure in the positive coordinate directions until all entries are positive without changing the area. \\
-	For every $1 \leq i \leq N$ the edge $\overline{ \vec{x}_i \: \vec{x}_{i+1}}$ gets assigned to the area $T_i$ of the trapeze that arises when one connects the line segment vertically with the $x$ axis. We get
+	For every $1 \leq i \leq N$ the edge $\overline{ \vec{x}_i \: \vec{x}_{i+1}}$ gets assigned to the area $T_i$ of the trapeze that arises when one connects the line segment vertically with the $x$-axis. We get
 	\begin{center}
 		$T_i = \frac{1}{2} (y_i + y_{i+1})(x_i - x_{i+1})$.
 	\end{center}
@@ -526,7 +526,7 @@ An example of this computation can be seen in Figure \ref{fig:rOverlap}.
 \begin{figure}[b!]
 	\centering 
 	\includegraphics[width=8cm]{discreteOverlap/Roverlap.png}
-	\caption{A sample of two discrete cells $C$ (blue) and $\zeta$ (red), their rectangles $R_C$ (green) and $R_\zeta$ (pink) and the intersection $R_{overlap}$ (brown) in the two dimensional space. }
+	\caption{A sample of two discrete cells $C$ (blue) and $\zeta$ (red), their rectangles $R_C$ (green) and $R_\zeta$ (pink) and the intersection $R_{overlap}$ (brown) in the two-dimensional space. }
 	\label{fig:rOverlap}	
 \end{figure}
 If performing the intersection delivers an empty set, we can end the calculation, since \textbf{no overlap} is possible in that case. So let us assume that $R_{overlap} \neq \emptyset$ from now on. \\
@@ -544,7 +544,7 @@ Now, we want to find every intersection point of the two cells. For the followin
 	Thus, all edges that are not parameterisable run completely vertically. \\
 \end{definition}
 Since every edge is just a line, it is no problem to determine $x_{i}^{min}$, $x_{i}^{max}$, $y_{i}^{min}$ and $y_{i}^{max}$. \\
-If $e_i$ is a not parameterisable edge, we know that it runs parallel to the $y$ axis. In that case, it is clear that 
+If $e_i$ is a not parameterisable edge, we know that it runs parallel to the $y$-axis. In that case, it is clear that 
 \begin{center}
 	$x_{i}^{min} = x_{i}^{max} = x_i = x_{i+1} $, \\ \smallskip
 	$y_{i}^{min} = \min(y_i, y_{i+1}) $, \\ \smallskip
@@ -1018,13 +1018,13 @@ The application of this force is illustrated in Figure \ref{fig:edgeForce}. For 
 \subsection{Interior angle energy}
 In order to complete the shape recovery in our model, we will also concentrate on the now coming interior angle energy. As the name already tells, it is used to ensure that the interior angles at each vertex evolve into their desired states. Simulations without this energy sometimes lead to constrictions at certain vertexes where the interior angle goes to 360°. The interior angle energy shall also prevent this problem.\\
 There are different ways to compute the angle that is given between two vectors. We choose the coming approach. \\
-First of all, we want to be able to determine the angle $\theta$ between a given vector $\vec{v} = (v_1, v_2)^T$ and the $x$ axis. In the first and fourth quadrant, we can easily apply the $\arctan$ function to compute
+First of all, we want to be able to determine the angle $\theta$ between a given vector $\vec{v} = (v_1, v_2)^T$ and the $x$-axis. In the first and fourth quadrant, we can easily apply the $\arctan$ function to compute
 \begin{center}
 	$\theta = \arctan(\frac{v_2}{v_1})$. 
 \end{center}
 Unfortunately, it gets more complicated if $\vec{v}$ is located in the second or third quadrant. The usual $\arctan$ is not able to distinguish between these cases, because the fraction $\frac{v_2}{v_1}$ conceals the information of the signs of $v_1$ and $v_2$. However, there exists an extension of the common $\arctan$ function. It takes $v_1$ and $v_2$ as arguments and is hence able to make a case distinction for the different signs of the arguments. \\
 \begin{definition} \textbf{arctan2} \\
-	The function $$\atanxy:\R^2/\{0\} \rightarrow (-\pi, \pi],\: (x,y) \mapsto \atanxy(x,y)$$ computes the angle $\theta$ between $(x,y)^T$ and the $x$ axis. 
+	The function $$\atanxy:\R^2/\{0\} \rightarrow (-\pi, \pi],\: (x,y) \mapsto \atanxy(x,y)$$ computes the angle $\theta$ between $(x,y)^T$ and the $x$-axis. 
 	\begin{center}
 		$ \atanxy(x,y) = 
 		\begin{cases}
@@ -1175,7 +1175,7 @@ Having all requirements stated, we can now introduce the overlap energy. \\
 	\end{align} 
 	where $a$ is the area functional \eqref{eq:areaOperator}. \\
 \end{definition}
-The first sum iterates over all other cells in the system, while the second sum iterates over all overlaps that occur between both cells. We do not need an absolute value, because the area functional $a$ always computes non negative values. \\
+The first sum iterates over all other cells in the system, while the second sum iterates over all overlaps that occur between both cells. We do not need an absolute value, because the area functional $a$ always computes non-negative values. \\
 An important assumption for the overlap force is that the vertices $\vec{x}_{ij}$ of $C_i$ that are also included in the overlap $D$ are identified with the according vertices in $D$. Let $\omega_{ik} = C_i \cap D_k$ be the set of the vertices that are in $C_i = (\vec{x}_{i1}, \ldots, \vec{x}_{iN})$ and $D_k = (\vec{d}_{k1}, \ldots, \vec{d}_{kL})$. Then, we can find an overlap vertex $\vec{d}_l$ that corresponds to $\vec{x}_j$, whenever $\vec{x}_j \in \omega_{ik}$. In the computation for the overlap force, we can then use $\nabla_{\vec{d}_l} a(D_k)$.\\
 If a vertex $\vec{x}_{ij}$ is not part of the overlap $D_k$ then this overlap will not have an impact on this vertex. \\
 \begin{proposition} \textbf{Overlap force} \\

@@ -61,7 +61,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	An illustration supporting the proof is provided in Figure\ref{fig:shoelace}, which is where the idea of the proof comes from. 
 	Without loss of generality, we may assume that all coordinates are positive.
 	If this is not initially the case, the entire polygon can be translated into the positive quadrant without affecting its area. \\
-	For each $1 \leq j \leq N$ the edge $\overline{ \vec{v}_j \: \vec{v}_{j+1}}$ is associated with the area $T_j$ of the trapeze that arises when connecting the line segment vertically with the $x$ axis. 
+	For each $1 \leq j \leq N$ the edge $\overline{ \vec{v}_j \: \vec{v}_{j+1}}$ is associated with the area $T_j$ of the trapeze that arises when connecting the line segment vertically with the $x$-axis. 
 	The signed trapeze area of $T_j$ can be computed with 
 	\begin{center}
 		$T_j = \frac{1}{2} (v_j^{y} + v_{j+1}^{y})(v_j^{x} - v_{j+1}^{x})$.
@@ -312,7 +312,7 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
 \FloatBarrier 
 \subsection{Interior angle force}
 % mention scaling factor of /360 for interior angle force 
-The combined application of the area and edge forces revealed instabilities in unfavorable configurations, where self-intersections of the cell edges occurred. 
+The combined application of the area and edge forces revealed instabilities in unfavorable configurations, where self intersections of the cell edges occurred. 
 Simulations without this energy sometimes can also result in constrictions at certain vertices, where the interior angle approaches $360$°. 
 To address this issue, we introduce the interior angle energy. \\
 The first challenge is to consistently determine the interior angle at a given vertex throughout the simulation.
@@ -338,13 +338,13 @@ A better alternative is to use the $\atanxy$ function, as it remains reliably st
 	\end{center}
 \end{definition}
 
-The $\atanxy(\vec{v})$ function computes the angle of a vector $\vec{v}$ with respect to the positive $x$ axis. \\
+The $\atanxy(\vec{v})$ function computes the angle of a vector $\vec{v}$ with respect to the positive $x$-axis. \\
 With this, we can compute the angles 
 \begin{center}
 	$\theta_1 = \atanxy( \vec{v}_{j-1} - \vec{v_j} )$, \\
 	$\theta_2 = \atanxy( \vec{v}_{j+1} - \vec{v_j} )$,
 \end{center}
-between the positive $x$ axis and the vectors from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
+between the positive $x$-axis and the vectors from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
 We get the searched angle at $\vec{v}_j$ by subtracting $\theta_1 - \theta_2$.
 To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
 Thus, our interior angle operator is: 
@@ -510,7 +510,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	\end{pmatrix}.$$
 	With these helper functions, we can write 
 	$$ \arctan\!\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}), $$
-	and use the two dimensional chain rule to stepwise compute the searched gradient. 
+	and use the two-dimensional chain rule to stepwise compute the searched gradient. 
 	We have 
 	\begin{center}
 		$\dfrac{\partial f(\vec{v})}{\partial v^{x}} = \dfrac{1}{1 + \left(\tfrac{v^{y}}{v^{x}}\right)^2} \left(- \dfrac{v^{y}}{(v^{x})^2}\right) = - \dfrac{v^{y}}{(v^{x})^2 + (v^{y})^2}$, \\[0.5em]
@@ -779,7 +779,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		& w: (\R^2)^4 \: \longrightarrow \:\R^2, \\[0.5em]
 		(\vargs) \: \longmapsto\: &\vec{v}_{\text{out}}^{\: i} + \dfrac{(\vec{v}_{\text{out}}^{\: m} - \vec{v}_{\text{out}}^{\: i}) \times (\vec{v}_{\text{in}}^{\: m} - \vec{v}_{\text{out}}^{\: m})}{(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \times (\vec{v}_{\text{in}}^{\: m} - \vec{v}_{\text{out}}^{\: m})} (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}),
 	\end{align*}
-	where $(a^x, a^y)^T \times (b^x, b^y)^T = a^x b^y - a^y b^x$ denotes the two dimensional cross product. \\
+	where $(a^x, a^y)^T \times (b^x, b^y)^T = a^x b^y - a^y b^x$ denotes the two-dimensional cross product. \\
 \end{definition}
 \FloatBarrier
 \vspace{1.5cm}
@@ -1051,6 +1051,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{align*}
 	where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}_j^{\: i}$ in the overlap $D$.\\
 
+
 	\textbf{Case 4:} $\vec{v}_j^{\: i} \in D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$\\
 	In the last case, the considered vertex is an overlap vertex and also adjacent to at least one intersection point. 
 	Thus, we have to add both dynamics from the last two cases and then use the partial derivative for inside vertices. 
@@ -1070,8 +1071,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The difference between $\nabla_{\vec{v}_j^{\: i}}A(D)$ and $\nabla_{\vec{w}}A(D)$ is, that $\nabla_{\vec{v}_j^{\: i}}A(D)$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A(D)$ uses the neighbors of the according intersection point in $D$ which is not the same overlap vertex as $\vec{v}_j^{\: i}$. 
 	
 	\textbf{Overall:}\\
-	Actually, Case 4 already provides the final formulation, since in the other cases the additional terms vanish due to the indicator functions.
-		
+	Actually, Case 4 already provides the final formulation, since in the other cases the additional terms vanish due to the indicator functions. \\		
 	\qed
 \end{proposition}
 
@@ -1086,7 +1086,7 @@ Figure~\ref{fig:overlapForce} illustrates the interaction between two overlappin
 \subsubsection*{Bounce overlap force} 
 While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially—leaving cells temporarily stuck together, relying on random Brownian motion to diffuse apart. 
 With just that force, it is hard to compare the DF cell model to the hard sphere cell model, where overlaps are solved by reflecting them away from each other, resulting in a real distance that both cells have after a really small amount of time. \\  
-To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
+To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non-deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
 This additional force, which we refer to as the bounce overlap force, acts not by changing cell shape but by actively transporting overlapping cells away from each other. 
 This mechanism captures the spatial repulsion characteristic of rigid body interactions while complementing the shape based degeneration of overlaps in deformable cells. 
 In the end, we will use a combination of both overlap forces to get a nice transition from the HCSM to the DF cell model. \\ 
@@ -1169,11 +1169,11 @@ The total overlap force is then defined as a weighted combination of two overlap
 \[
 F^{(\mathbf{O})} = h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
 \]
-where $F^{(\bar{O})}$ denotes the bounce-off overlap force and $F^{\hat{(O)}}$ the shape-deforming overlap force.\\
+where $F^{(\bar{O})}$ denotes the bounce off overlap force and $F^{\hat{(O)}}$ the shape deforming overlap force.\\
 When $h = 1$, the cells are maximally stiff. 
 In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce off mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
 As $h$ decreases, the cells become progressively softer. 
-The influence of the bounce-off force diminishes, while the shape-deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
+The influence of the bounce off force diminishes, while the shape deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
 With the introduction of the hardness parameter $h$, we have established a mechanism that enables a smooth transition from the HSCM dynamics introduced in~\cite{Bruna2012} to our new DF cell model. \\
 For $h = 1$, the dynamics are identical to the original HSCM model, as we will show in the following chapter. 
 By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
@@ -1187,9 +1187,9 @@ In the limiting case $h = 0$, we recover the DF dynamics without the bounce over
 Having defined all individual force contributions acting on the cell vertices, we now combine them to formulate the full dynamics of the system in terms of a stochastic differential equation. \\
 One challenging aspect that remains is the appropriate scaling of all forces.
 It has become evident that the system is highly sensitive to these scaling parameters. 
-If the shape-recovering forces are too small, the recovery process is excessively slow. 
+If the shape recovering forces are too small, the recovery process is excessively slow. 
 Conversely, if they are too large, the numerical integration scheme tends to become unstable. \\ 
-To ensure numerical stability while preserving the intended dynamics, we systematically tested the appropriate scaling for each force type, focusing in particular on the shape-preserving forces and the deforming overlap force.
+To ensure numerical stability while preserving the intended dynamics, we systematically tested the appropriate scaling for each force type, focusing in particular on the shape preserving forces and the deforming overlap force.
 
 Our method was to isolate each of these forces in simulation and determine the threshold at which the system becomes unstable. 
 Specifically, we ran simulations with only one force active at a time and gradually increased its scaling factor until numerical instabilities emerged. 
@@ -1225,7 +1225,7 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	\[
 		e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
 	\]
-	which allow us to distribute a two dimensional Brownian motion 
+	which allow us to distribute a two-dimensional Brownian motion 
 	\[
 		\dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T,
 	\] 
@@ -1269,7 +1269,7 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 		The cells are initially generated with overlap. 
 		Then, the dynamics from $\F^i$ alone resolve the overlap.
 		Since hardness $h=1$ was chosen, no deforming overlap force is active and the cell shape remains unchanged. 
-		Consequently, the shape-preserving forces are inactive, as the cells stay in their desired states.\\
+		Consequently, the shape preserving forces are inactive, as the cells stay in their desired states.\\
 		This is also reflected in the energy diagram in Figure~\ref{fig:allForces-hardEnergyDiagram}. 
 	}
 	\label{fig:allForces-hard}
