@@ -24,14 +24,14 @@ The point particle dynamics are defined by
 \end{equation*}
 for $1 \leq i \leq N_C$, where 
 \[
-    \Omega_{BC}^{\circ} = (-0.5, 0.5)^2
+    \Omega_{BC}^{\circ} = (-0.5, 0.5)^2,
 \]
 denotes the interior of the domain $\Omega_{BC}$. 
 Reflective boundary conditions are imposed on the boundary $\partial \Omega_{BC}$ to prevent particles from leaving the domain.  \\
 Equation~\eqref{equ:pointparticle} provides the general form of the first marginal of the point particle model. 
 In this case, we set the diffusion coefficient to $D = 1$ and omit any external force field, i.e. $f(\vec{x}) = 0$. Consequently, the first marginal simplifies to
 \begin{align}
-	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \nabla_{\vec{x}} \cdot  \nabla_{\vec{x}} \rho(t; \vec{x}), \quad \vec{x} \in \Omega_{BC}, \; t>0,
+	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = \nabla_{\vec{x}} \cdot  \nabla_{\vec{x}} \rho(t; \vec{x}), \quad \vec{x} \in \Omega_{BC}, \: t>0,
     \label{equ:marginalPP}
 \end{align}
 which is expressed in divergence form and represents the diffusion of independent Brownian particles within the confined domain. \\
@@ -49,7 +49,7 @@ Consequently, the reflective boundary condition leads to a significantly higher 
 When computing the first marginal of the hard sphere model, we obtain Equation~\eqref{equ:hardsphere}. 
 In our specific setting, this expression simplifies to
 \begin{align}
-	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}} \left[\rho + \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2\right], \quad \vec{x} \in \Omega_{BC}, \; t>0,
+	\dfrac{\partial \rho}{\partial t} = \nabla_{\vec{x}} \cdot \nabla_{\vec{x}} \left[\rho + \tfrac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2\right], \quad \vec{x} \in \Omega_{BC}, \: t>0,
     \label{equ:marginalHSCM}
 \end{align}
 which accounts for the additional diffusive correction caused by volume exclusion between cells. \\
@@ -80,14 +80,16 @@ We can rewrite Equation~\eqref{equ:marginalHSCM} to explicitly show this enhance
 \end{align*}
 where we used the product rule for gradients in the third line. 
 Here, 
-\[ D(\epsilon, N_C, \rho) = 1 + \pi (N_C - 1)\epsilon^2 \rho \] 
+\[ 
+    D(\epsilon, N_C, \rho) = 1 + \pi (N_C - 1)\epsilon^2 \rho,
+\] 
 acts as an effective diffusion coefficient that depends on the particle size, total particle number, and local concentration. 
 For $\epsilon = 0$, we recover Equation~\eqref{equ:marginalPP}, corresponding to point particles with $D=1$ and for $\epsilon > 0$, we obtain Equation~\eqref{equ:marginalHSCM} as shown in the computation. 
 This reformulation clearly demonstrates how excluded-volume interactions in the hard-sphere cell model lead to an enhanced diffusion rate compared to the point-particle case. \\
 
 \begin{figure}[h!]
 	\centering
-    \includegraphics[width=0.8\textwidth]{intro/fig2_BC12.png}
+    \includegraphics[width=0.7\textwidth]{intro/fig2_BC12.png}
     \caption{
     This figure from~\cite{Bruna2012} contains the following four plots, all of them are shown at time \( t=0.05 \). 
 	For all plots, the initial condition is normally distributed with mean $(0,0)^T$ and standard deviation $0.09$. 
@@ -146,8 +148,8 @@ To ensure direct comparability, we fixed the colour scale in our visualisations 
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/ppmodelSelf.png} &     
-        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/ppmodel-bruna.png} \\   
+        \includegraphics[width=0.45\textwidth]{sanity-check/heatmaps/compare/ppmodelSelf.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/heatmaps/compare/ppmodel-bruna.png} \\   
     \end{tabular}
     \caption{The left panel shows the heatmap obtained from our new point-particle simulation, while the right panel presents the corresponding result from~\cite{Bruna2012}. We applied the same color scale as in Bruna (2012) to both panels to facilitate direct comparison. Despite minor differences, the two heatmaps exhibit a very similar overall structure and intensity pattern.}
     \label{fig:comparePP}
@@ -176,7 +178,7 @@ Consequently, all shape-preserving forces from the DF model can be neglected, an
     \]
     distribute a two-dimensional Brownian motion 
     \[
-        \dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T
+        \dequ \vec{B}_i(t) = (\dequ B_i^{x}(t), \dequ B_i^{y}(t))^T,
     \] 
     to the \(x\) and \(y\) coordinates of the cell vertices.  \\
     Reflective boundary conditions are applied collectively to each cell: if the centre
@@ -196,8 +198,8 @@ Figure~\ref{fig:compareHSCM} compares our simulation results with the correspond
 \begin{figure}[h!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-self.png} &     
-        \includegraphics[width=0.4\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-bruna.png} \\   
+        \includegraphics[width=0.45\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-self.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/heatmaps/compare/HSCMmodel-bruna.png} \\   
     \end{tabular}
     \caption{Comparison of hard-cell simulations: the left panel shows the heatmap obtained from our DF model implementation, and the right panel shows the corresponding result from~\cite{Bruna2012}. The colour scale was matched to that used in the reference for a meaningful visual comparison. Overall, the two heatmaps display closely matching spatial patterns, with only minor variations.}
     \label{fig:compareHSCM}
@@ -263,7 +265,7 @@ The formulation reads as follows: \\
     \begin{align*}
 		\begin{split}
 			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \\
-			& 0.5 \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + 0.5 \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C})
+			& 0.5 \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + 0.5 \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C}).
 		\end{split}
 	\end{align*}  
     The force scalings are chosen as in Table~\ref{table:forcescalings}. \\
@@ -331,7 +333,7 @@ We therefore proceed by analysing these results in greater detail in the followi
         \includegraphics[width=\textwidth]{sanity-check/heatmaps/colorbar_horizontal.png}
     \end{subfigure}%
 
-    \caption{Heatmaps of a Monte Carlo simulation of the DF cell model with different hardness values at the times $t \in \{0.00, 0.01,\ldots, 0.05\}$. 
+    \caption{Heatmaps of a Monte Carlo simulation of the DF cell model with different hardness values at the times $t \in \{0.00, \, 0.01,\ldots,\, 0.05\}$. 
     Left column $(a)$ shows hardness $0$, we can see hardness $0.5$ in the middle $(b)$ and hardness $1$ on the right $(c)$.
     We can oberserve that the diffusion rate increases with increasing hardness.} 
 	\label{fig:dfHeatmaps}    
@@ -430,17 +432,18 @@ Geometrically, this means that, for a fixed number of vertices, the regular poly
 
 For any regular polygon $P_{N_V}$ with $N_V$ vertices, we have a cell perimeter of  
 \[
-    P_{P_{N_V}} = N_V * l,
+    P_{P_{N_V}} = N_V l,
 \]
-where $l>0$ denotes its edge length and an area of 
+where $l>0$ denotes its edge length.\\
+The polygons area is given by  
 \[
-    A_{P_{N_V}} = \frac{P_{P_{N_V}}^2}{4 N_v} \frac{\pi}{N_V}.
+    A_{P_{N_V}} = \tfrac{1}{4} N_V l^2 \cot\!\left( \frac{\pi}{N_V}\right) .
 \] 
 This yields an asphericity of 
 \begin{align*}    
     \alpha_{P_{N_V}} 
-    &= 4 \pi \frac{\frac{P_{P_{N_V}}^2}{4 N_v} \cot\left(\frac{\pi}{N_V}\right)}{(N_V * l)^2} \\
-    &= \frac{\pi}{N_V} \cot\left(\frac{\pi}{ N_V}\right).
+    &= 4 \pi \frac{\tfrac{1}{4} N_V l^2 \cot\!\left( \frac{\pi}{N_V}\right)}{(N_V l)^2} \\[0.5em]
+    &= \frac{\pi}{N_V} \cot\!\left(\frac{\pi}{ N_V}\right).
 \end{align*}
 Thus, for our desired regular hexagon with $N_V = 6$ vertices, we have an asphericity of 
 \[
@@ -487,7 +490,7 @@ There, we can also see an indictation that as the number of vertices increases, 
 	\label{table:asp_overview}
 \end{table}
 
-We apply the asphericity measure to monitor cell shape changes during our Monte Carlo simulations of the DF model with varying hardness values. For each of the soft, mid, and hard configurations, we tracked the asphericity of all $400$ cells throughout the simulation, recording their values at the sample times $t \in \{0, 0.01, \ldots, 0.05\}$. 
+We apply the asphericity measure to monitor cell shape changes during our Monte Carlo simulations of the DF model with varying hardness values. For each of the soft, mid, and hard configurations, we tracked the asphericity of all $400$ cells throughout the simulation, recording their values at the sample times $t \in \{0,\, 0.01, \ldots,\, 0.05\}$. 
 Each simulation setup was repeated for $50$ independent runs to obtain statistically robust averages of the asphericity evolution.  
 
 Figure~\ref{fig:asp_charts} presents a multi-bar plot showing the distributions of cell asphericity at these time points for the three different hardness settings. 
@@ -496,14 +499,14 @@ This visualisation allows for a direct comparison of how cell deformability evol
 \begin{figure}[b!]
     \centering
     \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time1.png} &     
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time2.png} \\   
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time1.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time2.png} \\   
 
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time3.png} &   
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time4.png} \\  
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time3.png} &   
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time4.png} \\  
 
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time5.png} &     
-        \includegraphics[width=0.4\textwidth]{sanity-check/asphericity/asphericity-chart-time6.png} \\   
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time5.png} &     
+        \includegraphics[width=0.45\textwidth]{sanity-check/asphericity/asphericity-chart-time6.png} \\   
     \end{tabular}
     \caption{Distributions of cell asphericity over time for the DF simulations with hardness values $h \in \{0, 0.5, 1\}$.
         Each setup consists of $400$ cells averaged over $50$ independent runs. 

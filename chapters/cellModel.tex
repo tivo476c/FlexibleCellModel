@@ -35,7 +35,7 @@ The next step is to describe the setup of a DF simulation.
 	Each cell has the same amount of $N_V \in \N$ vertices.
 	Thus, the notation of all cells and their vertices is given by 
 	\begin{center}
-		$C^{i} = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_{N_V})$, \hspace{0.5em} $1 \leq i \leq N_{C}$. 
+		$C^{i} = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_{N_V}), \quad 1 \leq i \leq N_{C}$. 
 	\end{center}
 
 	The complete set of all cells is represented by 
@@ -46,7 +46,7 @@ The next step is to describe the setup of a DF simulation.
 
 	The simulation's dynamics are defined on all cell vertices via the stochastic differential equation (SDE):
 	\begin{center}
-		$ \dequ \vec{v}^{\:i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \dequ t + \sqrt{2 D} \dequ \vec{B}_i(t)$, \hspace{0.5em} $1 \leq i \leq N_{C}$, \hspace{0.5em} $1 \leq j \leq N_{V}$. 
+		$ \dequ \vec{v}^{\:i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2 D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V}$. 
 	\end{center}
 	where $\F^i_j$ describes the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system $\vec{C}$ and $\sqrt{2 D} \dequ \vec{B}_i(t)$ models the two dimensional standard Brownian motion of cell $i$ with diffusion coefficient $D$.  
 	Note, that all vertices of cell $i$ perform the same Brownian motion such that the whole cell $i$ moves in the direction of $\dequ \vec{B}_i(t)$. \\

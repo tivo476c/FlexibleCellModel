@@ -1,7 +1,7 @@
 \section*{Abstract}
 
-Here, a short overview over most important content of thesis is given. Please make reader curios
-This is a lengthy and complex text, and it appears to be a master's thesis in the field of mathematics, specifically dealing with cell dynamics and modeling. The text describes various mathematical models and their applications in understanding cell behavior, particularly in the context of deformable cells. The thesis discusses the derivation and study of a non-confluent model for deformable cells, which is a vertex-based model that represents cells as polygons with deformable vertices.
-The text describes the simulation results and comparisons with established cell models, such as the hard sphere cell model and the point particle model. The thesis aims to provide a more realistic representation of cell behavior by incorporating cell deformability and flexibility into the model.
-The text also discusses the overlap force, which is an important aspect of the model, as it allows for the interaction between cells and the resolution of overlaps. The thesis provides a detailed description of the algorithm for computing the overlap cells and the overlap force.
-Overall, the text provides a comprehensive overview of the thesis, which focuses on the development of a new mathematical model for deformable cells and its application in understanding cell behavior. The thesis aims to provide a more realistic representation of cell behavior by incorporating cell deformability and flexibility into the model. 
+Building upon the foundations laid in the Bachelor's thesis~\cite{Vogel2023}, significant improvements were made, including bug fixes, code parallelisation, and reformulation of forces for stable large-scale simulations (detailed in Sections~\ref{model} and~\ref{dynamics}). \\
+Chapter~\ref{sanitycheck} presents a rigorous validation by recreating the diffusion dynamics of the point particle and hard sphere models from~\cite{Bruna2012} through extensive Monte Carlo simulations with varying hardness ($h \in \{0, 0.5, 1\}$), representing soft, intermediate, and hard cell behaviours. \\
+Subsequently, Chapter~\ref{density} analyses the resulting density dynamics. 
+By connecting to the frameworks of~\cite{Bruna2012, Bruna2017, Boromand2018}, this work provides a unified perspective on cell dynamics spanning rigid to deformable regimes. 
+Finally, the thesis concludes with a summary of findings and an outlook on potential future extensions and applications of the DF model.

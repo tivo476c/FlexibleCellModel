@@ -41,7 +41,7 @@ Figure~\ref{fig:muTransition} illustrates how empirical particle distributions c
 The first three panels depict empirical measures obtained from samples of size $N_C \in \{20, 200, 20\,000\}$, drawn independently from the same Gaussian distribution $\mathcal{N}_2((0,0), 0.09^2 I_2)$.
 To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\) sub squares, on which the empirical measure
 \[
-    \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i}(A)
+    \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i}(A),
 \]
 is evaluated and displayed as a heatmap. \\
 As the particle number grows, the empirical distribution becomes progressively smoother and more faithful to the true underlying density.  
@@ -49,8 +49,8 @@ For small \(N_C\), random fluctuations dominate the visual appearance, while for
 
 \begin{figure}[b!]
 	\begin{center}
-		\includegraphics[width=15cm]{density/muplot_combined.png}
-		\caption{Empirical measures for increasing particle numbers \(N_C \in \{20, 200, 20\,000\}\), compared with the limiting density \( \mathcal{N}_2((0,0), 0.09^2 \cdot I_2) \) shown in the fourth panel.  
+		\includegraphics[width=0.98\textwidth]{density/muplot_combined.png}
+		\caption{Empirical measures for three increasing particle numbers: $20$, $200$, and $20\,000$, compared with the limiting density \( \mathcal{N}_2((0,0), 0.09^2 \cdot I_2) \) shown in the fourth panel.  
         Particles are sampled i.i.d.\ from the same distribution, and the empirical measure \( \mu^{N_C} \) is visualised on a \(50 \times 50\) grid of sub squares.  
         As \(N_C\) increases, the empirical heatmaps become smoother and converge to the Gaussian density, demonstrating the transition towards the mean field limit.  
         A consistent colour scale allows direct comparison across all subplots.
@@ -81,7 +81,7 @@ We define the dynamic of a particle $\vec{x}_i$ via \\
 \]
 We consider the empirical measure 
 \[
-    \mu_t^{N_C}(A) = \tfrac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A)
+    \mu_t^{N_C}(A) = \tfrac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A).
 \]
 Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function with gradient field $ \nabla \phi : \R^2 \rightarrow \R^2$. \\
 We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}(x) \dequ x $) and we have convergence 
@@ -127,6 +127,7 @@ As this holds true for any $\phi \in C_c^{\infty}(\R^{2}, \R)$, we obtain the me
 For a force function $F(C) = - \nabla_C E(C)$, the we get the formulation
 \begin{align}
     \frac{\partial \bar{\rho}_t(x)}{\partial t} +  \nabla \cdot ( \bar{\rho}_t(x) F(x)) = 0.
+    \label{equ:FmeanFieldDerivation}
 \end{align}
 
 
@@ -135,7 +136,7 @@ For a force function $F(C) = - \nabla_C E(C)$, the we get the formulation
 In order to demonstrate how the preceding computations can be applied in practice, we begin with a lower dimensional example. 
 In this setting, each cell consists of two vertices situated in one spatial dimension, 
 \begin{align*}
-    C = \{v_1, v_2\}, \quad v_1, v_2 \in \R 
+    C = \{v_1, v_2\}, \quad v_1, v_2 \in \R,
 \end{align*}
 where we assume $v_1 \neq v_2$ and that their ordering remains fixed throughout the simulation. 
 This ensures that cells do not attain negative length. \\
@@ -194,14 +195,14 @@ With these identities at hand, we compute the divergence
     &= (\nabla_{v_1} \cdot \bar{\rho}) F_1 + \bar{\rho} (\nabla_{v_1} \cdot F_1) + (\nabla_{v_2} \cdot \bar{\rho}) F_2 + \bar{\rho} (\nabla_{v_2} \cdot F_2) \\
     &= - (\nabla_{v_1} \cdot \bar{\rho}) \alpha - \bar{\rho} (\nabla_{v_1} \cdot \alpha) + (\nabla_{v_2} \cdot \bar{\rho}) \alpha + \bar{\rho} (\nabla_{v_2} \cdot \alpha) \\
     &= - (\nabla_{v_1} \cdot \bar{\rho}) \alpha - \bar{\rho} + (\nabla_{v_2} \cdot \bar{\rho}) \alpha - \bar{\rho} \\
-    &= - 2 \bar{\rho} + \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho})   \\
+    &= - 2 \bar{\rho} + \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}),   \\
 \end{align*}
 where $F = (F_1, F_2)^T$.  \\
 Consequently, in the mean field limit $N_C \rightarrow \infty$, the density $\bar{\rho}$ satisfies
 \begin{align*}
-    \frac{\partial \bar{\rho}}{\partial t} + 2 \bar{\rho} - \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}) = 0,
+    \frac{\partial \bar{\rho}}{\partial t} - 2 \bar{\rho} + \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}) = 0,
 \end{align*}
-according to Equation~\eqref{equ:meanfieldPDE}. \\
+according to Equation~\eqref{equ:FmeanFieldDerivation}. \\
 To illustrate this model, we present two corresponding simulations.  
 First, we consider a finite system of $N_C = 400$ needle cells.  
 Each cell is initialised according to
@@ -406,7 +407,7 @@ such that, we can write down the cell wise gradient as
             \vdots \\  
             v_{1}^{y} - v_{N_V-1}^{y} \\[0.5em]  v_{N_V-1}^{x} - v_{1}^{x} 
         \end{pmatrix} 
-        =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) M_A V_C
+        =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) M_A V_C.
     \end{split}
     \label{eq:cGradArea}
 \end{align}
@@ -477,7 +478,7 @@ We can conclude a cell wise edge energy gradient as
 \subsubsection*{Interior angle energy}
 Next, we consider a system with pure scaled interior angle energy, i.e. 
 \begin{align*}
-    E_I(C) = \alpha_{I} I_2(C) = \frac{\alpha_{I}}{2} \sum\limits_{j=1}^{N_V} | I^j_{C} - I^{j}_d |^2
+    E_I(C) = \alpha_{I} I_2(C) = \frac{\alpha_{I}}{2} \sum\limits_{j=1}^{N_V} | I^j_{C} - I^{j}_d |^2,
 \end{align*}
 where we used 
 \begin{align*}
