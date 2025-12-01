@@ -1,5 +1,4 @@
 \section{DF model validation and simulation analysis} \label{sanitycheck}
-%%% TODO: Build bridge from previous chapter 
 
 In this chapter, we continue by performing and analysing cell simulations based on the DF model. 
 The chapter is structured into four subsections: we first introduce the reference model from~\cite{Bruna2012}, followed by a reproduction of their published results to validate our implementation. 
@@ -163,7 +162,7 @@ Consistent with the hard sphere model, the hexagonal cells have a diameter of $\
 To replicate the dynamics of hard spheres, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dynamics}). 
 Consequently, all shape preserving forces from the DF model can be neglected, and only the bounce overlap force is applied. \\
 
-\begin{simulation} \textbf{Hard DF Model – Monte Carlo Simulation Setup} \\
+\begin{simulation} \textbf{Hard DF model – Monte Carlo Simulation Setup} \\
     In this simulation, each cell \(C_i = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_6)\) represents a list of vertices.
     The desired cell shape is given as a regular hexagon with a diameter of \(\epsilon = 0.01\), defined as the distance between two opposite vertices.
     The dynamic of the cells, significant for hardness $h=1$, is governed by the SDE

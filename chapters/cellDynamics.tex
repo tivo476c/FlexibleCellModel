@@ -1,11 +1,5 @@
 \section{DF model dynamics} \label{dynamics}
-% TODOs:
-% * explain what the k does to the forces (k=1 -> discrepance between current and desired state does not influence scaling of force, k=2 -> it does influence it linearly)
-% * explain that we use k=1 only for deforming overlap and k=2 for shape preserving forces 
-% * explain that each figure representing a force has every parameter chosen to be equivalent to the big monte carlo simulations in the next chapter: cell size, desired states (perfect 6eck with distance 0.005 from each vertex to the cell centre), force scalings, time step size  
-% * explain that we tried to use unfavourable initital states to test the forces stability  
-% * change some of the 1e2 type numbers (eg 1e-1 -> 0.1)
-% * write down the cell SDE nicely 
+
 We characterise the interaction force $\F$ as the sum of gradient flows of energies. \\
 A gradient flow describes how a system changes over time in a way that always reduces a given energy $E(\vec{C})$.
 To obtain the gradient flow of this energy on vertex $\vec{v}$, we must add the term $-\nabla_{\vec{v}} E(\vec{C})$ to $\F$.
@@ -470,7 +464,6 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	for all $1 \leq j \leq N_V$.\\
 
 	Proof. \\
-	% TODO: check this force and the computations in the proof, especially the neighboring vertices part 
 	We are looking for 
 	\begin{center}
 		$
@@ -649,7 +642,6 @@ To be able to catch the correct dynamic in all cases, we need to introduce the s
 		\Omega_{C_i,C_m} = \{\, D \mid D \text{ is an overlap cell formed between } C_i \text{ and } C_m \,\}.
 	\]
 \end{definition}
-%TODO: add an example figure with 2 DF cells having two overlaps and write down what Omega_1,2 is and what their overlaps are
 Once all overlaps have been identified, we apply a dynamic similar to that of the area force, but with a desired area of zero. 
 This generates a force that acts to eliminate the overlap by reducing its area to zero. 
 The resulting force is then applied to the vertices of the original cells that define the overlapping region. \\
@@ -696,7 +688,6 @@ Having found all intersections, we can apply the following algorithm, that can b
 		\item A list `usedIntersections' of all intersection that are used in `newOverlap'
 	\end{itemize}	
 \end{algorithm}
-%TODO; rewrite that shit 
 The algorithm begins by selecting the first intersection point $I[1]$ from the list $I$ as the initial vertex of the overlap cell `newOverlap'. 
 This point is also added to the list `usedIntersections' \\
 Next, the function `getOverlap' calls another function, `findPath', which determines the path along the discrete cell $\zeta$ from the current intersection point to the next intersection in $I$ encountered while traversing the edges of $\zeta$. 
@@ -998,7 +989,6 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 	
 	Proof of Proposition~\ref{force:deformingOverlap}. \\
-	%TODO: change from A_D^k to (A_D)^k
 	Although we did not noted it like this before, we must be aware that $A_D$ is actually dependent on all overlap vertices, e.g. $A_D = A(D)$.
 	We will also use that notation in the coming computation. 
 	Since the area $A(D)$ is always positive, we can drop the absolute value. \\
@@ -1163,7 +1153,6 @@ In order to achieve a similarly fast degeneration of the overlap as in~\cite{Bru
 as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$. 
 The according dynamic is shown in Figure~\ref{fig:bounceOverlapForce}.
 
-%TODO: insert figure of Bounce overlap force 
 To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how `hard' the cells are. 
 The total overlap force is then defined as a weighted combination of two overlap force types:
 \[

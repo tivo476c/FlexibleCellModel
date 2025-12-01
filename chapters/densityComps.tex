@@ -169,21 +169,21 @@ The resulting cell dynamics take the compact form
 
 For the subsequent derivation we require the computations 
 \begin{align*}
-    \nabla_{v_1} \cdot \alpha 
-    &= \nabla_{v_1} \cdot (sgn(v_1 - v_2) (|v_1 - v_2| - E_d)) \\
-    &= (\nabla_{v_1} \cdot sgn(v_1 - v_2)) (|v_1 - v_2| - E_d) 
-      +  sgn(v_1 - v_2)(\nabla_{v_1} \cdot (|v_1 - v_2| - E_d) ) \\
-    &= 0 + sgn(v_1 - v_2)(\nabla_{v_1} \cdot (|v_1 - v_2|) ) \\
+    \frac{\partial \alpha}{\partial v_1}
+    &= \frac{\partial}{\partial v_1} \left[sgn(v_1 - v_2) (|v_1 - v_2| - E_d)\right] \\
+    &= \frac{\partial}{\partial v_1} \left[ sgn(v_1 - v_2) \right] (|v_1 - v_2| - E_d) 
+      +  sgn(v_1 - v_2)\frac{\partial}{\partial v_1} \left[|v_1 - v_2| - E_d\right] \\
+    &= 0 + sgn(v_1 - v_2)\frac{\partial}{\partial v_1} \left[|v_1 - v_2| \right] \\
     &= sgn(v_1 - v_2) sgn(v_1 - v_2) \\
     &= 1,
 \end{align*}
 and 
 \begin{align*}
-    \nabla_{v_2} \cdot \alpha 
-    &= \nabla_{v_2} \cdot (sgn(v_1 - v_2) (|v_1 - v_2| - E_d)) \\
-    &= (\nabla_{v_2} \cdot sgn(v_1 - v_2)) (|v_1 - v_2| - E_d) 
-      +  sgn(v_1 - v_2)(\nabla_{v_2} \cdot (|v_1 - v_2| - E_d) ) \\
-    &= 0 + sgn(v_1 - v_2)(\nabla_{v_2} \cdot (|v_1 - v_2|) ) \\
+    \frac{\partial \alpha}{\partial v_2}
+    &= \frac{\partial}{\partial v_2} \left[sgn(v_1 - v_2) (|v_1 - v_2| - E_d)\right] \\
+    &= \frac{\partial}{\partial v_2} \left[ sgn(v_1 - v_2)\right] (|v_1 - v_2| - E_d) 
+      +  sgn(v_1 - v_2) \frac{\partial}{\partial v_2} \left[|v_1 - v_2| - E_d \right] \\
+    &= 0 + sgn(v_1 - v_2)\frac{\partial}{\partial v_2} \left[|v_1 - v_2| \right] \\
     &= sgn(v_1 - v_2) (- sgn(v_1 - v_2)) \\
     &= -1,
 \end{align*}
@@ -191,16 +191,16 @@ and
 With these identities at hand, we compute the divergence
 \begin{align*}
     \nabla_C \cdot (\bar{\rho} F) 
-    &= \nabla_{v_1} \cdot (\bar{\rho} F_1)  + \nabla_{v_2} \cdot (\bar{\rho} F_2) \\
-    &= (\nabla_{v_1} \cdot \bar{\rho}) F_1 + \bar{\rho} (\nabla_{v_1} \cdot F_1) + (\nabla_{v_2} \cdot \bar{\rho}) F_2 + \bar{\rho} (\nabla_{v_2} \cdot F_2) \\
-    &= - (\nabla_{v_1} \cdot \bar{\rho}) \alpha - \bar{\rho} (\nabla_{v_1} \cdot \alpha) + (\nabla_{v_2} \cdot \bar{\rho}) \alpha + \bar{\rho} (\nabla_{v_2} \cdot \alpha) \\
-    &= - (\nabla_{v_1} \cdot \bar{\rho}) \alpha - \bar{\rho} + (\nabla_{v_2} \cdot \bar{\rho}) \alpha - \bar{\rho} \\
-    &= - 2 \bar{\rho} + \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}),   \\
+    &= \frac{\partial}{\partial v_1} \left[\bar{\rho} F_1 \right]  + \frac{\partial}{\partial v_2} \left[\bar{\rho} F_2\right] \\
+    &= \frac{\partial}{\partial v_1} \left[\bar{\rho}\right] F_1 + \bar{\rho} \frac{\partial}{\partial v_1} \left[ F_1 \right] +  \frac{\partial}{\partial v_2} \left[\bar{\rho}\right] F_2 + \bar{\rho}  \frac{\partial}{\partial v_2} \left[ F_2\right] \\
+    &= - \frac{\partial}{\partial v_1} \left[\bar{\rho}\right] \alpha - \bar{\rho} \frac{\partial}{\partial v_1} \left[ \alpha \right] +  \frac{\partial}{\partial v_2} \left[\bar{\rho}\right] \alpha + \bar{\rho}  \frac{\partial}{\partial v_2} \left[ \alpha \right] \\
+    &= - \frac{\partial \bar{\rho}}{\partial v_1} \alpha - \bar{\rho} + \frac{\partial \bar{\rho}}{\partial v_2} \alpha - \bar{\rho} \\
+    &= - 2 \bar{\rho} + \alpha \left(- \frac{\partial \bar{\rho}}{\partial v_1} + \frac{\partial \bar{\rho}}{\partial v_2} \right),   \\
 \end{align*}
 where $F = (F_1, F_2)^T$.  \\
 Consequently, in the mean field limit $N_C \rightarrow \infty$, the density $\bar{\rho}$ satisfies
 \begin{align*}
-    \frac{\partial \bar{\rho}}{\partial t} - 2 \bar{\rho} + \alpha(- \nabla_{v_1} \cdot \bar{\rho} + \nabla_{v_2} \cdot \bar{\rho}) = 0,
+    \frac{\partial \bar{\rho}}{\partial t} - 2 \bar{\rho} + \alpha \left(- \frac{\partial \bar{\rho}}{\partial v_1} + \frac{\partial \bar{\rho}}{\partial v_2} \right) = 0,
 \end{align*}
 according to Equation~\eqref{equ:FmeanFieldDerivation}. \\
 To illustrate this model, we present two corresponding simulations.  
@@ -228,18 +228,17 @@ By the final time, all cells lie precisely on these two diagonals, confirming th
 Subsequently, we examine the associated mean field dynamics.  
 We choose an initial condition given by $\mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot I_2)$ on the domain $\Omega = [0.0, 1.0]^2$ and evolve it using the PDE
 \begin{align*}
-    \frac{\partial \bar{\rho}}{\partial t}  = \nabla_{v_1} \cdot (- \bar{\rho} \alpha)  + \nabla_{v_2} \cdot (\bar{\rho} \alpha),
+    \frac{\partial \bar{\rho}}{\partial t}  - \frac{\partial}{\partial v_1} [\bar{\rho} \alpha]  + \frac{\partial}{\partial v_2} [\bar{\rho} \alpha] = 0,
 \end{align*}
 which arises from the earlier derivation of the density evolution equation.  
 The discretisation is given by
-% TODO: fix this
 \begin{align*}
     \Omega \: &\longrightarrow \: \{A_{ij}\}_{i,j = 1}^{500} \text{ sub squares}, \\[0.5em]
     \bar{\rho} \: &\longrightarrow \: \bar{\rho}_{ij}^{\: k} \text{ density value on } A_{ij} \text{ at time step } k \in \N, \\[0.5em]
     \partial_t \bar{\rho} \: &\longrightarrow \: \frac{\bar{\rho}_{ij}^{\: k+1} - \bar{\rho}_{ij}^{\: k}}{\Delta t}, \\[0.5em] 
     \alpha \: &\longrightarrow \: \alpha_{ij}^k \text{ value on } A_{ij} \text{ at time step } k \in \N, \\[0.5em]
-    \nabla_{v_1} \cdot (- \bar{\rho} \alpha) \: &\longrightarrow \: \frac{- \bar{\rho}_{i,j+1}^{\: k} \alpha_{i,j+1}^k + \bar{\rho}_{i,j-1}^{\: k} \alpha_{i,j-1}^k}{2 \Delta x},  \\[0.5em]
-    \nabla_{v_2} \cdot (\bar{\rho} \alpha) \: &\longrightarrow \: \frac{ \bar{\rho}_{i+1,j}^{\: k} \alpha_{i+1,j}^k - \bar{\rho}_{i-1,j}^{\: k} \alpha_{i-1,j}^k}{2 \Delta x}, 
+   - \frac{\partial}{\partial v_1} [\bar{\rho} \alpha] \: &\longrightarrow \: \frac{- \bar{\rho}_{i,j+1}^{\: k} \alpha_{i,j+1}^k + \bar{\rho}_{i,j-1}^{\: k} \alpha_{i,j-1}^k}{2 \Delta x},  \\[0.5em]
+    \frac{\partial}{\partial v_2} [\bar{\rho} \alpha] \: &\longrightarrow \: \frac{ \bar{\rho}_{i+1,j}^{\: k} \alpha_{i+1,j}^k - \bar{\rho}_{i-1,j}^{\: k} \alpha_{i-1,j}^k}{2 \Delta x}, 
 \end{align*}
 with grid spacing $\Delta x = \tfrac{1}{500}$.  
 \FloatBarrier

@@ -1,6 +1,4 @@
 \section{Introduction} \label{intro}
-%%% TODO: mention all figures in text 
-%%% TODO: add motiviation for cell diffusion models from real world applications 
 % from bridge paper:
 Collective cell migration represents a fundamental process underpinning various biological phenomena, including embryonic development, tissue regeneration, wound healing, and the invasive potential of certain cancers. 
 The collective nature of cell movement has been acknowledged for over a century, with early observations recognising its importance in developmental and regenerative processes~\cite{alert2020, holmes1914, herrick1932, vaughan1966}. 
@@ -14,7 +12,7 @@ Snapshots from a cell wound healing process, illustrating the dynamics of cell m
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/cell-migration.pdf}
+	\includegraphics[width=0.7\textwidth]{intro/cell-migration.pdf}
 	\caption{A figure from the paper~\cite{alert2020} illustrating cell migration during the wound healing process. 
 	(a) Vector field representation of cellular traction forces in cells as they close a wound, with color intensity reflecting the radial component (positive values indicate outward-directed forces). 
 	Panels labelled i and ii present magnified views of the regions marked by arrows in panel (a). 
@@ -80,7 +78,6 @@ The term $\dequ \vec{B}_i(t) $ represents the stochastic increment of a two-dime
 It models the random, unpredictable fluctuations in the particle's position over time. \\
 For infinitesimally small time intervals $ \dequ t $, the increment $ \dequ \vec{B}_i(t) $ is normally distributed with mean zero and covariance $ \dequ t \cdot I_2$, where $I_2$ denotes the $2 \times 2$ identity matrix. \\  
 This dynamic is fundamental and widely used in SDEs across various fields, including modelling particle diffusion~\cite{Bruna2012}, biological systems such as cell migration and also financial markets. \\ 
-% TODO: add external force term f(x) to motion equation for modelling environmental influences or chemical gradients.
 
 The stochastic dynamics of individual particles, governed by Brownian motion and external forces, naturally give rise to a probability density function that characterises the collective behaviour of the entire system through a mean field description. 
 This density function serves as the fundamental mean field that encapsulates the averaged influence of all particles, enabling a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution where individual fluctuations are replaced by deterministic evolution of the ensemble density. \\
@@ -149,8 +146,8 @@ This yields a new particle dynamic
 \end{center}
 We define a multidimensional function
 \begin{align*}
-	F : \Omega^{N_C} \: &\longrightarrow \: {(\R^2)}^{N_C}, \\
-	\vec{X} \: &\longmapsto \:F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T,
+	&F : \Omega^{N_C} \: \longrightarrow \: {(\R^2)}^{N_C}, \\
+	\vec{X} \: \longmapsto \: &F(\vec{X}) = (f(\vec{x}_1), \ldots, f(\vec{x}_{N_C}))^T,
 \end{align*}
 that gathers the external dynamics for all particles. \\
 With that new external force, the diffusion behaviour changes. 
@@ -193,7 +190,7 @@ How this kind of exclusion works is visualized in an one-dimensional example in 
 
 \begin{figure}[b!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/hardsphere_exclusion.png}
+	\includegraphics[width=0.7\textwidth]{intro/hardsphere_exclusion.png}
 	\caption{This plot illustrates the feasible regions for cell 2 in one-dimensional space, dependent on the position of cell 1. 
 	The domain of interest is restricted to the one-dimensional interval $[-L, L]$, with the two cells having a diameter of $\epsilon$. 
 	The red boundaries indicate the excluded regions, where neither cell can occupy a position closer than $\frac{\epsilon}{2}$ to the boundary. 
@@ -218,7 +215,7 @@ Figure~\ref{fig:hardsphere} illustrates how a hard sphere cell configuration loo
 
 \begin{figure}[b!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/hardsphere.eps}
+	\includegraphics[width=0.7\textwidth]{intro/hardsphere.eps}
 	\caption{An illustration from~\cite{Bruna2012} of the point particles on the left and the hard sphere particles on the right. We can see areas where the centre of the particles cannot be located, as they would overlap with other particles being marked red. 
 	}
 	\label{fig:hardsphere}
@@ -376,7 +373,7 @@ The cell wall is denoted by values of $\phi_i = 0$.
 An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield}. \\
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=\textwidth]{intro/phasefield+cut.png}
+	\includegraphics[width=0.9\textwidth]{intro/phasefield+cut.png}
 	\caption{A snapshot from the paper~\cite{alert2020} illustrating a phase field variable. 
 	The cell's inside has value $\phi = 1$ and the outside $\phi = -1$. 
 	On the right, we can see a cut of the plot from the left. 
@@ -481,7 +478,7 @@ Model predictions are compared with experimental data from various cell cultures
 The qualitative differences observed highlight the importance of microscopic details. \\ 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/curved_phasefield.png}
+	\includegraphics[width=0.7\textwidth]{intro/curved_phasefield.png}
 	\caption{A figure from the paper~\cite{Happel2023} showing a phase field variable $\phi$ on a curved domain, specifically a torus. 
 	In (a) and (b), the surface of the torus from (c) is shown as a parametrization on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
 	Red and blue lines represent periodic boundary conditions, which are enforced by gluing the corresponding edges in (b) and (c).
@@ -569,7 +566,7 @@ where $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,
 These four energies are conserving a specific cell shape. \\
 \begin{figure}[h!]
 	\centering
-	\includegraphics[width=0.8\textwidth]{intro/jamming.png}
+	\includegraphics[width=0.7\textwidth]{intro/jamming.png}
 	\caption{A snapshot from the paper~\cite{Boromand2018} illustrating a configuration of vertex based deformable cells. 
 	Schematic of deformable polygons with $N_V = 34$ vertices (where the position of vertex $j$ in the polygon $m$ is denoted by $\vec{v}_{m,j}$), area $a_m$, and perimeter $p_m$. 
 	The edge $l_{m,j} = p_m / N_V$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. 
