@@ -29,7 +29,7 @@ For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfi
 \int_{\R^2} \phi(x) \: \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
 \]
 For a set $A \in \mathcal{B}(\mathbb{R}^2)$, the quantity $\mu^{(N_C, N_S)}_t(A)$ denotes the relative proportion of the $N_C$ particles that lie in $A$ at time $t$, averaged over all $N_S$ simulations.\\
-The heatmaps in Chapter~\ref{sanitycheck} are obtained by evaluating this empirical measure on a family of subsets $\{A_{ij}\}_{i,j=1}^{N_H}$, where $N_H^2$ is the number of sub squares into which we partition the domain $\Omega = [-0.5, 0.5]^2$.  
+The heatmaps in Chapter~\ref{sanitycheck} are obtained by evaluating this empirical measure on a family of subsets $\{A_{ij}\}_{i,j=1}^{N_H}$, where $N_H^2$ is the number ofsubsquares into which we partition the domain $\Omega = [-0.5, 0.5]^2$.  
 Each subsquare $A_{ij}$ has side length $\tfrac{1}{N_H}$, and increasing $N_H$ yields an increasingly fine spatial resolution of~$\Omega$.\\
 If, in addition, we let $N_S \to \infty$, then by the Central Limit Theorem the empirical heatmaps converge to their expectation, which coincides with the first marginal distribution of the system, since the simulations are independent and identically distributed.  
 In our computations we used $10\,000$ simulations to ensure a reliable numerical approximation of this first marginal. \\
@@ -39,7 +39,7 @@ Here, we let the number of cells $N_C \rightarrow \infty$.
 In the mean field limit, we can study the transition from the microscopic model view, that uses a finite number of cells, $N_C < \infty$, to a macroscopic model view where we consider the whole system's density without individual cells. \\
 Figure~\ref{fig:muTransition} illustrates how empirical particle distributions converge towards their underlying mean field density as the number of particles increases.  
 The first three panels depict empirical measures obtained from samples of size $N_C \in \{20, 200, 20\,000\}$, drawn independently from the same Gaussian distribution $\mathcal{N}_2((0,0), 0.09^2 I_2)$.
-To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\) sub squares, on which the empirical measure
+To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\)subsquares, on which the empirical measure
 \[
     \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i}(A),
 \]
@@ -51,7 +51,7 @@ For small \(N_C\), random fluctuations dominate the visual appearance, while for
 	\begin{center}
 		\includegraphics[width=0.98\textwidth]{density/muplot_combined.png}
 		\caption{Empirical measures for three increasing particle numbers: $20$, $200$, and $20\,000$, compared with the limiting density \( \mathcal{N}_2((0,0), 0.09^2 \cdot I_2) \) shown in the fourth panel.  
-        Particles are sampled i.i.d.\ from the same distribution, and the empirical measure \( \mu^{N_C} \) is visualised on a \(50 \times 50\) grid of sub squares.  
+        Particles are sampled i.i.d.\ from the same distribution, and the empirical measure \( \mu^{N_C} \) is visualised on a \(50 \times 50\) grid ofsubsquares.  
         As \(N_C\) increases, the empirical heatmaps become smoother and converge to the Gaussian density, demonstrating the transition towards the mean field limit.  
         A consistent colour scale allows direct comparison across all subplots.
         }
@@ -233,7 +233,7 @@ We choose an initial condition given by $\mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot
 which arises from the earlier derivation of the density evolution equation.  
 The discretisation is given by
 \begin{align*}
-    \Omega \: &\longrightarrow \: \{A_{ij}\}_{i,j = 1}^{500} \text{ sub squares}, \\[0.5em]
+    \Omega \: &\longrightarrow \: \{A_{ij}\}_{i,j = 1}^{500} \text{subsquares}, \\[0.5em]
     \bar{\rho} \: &\longrightarrow \: \bar{\rho}_{ij}^{\: k} \text{ density value on } A_{ij} \text{ at time step } k \in \N, \\[0.5em]
     \partial_t \bar{\rho} \: &\longrightarrow \: \frac{\bar{\rho}_{ij}^{\: k+1} - \bar{\rho}_{ij}^{\: k}}{\Delta t}, \\[0.5em] 
     \alpha \: &\longrightarrow \: \alpha_{ij}^k \text{ value on } A_{ij} \text{ at time step } k \in \N, \\[0.5em]

@@ -111,12 +111,12 @@ In our case, the Monte Carlo simulations are used to track the positions of cell
 Each simulation begins from an initial configuration of cells, which is consistently generated using Algorithm~\ref{alge:HSCMinitial}. 
 After initialisation, the prescribed dynamics - either the point particle model or the hard sphere model - are applied, and the positions of the cell centres are recorded at a fixed time point, $t=0.05$. \\
 To visualise the results, we construct heatmaps representing the spatial distribution of cells at the final time. 
-This is done by discretizing the domain into a uniform grid of sub squares. 
-For each sub square, we count how many cells fall within it across all simulations. 
-The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a sub square. 
+This is done by discretizing the domain into a uniform grid ofsubsquares. 
+For eachsubsquare, we count how many cells fall within it across all simulations. 
+The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of asubsquare. 
 This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: 
 \[
-    \sum\limits_{i \: \in \text{ sub squares}} \text{value}_i \cdot \text{area}_i = 1. 
+    \sum\limits_{i \: \in \text{subsquares}} \text{value}_i \cdot \text{area}_i = 1. 
 \]
 By the Law of Large Numbers, these heatmaps converge to the first marginal distribution as both the number of independent simulations increases and the spatial discretisation of $\Omega$ is refined.
 This procedure, detailed in Section~\ref{density}, yields a smooth and consistent estimate of the empirical cell density, enabling a direct comparison with the corresponding solutions of the continuum diffusion equations.
@@ -339,7 +339,7 @@ We therefore proceed by analysing these results in greater detail in the followi
 Having compared the full spatial density evolution through heatmaps, we next consider a reduced one-dimensional representation of the cell density to facilitate quantitative comparison between models. 
 To this end, we introduce cross-section plots, which provide averaged density profiles extracted from the two-dimensional simulation domain~$\Omega$. \\
 The procedure is as follows. 
-Starting from the discrete density field obtained from a DF simulation, the quadratic domain~$\Omega$ is subdivided into $N_H \times N_H$ sub squares, where $N_H \in \N$ defines the spatial resolution with a corresponding step size $\Delta x = 1 / N_H$, as $\Omega$ has a side length of $1$. \\
+Starting from the discrete density field obtained from a DF simulation, the quadratic domain~$\Omega$ is subdivided into $N_H \times N_H$subsquares, where $N_H \in \N$ defines the spatial resolution with a corresponding step size $\Delta x = 1 / N_H$, as $\Omega$ has a side length of $1$. \\
 For each vertical line across the domain, we compute the integrated density by summing the density values of all subsquares along that line, multiplied by the step size~$\Delta x$. 
 This yields a vector of length~$N_H$ representing the average cell density per vertical line. \\
 The same operation is then repeated along all horizontal lines to obtain a second vector. 
