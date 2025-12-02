@@ -725,6 +725,7 @@ This force is first computed based on the geometry of the overlap and then distr
 	Let $C_i$ and $C_m$ be two cells from the system $\vec{C}$ and $\Omega_{C_i,C_m}$ be the set of all overlaps that appear between $C_i$ and $C_m$, like explained above. Then, the total overlap energy $O_k : (\R^{2N_V})^{N_C} \rightarrow \R$ of the cell system is given by the formula 
 	\begin{align}
 		O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \; \sum\limits_{m=i+1}^{N_C} \; \sum\limits_{D \,\in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k,	
+		\label{eq:overlapEnergy}
 	\end{align} 
 	where $A_{D}$ is the area of the overlap $D$.  \\
 	We define the inner bracket to be the overlap energy of the cell pair $C_i$ and $C_m$
@@ -943,6 +944,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
 													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A(D)\Biggr),
 		\end{split}
+		\label{grad:overlap}
 	\end{align}
 	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively. \\
 	Note, that the Formulas \ref{equ:dwv_out} and \ref{equ:dwv_in} define $\frac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}$ and $\frac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}}$, respectively. \\
@@ -1209,7 +1211,7 @@ Summarizing all these efforts, we arrived at the following force scalings used i
 
 These scaling par
 ameters serve as the foundation for the complete DF SDE model, which we now introduce.
-\begin{definition} \textbf{The DF SDE} \\
+\begin{definition} \textbf{The DF SDE} \label{def:df-sde} \\
 	We define the vectors
 	\[
 		e_{N_V}^{x} = (1,0,1,0,\ldots,1,0)^T, \quad e_{N_V}^{y} = (0,1,0,1,\ldots,0,1)^T \in \R^{2N_V},
