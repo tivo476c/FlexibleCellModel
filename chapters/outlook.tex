@@ -1,37 +1,35 @@
 \section{Outlook}
 
-An interesting extension of the current model would involve assigning individual desired states to each cell, in contrast to the uniform desired state used throughout this study. 
-This modification would naturally lead to cell-specific energies and corresponding forces, as both would depend on the unique desired configuration of each cell. 
-Incorporating such heterogeneity could allow the model to capture more complex biological behaviors, such as differentiation, cell-type-specific migration, or adaptive responses to environmental cues. 
-- incorporate external force $f$,
+%% introduction section 
+- in the end, we wanna summarise possible future directions for the DF model and its analysis, both from a modelling and theoretical perspective.
 
+%% whats missing in the thesis 
 
-- curved surfaces 
-- 3d 
-- cell division 
-- more parameter studies 
-- use more vertices for more accurate shape and dynamics 
-- limit $N_V \rightarrow \infty$ 
-- overdamping 
-- new shapes  
--  Additionally, many vertex models incorporate rules that govern changes in connection among vertices, and therefore allow for changes in cell neighbor relationships.
-->  These approximations are suitable in the case of tightly packed cell sheets, where the intercellular space is negligible, and is based on experimental observations that cells in epithelial tissues are often arranged in polygonal or polyhedral structures (19) and can move around relative to other cells (20)
-- mention that doing the cross-section plot with a finer spatial resolution shows oscillations that are numerical artifacts 
+- proof for existence of mean field limit density
 - mean field limit for our overlap forces 
-- existence of mean field limit density
+- theoretical analysis of well-posedness of the DF SDE and regularity properties of solutions
 
-\begin{figure}[h!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.00.png} &     
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.01.png} \\   
+- more parameter studies 
+- diffusion behaviour for new desired shapes 
+- use more vertices for more accurate shape and dynamics 
 
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.02.png} &   
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.03.png} \\  
 
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.04.png} &     
-        \includegraphics[width=0.45\textwidth]{sanity-check/crosssections/hdx30/crosssection_t0.05.png} \\   
-    \end{tabular}
-    \caption{ } 
-	\label{fig:crosssections30}    
-\end{figure}
+%% possible extensions and future work 
+- extend to 3d, or consider curved surfaces as in \cite{Happel2023}
+
+- incorporate external force $f$, for modelling of biochemical signalling fields that influence cell motion or shape (e.g.\ chemotaxis, haptotaxis, or mechanochemical coupling)
+- modelling active processes inside cells, such as internal polarity cues or cytoskeletal alignment, leading to directed motion or anisotropic shape regulation
+
+- introduction of time-dependent desired states to model growth, adaptation, division, or responses to external stimuli
+- exploration of long-time behaviour, equilibria, pattern formation, or phase transitions in the DF system
+
+- An interesting extension of the current model would involve assigning individual desired states to each cell, in contrast to the uniform desired state used throughout this study. This modification would naturally lead to cell-specific energies and corresponding forces, as both would depend on the unique desired configuration of each cell. 
+- multi-species or multi-type DF populations with different mechanical parameters, desired shapes, or interaction rules
+Incorporating such heterogeneity could allow the model to capture more complex biological behaviors, such as differentiation, cell-type-specific migration, or adaptive responses to environmental cues. 
+
+- studying emergent collective phenomena (e.g.\ clustering, phase separation, tissue flows) under different choices of energies or interaction forces
+
+- inference of parameters from experimental data or using machine-learning-based calibration
+
+
+
