@@ -8,9 +8,11 @@ We introduce the empirical measure associated with large ensembles of simulated 
 This leads naturally to a deterministic transport equation for the limiting cell density, which provides a mathematically transparent interpretation of the collective dynamics. 
 We illustrate this approach with an explicit low-dimensional needle cell example. 
 Afterwards, we compute the mean field PDEs for our DF model with sorely the area, edge or interior angle force applied, respectively. 
-Unfortunately, we did not manage to do the same for our interaction term in this thesis, as there was not enough time. 
+Unfortunately, we did not manage to do the same for our interaction term in this thesis, as there was not enough time. \\
 %now introduce empirical measure: 
-For our point particle monte carlo simulations, we can define the empirical measure 
+In order to analyse the macroscopic system dynamic, we start by studying the transition from the microscopic point particle model with $N_C \in \N$ particles to a macroscopic density description where $N_C \rightarrow \infty$.
+We want to consider the point particle Monte Carlo simulations from Chapter~\ref{sanitycheck}.
+Therefore, we define the empirical measure 
 \begin{align*}
     &\mu^{(N_C, N_S)}_t: \mathcal{B}(\R^2) \: \longrightarrow \: [0,1],  \\
     A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{\vec{x}_i^{\:(s)}(t)}(A),
@@ -34,11 +36,11 @@ Each subsquare $A_{ij}$ has side length $\tfrac{1}{N_H}$, and increasing $N_H$ y
 If, in addition, we let $N_S \to \infty$, then by the Central Limit Theorem the empirical heatmaps converge to their expectation, which coincides with the first marginal distribution of the system, since the simulations are independent and identically distributed.  
 In our computations we used $10\,000$ simulations to ensure a reliable numerical approximation of this first marginal. \\
 
-There is also a further limit to consider: the mean field limit. 
+The focus of this chapter lays in another limit, namely the mean field limit. 
 Here, we let the number of cells $N_C \rightarrow \infty$. 
 In the mean field limit, we can study the transition from the microscopic model view, that uses a finite number of cells, $N_C < \infty$, to a macroscopic model view where we consider the whole system's density without individual cells. \\
 Figure~\ref{fig:muTransition} illustrates how empirical particle distributions converge towards their underlying mean field density as the number of particles increases.  
-The first three panels depict empirical measures obtained from samples of size $N_C \in \{20, 200, 20\,000\}$, drawn independently from the same Gaussian distribution $\mathcal{N}_2((0,0), 0.09^2 I_2)$.
+The first three panels depict empirical measures obtained from samples of size $N_C \in \{20, 200, 20\,000\}$, drawn independently from the same Gaussian distribution $\mathcal{N}_2((0,0), 0.09^2 \cdot I_2)$.
 To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\)subsquares, on which the empirical measure
 \[
     \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i}(A),
@@ -59,23 +61,21 @@ For small \(N_C\), random fluctuations dominate the visual appearance, while for
 	\end{center}
 \end{figure}
 
-For the following discussion, we assume that the first marginal distributions of the DF model converge to a mean field density, that is,
-\[
-    \rho^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}.
-\]
 In the preceding chapters, we wrote $\rho$ for the first marginal, as the mean field limit was not under consideration.  
 To emphasise the dependence on the number of cells $N_C$, we adopt the notation $\rho^{N_C}$ throughout this chapter. \\
-A rigorous analysis establishing this convergence remains an interesting direction for future work. \\ 
-
+We now want to derive a temporal PDE for the time evolution of a point particles system's density. 
+At time $t=0$, the first marginal $\rho_0^{N_C}$ converges to the distribution where we sample the particles from, as $N_C \rightarrow \infty$, like illustrated in Figure~\ref{fig:muTransition}. 
+Thus, the initial mean field density $\bar{\rho}_0$ is given by the distribution where we sample the particles from. \\
+As the first marginal distribution changes over time due to the particle dynamics, so does the density in the mean field limit.
 % now: computation of mean field density PDE 
-Next, we will show how the PDE for the mean field density temporal evolution can be computed generally for a point particle model, if the particle dynamic is given by the gradient flow of a given energy. 
+Let the particle dynamic be given by the gradient flow of a certain energy. 
 For $N_C$ point particles $\vec{x}_i(t) \in \R^2$, we use a cell wise energy  
 \begin{align*}
     E: \R^{2} \: &\longrightarrow \:  \R, \\ 
     \vec{x} \: &\longmapsto \: E(\vec{x}).
 \end{align*}
 
-We define the dynamic of a particle $\vec{x}_i$ via \\
+We define the particle dynamic via 
 \[ 
     \dfrac{\dequ \vec{x}_i(t)}{\dequ t} = - \nabla E(\vec{x}_i(t)) \in \R^{2}, \quad 1 \leq i \leq N_C. 
 \]
@@ -84,7 +84,7 @@ We consider the empirical measure
     \mu_t^{N_C}(A) = \tfrac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A).
 \]
 Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function with gradient field $ \nabla \phi : \R^2 \rightarrow \R^2$. \\
-We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}(x) \dequ x $) and we have convergence 
+We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}\!(x)\:\dequ x $) and we have convergence 
 \begin{align*}
     \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t.
 \end{align*}  
@@ -94,7 +94,7 @@ First, we consider
         \frac{\dequ}{\dequ t} \int \phi(x) \: \dequ \mu^{N_C}_t
         &= \frac{\dequ}{\dequ t} \int \phi(x) \: \rho_t^{N_C}(x) \: \dequ x \\
         &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(x) \: \bar{\rho}_t(x) \: \dequ x \\
-        &= \int \phi(x) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t(x)\right] \: \dequ x,
+        &= \int \phi(x) \,\frac{\partial \bar{\rho}_t(x)}{\partial t} \: \dequ x,
     \end{split}
     \label{equ:leftSideMeanFieldPDE}
 \end{align}
@@ -115,8 +115,8 @@ Then, we use the definition of the empirical measure to obtain
 We consider the difference from Equations~\eqref{equ:leftSideMeanFieldPDE} and \eqref{equ:rightSideMeanFieldPDE} for $N_C \rightarrow \infty$
 \begin{align*}
     0 
-    &= \int \phi(x) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t(x)\right] \: \dequ x - \int \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x \\
-    &= \int \phi(x) \left( \frac{\partial}{\partial t} \left[\bar{\rho}_t(x)\right] -  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \right) \: \dequ x.
+    &= \int \phi(x) \,\frac{\partial \bar{\rho}_t(x)}{\partial t} \: \dequ x - \int \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x \\
+    &= \int \phi(x) \left( \frac{\partial \bar{\rho}_t(x)}{\partial t} -  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \right) \: \dequ x.
 \end{align*}
 
 As this holds true for any $\phi \in C_c^{\infty}(\R^{2}, \R)$, we obtain the mean field PDE 
@@ -130,38 +130,38 @@ For a force function $F(C) = - \nabla_C E(C)$, the we get the formulation
     \label{equ:FmeanFieldDerivation}
 \end{align}
 
+This mean field PDE reveals how the macroscopic density changes over time, as the collective effect of the microscopic particle dynamics driven by the energy $E$. 
 
 \subsection{1d needles example}
 % TODOs: formulate everything, figure captions, formatting
 In order to demonstrate how the preceding computations can be applied in practice, we begin with a lower-dimensional example. 
 In this setting, each cell consists of two vertices situated in one spatial dimension, 
 \begin{align*}
-    C = \{v_1, v_2\}, \quad v_1, v_2 \in \R,
+    C = \{v_1, v_2\}, \quad v_1, v_2 \in \R.
 \end{align*}
-where we assume $v_1 \neq v_2$ and that their ordering remains fixed throughout the simulation. 
-This ensures that cells do not attain negative length. \\
-Our dynamic naturally fulfils this condition, as we use the cell wise energy 
+We use the cell wise energy 
 \begin{align*}
     E(C) = \tfrac{1}{2} \left| |v_1 - v_2| - E_d  \right|^2,
 \end{align*}
 where $E_d$ is the desired edge length of each cell. 
-This energy lets each needle cell to recover a length of $E_d$. \\
+This energy lets each needle cell to recover a length of $E_d$.
+This is the one-dimensional analogue to the edge energy from Equation~\eqref{eq:edgeEnergy} with $k=2$ for needle cells with just one edge. \\
 Applying gradient flow dynamics yields
 \begin{align*}
     \frac{\dequ v_1}{\dequ t} 
-    &= - \nabla_{v_1} E(C) \\
-    &= - \nabla_{v_1} \tfrac{1}{2}| |v_1 - v_2| - E_d |^2 \\
-    &= - (|v_1 - v_2| - E_d) \nabla_{v_1} |v_1 - v_2|  \\
-    &= - sgn(v_1 - v_2) (|v_1 - v_2| - E_d),   \\
+    &= - \frac{\partial E(C)}{ \partial v_1}  \\
+    &= - \frac{\partial }{ \partial v_1} \left[ tfrac{1}{2}| |v_1 - v_2| - E_d |^2 \right] \\
+    &= - (|v_1 - v_2| - E_d) \frac{\partial }{ \partial v_1} \left[ |v_1 - v_2| \right] \\
+    &= - \sgn(v_1 - v_2) (|v_1 - v_2| - E_d),   \\
 \end{align*}
 and 
 \begin{align*}
     \frac{\dequ v_2}{\dequ t} 
-    &=  sgn(v_1 - v_2) (|v_1 - v_2| - E_d).  \\
+    &=  \sgn(v_1 - v_2) (|v_1 - v_2| - E_d).  \\
 \end{align*}
-The resulting cell dynamics take the compact form
+The resulting cell dynamic takes the compact form
 \begin{align*}
-    \frac{\partial C}{\partial t} = - \nabla_C E(C) =F(C) = \underbrace{sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
+    \frac{\partial C}{\partial t} = - \nabla_C E(C) =F(C) = \underbrace{\sgn(v_1 - v_2) (|v_1 - v_2| - E_d)}_{\displaystyle = \alpha} \begin{pmatrix}
         -1 \\ 
         1
     \end{pmatrix}.
@@ -170,22 +170,22 @@ The resulting cell dynamics take the compact form
 For the subsequent derivation we require the computations 
 \begin{align*}
     \frac{\partial \alpha}{\partial v_1}
-    &= \frac{\partial}{\partial v_1} \left[sgn(v_1 - v_2) (|v_1 - v_2| - E_d)\right] \\
-    &= \frac{\partial}{\partial v_1} \left[ sgn(v_1 - v_2) \right] (|v_1 - v_2| - E_d) 
-      +  sgn(v_1 - v_2)\frac{\partial}{\partial v_1} \left[|v_1 - v_2| - E_d\right] \\
-    &= 0 + sgn(v_1 - v_2)\frac{\partial}{\partial v_1} \left[|v_1 - v_2| \right] \\
-    &= sgn(v_1 - v_2) sgn(v_1 - v_2) \\
+    &= \frac{\partial}{\partial v_1} \left[\sgn(v_1 - v_2) (|v_1 - v_2| - E_d)\right] \\
+    &= \frac{\partial}{\partial v_1} \left[ \sgn(v_1 - v_2) \right] (|v_1 - v_2| - E_d) 
+      +  \sgn(v_1 - v_2)\frac{\partial}{\partial v_1} \left[|v_1 - v_2| - E_d\right] \\
+    &= 0 + \sgn(v_1 - v_2)\frac{\partial}{\partial v_1} \left[|v_1 - v_2| \right] \\
+    &= \sgn(v_1 - v_2) \sgn(v_1 - v_2) \\
     &= 1,
 \end{align*}
 and 
 \begin{align*}
     \frac{\partial \alpha}{\partial v_2}
-    &= \frac{\partial}{\partial v_2} \left[sgn(v_1 - v_2) (|v_1 - v_2| - E_d)\right] \\
-    &= \frac{\partial}{\partial v_2} \left[ sgn(v_1 - v_2)\right] (|v_1 - v_2| - E_d) 
-      +  sgn(v_1 - v_2) \frac{\partial}{\partial v_2} \left[|v_1 - v_2| - E_d \right] \\
-    &= 0 + sgn(v_1 - v_2)\frac{\partial}{\partial v_2} \left[|v_1 - v_2| \right] \\
-    &= sgn(v_1 - v_2) (- sgn(v_1 - v_2)) \\
-    &= -1,
+    &= \frac{\partial}{\partial v_2} \left[\sgn(v_1 - v_2) (|v_1 - v_2| - E_d)\right] \\
+    &= \frac{\partial}{\partial v_2} \left[ \sgn(v_1 - v_2)\right] (|v_1 - v_2| - E_d) 
+      +  \sgn(v_1 - v_2) \frac{\partial}{\partial v_2} \left[|v_1 - v_2| - E_d \right] \\
+    &= 0 + \sgn(v_1 - v_2)\frac{\partial}{\partial v_2} \left[|v_1 - v_2| \right] \\
+    &= \sgn(v_1 - v_2) (- \sgn(v_1 - v_2)) \\
+    &= -1.
 \end{align*}
 
 With these identities at hand, we compute the divergence
@@ -197,7 +197,7 @@ With these identities at hand, we compute the divergence
     &= - \frac{\partial \bar{\rho}}{\partial v_1} \alpha - \bar{\rho} + \frac{\partial \bar{\rho}}{\partial v_2} \alpha - \bar{\rho} \\
     &= - 2 \bar{\rho} + \alpha \left(- \frac{\partial \bar{\rho}}{\partial v_1} + \frac{\partial \bar{\rho}}{\partial v_2} \right),   \\
 \end{align*}
-where $F = (F_1, F_2)^T$.  \\
+where $F = (F_1, F_2)^T$ and $\bar{\rho}$ is the density in the mean field limit.  \\
 Consequently, in the mean field limit $N_C \rightarrow \infty$, the density $\bar{\rho}$ satisfies
 \begin{align*}
     \frac{\partial \bar{\rho}}{\partial t} - 2 \bar{\rho} + \alpha \left(- \frac{\partial \bar{\rho}}{\partial v_1} + \frac{\partial \bar{\rho}}{\partial v_2} \right) = 0,
@@ -205,7 +205,7 @@ Consequently, in the mean field limit $N_C \rightarrow \infty$, the density $\ba
 according to Equation~\eqref{equ:FmeanFieldDerivation}. \\
 To illustrate this model, we present two corresponding simulations.  
 First, we consider a finite system of $N_C = 400$ needle cells.  
-Each cell is initialised according to
+Each needle is initially sampled from 
 \begin{center}
     $
     C_i = (v^{i}_1, v^{i}_2) \sim \mathcal{N}_2((0.5,0.5)^T, 0.09^2 \cdot I_2), \quad 1 \leq i \leq 400.
@@ -213,16 +213,16 @@ Each cell is initialised according to
 \end{center}
 We then evolve the system under the dynamics
 \begin{align*}
-    \frac{\partial C}{\partial t} = F(C) = sgn(v_1 - v_2) (|v_1 - v_2| - E_d)(-1, 1)^T,
+    \frac{\partial C}{\partial t} = F(C) = \sgn(v_1 - v_2) (|v_1 - v_2| - E_d)(-1, 1)^T,
 \end{align*}
 using a desired edge length of $E_d = 0.2$.  
-The resulting ODE system is integrated with an explicit Euler method using a time step of $\Delta t = 10^{-3}$ over the interval $[0,1]$, giving $100$ time steps. \\
+The resulting ODE system is integrated with an explicit Euler method using a time step of $\Delta t = 10^{-3}$ over the time interval $[0,1]$, giving $100$ time steps. \\
 Figure~\ref{fig:needle400} visualises the evolution of the one-dimensional needle cell system. 
 Each cell is represented by a blue point in the $(v_1,v_2)$ plane, where the horizontal axis corresponds to the position of the first vertex and the vertical axis to that of the second vertex. 
 Such a representation is only possible in this lower-dimensional setting, since the full vertex configuration of a cell can be embedded in $\R^2$. \\
 At initial time, the $N_C = 400$ cells are sampled from $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$. 
 As time progresses, the dynamics drive each cell towards its desired edge length $E_d = 0.2$. 
-In the scatter plot, this manifests as a gradual migration of points towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, corresponding to cells whose vertex separation has achieved the prescribed value. 
+In the scatter plot, this manifests as a gradual migration of points towards the two diagonal lines defined by $|v_1 - v_2| = 0.2$, corresponding to cells whose vertex separation has achieved the desired value. 
 By the final time, all cells lie precisely on these two diagonals, confirming that the system converges to a configuration in which every cell has relaxed to the target length. \\
 
 Subsequently, we examine the associated mean field dynamics.  
@@ -282,35 +282,32 @@ with grid spacing $\Delta x = \tfrac{1}{500}$.
 	\label{fig:needle-limit}    
 \end{figure}
 
-
-
 Figure~\ref{fig:needle-limit} illustrates the evolution of the cell density in the mean field limit. 
 The initial distribution is given by $\mathcal{N}_2((0.5,0.5), 0.09^2 \cdot I_2)$ on the domain $[0,1]^2$, forming a concentrated region in the centre of the domain. 
 Under the action of the mean field PDE, the density is gradually transported towards the two diagonal lines characterised by $|v_1 - v_2| = 0.2$, mirroring the behaviour observed in the finite particle simulation from Figure~\ref{fig:needle400}. 
-As time evolves, the solution develops sharp ridges along these diagonals, and by the final time almost all mass is concentrated on there, indicating convergence towards the desired edge length in the continuum description.
-
+As time evolves, the solution develops sharp ridges along these diagonals, and by the final time almost all mass is concentrated on there, indicating convergence towards the desired edge length in the continuum description. \\
+This example is a very nice depiction of how a first marginal density in a $N_C$ cell system (microscopic view) corresponds to its mean field density (macroscopic view). 
+It also validates our derivation of the mean field PDE from Equation~\eqref{equ:meanFieldDerivation}.  \\
 During the evolution, small oscillations appear in the region between the two diagonals. 
-These artefacts are purely numerical and originate from the central difference discretisation used for the spatial derivatives. They can be removed by employing an upwind scheme, which would provide the correct directional bias in the discretisation of the fluxes and thereby suppress non-physical oscillations. 
-
+These artefacts are purely numerical and originate from the central difference discretisation used for the spatial derivatives. They can be removed by employing an upwind scheme, which would provide the correct directional bias in the discretisation of the fluxes and thereby suppress non-physical oscillations. \\
 % reference to hard disc exclusion
-Both simulations exhibit exclusion effects that closely resemble the behaviour observed in the earlier hard disc model shown in Figure~\ref{fig:hardsphere}.
+Both simulations exhibit exclusion effects that remind of  the behaviour observed in the earlier hard disc model shown in Figure~\ref{fig:hardsphere}.
 In the hard disc example, the diagonal region of the domain was inaccessible because any placement of the second disc in that area would necessarily lead to overlap with the first disc. 
 This exclusion was enforced explicitly: overlap was prohibited both by the initial configuration and by the dynamics, which strictly prevented discs from entering the forbidden region. \\ 
 The geometric volume exclusion in the hard disc system corresponds to the desired state constraint in the needle model: whereas discs must avoid overlaps, needles are driven toward configurations in which their length equals $E_d$, and both mechanisms create analogous forbidden regions in the state space.
 The needle model does not impose such exclusions a priori. 
 Initially, needle cell configurations with lengths unequal to $E_d$ are allowed. 
-Nevertheless, the dynamics, driven by the energy term
+Nevertheless, the dynamics, driven to reduce the energy 
 \[
     E(C) = \tfrac{1}{2} ||v_1 - v_2| - E_d |^2 ,
 \]
 naturally steer the system toward states where the needle length matches $E_d$. 
 As the evolution proceeds, the density gradually depletes along the diagonal region of the $(v_1, v_2)$ space, reproducing the same `forbidden' diagonal line that appeared in the hard disc case. \\
-Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap), the needle system develops a soft exclusion: the dynamics energetically penalize undesirable configurations until the system self organises into a feasible state.
+Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap), the needle system develops a soft exclusion: the dynamics energetically penalise undesirable configurations until the system self organises into a feasible state.
 
 
 \subsection{DF model mean field PDE} \label{subsection:dfMeanFieldPDE}
-- bridge from needle example to mean field DF PDE
-Now, we want to apply the computation for PDE~\eqref{equ:meanFieldDerivation} on our DF model.
+Now, we want to transfer the computation for PDE~\eqref{equ:meanFieldDerivation} to our DF model.
 Therefore, we adapt our empirical measure. 
 In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
 Thus, we need to use $\delta_{C_i}$ that uses high-dimensional subsets $A \subset \R^{2 N_V}$, i.e.
@@ -331,6 +328,7 @@ Later on, we want to insert the three shape preserving energies, i.e. the area, 
 We can derive the mean field PDE for this setup as follows. 
 Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher-dimensional space $\R^{2N_V}$.
 We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t^{\:N_V}$, as $N_C \rightarrow \infty$.
+A rigorous analysis establishing this convergence remains an interesting direction for future work. 
 Similarly to the calculation at the beginning of this chapter, we observe 
 \begin{align*}
     \begin{split}
@@ -356,20 +354,20 @@ We can conclude, with the same derivation as before, that
     \label{equ:meanfieldPDE}
 \end{align}
 
-Now, we want to consider our energies individually, before we take a look at a combined system. 
-We define the vector of all vertex coordinates of cell C as 
+
+For each energy $E$, we need a representation of the cell wise gradient $\nabla_C E(C)$ that we can plug into the mean field PDE from Equation~\eqref{equ:meanfieldPDE}. 
+Therefore, we define the vector of all vertex coordinates of cell C as 
 \begin{align*}
     V_C = (v_1^x, v_1^y, \ldots, v_{N_V}^x, v_{N_V}^y)^T \in \R^{2 N_V}.
 \end{align*}
-
-
+We compute the according matrices that enable as a gradient representation with matrix multiplication for whole cells, and not vertex wise, like already computed in the previous chapters. \\ 
 
 \subsubsection*{Area energy}
 First, we consider pure scaled area energy, i.e.
 \begin{align*}
     E_A(C) = \alpha_{A} A_2(C) = \frac{\alpha_{A}}{2} |A_{C} - A_d|^2, 
 \end{align*}
-with $A_2(C)$ defined at Equation~\eqref{eq:areaEnergy} with $k=2$. \\
+with $A_2(C)$ defined at Equation~\eqref{eq:areaEnergy} with $k=2$ and a constant scaling factor $\alpha_A > 0$. \\
 This energy has the gradient 
 \begin{align*}
     \nabla_C E_A(C) 
@@ -410,7 +408,6 @@ such that, we can write down the cell wise gradient as
     \end{split}
     \label{eq:cGradArea}
 \end{align}
-
 
 
 \subsubsection*{Edge energy}
@@ -555,5 +552,7 @@ we can use the linearity of the gradient to easily write down
     \nabla_C E_{\text{shape}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C).
 \end{align} 
 The three gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge} and \eqref{eq:cGradAngle}.
-
-
+The mean field PDE for the DF model with shape preserving energies is then given by inserting the above gradient into Equation~\eqref{equ:meanfieldPDE}, i.e.
+\begin{align*}
+    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)) = 0.
+\end{align*}
