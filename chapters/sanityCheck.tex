@@ -149,7 +149,7 @@ To ensure direct comparability, we fixed the colour scale in our visualisations 
         \includegraphics[width=0.45\textwidth]{sanity-check/heatmaps/compare/ppmodelSelf.png} &     
         \includegraphics[width=0.45\textwidth]{sanity-check/heatmaps/compare/ppmodel-bruna.png} \\   
     \end{tabular}
-    \caption{The left panel shows the heatmap obtained from our new point particle simulation, while the right panel presents the corresponding result from~\cite{Bruna2012}. We applied the same color scale as in Bruna (2012) to both panels to facilitate direct comparison. Despite minor differences, the two heatmaps exhibit a very similar overall structure and intensity pattern.}
+    \caption{The left panel shows the heatmap obtained from our new point particle simulation, while the right panel presents the corresponding result from~\cite{Bruna2012}. We applied the same colour scale as in Bruna (2012) to both panels to facilitate direct comparison. Despite minor differences, the two heatmaps exhibit a very similar overall structure and intensity pattern.}
     \label{fig:comparePP}
 \end{figure}
 
@@ -210,7 +210,7 @@ Overall, the results confirm that our DF model accurately captures the behaviour
 
 \subsection{DF model simulations with deformable cells} 
 
-After confirming that our implementation correctly reproduces the macroscopic dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalize the model to account for cell deformability. \\ 
+After confirming that our implementation correctly reproduces the macroscopic dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalise the model to account for cell deformability. \\ 
 In biological systems, cell-cell interactions are rarely perfectly hard; instead, cells can locally deform upon contact, redistributing internal stresses and slightly modifying their effective motion. 
 To capture this behaviour, we relax the hard sphere constraint by introducing a soft deformable force that acts when two cells are sufficiently close to each other. \\
 This modification leads to an extended stochastic description in which the overlap force $F_i^{(\hat{O})}(\vec{C})$, defined in \ref{force:deformingOverlap}, supplements the purely repulsive (bounce) force $F_i^{(\bar{O})}(\vec{C})$ (\ref{force:bounceOverlap}), whenever we use a hardness $h < 1$.

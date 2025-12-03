@@ -14,7 +14,7 @@ Snapshots from a cell wound healing process, illustrating the dynamics of cell m
 	\centering
 	\includegraphics[width=0.7\textwidth]{intro/cell-migration.pdf}
 	\caption{A figure from the paper~\cite{alert2020} illustrating cell migration during the wound healing process. 
-	(a) Vector field representation of cellular traction forces in cells as they close a wound, with color intensity reflecting the radial component (positive values indicate outward-directed forces). 
+	(a) Vector field representation of cellular traction forces in cells as they close a wound, with colour intensity reflecting the radial component (positive values indicate outward-directed forces). 
 	Panels labelled i and ii present magnified views of the regions marked by arrows in panel (a). 
 	(b) Velocity vectors (green) and monolayer stress ellipses (red), depicting the principal stress directions and magnitudes, in a growing cell colony (phase contrast). 
 	}
@@ -40,7 +40,7 @@ A key challenge is linking this macroscopic behaviour to the properties of indiv
 The systematic comparison of these diverse cell models is crucial for selecting appropriate methods for future studies and enabling predictive simulations of patterns and correlations in cell colonies. \\
 Understanding the collective behaviour of cells, particularly in processes such as wound healing, tissue regeneration, and embryonic development, is a central challenge in computational and mathematical biology. 
 These phenomena arise from the interplay of intrinsic cell dynamics and extrinsic cues, including chemical gradients, mechanical forces, and the physical constraints of the environment. 
-A key aspect of this behaviour is the diffusion like motion of cells, which governs how populations spread, organize, and respond to perturbations. \\
+A key aspect of this behaviour is the diffusion like motion of cells, which governs how populations spread, organise, and respond to perturbations. \\
 To gain insight into these processes, we focus on the diffusion dynamics of cells as a fundamental tool for characterizing and comparing different modelling approaches. 
 In this thesis, we investigate how distinct mathematical cell models, ranging from point particles to extended, deformable cells, give rise to different diffusion behaviours. 
 By analysing the underlying mechanisms that drive cell movement and spatial spreading, we aim to uncover the role of cell shape, interaction dynamics, and mechanical properties in shaping collective migration patterns, ultimately providing a deeper understanding of biological processes such as wound closure and tissue morphogenesis. \\
@@ -67,7 +67,7 @@ There is also no particle interaction, as there is no possibility of collision. 
 The particles' dynamics are governed solely by Brownian motion.
 Brownian motion is a random and unpredictable motion that occurs in the real world when particles are suspended in a fluid and collide with surrounding molecules. \\
 In mathematics, we model Brownian motion using stochastic differential equations (SDEs), which are equations that describe the motion of a particle over time in a random and unpredictable manner. 
-SDEs are a powerful tool for modelling complex phenomena in physics, finance, and other fields, and are characterized by the presence of random terms that capture the uncertainty of the system. \\
+SDEs are a powerful tool for modelling complex phenomena in physics, finance, and other fields, and are characterised by the presence of random terms that capture the uncertainty of the system. \\
 The particle movement can be modelled using the following SDE, which describes the random motion of particles over time
 \begin{center}
 	$\dequ \vec{x}_i(t) = \sqrt{2D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_C$,
@@ -185,7 +185,7 @@ Since particles cannot overlap, the domain $\Omega_{\epsilon}^{N_C} \subset \Ome
 	\norm[\vec{x}_i - \vec{x}_j] \leq \epsilon, \quad 1 \leq i < j \leq N_C.
 \] 
 This is due to the fact that particles cannot occupy the same space simultaneously. \\
-How this kind of exclusion works is visualized in an one-dimensional example in Figure~\ref{fig:exclusion1d}.  
+How this kind of exclusion works is visualised in an one-dimensional example in Figure~\ref{fig:exclusion1d}.  
 
 
 \begin{figure}[b!]
@@ -271,7 +271,7 @@ This distinction arises because $\rho(t; \vec{x})$ is obtained by integrating th
 For any position $\vec{x} \in \Omega$, there exist valid configurations where the first particle occupies $\vec{x}$ while all other particles are positioned to avoid overlap. 
 Consequently, the marginal density remains well defined across the entire domain $\Omega$, despite the joint density being restricted to $\Omega_{\epsilon}^{N_C}$. \\
 In the derivation of Equation~\eqref{equ:hardsphere}, the divergence theorem introduces additional boundary terms arising from the excluded volume holes in the configuration space $\Omega_{\epsilon}^{N_C}$. 
-These boundary contributions, localized near particle-particle collision surfaces, ultimately generate the non-linear diffusion correction term in the first marginal density equation for hard spheres. 
+These boundary contributions, localised near particle-particle collision surfaces, ultimately generate the non-linear diffusion correction term in the first marginal density equation for hard spheres. 
 This term, proportional to the particle volume fraction, captures the excluded volume effects that enhance collective diffusion compared to the point particle model. 
 Bruna and Chapman~\cite{Bruna2012} demonstrated that the excluded volume effects of hard spheres lead to enhanced diffusion within the system. \\
 This is also shown in Figure~\ref{fig:fig2BC12} from the original paper, which compares the diffusion behaviour of the point particle model and the hard sphere model. 
@@ -365,7 +365,7 @@ The phase field model resolves cell overlaps through a free energy producing a r
 This enables gradual, continuous deformation of cell interfaces, thereby avoiding discontinuities in the dynamics that are characteristic of discrete collision models. 
 Thus, the interaction mechanisms operate continuously and locally, ensuring a seamless transition between overlapping and non-overlapping configurations while maintaining physical consistency in both models. \\
 Nevertheless, the phase field model diverges fundamentally in its underlying structure: it is a continuum model based on partial differential equations that explicitly encodes cell morphology and internal organisation through the phase field variable $\phi_i$, enabling dynamic shape changes, topological transitions, and coupling to geometric features such as surface curvature. \\
-The free energy functional encodes shape regularization, intercellular interactions, and physical constraints of the system. 
+The free energy functional encodes shape regularisation, intercellular interactions, and physical constraints of the system. 
 Unlike the soft sphere model, which treats cells as point like entities interacting via a smooth potential, the phase field model represents cells as much more complex, spatially extended, continuously structured entities, with their internal state fully described by the evolution of the phase field variable $\phi_i$. 
 This enables a natural description of complex cell morphologies, topological transitions such as cell division or fusion, and the integration of cell mechanics with geometric curvature via extrinsic curvature contributions in the free energy. \\
 Phase field variables represent cells as smooth functions $\phi_i(\vec{x}, t) \in [-1, 1]$, with $\phi_i > 0$ in the cell interior and $\phi_i <0$ in the exterior. 
@@ -398,7 +398,7 @@ The first energy is a Cahn-Hilliard energy and could look like in~\cite{wenzel20
 \end{align*}
 where now, $\epsilon$ is a small parameter related to the interface thickness, and $Ca$ is a capillary number that scales the relative importance of surface tension.
 The term $\norm[\nabla_{\vec{x}} \phi_i]^2$ penalises a long cell wall, as $\nabla_{\vec{x}} \phi_i \neq 0$ only at the cell wall.
-Thus, the Cahn-Hilliard energy always tries to minimize the area of the cell interface. \\
+Thus, the Cahn-Hilliard energy always tries to minimise the area of the cell interface. \\
 $W(\phi_i) = \tfrac{1}{4} (\phi_i^2 - 1)^2$ is a double-well potential. 
 This energy ensures that each $\phi_i$ maintains a stable interface of $[-1,1]$.  \\ 
 The second energy term $F_{INT}$ models cell-cell interactions and could be defined as in~\cite{wenzel2021}
@@ -480,9 +480,9 @@ The qualitative differences observed highlight the importance of microscopic det
 	\centering
 	\includegraphics[width=0.7\textwidth]{intro/curved_phasefield.png}
 	\caption{A figure from the paper~\cite{Happel2023} showing a phase field variable $\phi$ on a curved domain, specifically a torus. 
-	In (a) and (b), the surface of the torus from (c) is shown as a parametrization on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
+	In (a) and (b), the surface of the torus from (c) is shown as a parametrisation on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
 	Red and blue lines represent periodic boundary conditions, which are enforced by gluing the corresponding edges in (b) and (c).
-	The color coding corresponds to the extrinsic curvature parameter $E_c$ (see Eq.~(3)): $E_c = 0$ (purple) results in a geodesic circle on both geometries; $E_c > 0$ (green) favours alignment with the direction of maximum absolute curvature; $E_c < 0$ (yellow) favours alignment with the direction of minimal absolute curvature. 
+	The colour coding corresponds to the extrinsic curvature parameter $E_c$ (see Eq.~(3)): $E_c = 0$ (purple) results in a geodesic circle on both geometries; $E_c > 0$ (green) favours alignment with the direction of maximum absolute curvature; $E_c < 0$ (yellow) favours alignment with the direction of minimal absolute curvature. 
 	Cell elongation is highlighted for visibility. 
 	On toroidal surfaces, cell shape depends on position due to varying curvature. 
 	(c) shows the trajectories, final positions, and shapes of cells over time. 
@@ -491,13 +491,13 @@ The qualitative differences observed highlight the importance of microscopic det
 	\label{fig:curved_phasefield}
 \end{figure}
 A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behaviour. 
-The visualization of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
+The visualisation of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
 Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self propulsion. 
 Unlike the soft sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
 This capability enables the simulation of complex collective behaviours but also increases computational demands compared to simpler point particle models. \\
 The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
 By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature dependent morphological changes on tori. 
-This work emphasizes the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
+This work emphasises the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
 
 
 
@@ -512,9 +512,9 @@ The cell dynamic in a vertex model is usually given by the equation
 \end{align}
 where $F_i^m$ is the total force acting on vertex $1 \leq i \leq N_V$ of cell $1 \leq m \leq N_C$. \\
 Like in the phase field model, $F_i^m$ is a sum of different forces that define the cell behaviour, such as the cell flexibility or the interaction with other cells. 
-The forces participating in $F_i^m$ or often found as negative gradients of energies that shall be minimized. 
+The forces participating in $F_i^m$ or often found as negative gradients of energies that shall be minimised. 
 This method called gradient flow is also used for phase field models. \\
-Due to their discrete nature, vertex models are computationally efficient compared to continuum models, while still providing rich insights into the interplay between cell mechanics and collective behaviour, making them invaluable for understanding fundamental principles governing cell organization and tissue dynamics across diverse biological contexts. \\
+Due to their discrete nature, vertex models are computationally efficient compared to continuum models, while still providing rich insights into the interplay between cell mechanics and collective behaviour, making them invaluable for understanding fundamental principles governing cell organisation and tissue dynamics across diverse biological contexts. \\
 This geometric representation allows for the incorporation of key cellular properties, such as surface tension, cortical tension, adhesion, and local shape constraints, into an energy functional. 
 Minimizing this energy through computational simulation enables the capture of emergent phenomena like tissue morphogenesis, cell migration, wound healing, and pattern formation. \\
 
@@ -532,7 +532,7 @@ Boromand, Merkel, and Manning~\cite{Boromand2018} investigated the jamming trans
 Of particular interest is their development of a non-confluent cell model meaning that gaps between the cells are allowed by the model. 
 This model is versatile and can be applied to simulate cells, foams, emulsions, and other soft particulate materials. \\
 It uniquely combines the ability to represent individual deformable particles with the established shape energy function of the vertex model. 
-This shape energy function incorporates terms that penalize deviations from a target area ($a$) and perimeter ($p$), along with repulsive interparticular forces to prevent overlap. \\
+This shape energy function incorporates terms that penalise deviations from a target area ($a$) and perimeter ($p$), along with repulsive interparticular forces to prevent overlap. \\
 The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}_{mi}$ connects vertex $\vec{v}_{m,i}$ to $\vec{v}_{m,i+1}$, i.e. vertex $i$ to vertex $i+1$ of cell $m$.
 The complete shape energy function, which governs the particle dynamics, integrates these various contributions:
 \begin{align*}
@@ -579,10 +579,10 @@ These four energies are conserving a specific cell shape. \\
 
 There are two different methods to model the repulsive interaction between two deformable polygons called rough surface (RS) and smooth surface (SS) method.
 Both methods are illustrated in Figure~\ref{fig:vertex}. \\ 
-In the Rough Surface (RS) method, the discrete nature of the polygonal cell representation is emphasized. 
-Each vertex of a cell is treated as the center of a rigid disk with a fixed diameter, set to $\delta = l_0$ (equilibrium bond length).
+In the Rough Surface (RS) method, the discrete nature of the polygonal cell representation is emphasised. 
+Each vertex of a cell is treated as the centre of a rigid disk with a fixed diameter, set to $\delta = l_0$ (equilibrium bond length).
 Repulsive interactions between cells are then modelled as linear spring forces that arise when these disks overlap. 
-This approach effectively simulates a rough surface interaction, characterized by discrete points of repulsion localized at the cell vertices, rather than a continuous interaction across the cell boundary.
+This approach effectively simulates a rough surface interaction, characterised by discrete points of repulsion localised at the cell vertices, rather than a continuous interaction across the cell boundary.
 \begin{align*}
 	E_{\text{RS}} &=  \sum\limits_{m=1}^{N_C} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
 \end{align*}

@@ -21,7 +21,7 @@ But first, let us introduce each of the mentioned forces. \\
 We define our energies as
 \[E_k(x) = \tfrac{1}{k} |x_{\text{desired}} - x_{\text{current}}|^k, \]
 where $k \in \N$ is a positive integer parameter specific to each energy term. 
-Using different values of $k$ allows us to model various types of energies and their corresponding forces, resulting in distinct dynamical behaviors that reflect different aspects of cell physics. \\
+Using different values of $k$ allows us to model various types of energies and their corresponding forces, resulting in distinct dynamical behaviours that reflect different aspects of cell physics. \\
 In order to compute the forces arising from these energy functions, we require the gradient $\nabla E$. 
 This leads us to compute derivatives of the form 
 \[ \frac{\dequ}{\dequ x} |x|^k. \]
@@ -390,7 +390,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 \begin{figure}
     \centering
         \includegraphics[width=0.7\textwidth]{forces/angle1/energies-show-intAngleForce.png} 
-    \caption{The interior angle force is able to minimize the interior angle energy over time.}
+    \caption{The interior angle force is able to minimise the interior angle energy over time.}
 	\label{fig:angleEnergyDiagram}    
 \end{figure}
 
@@ -783,7 +783,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\caption{
 			Here, we can see a DF cell setup with two cells having an overlap. 
 			The intersection points $\vec{w}_1$ and $\vec{w}_2$ are marked green. 
-			We can also see all inside vertices colored in black and the outside vertices colored in white.
+			We can also see all inside vertices coloured in black and the outside vertices coloured in white.
 			In this example, we have $\text{adj}(\vec{w}_1) = \{\vec{v}_1^{\:1}, \vec{v}_2^{\:1}, \vec{v}_2^{\:2}, \vec{v}_3^{\:2}\}$, $\text{in}(\vec{w}_1) = \{\vec{v}_1^{\:1}, \vec{v}_3^{\:2}\}$ and $\text{out}(\vec{w}_1) = \{\vec{v}_2^{\:1}, \vec{v}_2^{\:2}\}$ for the first intersection and $\text{adj}(\vec{w}_2) = \{\vec{v}_1^{\:1}, \vec{v}_6^{\:1}, \vec{v}_4^{\:2}, \vec{v}_5^{\:2}\}$, $\text{in}(\vec{w}_2) = \{\vec{v}_1^{\:1}, \vec{v}_4^{\:2}\}$ and $\text{out}(\vec{w}_2) = \{\vec{v}_6^{\:1}, \vec{v}_5^{\: 2}\}$ for the second intersection.
 			}
 		\label{fig:adjacent}
@@ -940,21 +940,21 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
+			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A_D  + \\[0.5em]
 				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
-													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A(D)\Biggr),
+													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A_D\Biggr),
 		\end{split}
 		\label{grad:overlap}
 	\end{align}
 	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively. \\
 	Note, that the Formulas \ref{equ:dwv_out} and \ref{equ:dwv_in} define $\frac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}$ and $\frac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}}$, respectively. \\
-	The difference between $\nabla_{\vec{v}_j^{\: i}}A(D)$ and $\nabla_{\vec{w}}A(D)$ is that $\nabla_{\vec{v}_j^{\: i}}A(D)$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A(D)$ uses the neighbors of the corresponding intersection point in $D$, which is not the same overlap vertex as $\vec{v}_j^{\: i}$.
+	The difference between $\nabla_{\vec{v}_j^{\: i}}A_D$ and $\nabla_{\vec{w}}A_D$ is that $\nabla_{\vec{v}_j^{\: i}}A_D$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A_D$ uses the neighbors of the corresponding intersection point in $D$, which is not the same overlap vertex as $\vec{v}_j^{\: i}$.
     $A_{D}$ is the area of the overlap $D$.\\
 	The indicator function $\mathbf{1}_{A}(\vec{v})$ equals one, if $\vec{v} \in A$ and is zero otherwise. \\
 	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is then given by  
 	\begin{align*}
 		F_{k}^{\hat{(O)}}(\vec{C}) 
-		= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \vec{v}_1^{\:N_C} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T.
+		= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \nabla_{\vec{v}_1^{\:N_C}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T.
 	\end{align*}
 	For addressing the overlap force that acts on cell $1 \leq i \leq N_C$, we define 
 	\begin{center}
@@ -991,23 +991,34 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 	
 	Proof of Proposition~\ref{force:deformingOverlap}. \\
-	Although we did not noted it like this before, we must be aware that $A_D$ is actually dependent on all overlap vertices, e.g. $A_D = A(D)$.
-	We will also use that notation in the coming computation. 
-	Since the area $A(D)$ is always positive, we can drop the absolute value. \\
+	Note that $A_D$ depends on all vertices of the overlap cell $D$ and also on the first vertices of the overlap building cells that are adjacent to the intersection points, as they influence the position of the intersection points.
+	Thus, we must differentiate between vertices $\vec{v}_j^{\: i}$ that are 
+	\begin{itemize}
+		\item not part of the overlap cell $D$ and not adjacent to any intersection point \\
+		$\Leftrightarrow \vec{v}_j^{\: i} \notin D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$, \\
+		\item not part of the overlap cell $D$, but adjacent to a intersection point \\
+		$\Leftrightarrow \vec{v}_j^{\: i} \notin D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$, \\
+		\item part of the overlap cell $D$ and not adjacent to any intersection point \\
+		$\Leftrightarrow \vec{v}_j^{\: i} \in D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$, \\
+		\item part of the overlap cell $D$ and adjacent to any intersection point \\
+		$\Leftrightarrow \vec{v}_j^{\: i} \in D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$. \\
+	\end{itemize}  
+	These four cases are all considered in the following. \\ 
+	Since the area $A_D$ is always positive, we can drop the absolute value. \\
 	We aim to compute 
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) 
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{C_i,C_m}} \tfrac{1}{k}A_{D}^k\right) \right) \\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{C_i,C_m}} \tfrac{1}{k}{A_{D}}^k\right) \right) \\
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} O_k^{i,m}(C_i, C_m) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \tfrac{1}{k}A(D)^k \\
-		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k}A(D)^k. 
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \tfrac{1}{k}{A_D}^k \\
+		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k}{A_D}^k. 
 	\end{align*}
 	Now, there are different cases. \\
 	\textbf{Case 1:} $\vec{v}_j^{\: i} \notin D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
 	In the first case, the considered vertex is neither a vertex from the overlap cell $D$, nor adjacent to any intersection point. \\
 	Hence, this vertex has zero impact on the overlap and its gradient is zero, i.e.
 	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k}A_{D}^k = 0.
+		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k}{A_{D}}^k = 0.
 	\end{align*}
 
 	\textbf{Case 2:} $\vec{v}_j^{\: i} \notin D$ and $\exists \vec{w} \in W(D): \; \vec{v}_j^{\: i} \in \text{adj}(\vec{w})$\\
@@ -1015,9 +1026,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	This means that $\vec{v}_j^{\: i}$ is an outside adjacent vertex of the intersection $\vec{w}$. 
 	We compute
 	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} A(D)^k 
-		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w}\nabla_{\vec{w}}A(D), \\
+		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} {A_D}^k 
+		&= {A_{D}}^{k-1} \nabla_{\vec{v}_j^{\: i}} A_D \\
+		&= {A_{D}}^{k-1} \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} \, \nabla_{\vec{w}}A_D, \\
 	\end{align*}
 	where, according to Equation~\eqref{equ:dwv_out}
 	\begin{align*}
@@ -1027,9 +1038,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\end{pmatrix}^T,
 	\end{align*}
 	because $\vec{v}_j^{\: i}$ is an outside vertex in this case and $\vec{v}_{\text{in}}^{\: i}$ is the vertex adjacent to $\vec{v}_j^{\: i}$ in cell $i$, such that these vertices build the edge causing the intersection. \\
-	The gradient $\nabla_{\vec{w}}A(D)$ can easily be computed via the Shoelace Formula~\ref{prop:Shoelace}, as in the area gradient from Formula~\ref{gradient:area}:
+	The gradient $\nabla_{\vec{w}}A_D$ can easily be computed via the Shoelace Formula~\ref{prop:Shoelace}, as in the area gradient from Formula~\ref{gradient:area}:
 	\begin{align*}
-		\nabla_{\vec{w}}A(D) = \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
+		\nabla_{\vec{w}}A_D = \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
 	\end{align*}
 	where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of the intersection $\vec{w}$ in the overlap $D$.\\
 
@@ -1037,9 +1048,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	Now, $\vec{v}_j^{\: i}$ is a pure inside overlap vertex, in the sence that it does not have an intersection point as a neighbor in the overlap. 
 	This dynamic is quite easy, since we just have to use the Shoelace Formular~\ref{prop:Shoelace} for once more: 
 	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} A(D)^k 
-		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
+		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} {A_D}^k 
+		&= {A_{D}}^{k-1} \nabla_{\vec{v}_j^{\: i}} A_D \\
+		&= {A_{D}}^{k-1} \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
 	\end{align*}
 	where $\vec{d}_{j-1}^{\: D} = (d_{j-1}^{x}, d_{j-1}^{y})^T$ and $\vec{d}_{j+1}^{\: D} = (d_{j+1}^{x}, d_{j+1}^{y})^T$ are the neighboring vertices of $\vec{v}_j^{\: i}$ in the overlap $D$.\\
 
@@ -1048,19 +1059,19 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	In the last case, the considered vertex is an overlap vertex and also adjacent to at least one intersection point. 
 	Thus, we have to add both dynamics from the last two cases and then use the partial derivative for inside vertices. 
 	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} A(D)^k 
-		&= A_{D}^{k-1} \nabla_{\vec{v}_j^{\: i}} A(D) \\
-		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D) %+ \\[0.5em]
-							+ \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_j^{\: i}} \vec{w} \: \nabla_{\vec{w}}A(D) \Biggr)\\[0.5em]
-		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  \\[0.5em]
-							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} \:\nabla_{\vec{w}}A(D) %+ \\
-		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \: \nabla_{\vec{w}}A(D)\right) \Biggr)\\[0.5em]
-		&= A_{D}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)   \\[0.5em]
+		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} {A_D}^k 
+		&= {A_{D}}^{k-1} \nabla_{\vec{v}_j^{\: i}} A_D \\
+		&= {A_{D}}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A_D %+ \\[0.5em]
+							+ \sum\limits_{\vec{w} \in W(D)} \mathbf{1}_{\text{adj}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_j^{\: i}} \vec{w} \: \nabla_{\vec{w}}A_D \Biggr)\\[0.5em]
+		&= {A_{D}}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A_D  \\[0.5em]
+							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} \:\nabla_{\vec{w}}A_D %+ \\
+		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \: \nabla_{\vec{w}}A_D\right) \Biggr)\\[0.5em]
+		&= {A_{D}}^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A_D   \\[0.5em]
 							 &\quad + \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
-		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A(D)\Biggr),
+		+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A_D\Biggr),
 	\end{align*}
 	where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively.\\
-	The difference between $\nabla_{\vec{v}_j^{\: i}}A(D)$ and $\nabla_{\vec{w}}A(D)$ is, that $\nabla_{\vec{v}_j^{\: i}}A(D)$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A(D)$ uses the neighbors of the according intersection point in $D$ which is not the same overlap vertex as $\vec{v}_j^{\: i}$. 
+	The difference between $\nabla_{\vec{v}_j^{\: i}}A_D$ and $\nabla_{\vec{w}}A_D$ is, that $\nabla_{\vec{v}_j^{\: i}}A_D$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A_D$ uses the neighbors of the according intersection point in $D$ which is not the same overlap vertex as $\vec{v}_j^{\: i}$. 
 	
 	\textbf{Overall:}\\
 	Actually, Case 4 already provides the final formulation, since in the other cases the additional terms vanish due to the indicator functions. \\		
@@ -1167,7 +1178,7 @@ As $h$ decreases, the cells become progressively softer.
 The influence of the bounce off force diminishes, while the shape deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
 With the introduction of the hardness parameter $h$, we have established a mechanism that enables a smooth transition from the HSCM dynamics introduced in~\cite{Bruna2012} to our new DF cell model. \\
 For $h = 1$, the dynamics are identical to the original HSCM model, as we will show in the following chapter. 
-By gradually decreasing $h$, we can continuously adapt the system behavior toward the pure deformable (DF) cell model. 
+By gradually decreasing $h$, we can continuously adapt the system behaviour toward the pure deformable (DF) cell model. 
 In this way, we can systematically investigate how the dynamics evolve between the two regimes. 
 In the limiting case $h = 0$, we recover the DF dynamics without the bounce overlap force term.
 
@@ -1186,7 +1197,7 @@ Our method was to isolate each of these forces in simulation and determine the t
 Specifically, we ran simulations with only one force active at a time and gradually increased its scaling factor until numerical instabilities emerged. 
 We then selected the maximum stable scaling as the operative value for that force. \\
 These tests were conducted using a fixed time step of $10^{-5}$, with cell configurations composed of six vertices. 
-To rigorously challenge the model, we initialized the cells in deliberately distorted and uncomfortable shapes, which are most prone to triggering instabilities. 
+To rigorously challenge the model, we initialised the cells in deliberately distorted and uncomfortable shapes, which are most prone to triggering instabilities. 
 The configurations used in these tests are the same as those shown in the figures throughout this chapter, where the isolated effects of each force were illustrated following their respective introductions. 
 This allowed us to verify that the chosen scalings are robust even under unfavorable conditions. \\
 For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce off dynamics used in~\cite{Bruna2012}. \\
@@ -1233,8 +1244,9 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	for each cell $1 \leq i \leq N_C$. \\ 
 	Each scaling parameter $\alpha \geq 0$. 
 	Each $F$ represents one of our forces that got defined in this chapter. 
-	For the shape preserving forces, we choose $k=2$ as then the difference between current state and desired state influences the intensity of the force which is nice.
-	But for the deforming overlap force, we choose $k=1$ we want it to have a strong impact whenever a small overlap arises. 
+	For the shape preserving forces, we choose $k=2$ as then the difference between current state and desired state influences the intensity of the force.
+	This dynamic seems best, as small deviations from the desired state should only have a small impact, while larger deviations should be corrected more strongly. 
+	But for the deforming overlap force, we choose $k=1$ as we want it to have a strong impact whenever a small overlap arises. 
 	This configuration seems to be the best to model the physics we would like to achieve. 
 	With that we can write down the cell wise formulated DF SDE:
 	\begin{align}
@@ -1333,6 +1345,6 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
         \includegraphics[width=0.7\textwidth]{forces/allforces_soft/energies-show-allForces-hard0.png} 
     \caption{The energy diagram shows that the overlap energy drops initially but then increases again as the cells deform to restore their shapes.
 			 This deformation again induces overlap, leading to a repeating cycle.
-			 But overall, the total energy converges to a low level, indicating that the system stabilizes over time.} 
+			 But overall, the total energy converges to a low level, indicating that the system stabilises over time.} 
 	\label{fig:allForces-softEnergyDiagram}    
 \end{figure}
