@@ -1,7 +1,12 @@
 \section*{Abstract}
 
 Building upon the foundations laid in the Bachelor's thesis~\cite{Vogel2023}, significant improvements were made, including bug fixes, code parallelisation, and reformulation of forces for stable large scale simulations (detailed in Sections~\ref{model} and~\ref{dynamics}). \\
-Chapter~\ref{sanitycheck} presents a rigorous validation by recreating the diffusion dynamics of the point particle and hard sphere models from~\cite{Bruna2012} through extensive Monte Carlo simulations with varying hardness ($h \in \{0, 0.5, 1\}$), representing soft, intermediate, and hard cell behaviours. \\
-Subsequently, Chapter~\ref{density} analyses the macroscopic mean field limit of a DF model. 
+Chapter~\ref{sanitycheck} presents a rigorous validation by recreating the diffusion dynamics of the point particle and hard sphere models from~\cite{Bruna2012} through extensive Monte Carlo simulations with varying hardness ($h \in \{0, 0.5, 1\}$), representing soft, intermediate, and hard cell behaviours. 
+The chapter further investigates shape deformation and highlights the dependence of cell diffusion and deformation on hardness and initial packing. \\
+Subsequently, Chapter~\ref{density} derives the macroscopic mean field description of the DF model. 
+Starting from the vertex wise stochastic dynamics, partial differential equations governing the evolution of the mean field density are obtained, including explicit forms for shape preserving energies. 
+A low-dimensional example illustrates the correspondence between first marginals of the empirical measure and the mean field limit, providing a bridge between microscopic and macroscopic descriptions. \\
 By connecting to the frameworks of~\cite{Bruna2012, Bruna2017, Boromand2018}, this work provides a unified perspective on cell dynamics spanning rigid to deformable regimes. 
 Finally, the thesis concludes with a summary of findings and an outlook on potential future extensions and applications of the DF model.
+
+
