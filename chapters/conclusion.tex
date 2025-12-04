@@ -1,13 +1,6 @@
 \section{Conclusion}
 In this work, we develop a vertex based discrete form (DF) model that captures the behaviour of deformable cells with realistic mechanical interactions, including shape preservation, cell-cell overlap resolution, and stochastic motion. 
-
-% % DF cell model	\ref{model}				
-% - In Definition~\ref{def:DF-Sim} we defined the DF cell model and the vertex wise dynamic as
-% \begin{center}
-%     $ \dequ \vec{v}^{\:i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2 D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V}$. 
-% \end{center}
-% with $\F^i_j$ being the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system state.   
-The first chapter provided a brief introduction to the DF cell model. 
+The first chapter provided a brief introduction to the DF cell model and its dynamics. 
 We began by defining what is meant by a DF cell and how such a cell is represented through its ordered sequence of vertices. 
 Based on this representation, we then stated a first form of the vertex-wise dynamics in Definition~\ref{def:DF-Sim}, given by the stochastic differential equation
 \[
@@ -15,83 +8,7 @@ Based on this representation, we then stated a first form of the vertex-wise dyn
 \]
 which specifies how each vertex evolves under the total deterministic force $\F^i_j(\vec{C}(t))$ and stochastic fluctuations. 
 As such, the chapter mainly served to set up the basic objects and notation that are used throughout the remainder of the work. \\
-
-% DF model dynamics	\ref{dynamics}			
-% - redefined dynamics with adopted cell wise energies for shape preservation 
-% - we computed the vertex gradients for the area energy, 
-% \begin{align*}
-%     \nabla_{\vec{v}_j} A_k(C) &= \dfrac{1}{2} \sgn(A_{C} - A_d) |A_{C} - A_d|^{k-1} \begin{pmatrix} v_{j+1}^{y} - v_{j-1}^{y} \\[0.5em]  v_{j-1}^{x} - v_{j+1}^{x} \end{pmatrix}, \\
-% \end{align*}
-% edge energy,
-% \begin{align*}
-% \begin{split}
-%     \nabla_{\vec{v}_j} E_k(C) &= \sgn(E^{j-1}_{C}- E_d^{j-1}) \dfrac{|E^{j-1}_{C}- E_d^{j-1}|^{k-1}}{E^{j-1}_{C}}  
-%     \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} \\[0.5em]
-%     &+ \sgn(E^j_{C} - E_d^{j}) \dfrac{|E^j_{C} - E_d^{j}|^{k-1}}{E^j_{C}}  
-%     \begin{pmatrix} v_{j}^{x} - v_{j+1}^{x} \\[0.5em]  v_{j}^{y} - v_{j+1}^{y} \end{pmatrix},
-% \end{split} \\
-% \end{align*}
-% interior angle energy 
-% \begin{align*}
-%     \begin{split}
-% 			\nabla_{\vec{v}_j} I_k(C) &= \sgn(I^{j-1}_{C} - I^{j-1}_d) |I^{j-1}_{C} - I^{j-1}_d|^{k-1} \left( 
-% 					- \frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j-1}]^{2}} \begin{pmatrix}
-% 						v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-% 						v_{j}^{x} - v_{j-1}^{x}
-% 					\end{pmatrix} 
-% 				\right) \\[0.5em] 
-% 			&+ \sgn(I^{j}_{C} - I^{j}_d)|I^{j}_{C} - I^{j}_d|^{k-1} \Biggl( 
-% 				\frac{1}{\norm[\vec{v}_{j-1} - \vec{v}_j]^{2}} \begin{pmatrix}
-% 				v_{j-1}^{y} - v_{j}^{y} \\[0.5em]
-% 				v_{j}^{x} - v_{j-1}^{x}
-% 				\end{pmatrix} \\
-% 			& \quad - \frac{1}{\norm[\vec{v}_{j+1} - \vec{v}_j]^2} \begin{pmatrix}
-% 				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
-% 				v_{j}^{x} - v_{j+1}^{x}
-% 				\end{pmatrix} 
-% 				\Biggr) \\[0.5em] 
-% 			&+ \sgn(I^{j+1}_{C} - I^{j+1}_d) |I^{j+1}_{C} - I^{j+1}_d|^{k-1} \left( 
-% 				\frac{1}{\norm[\vec{v}_{j} - \vec{v}_{j+1}]^2} \begin{pmatrix}
-% 				v_{j+1}^{y} - v_{j}^{y} \\[0.5em]
-% 				v_{j}^{x} - v_{j+1}^{x}
-% 				\end{pmatrix} 
-% 				\right), %\\[0.5em] 
-% 		\end{split}
-% \end{align*}
-% completing the shape preserving energies. 
-
-% - improvement of overlap force such that neighbouring vertices a part of the dynamic: deforming overlap force 
-% \begin{align*}
-% \begin{split}
-%     \nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  + \\[0.5em]
-%                                             &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
-%                                             + \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A(D)\Biggr),
-% \end{split}
-% \end{align*}
-% - bounce overlap force 
-% \[
-% 	\dequ \bar{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}.
-% \]
-% \[
-% 	F^{(\bar{O})}_{i,l}(C_i, C_l) =  (\dequ \bar{o}_{i,l}, \ldots, \dequ \bar{o}_{i,l})^T \in \mathbb{R}^{2N_V},
-% \]
-% \[
-% 	F^{(\bar{O})}_i(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l).
-% \]
-% - introduction of hardness $h \in [0,1]$
-% - Derivation of full df dynamics per sde 
-% - parameter study for good force scalings, written down in Table~\ref{table:forcescalings}
-% the overall DF SDE was then given as 
-% \begin{align*}
-%     \dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y},
-% \end{align*} 
-% with deterministic part 
-% \begin{align*}
-%     & \F^i: (\R^{2N_V})^{N_C} \longrightarrow \R^{2N_V} , \\[0.5em]
-%     \F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \\
-%     & (1-h)\alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + h \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C}),
-% \end{align*}
-In the Chapter~\ref{dynamics}, we started with refining the DF cell dynamics by introducing shape preserving energies at the cell level. 
+Afterwards, we started with refining the DF cell dynamics by introducing shape preserving energies at the cell level. 
 Building on the initial vertex based formulation, we redefined the dynamics through suitably chosen area, edge, and interior angle energies
 \begin{align*}
     A_k(C) &= \tfrac{1}{k} |A_{C} - A_d|^k, \\
@@ -218,15 +135,7 @@ where the deterministic part takes the form
     + h \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C}).
 \end{align*}
 
-
-% % DF model validation and simulation analysis \ref{sanitycheck}				
-% - we managed to validate of df model with comparison to established models \cite{Bruna2012}, shown in Figure~\ref{fig:compareHSCM} that compares the dynamic of our hard DF model to their hard sphere particle model. 
-% - comparison of df dynamics with different cell hardnesses \ref{fig:dfHeatmaps} and \ref{fig:crosssections}
-% -> we found a higher diffusion rate as hardness increases 
-
-% - study of shape deformation 
-% we found out that more shape deformation occurs when the cell hardness decreases (by construction) and that most shape deformation occurs at the beginning of each simulation as the cells are initially crowded in the centre of the domain.
-In the third chapter, `DF model validation and simulation analysis', we turned to the validation and analysis of the DF model. 
+In Chapter~\ref{sanitycheck}, `DF model validation and simulation analysis', we turned to the validation and analysis of the DF model. 
 First, we confirmed the qualitative correctness of our approach by comparing the hard DF dynamics with an established hard sphere model from the literature \cite{Bruna2012}. 
 As illustrated in Figure~\ref{fig:compareHSCM}, the trajectories produced by our hard DF model closely resemble those obtained in their setting, thereby supporting the consistency of our formulation. \\
 We then examined the behaviour of the DF dynamics under varying cell hardnesses, as shown in Figures~\ref{fig:dfHeatmaps} and~\ref{fig:crosssections}. 
@@ -234,20 +143,7 @@ These comparisons revealed a clear trend: the diffusion rate increases as the ha
 Finally, we investigated shape deformation across simulations. 
 Here, we observed that deformation becomes more pronounced as the cell hardness decreases, which is consistent with the construction of the model. 
 Moreover, most of the deformation occurs at the beginning of each simulation, when the cells start out densely packed near the centre of the domain before gradually spreading out. 
-This behaviour confirms the intended interplay between overlap forces, shape energies, and the hardness parameter. 
-% % Mean field limit \ref{density}
-% - we derived a pde for temporal evolution of mean field density (mean field PDE)
-% - for df cells, its given as 
-% \begin{align*}
-%     \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \nabla E(C)) = 0.
-% \end{align*}
-
-% - low dimensional needle example showing the correspondence from first marginal (Figure~\ref{fig:needle400}) to mean field density (Figure~\ref{fig:needle-limit})
-% - concrete mean field pde for shape preserving energies 
-% \begin{align*}
-%     \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)) = 0.
-% \end{align*}
-% where we found cell wise gradients for the area energy in Equations~\eqref{eq:cGradArea}, edge energy in \eqref{eq:cGradEdge} and  interior angle energy in \eqref{eq:cGradAngle}.
+This behaviour confirms the intended interplay between overlap forces, shape energies, and the hardness parameter. \\
 In the final chapter, we derived the mean field description corresponding to the DF dynamics. 
 Starting from the underlying stochastic model, we obtained a partial differential equation governing the temporal evolution of the mean field density. 
 For general DF cells, this mean field PDE takes the form  
