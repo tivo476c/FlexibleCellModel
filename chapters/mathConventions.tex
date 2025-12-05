@@ -12,33 +12,38 @@
         $\dfrac{\dequ f}{\dequ x}$ & Derivative of a function $f$ with respect to its single argument $x$ \\[0.5em] 
         $\dfrac{\partial f}{\partial x}$ & Partial derivative of a multivariate function $f$ with respect to $x$ \\[0.5em] 
         $\nabla_{\vec{v}} f$  & Gradient $\nabla_{\vec{v}} f = (\frac{\partial f}{\partial v_1}, \ldots, \frac{\partial f}{\partial v_n})^T$, where $f$ is a scalar function that (partially) depends on $\vec{v} = (v_1, \ldots, v_n)^T$  \\[0.5em]
-        $\nabla_{\vec{v}} \cdot F$  & Divergence $\nabla_{\vec{v}} \cdot F = \frac{\partial F_1}{\partial v_1} + \ldots + \frac{\partial F_n}{\partial v_n}$, where $F = (F_1, \ldots, F_m)^{T}$ is a vector valued function \\[0.5em]
-        $\Delta f$ & Laplacian of a scalar function $f$, i.e. $\Delta f = \nabla \cdot (\nabla f)$ \\ 
+        $\nabla_{\vec{v}} \cdot F$  & \parbox[t]{10cm}{Divergence $\nabla_{\vec{v}} \cdot F = \frac{\partial F_1}{\partial v_1} + \ldots + \frac{\partial F_n}{\partial v_n}$, where \\
+                                       $F = (F_1, \ldots, F_m)^{T}$ is a vector valued function} \\[0.5em]
+        $\Delta f$ & Laplacian of a scalar function $f$, i.e. $\Delta f = \nabla \cdot (\nabla f)$ \\[0.5em] 
         $D_{\vec{v}} F$ & Jacobian matrix $D_{\vec{v}} F = \begin{pmatrix}
             \frac{\partial F_1}{\partial v_1} \cdots \frac{\partial F_1}{\partial v_n} \\
             \vdots \\
             \frac{\partial F_m}{\partial v_1} \cdots \frac{\partial F_m}{\partial v_n} \\
-        \end{pmatrix}$, \\
-        $2e-3$ & Scientific notation for $2 \times 10^{-3} = 0.002$ \\
-        $\dequ \vec{B}_i(t)$ & Two-dimensional Brownian motion applied to cell $i$ at time $t$ in SDEs \\
-        $I_d$ & Identity matrix in $\R^{d \times d}$  \\
-        $\R_+$ & Positive real numbers including $0$, i.e. $[0, \infty)$  \\
-        $\R_-$ & Negative real numbers excluding $0$, i.e. $(-\infty, 0)$  \\
-        $\N$ & Natural numbers excluding $0$  \\
-        $\N_0$ & Natural numbers including $0$  \\
-        $N_C \in \N$ & Number of cells in a model \\
-        $N_V \in \N$ & Number of vertices of each cell in a model \\
-        $\partial \Omega$ & Boundary of the domain $\Omega$ \\
-        $\Omega^{\circ}$ & Interior of the domain $\Omega$ \\
+        \end{pmatrix}$, \\[0.5em]
+        $2e-3$ & Scientific notation for $2 \times 10^{-3} = 0.002$ \\[0.5em]
+        $\dequ \vec{B}_i(t)$ & Two-dimensional Brownian motion applied to cell $i$ at time $t$ in SDEs \\[0.5em]
+        $I_d$ & Identity matrix in $\R^{d \times d}$  \\[0.5em]
+        $\R_+$ & Positive real numbers including $0$, i.e. $[0, \infty)$  \\[0.5em]
+        $\R_-$ & Negative real numbers excluding $0$, i.e. $(-\infty, 0)$  \\[0.5em]
+        $\N$ & Natural numbers excluding $0$  \\[0.5em]
+        $\N_0$ & Natural numbers including $0$  \\[0.5em]
+        $N_C \in \N$ & Number of cells in a model \\[0.5em]
+        $N_V \in \N$ & Number of vertices of each cell in a model \\[0.5em]
+        $C^i = (\vec{v}^{\: i}_{1}, \ldots, \vec{v}^{\: i}_{N_V})$ & DF cell $1 \leq i \leq N_C$ \\[0.5em]
+        $\partial \Omega$ & Boundary of the domain $\Omega$ \\[0.5em]
+        $\Omega^{\circ}$ & Interior of the domain $\Omega$ \\[0.5em]
+        $L^1_{loc}(\R)$ & \parbox[t]{10cm}{$L^1_{loc}(\R) = \{\, f : \R \to \R\text{ measurable} \mid \\ 
+                                           \hspace*{2.1cm} f \in L^1(K) \: \forall \text{ compact } K \subset \R \,\}$}\\[0.5em] 
+        $C_C^{\infty}(\R)$ & $C_C^{\infty}(\R) =\{\, f \in C^{\infty}(\R) \mid \operatorname{supp}(f) \text{ is compact} \,\}$\\[0.5em] 
+        $[ \cdot ]_{[a, b)}$ & Modulo operator that maps the given value into the subscript interval \\[0.5em]
 %     \end{tabular}
 % \end{table}
 % \begin{table}
 % \centering
 %     \begin{tabular}{c p{12.3cm}} % l = left aligned, c = centered, r = right aligned
-        $C^i = (\vec{v}^{\: i}_{1}, \ldots, \vec{v}^{\: i}_{N_V})$ & DF cell $1 \leq i \leq N_C$ \\[0.5em]
         $\vec{v}^{{: i}}_j = (v^{i, x}_{j}, v^{i, y}_{j})^T \in \R^2$ & Vertex $1 \leq j \leq N_V$ of DF cell $1 \leq i \leq N_C$ \\[0.5em]
-        $P(t; \vec{x}_1, \ldots, \vec{x}_{N_C})$ & Joint probability density function  \\
-        $\rho(t; \vec{x})$, $\rho^{N_C}(t; \vec{x})$ & First marginal function \\
+        $P(t; \vec{x}_1, \ldots, \vec{x}_{N_C})$ & Joint probability density function  \\[0.5em]
+        $\rho(t; \vec{x})$, $\rho^{N_C}(t; \vec{x})$ & First marginal function \\[0.5em]
         $\bar{\rho}(t; \vec{x})$ & Density in the mean field limit \\
         \bottomrule 
     \end{tabular}

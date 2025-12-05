@@ -6,14 +6,15 @@ In the following section, we establish the specific model and dynamical framewor
 We focus on a non-confluent cell setting, as in~\cite{Boromand2018}, where free space in between cells is permitted.
 Moreover, we require cells to be deformable, following ideas from~\cite{Boromand2018, Fletcher14, wenzel2021, Happel2023}. \\
 Therefore, we choose a vertex based cell approach, like in~\cite{Fletcher14, Boromand2018}, in which each cell is represented by a polygon defined by its vertices.
-The DF cell model, originally introduced in my Bachelor's thesis~\cite{Vogel2023}, satisfies these properties. \\
+The DF cell model, originally introduced in my Bachelor's thesis~\cite{Vogel2023}, satisfies these properties. 
 This chapter revisits this model and its dynamical formulation. 
 Over the course of this thesis, the dynamics and implementation of the original DF model were refined and extended in several ways.
 
 \subsection{DF cell model}\label{model}
 % give definition for DF model, before that explain all needed math. terms 
 
-We are considering cells in the two-dimensional space $\R^2$. Here, cells are considered to be polygons. 
+We are considering cells in the two-dimensional space $\R^2$. 
+Here, cells are considered to be polygons. 
 
 \begin{definition} \textbf{Polygon} \\
 	A polygon is a closed geometric figure in $\R^2$, constructed by joining a finite number of straight line segments end to end. 
@@ -70,7 +71,7 @@ The next step is to describe the setup of a DF simulation.
 	\end{center} 
 \end{definition}
 
-We characterise the interaction force $\F$ as the sum of gradient flows of energies. \\
+We characterise the interaction force $\F$ as the sum of gradient flows of energies. 
 A gradient flow describes how a system changes over time in a way that always reduces a given energy $E(\vec{C})$.
 To obtain the gradient flow of this energy on vertex $\vec{v}$, we must add the term $-\nabla_{\vec{v}} E(\vec{C})$ to $\F$.
 Since all our energy terms are positive, the lowest possible value is zero.  
@@ -78,7 +79,7 @@ So, the gradient flow moves the system step by step toward this minimum, always 
 This is how we guide the motion of our cells: by letting them follow the gradient flow of each energy so that their shapes and vertex positions gradually adjust to reduce the total energy. \\
 In~\cite{Vogel2023}, the area, edge, interior angle, and overlap energies were introduced.
 The first three energies are responsible for maintaining the shape of each cell. 
-All of these three according forces act on each cell in a vacuum based only on its own current cell shape. \\
+All of these forces act on each cell in a vacuum based only on its own current cell shape. \\
 Unlike in~\cite{Vogel2023}, where each cell was assigned an individual desired state, we now assume a common desired state for all cells. This simplification allows for a more controlled analysis of the system's deformability and its influence on the collective dynamics.
 We assume that all cells are initially given in their desired states in order to prevent system instabilities right from the beginning. \\
 Additionally, we introduce slight modifications to the energy formulation: rather than being defined locally on vertices or edges, the energies are now defined over entire cells. 
@@ -89,15 +90,29 @@ Once the overlap is resolved, the first three forces act to restore the cell's o
 The central question we aim to investigate in this thesis is how the deformability of individual cells influences the overall diffusivity of the cell system.
 But first, let us introduce each of the mentioned forces. \\
 We define our energies as
-\[E_k(x) = \tfrac{1}{k} |x_{\text{desired}} - x_{\text{current}}|^k, \]
+\[
+	E_k(x) = \tfrac{1}{k} |x_{\text{current}} - x_{\text{desired}}|^k, 
+\]
 where $k \in \N$ is a positive integer parameter specific to each energy term. 
-Using different values of $k$ allows us to model various types of energies and their corresponding forces, resulting in distinct dynamical behaviours that reflect different aspects of cell physics. \\
+When considering the gradient flow of this energy, we obtain a force of the form 
+\[
+	- \nabla E_k(x) = - |x_{\text{current}} - x_{\text{desired}}|^{k-1} \nabla x_{\text{current}}.
+\]
+Different choices of $k$ give rise to qualitatively distinct force laws in the corresponding gradient flow. 
+For $k=1$, the force is independent of the magnitude of the deviation $|x_{\text{current}} - x_{\text{desired}}|$, as that term has a power of zero after applying the gradient.
+This makes it suitable for modelling strongly corrective forces that react immediately to small deviations, such as our overlap degeneration force. 
+In contrast, for $k=2$ the force scales linearly with the deviation, yielding a weaker response near the desired state and a stronger response for larger discrepancies. 
+This behaviour is well suited for modelling shape preserving energies. \\
 In order to compute the forces arising from these energy functions, we require the gradient $\nabla E$. 
 This leads us to compute derivatives of the form 
-\[ \frac{\dequ}{\dequ x} |x|^k. \]
+\[ 
+	\frac{\dequ}{\dequ x} |x|^k. 
+\]
 While $|x|^k$ is not classically differentiable at $x=0$, it is weakly differentiable for all $k \in \N$.
 There exists a locally integrable function 
-\[ x \mapsto k \sgn(x)|x|^{k-1} \in L^1_{loc}(\R),\] 
+\[ 
+	x \mapsto k \sgn(x)|x|^{k-1} \in L^1_{loc}(\R),
+\] 
 such that for all $\phi \in C_C^{\infty}(\R)$:
 \begin{align*}
 	\int_{\R} |x|^k \phi'(x) \: \dequ x  
@@ -122,10 +137,10 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\end{center} 
 	where $\vec{v}_{N + 1} = \vec{v}_1$. \\
 	Proof. 	\\
-	An illustration supporting the proof is provided in Figure\ref{fig:shoelace}, which is where the idea of the proof comes from. 
+	An illustration supporting the proof is provided in Figure~\ref{fig:shoelace}, which is where the idea of the proof comes from. 
 	Without loss of generality, we may assume that all coordinates are positive.
 	If this is not initially the case, the entire polygon can be translated into the positive quadrant without affecting its area. \\
-	For each $1 \leq j \leq N$ the edge $\overline{ \vec{v}_j \: \vec{v}_{j+1}}$ is associated with the area $T_j$ of the trapeze that arises when connecting the line segment vertically with the $x$-axis. 
+	For each $1 \leq j \leq N$ the edge between the vertices $\vec{v}_j$ and $\vec{v}_{j+1}$ is associated with the area $T_j$ of the trapeze that arises when connecting the line segment vertically with the $x$-axis. 
 	The signed trapeze area of $T_j$ can be computed with 
 	\begin{center}
 		$T_j = \frac{1}{2} (v_j^{y} + v_{j+1}^{y})(v_j^{x} - v_{j+1}^{x})$.
@@ -158,6 +173,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\end{center}
 \end{figure}
 	
+
 
 With the Shoelace formula we are able to easily compute all cell areas at all times in the simulation. 
 This enables us to implement the gradient flow over the area energy. 
@@ -244,7 +260,7 @@ Figure~\ref{fig:areaForce} illustrates how the area force acts on a cell to eith
 \subsection{Edge force}
 The next force we would like to model is the edge force. 
 It acts on the cells' edges and aims to maintain their lengths.
-We define the edge $j$ as $\overline{\vec{v}_j \: \vec{v}_{j+1}}$ and use the operator 
+We define the edge $j$ to be between $\vec{v}_j$ and $\vec{v}_{j+1}$ and use the operator 
 \begin{center}
 	$
 	E^j_C = \norm[\vec{v}_j - \vec{v}_{j+1}], 
@@ -384,11 +400,11 @@ Although we could apply the law of cosines and use $\arccos$ to compute the angl
 A better alternative is to use the $\atanxy$ function, as it remains reliably stable at all angles. \\
 
 \begin{definition} \textbf{arctan2} \\
-	The function 
+	For the vector $\vec{v} = (v^x, v^y)^T$, the function 
 	\[
 		\atanxy:\R^2/\{0\} \rightarrow (-\pi, \pi],
 	\]  
-	is defined by:
+	is defined by
 	\begin{center}
 		$ \atanxy(\vec{v}) = 
 		\begin{cases}
@@ -410,7 +426,7 @@ With this, we can compute the angles
 \end{center}
 between the positive $x$-axis and the vectors from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
 We get the searched angle at $\vec{v}_j$ by subtracting $\theta_1 - \theta_2$.
-To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$, which repeatedly adds or subtracts $2\pi$ from the angle until it falls within the desired range.
+To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$.
 Thus, our interior angle operator is: 
 \begin{center}
 	$
@@ -468,7 +484,6 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 
 
 \begin{proposition} \textbf{Interior angle force} \label{prop:intAngleForce} \\
-
 	% The interior angle force $F^{(I)}_j(C): (\R^2)^{N_V} \rightarrow \R^2$ that gets applied on vertex $\vec{v}_j$ of cell $C$ is given by 
 	% \begin{align}
 	% 	\begin{split}
@@ -497,7 +512,6 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	% 			\right) %\\[0.5em] 
 	% 	\end{split}
 	% \end{align}
-
 	The interior angle force $F_{k}^{(I)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
 	\begin{align*}
 		F_{k}^{(I)}(C) 
@@ -573,7 +587,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	\end{pmatrix}.$$
 	With these helper functions, we can write 
 	$$ \arctan\!\left(\frac{v_{j-1}^{y} - v_{j}^{y}}{v_{j-1}^{x} - v_{j}^{x}}\right) = (f \circ g) (\vec{v}_{j-1}, \vec{v}_{j}), $$
-	and use the two-dimensional chain rule to stepwise compute the searched gradient. 
+	and use the two-dimensional chain rule to compute stepwise the searched gradient. 
 	We have 
 	\begin{center}
 		$\dfrac{\partial f(\vec{v})}{\partial v^{x}} = \dfrac{1}{1 + \left(\tfrac{v^{y}}{v^{x}}\right)^2} \left(- \dfrac{v^{y}}{(v^{x})^2}\right) = - \dfrac{v^{y}}{(v^{x})^2 + (v^{y})^2}$, \\[0.5em]
@@ -648,7 +662,7 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
 	We introduce \[g_{-}(\vec{v}_{j-1}, \vec{v}_{j}) = \begin{pmatrix}
 		v_{j}^{x} - v_{j-1}^{x} \\[0.5em] 
 		v_{j}^{y} - v_{j-1}^{y}
-	\end{pmatrix} = - g(\vec{v}_{j-1}, \vec{v}_{j}).\] 
+	\end{pmatrix} = - g(\vec{v}_{j-1}, \vec{v}_{j}),\] 
 	and
 	\[g_{+}(\vec{v}_{j}, \vec{v}_{j+1}) = \begin{pmatrix}
 		v_{j}^{x} - v_{j+1}^{x} \\[0.5em] 
@@ -694,7 +708,7 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 
 \subsection{Overlap force}
 % explain the algorithm
-Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. \\
+Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. 
 
 \subsubsection*{Deforming overlap force}
 The first overlap force, that we want to introduce, is an adapted form of the overlap force introduced in~\cite{Vogel2023}. 
@@ -735,9 +749,9 @@ Having found all intersections, we can apply the following algorithm, that can b
 			\For{counter = 1 : length(I)} 
 			
 				\If{counter is even}
-					\State newPath, newIntersection = findPath(currentIntersection, $C$, $I$) 
+					\State newPath, newIntersection = \textsc{findPath}(currentIntersection, $C$, $I$) 
 				\Else 
-					\State newPath, newIntersection = findPath(currentIntersection, $\zeta$, $I$) 
+					\State newPath, newIntersection = \textsc{findPath}(currentIntersection, $\zeta$, $I$) 
 				\EndIf
 				
 				\State append!(newOverlap, newPath)
@@ -760,23 +774,22 @@ Having found all intersections, we can apply the following algorithm, that can b
 \end{algorithm}
 The algorithm begins by selecting the first intersection point $I[1]$ from the list $I$ as the initial vertex of the overlap cell `newOverlap'. 
 This point is also added to the list `usedIntersections' \\
-Next, the function `getOverlap' calls another function, `findPath', which determines the path along the discrete cell $\zeta$ from the current intersection point to the next intersection in $I$ encountered while traversing the edges of $\zeta$. 
+Next, the function `getOverlap' calls another function, `\textsc{findPath}', which determines the path along the discrete cell $\zeta$ from the current intersection point to the next intersection in $I$ encountered while traversing the edges of $\zeta$. 
 This next intersection is also returned by the function. 
 The identified path is a list of vertices in $\zeta$ that lie strictly between the two intersections. 
 It may be empty if the next intersection occurs on the same edge as the current one. 
 Both the path and the newly found intersection are appended to `newOverlap', and the intersection is also added to the list usedIntersections.\\
-Since each intersection implies changing the cell from which the overlapping cell uses the edges, `findPath' is now applied to the other cell. 
+Since each intersection implies changing the cell from which the overlapping cell uses the edges, `\textsc{findPath}' is now applied to the other cell. 
 Again, it will deliver the next intersection as well as a list of the in between laying vertices. 
 The vertex list always gets appended to `newOverlap'. \\
 If the newly found intersection is equal to the initial intersection $I[1]$, then the construction of the discrete overlap cell `newOverlap' is complete. 
-At this point, both `newOverlap' and `usedIntersections' can be returned by the function `constructOverlap'. \\
-Otherwise, the newly found intersection is appended to both `newOverlap' and `usedIntersections', and the process continues by calling `findPath' on the other discrete cell.   
+At this point, both `newOverlap' and `usedIntersections' can be returned by the function `\textsc{construct-Overlap}'. \\
+Otherwise, the newly found intersection is appended to both `newOverlap' and `usedIntersections', and the process continues by calling `\textsc{findPath}' on the other discrete cell.   
 This step is repeated until the starting intersection is reached, completing the overlap cell construction. \\
 Once an overlap between $C$ and $\zeta$ has been successfully extracted, all intersections used in its construction can be removed from the list $I$, since each intersection point belongs to exactly one overlap. 
-As long as $I$ is not empty, the function `constructOverlap' can be called again with the updated list to extract the next overlap. 
+As long as $I$ is not empty, the function `\textsc{constructOverlap}' can be called again with the updated list to extract the next overlap. 
 When $I$ is empty, we can be certain that all intersections between $C$ and $\zeta$ have been processed, and thus all overlaps between the two cells have been identified. \\
-
-Each time `findPath' is called, it is not immediately clear in which direction the function should traverse the vertices of the given cell. 
+Each time `\textsc{findPath}' is called, it is not immediately clear in which direction the function should traverse the vertices of the given cell. 
 However, the correct direction can be determined using the following approach. \\
 Starting from the current intersection passed into the function, move a small distance in one direction along the edge of the given cell where the intersection is located. Next, check whether this new point lies within the boundaries of the other cell as well. 
 If the point is found in both cells, the chosen direction is correct. 
@@ -784,10 +797,10 @@ If not, then the opposite direction must be used. \\
 A simple method to determine whether a point lies inside a polygon is to draw a ray from the point to the outside of the polygon. 
 The number of intersections between the ray and the polygon's edges determines the point's position. 
 If the number of intersections is odd, the point is inside the polygon.
-If it is even, the point is outside the polygon. \\ 
-\smallskip  \\
+If it is even, the point is outside the polygon. \\
 % until here the rewriting!! 
 % then continue with the energy and the force 
+
 After introducing the method for detecting overlaps, we can now define the overlap force, which acts on the cell vertices involved in an overlap. 
 This force is first computed based on the geometry of the overlap and then distributed to the corresponding vertices of the original cells. \\
 
@@ -949,9 +962,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		&= \dfrac{g - f}{g^2} \begin{pmatrix}
 			-(v_{\text{in}}^{m, y} - v_{\text{out}}^{m, y}) \\[0.5em]
 			 v_{\text{in}}^{m, x} - v_{\text{out}}^{m, x}
-		\end{pmatrix},\\[1em]
-	\end{align*}
-	\begin{align*}	
+		\end{pmatrix},\\[2em]
+	% \end{align*}
+	% \begin{align*}	
 		\nabla_{\vec{v}_{\text{in}}^{\: i}} t
 		&= \nabla_{\vec{v}_{\text{in}}^{\: i}} \dfrac{f}{g} \\
 		&= \dfrac{(\nabla_{\vec{v}_{\text{in}}^{\: i}} f) g - (\nabla_{\vec{v}_{\text{in}}^{\: i}} g) f}{g^2} \\[0.5em]
@@ -1016,10 +1029,10 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\end{split}
 		\label{grad:overlap}
 	\end{align}
-	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively. \\
+	for all $1 \leq j \leq N_V$ and $1 \leq i \leq N_C$, where $\text{out}(w)$, $\text{in}(w) \subset \text{adj}(w)$ denote the sets of outside and inside overlap-adjacent vertices, respectively. 
 	Note, that the Formulas \ref{equ:dwv_out} and \ref{equ:dwv_in} define $\frac{\partial \vec{w}}{\partial \vec{v}_{j, out}^{\: i}}$ and $\frac{\partial \vec{w}}{\partial \vec{v}_{j, in}^{\: i}}$, respectively. \\
 	The difference between $\nabla_{\vec{v}_j^{\: i}}A_D$ and $\nabla_{\vec{w}}A_D$ is that $\nabla_{\vec{v}_j^{\: i}}A_D$ uses the neighboring overlap vertices of $\vec{v}_j^{\: i}$ itself in the Area Gradient Formula \ref{gradient:area}, whereas $\nabla_{\vec{w}}A_D$ uses the neighbors of the corresponding intersection point in $D$, which is not the same overlap vertex as $\vec{v}_j^{\: i}$.
-    $A_{D}$ is the area of the overlap $D$.\\
+    $A_{D}$ is the area of the overlap $D$.
 	The indicator function $\mathbf{1}_{A}(\vec{v})$ equals one, if $\vec{v} \in A$ and is zero otherwise. \\
 	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is then given by  
 	\begin{align*}
@@ -1116,7 +1129,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 	\textbf{Case 3:} $\vec{v}_j^{\: i} \in D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
 	Now, $\vec{v}_j^{\: i}$ is a pure inside overlap vertex, in the sence that it does not have an intersection point as a neighbor in the overlap. 
-	This dynamic is quite easy, since we just have to use the Shoelace Formular~\ref{prop:Shoelace} for once more: 
+	This dynamic is quite easy, since we just have to use the Shoelace Formula~\ref{prop:Shoelace} for once more: 
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} {A_D}^k 
 		&= {A_{D}}^{k-1} \nabla_{\vec{v}_j^{\: i}} A_D \\
@@ -1269,9 +1282,9 @@ We then selected the maximum stable scaling as the operative value for that forc
 These tests were conducted using a fixed time step of $10^{-5}$, with cell configurations composed of six vertices. 
 To rigorously challenge the model, we initialised the cells in deliberately distorted and uncomfortable shapes, which are most prone to triggering instabilities. 
 The configurations used in these tests are the same as those shown in the figures throughout this chapter, where the isolated effects of each force were illustrated following their respective introductions. 
-This allowed us to verify that the chosen scalings are robust even under unfavorable conditions. \\
+This allowed us to verify that the chosen scalings are robust even under unfavorable conditions. 
 For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce off dynamics used in~\cite{Bruna2012}. \\
-Summarizing all these efforts, we arrived at the following force scalings used in the simulations:
+Summarizing all these efforts, we arrived at the following force scalings used in the simulations
 
 \begin{table}[h]
 	\centering
@@ -1290,8 +1303,7 @@ Summarizing all these efforts, we arrived at the following force scalings used i
 	\label{table:forcescalings}
 \end{table}
 
-These scaling par
-ameters serve as the foundation for the complete DF SDE model, which we now introduce.
+These scaling parameters serve as the foundation for the complete DF SDE model, which we now introduce.
 \begin{definition} \textbf{The DF SDE} \label{def:df-sde} \\
 	We define the vectors
 	\[
@@ -1318,13 +1330,11 @@ ameters serve as the foundation for the complete DF SDE model, which we now intr
 	This dynamic seems best, as small deviations from the desired state should only have a small impact, while larger deviations should be corrected more strongly. 
 	But for the deforming overlap force, we choose $k=1$ as we want it to have a strong impact whenever a small overlap arises. 
 	This configuration seems to be the best to model the physics we would like to achieve. 
-	With that we can write down the cell wise formulated DF SDE:
+	With that we can write down the cell wise formulated DF SDE
 	\begin{align}
 		\dequ C_i(t) = \F^{i}(\vec{C}(t)) \dequ t + \dequ B_i^{x}(t) \: e_{N_V}^{x} +\dequ B_i^{y}(t) \: e_{N_V}^{y}.
 		\label{equ:cellwiseDFpde}
 	\end{align} 
-
-
 \end{definition}
 
 \begin{figure}[]

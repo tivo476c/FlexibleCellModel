@@ -129,7 +129,6 @@ This approach provides both flexibility and numerical reliability for large scal
 Julia offers significant advantages for our purpose due to its high computational performance, native support for parallelisation, and clear syntax that allows for a concise yet expressive implementation of mathematical models. 
 Moreover, the `DifferentialEquations.jl' ecosystem is highly optimised for stochastic and deterministic solvers alike, ensuring efficient and reproducible numerical experiments. 
 Many of the visualisations throughout this thesis, for instance Figure~\ref{fig:exclusion1d}, were created using the Julia package `Plots.jl'~\cite{Plots2023}. \\
-
 We began with the implementation of the simplest case: the point particle model. 
 All simulation parameters, such as the domain, number of particles, and diffusion coefficients, were chosen as described in the previous subsection to ensure full comparability with the reference setup from~\cite{Bruna2012}. 
 Specifically, we simulated $N_C = 400$ particles within the domain $\Omega = [-0.5, 0.5]^2$, initialised according to Algorithm~\ref{alge:HSCMinitial}. 
