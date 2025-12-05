@@ -209,7 +209,7 @@ Overall, the results confirm that our DF model accurately captures the behaviour
 
 \subsection{DF model simulations with deformable cells} 
 
-After confirming that our implementation correctly reproduces the macroscopic dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalise the model to account for cell deformability. \\ 
+After confirming that our implementation correctly reproduces the dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalise the model to account for cell deformability. \\ 
 In biological systems, cell-cell interactions are rarely perfectly hard; instead, cells can locally deform upon contact, redistributing internal stresses and slightly modifying their effective motion. 
 To capture this behaviour, we relax the hard sphere constraint by introducing a soft deformable force that acts when two cells are sufficiently close to each other. \\
 This modification leads to an extended stochastic description in which the overlap force $F_i^{(\hat{O})}(\vec{C})$, defined in \ref{force:deformingOverlap}, supplements the purely repulsive (bounce) force $F_i^{(\bar{O})}(\vec{C})$ (\ref{force:bounceOverlap}), whenever we use a hardness $h < 1$.
@@ -393,26 +393,26 @@ Several approaches have been proposed in the literature for characterising the s
 A simple yet effective measure is based on the ratio between a cell's area and its perimeter, which reflects how close its shape is to an ideal circle. 
 We denote this quantity as the asphericity~$\alpha$ of a geometric figure~$F$, defined as
 \[
-    \alpha_{F} = 4 \pi \frac{\mathrm{area}_{F}}{\mathrm{perimeter}_{F}^{2}},
+    \alpha_{F} = 4 \pi \frac{A_F}{{P_F}^{2}},
 \]
-where the scaling factor $4 \pi$ ensures that a perfect circle yields $\alpha_{\text{c}} = 1$. 
+for an area $A_F$ and perimeter $P_F$.
+The scaling factor $4 \pi$ ensures that a perfect circle yields $\alpha_{\text{c}} = 1$. 
 Lower values of~$\alpha_{F}$ therefore indicate stronger deviations from circularity, corresponding to more pronounced cell deformation. \\ 
-
 The circle is the only two-dimensional geometric figure that attains the maximal asphericity value of $1$.  
-For a circle of radius $r>0$ we have $\text{area}_{\text{c}} = \pi r^2$ and $\text{perimeter}_\text{c} = 2\pi r$. 
+For a circle $c$ of radius $r>0$ we have $A_{\text{c}} = \pi r^2$ and $P_\text{c} = 2\pi r$. 
 Hence
 \[
     \alpha_{\text{c}} \;=\; 4 \pi \frac{\pi r^2}{(2\pi r)^2} \;=\; 1.
 \]
 
-The classical isoperimetric inequality states that for any (sufficiently regular) planar region $F$ with area $A$ and perimeter $P$ one has
+The classical isoperimetric inequality states that for any sufficiently regular planar region $F$ % with area $A$ and perimeter $P$ one has
 \[
-    P^2 \;\geq\; 4\pi A,
+    {P_{F}}^2 \;\geq\; 4\pi A_{F},
 \]
 with equality if and only if $F$ is a circle. 
 Dividing by $P^2$ and multiplying by the factor $4\pi$ gives
 \[
-    4\pi\,\frac{A}{P^2} \;\leq\; 1,
+    4\pi\,\frac{A_{F}}{{P_{F}}^2} \;\leq\; 1,
 \]
 and therefore $\alpha_F \leq 1$ for every region $F$, with $\alpha_F=1$ only for the circle. \\
 We can conclude that the asphericity of a two-dimensional figure is always bounded between $0$ and $1$.
@@ -425,13 +425,12 @@ Since a perfectly circular cell cannot be represented with a finite number of ve
 For any DF cell configuration with $N_V = 6$ vertices, the highest possible asphericity is achieved by this regular hexagonal shape. 
 This is a classical geometric result, analogous to the proof of the isoperimetric inequality, and it can be generalised to polygons with any number of vertices $N_V \geq 3$. 
 Geometrically, this means that, for a fixed number of vertices, the regular polygon is the shape that most closely approximates a circle.  \\
-
 For any regular polygon $P_{N_V}$ with $N_V$ vertices, we have a cell perimeter of  
 \[
     P_{P_{N_V}} = N_V l,
 \]
 where $l>0$ denotes its edge length.\\
-The polygons area is given by  
+The polygon's area is given by  
 \[
     A_{P_{N_V}} = \tfrac{1}{4} N_V l^2 \cot\!\left( \frac{\pi}{N_V}\right) .
 \] 
@@ -446,7 +445,7 @@ Thus, for our desired regular hexagon with $N_V = 6$ vertices, we have an aspher
     \alpha_{P_{6}} = \frac{\pi}{6} \cot\left(\frac{\pi}{ 6}\right) = \frac{\pi}{6} \sqrt{3} \approx 0.907.
 \]
 Figure~\ref{fig:asp_overview} and Table~\ref{table:asp_overview} illustrate the asphericity values for different DF cell shapes, including our target regular hexagon configuration, alongside a perfect circle for reference. 
-There, we can also see an indictation that as the number of vertices increases, the asphericity approaches $1$, consistent with the geometric interpretation that polygons with more vertices better approximate a circular shape.
+The table also indicates that, as the number of vertices increases, the asphericity approaches $1$, which is consistent with the geometric interpretation that polygons with more vertices better approximate a circular shape.
 
 
 \begin{figure}[h!]
