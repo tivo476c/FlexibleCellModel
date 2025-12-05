@@ -389,20 +389,24 @@ The dynamics of a phase field variable $\phi_i$ can typically be given by a grad
 where $\vec{v}_i$ is a vector field used to incorporate activity, with a self propulsion strength $v_0$, $F$ is a free energy, and $\tfrac{\delta F}{\delta \phi_i}$ denotes the first variation.\\
 The free energy $F$ arises from a sum of different energies, 
 \begin{align*}
-	F = F_{CH} + F_{INT} + F_{M}. 
+	F = F_{\text{CH}} + F_{\text{INT}} + F_{\text{M}}. 
 \end{align*}
 The first energy is a Cahn-Hilliard energy and could look like in~\cite{wenzel2021}
 \begin{align*} 
-	F_{CH} = \sum\limits_{i=1}^N \frac{1}{Ca} \int_{\Omega} \left( \tfrac{\epsilon}{2} \norm[\nabla_{\vec{x}} \phi_i]^2 + \tfrac{1}{\epsilon} W(\phi_i) \right) \, \dequ \vec{x},
+	F_{\text{CH}} = \sum\limits_{i=1}^N \frac{1}{Ca} \int_{\Omega} \left( \tfrac{\epsilon}{2} \norm[\nabla_{\vec{x}} \phi_i]^2 + \tfrac{1}{\epsilon} W(\phi_i) \right) \, \dequ \vec{x},
 \end{align*}
 where now, $\epsilon$ is a small parameter related to the interface thickness, and $Ca$ is a capillary number that scales the relative importance of surface tension.
 The term $\norm[\nabla_{\vec{x}} \phi_i]^2$ penalises a long cell wall, as $\nabla_{\vec{x}} \phi_i \neq 0$ only at the cell wall.
 Thus, the Cahn-Hilliard energy always tries to minimise the area of the cell interface. \\
-$W(\phi_i) = \tfrac{1}{4} (\phi_i^2 - 1)^2$ is a double-well potential. 
-This energy ensures that each $\phi_i$ maintains a stable interface of $[-1,1]$.  \\ 
-The second energy term $F_{INT}$ models cell-cell interactions and could be defined as in~\cite{wenzel2021}
+% $W(\phi_i) = \tfrac{1}{4} (\phi_i^2 - 1)^2$ is a double-well potential. 
+% This energy ensures that each $\phi_i$ maintains a stable interface of $[-1,1]$.  \\ 
+The function $W(\phi_i) = \tfrac14 (\phi_i^2 - 1)^2$ is a standard double-well potential with local minima at $\phi_i = \pm 1$ and a local maximum at $\phi_i = 0$. 
+In a gradient flow dynamic, the evolution of $\phi_i$ is driven toward values that minimise $W$. 
+Consequently, $\phi_i$ is energetically confined to remain close to the two stable phases $\phi_i = -1$ and $\phi_i = 1$, while deviations toward intermediate values are penalised by an increase in potential energy. 
+This mechanism stabilises the interface and prevents $\phi_i$ from drifting beyond the physically meaningful range $[-1,1]$. \\
+The second energy term $F_{\text{INT}}$ models cell-cell interactions and could be defined as in~\cite{wenzel2021}
 \begin{align*}
-	F_{INT} = \sum\limits_{i=1}^N \frac{1}{Ca} \int_{\Omega} B(\phi_i) \sum\limits_{j \neq i} w(d_j) \: \dequ \vec{x},
+	F_{\text{INT}} = \sum\limits_{i=1}^N \frac{1}{Ca} \int_{\Omega} B(\phi_i) \sum\limits_{j \neq i} w(d_j) \: \dequ \vec{x},
 \end{align*}
 where 
 \[
@@ -410,19 +414,19 @@ where
 \]
 is an approximation of the delta function of the cell boundary that is non-zero only at the cell wall.
 The sum in the integral accounts for the interaction with all other cells $j \neq i$ through a short range potential $w(d_j)$, where $d_j$ is the signed distance function to the cell boundary of cell $j$.  
-When employing this dynamics, the interaction force $F_{INT}$, acts to reduce or eliminate cell overlaps. \\
-The third energy term $F_M$ differs for different models and incorporates additional mechanical properties of the cells, such as area conservation or bending energy.
+When employing this dynamics, the interaction force $F_{\text{INT}}$, acts to reduce or eliminate cell overlaps. \\
+The third energy term $F_\text{M}$ differs for different models and incorporates additional mechanical properties of the cells, such as area conservation or bending energy.
 This energy is dependent on the use case of the model. \\
-It can have a big influence on the dynamic of a phase field model, as analysed in~\cite{wenzel2021}, where the authors focussed on the influence of microscopic details to incorporate active forces on emerging phenomena.\\
+It can have a large influence on the dynamic of a phase field model, as analysed in~\cite{wenzel2021}, where the authors focus on the influence of microscopic details to incorporate active forces on emerging phenomena.\\
 Four different approaches are considered.
-One in which the activity is determined by a random orientation, one where the activity is related to the deformation of the cells, and two models with subcellular details to resolve the mechanical interactions underlying cell migration. \\
+One in which the activity is determined by a random orientation, one where the activity is related to the deformation of the cells, and two models with subcellular details to resolve the mechanical interactions underlying cell migration. 
 The random model determines the direction of motion on the single cell level by a stochastic process. 
 The second model is called elongation model.
-It identifies the longest axis of the cell's phase field and aligns the direction of motion with this axis. \\
+It identifies the longest axis of the cell's phase field and aligns the direction of motion with this axis. 
 The third and fourth models presented are referred to as the polar model and the nematic model, respectively.
-Cell motion strength and direction are determined based on subcellular details at the single cell level. \\
+Cell motion strength and direction are determined based on subcellular details at the single cell level. 
 All models are compared with respect to generic features, such as coordination number distribution, cell shape variability, emerging nematic properties, as well as vorticity correlations and flow patterns in large confluent monolayers and confinements. 
-We can see the results in Table~\ref{table:phasefield}. \\
+We can see the results in Table~\ref{table:phasefield}. 
 
 \begin{table*}[h!]
 	\centering
@@ -472,31 +476,32 @@ We can see the results in Table~\ref{table:phasefield}. \\
 	\label{table:phasefield}
 \end{table*}
 
-The goal of this paper is a systematic comparison of these approaches and their linkage with statistical observables of experiments to provide a route towards predictive simulations of patterns and correlations in cell colonies. 
+The goal of~\cite{wenzel2021} is a systematic comparison of these approaches and their linkage with statistical observables of experiments to provide a route towards predictive simulations of patterns and correlations in cell colonies. 
 Model predictions are compared with experimental data from various cell cultures. 
 The qualitative differences observed highlight the importance of microscopic details. \\ 
-\begin{figure}[h!]
-	\centering
-	\includegraphics[width=0.7\textwidth]{intro/curved_phasefield.png}
-	\caption{A figure from the paper~\cite{Happel2023} showing a phase field variable $\phi$ on a curved domain, specifically a torus. 
-	In (a) and (b), the surface of the torus from (c) is shown as a parametrisation on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
-	Red and blue lines represent periodic boundary conditions, which are enforced by gluing the corresponding edges in (b) and (c).
-	The colour coding corresponds to the extrinsic curvature parameter $E_c$ (see Eq.~(3)): $E_c = 0$ (purple) results in a geodesic circle on both geometries; $E_c > 0$ (green) favours alignment with the direction of maximum absolute curvature; $E_c < 0$ (yellow) favours alignment with the direction of minimal absolute curvature. 
-	Cell elongation is highlighted for visibility. 
-	On toroidal surfaces, cell shape depends on position due to varying curvature. 
-	(c) shows the trajectories, final positions, and shapes of cells over time. 
-	The influence of extrinsic curvature is not apparent in the final configuration, as all shapes were obtained by solving Eq.~(1) with $v_0 = 0$. 
-	}
-	\label{fig:curved_phasefield}
-\end{figure}
-A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behaviour. 
-The visualisation of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
-Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self propulsion. 
-Unlike the soft sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
-This capability enables the simulation of complex collective behaviours but also increases computational demands compared to simpler point particle models. \\
-The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
-By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature dependent morphological changes on tori. 
-This work emphasises the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
+% TODO: consider if its in 
+% \begin{figure}[h!]
+% 	\centering
+% 	\includegraphics[width=0.7\textwidth]{intro/curved_phasefield.png}
+% 	\caption{A figure from the paper~\cite{Happel2023} showing a phase field variable $\phi$ on a curved domain, specifically a torus. 
+% 	In (a) and (b), the surface of the torus from (c) is shown as a parametrisation on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
+% 	Red and blue lines represent periodic boundary conditions, which are enforced by gluing the corresponding edges in (b) and (c).
+% 	The colour coding corresponds to the extrinsic curvature parameter $E_c$ (see Eq.~(3)): $E_c = 0$ (purple) results in a geodesic circle on both geometries; $E_c > 0$ (green) favours alignment with the direction of maximum absolute curvature; $E_c < 0$ (yellow) favours alignment with the direction of minimal absolute curvature. 
+% 	Cell elongation is highlighted for visibility. 
+% 	On toroidal surfaces, cell shape depends on position due to varying curvature. 
+% 	(c) shows the trajectories, final positions, and shapes of cells over time. 
+% 	The influence of extrinsic curvature is not apparent in the final configuration, as all shapes were obtained by solving Eq.~(1) with $v_0 = 0$. 
+% 	}
+% 	\label{fig:curved_phasefield}
+% \end{figure}
+% A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behaviour. 
+% The visualisation of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
+% Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self propulsion. 
+% Unlike the soft sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
+% This capability enables the simulation of complex collective behaviours but also increases computational demands compared to simpler point particle models. \\
+% The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
+% By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature dependent morphological changes on tori. 
+% This work emphasises the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
 
 
 
@@ -518,7 +523,8 @@ This geometric representation allows for the incorporation of key cellular prope
 Minimizing this energy through computational simulation enables the capture of emergent phenomena like tissue morphogenesis, cell migration, wound healing, and pattern formation. \\
 
 % fletcher 
-The paper~\cite{Fletcher14} developed a sophisticated vertex based model to simulate the dynamic behaviour of confluent epithelial cell sheets, representing tissues where cells completely cover the available space without gaps. 
+In~\cite{Fletcher14} a sophisticated vertex based model is presented.
+It is used to simulate the dynamic behaviour of confluent epithelial cell sheets, representing tissues where cells completely cover the available space without gaps. 
 Their model aims to capture key biological processes observed in real epithelial tissues. \\
 Conservation of cell area and perimeter ensures cells maintain their size and shape during deformation.
 Junctional rearrangements, including neighbour exchange and vertex/edge merging, enable cell migration and tissue remodelling.
@@ -527,42 +533,41 @@ A detailed exploration of the implementation and specific consequences of these 
 While these mechanisms are essential for understanding the complex dynamics of confluent tissues, the focus of this thesis lies on non-confluent cell models, where the presence of interstitial space and variable packing density leads to distinct physical behaviours. \\
 
 % jamming (deformable particles in confluent model)
-Boromand, Merkel, and Manning~\cite{Boromand2018} investigated the jamming transition in a system of deformable cells using a vertex model. 
+In~\cite{Boromand2018}, the authors investigated the jamming transition in a system of deformable cells using a vertex model. 
 Of particular interest is their development of a non-confluent cell model meaning that gaps between the cells are allowed by the model. 
 This model is versatile and can be applied to simulate cells, foams, emulsions, and other soft particulate materials. \\
 It uniquely combines the ability to represent individual deformable particles with the established shape energy function of the vertex model. 
-This shape energy function incorporates terms that penalise deviations from a target area ($a$) and perimeter ($p$), along with repulsive interparticular forces to prevent overlap. \\
-The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}_{mi}$ connects vertex $\vec{v}_{m,i}$ to $\vec{v}_{m,i+1}$, i.e. vertex $i$ to vertex $i+1$ of cell $m$.
+This shape energy function incorporates terms that penalise deviations from a target area $a$ and perimeter $p$, along with repulsive interparticular forces to prevent overlap. \\
+The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}_{m,i}$ connects vertex $\vec{v}_{m,i}$ to $\vec{v}_{m,i+1}$, i.e. vertex $i$ to vertex $i+1$ of cell $m$.
 The complete shape energy function, which governs the particle dynamics, integrates these various contributions:
 \begin{align*}
 	E &= E_{\text{contract}} + E_{\text{compress}} + E_{\text{line tension}} + E_{\text{bending}} + E_{\text{interaction}}.
 \end{align*}
 
-The first energy reads
+The contraction energy is defined as 
 \begin{align*}
 	E_{\text{contract}} &= \frac{k_l N_V}{2} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} (l_{m,i}-l_0)^2,
 \end{align*}
 where $k_l$ is the spring constant and $l_0$ is the equilibrium length of the edges. 
-It penalises contractions or expansion of cell edges and makes the edges return to their desired length $l_0$. \\ 
-Similarly, the second force $E_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_0$ 
+It penalises contractions and expansion of cell edges and forces the edges to return to their desired length $l_0$. \\ 
+Similarly, the compression energy $E_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_0$ 
 \begin{align*}
 	E_{\text{compress}} &= \frac{k_a}{2} \sum\limits_{m=1}^{N_C} (a_m - a_0)^2, 
 \end{align*}
 where $k_a$ is compressibility constant. \\ 
-The line tension energy is another energy working with the cell edges.
-It sanctions long edges with the formula 
+The line tension energy sanctions long edges with the formula 
 \begin{align*}
 	E_{\text{line tension}} &= \gamma \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} l_{m,i} ,
 \end{align*}
 where $\gamma$ is the line tension coefficient. \\
-The last shape energy is given by the bending energy. 
-It acts to resist changes in the angles between adjacent edges of the polygonal cells.
+The bending energy acts to resist changes in the angles between adjacent edges of the polygonal cells.
 This energy encourages the cells to maintain smooth, relatively straight boundaries and discourages sharp bends or kinks.
 \begin{align*}
 	E_{\text{bending}} &= \frac{k_b}{2 N_V} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
 \end{align*}
 where $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,i}}{\norm[\vec{l}_{m,i}]} $ is the unit vector of $\vec{l}_{m,i}$.
-These four energies are conserving a specific cell shape. \\
+These four energies are conserving a specific cell shape. 
+
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\textwidth]{intro/jamming.png}
@@ -575,7 +580,6 @@ These four energies are conserving a specific cell shape. \\
 	\label{fig:vertex}
 \end{figure}
 %TODO: is notation consistent: $\vec{v}_{m,j}$ ? | Continue with dash 70 of 292
-
 There are two different methods to model the repulsive interaction between two deformable polygons called rough surface (RS) and smooth surface (SS) method.
 Both methods are illustrated in Figure~\ref{fig:vertex}. \\ 
 In the Rough Surface (RS) method, the discrete nature of the polygonal cell representation is emphasised. 
