@@ -512,15 +512,15 @@ Originating from materials science and solid mechanics, these models represent c
 The degrees of freedom in these models are precisely these vertices, meaning that all the cell model dynamics are applied only to the vertices. \\
 The cell dynamic in a vertex model is usually given by the equation
 \begin{align}
-	\dfrac{\dequ \vec{x}_i}{\dequ t} = F_i^m, \label{eq:vertexmodel}
+	\dfrac{\dequ \vec{x}^{\:i}_j}{\dequ t} = F^{\:i}_j, \label{eq:vertexmodel}
 \end{align}
-where $F_i^m$ is the total force acting on vertex $1 \leq i \leq N_V$ of cell $1 \leq m \leq N_C$. \\
-Like in the phase field model, $F_i^m$ is a sum of different forces that define the cell behaviour, such as the cell flexibility or the interaction with other cells. 
-The forces participating in $F_i^m$ or often found as negative gradients of energies that shall be minimised. 
+where $F^{\:i}_j$ is the total force acting on vertex $1 \leq j \leq N_V$ of cell $1 \leq i \leq N_C$. \\
+Like in the phase field model, $F^{\:i}_j$ is a sum of different forces that define the cell behaviour, such as the cell flexibility or the interaction with other cells. 
+The forces participating in $F^{\:i}_j$ or often found as negative gradients of energies that shall be minimised. 
 This method called gradient flow is also used for phase field models. \\
 Due to their discrete nature, vertex models are computationally efficient compared to continuum models, while still providing rich insights into the interplay between cell mechanics and collective behaviour, making them invaluable for grasping	 fundamental principles governing cell organisation and tissue dynamics across diverse biological contexts. \\
 This geometric representation allows for the incorporation of key cellular properties, such as surface tension, cortical tension, adhesion, and local shape constraints, into an energy functional. 
-Minimizing this energy through computational simulation enables the capture of emergent phenomena like tissue morphogenesis, cell migration, wound healing, and pattern formation. \\
+Minimising this energy through computational simulation enables the capture of emergent phenomena like tissue morphogenesis, cell migration, wound healing, and pattern formation. \\
 
 % fletcher 
 In~\cite{Fletcher14} a sophisticated vertex based model is presented.
@@ -538,7 +538,8 @@ Of particular interest is their development of a non-confluent cell model meanin
 This model is versatile and can be applied to simulate cells, foams, emulsions, and other soft particulate materials. \\
 It uniquely combines the ability to represent individual deformable particles with the established shape energy function of the vertex model. 
 This shape energy function incorporates terms that penalise deviations from a target area $a$ and perimeter $p$, along with repulsive interparticular forces to prevent overlap. \\
-The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}_{m,i}$ connects vertex $\vec{v}_{m,i}$ to $\vec{v}_{m,i+1}$, i.e. vertex $i$ to vertex $i+1$ of cell $m$.
+The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}^{\:i}_j$ connects vertex $\vec{v}^{\:i}_j$ to $\vec{v}^{\:i}_{j+1}$, i.e. vertex $j$ to vertex $j+1$ of cell $i$. 
+We denote the length of a bond as $l^{i}_j = \norm[\vec{l}^{\:i}_j]$.
 The complete shape energy function, which governs the particle dynamics, integrates these various contributions:
 \begin{align*}
 	E &= E_{\text{contract}} + E_{\text{compress}} + E_{\text{line tension}} + E_{\text{bending}} + E_{\text{interaction}}.
@@ -546,36 +547,36 @@ The complete shape energy function, which governs the particle dynamics, integra
 
 The contraction energy is defined as 
 \begin{align*}
-	E_{\text{contract}} &= \frac{k_l N_V}{2} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} (l_{m,i}-l_0)^2,
+	E_{\text{contract}} &= \frac{k_l N_V}{2} \sum\limits_{i=1}^{N_C} \sum\limits_{j=1}^{N_V} (l^{i}_j - l_d)^2,
 \end{align*}
-where $k_l$ is the spring constant and $l_0$ is the equilibrium length of the edges. 
-It penalises contractions and expansion of cell edges and forces the edges to return to their desired length $l_0$. \\ 
-Similarly, the compression energy $E_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_0$ 
+where $k_l$ is the spring constant and $l_d$ is the equilibrium length of the edges. 
+It penalises contractions and expansion of cell edges and forces the edges to return to their desired length $l_d$. \\ 
+Similarly, the compression energy $E_{\text{compress}}$ stabilises the cells area to a equilibrium area $a_d$ 
 \begin{align*}
-	E_{\text{compress}} &= \frac{k_a}{2} \sum\limits_{m=1}^{N_C} (a_m - a_0)^2, 
+	E_{\text{compress}} &= \frac{k_a}{2} \sum\limits_{i=1}^{N_C} (a_i - a_d)^2, 
 \end{align*}
 where $k_a$ is compressibility constant. \\ 
 The line tension energy sanctions long edges with the formula 
 \begin{align*}
-	E_{\text{line tension}} &= \gamma \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} l_{m,i} ,
+	E_{\text{line tension}} &= \gamma \sum\limits_{i=1}^{N_C} \sum\limits_{j=1}^{N_V} l^{i}_j ,
 \end{align*}
 where $\gamma$ is the line tension coefficient. \\
 The bending energy acts to resist changes in the angles between adjacent edges of the polygonal cells.
 This energy encourages the cells to maintain smooth, relatively straight boundaries and discourages sharp bends or kinks.
 \begin{align*}
-	E_{\text{bending}} &= \frac{k_b}{2 N_V} \sum\limits_{m=1}^{N_C} \sum\limits_{i=1}^{N_V} \left( \frac{2( \hat{l}_{m,i} - \hat{l}_{m,i+1})}{l_{m,i} - l_{m,i+1}}  \right)^2 ,
+	E_{\text{bending}} &= \frac{k_b}{2 N_V} \sum\limits_{i=1}^{N_C} \sum\limits_{j=1}^{N_V} \left( \frac{2( \hat{l}^{\:i}_{j} - \hat{l}^{\:i}_{j+1})}{l^{i}_{j} - l^{i}_{j+1}}  \right)^2 ,
 \end{align*}
-where $k_b$ is the bending rigidity constant, $\hat{l}_{m,i} = \frac{\vec{l}_{m,i}}{\norm[\vec{l}_{m,i}]} $ is the unit vector of $\vec{l}_{m,i}$.
+where $k_b$ is the bending rigidity constant, $\hat{l}^{\:i}_{j} = \frac{\vec{l}^{\:i}_{j}}{\norm[\vec{l}^{\:i}_{j}]} $ is the unit vector of $\vec{l}^{\:i}_{j}$.
 These four energies are conserving a specific cell shape. 
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.7\textwidth]{intro/jamming.png}
 	\caption{A snapshot from the paper~\cite{Boromand2018} illustrating a configuration of vertex based deformable cells. 
-	Schematic of deformable polygons with $N_V = 34$ vertices (where the position of vertex $j$ in the polygon $m$ is denoted by $\vec{v}_{m,j}$), area $a_m$, and perimeter $p_m$. 
-	The edge $l_{m,j} = p_m / N_V$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. 
+	Schematic of deformable polygons with $N_V = 34$ vertices (where the position of vertex $j$ in the polygon $m$ is denoted by $\vec{v}_{mj}$), area $a_m$, and perimeter $p_m$. 
+	The edge $l_{mj} = \frac{p_m}{N_V}$ represents the line segment connecting vertices $j$ and $j+1$ in polygon $m$. 
 	Two methods are used to model the edges of deformable polygons: (a) and (b) show the RS method, where disks of diameter $\delta$ are centred at the polygon vertices; (c) and (d) show the SS method, where polygon edges are modelled as circulo-lines of width $\delta$. 
-	The quantity $d_{\text{min}}$ denotes the minimum distance between the line segments $l_{m,j}$ and $l_{n,k}$.
+	The quantity $d_{\text{min}}$ denotes the minimum distance between the line segments $l_{mj}$ and $l_{nk}$.
 	}
 	\label{fig:vertex}
 \end{figure}
@@ -583,18 +584,18 @@ These four energies are conserving a specific cell shape.
 There are two different methods to model the repulsive interaction between two deformable polygons called rough surface (RS) and smooth surface (SS) method.
 Both methods are illustrated in Figure~\ref{fig:vertex}. \\ 
 In the Rough Surface (RS) method, the discrete nature of the polygonal cell representation is emphasised. 
-Each vertex of a cell is treated as the centre of a rigid disk with a fixed diameter, set to $\delta = l_0$ (equilibrium bond length).
+Each vertex of a cell is treated as the centre of a rigid disk with a fixed diameter, set to $\delta = l_d$ (equilibrium bond length).
 Repulsive interactions between cells are then modelled as linear spring forces that arise when these disks overlap. 
 This approach effectively simulates a rough surface interaction, characterised by discrete points of repulsion localised at the cell vertices, rather than a continuous interaction across the cell boundary.
 \begin{align*}
-	E_{\text{RS}} &=  \sum\limits_{m=1}^{N_C} \sum\limits_{n>m}^{N} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} (\delta - |\vec{v}_{m,j} - \vec{v}_{n,k} |)^2 \times \Theta(\delta - |\vec{v}_{m,j} - \vec{v}_{n,k}) ,
+	E_{\text{RS}} &=  \sum\limits_{i=1}^{N_C} \sum\limits_{m>i}^{N_C} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} (\delta - |\vec{v}^{\:i}_{j} - \vec{v}^{\:m}_{k} |)^2 \times \Theta(\delta - |\vec{v}^{\:i}_{j} - \vec{v}^{\:m}_{k}|) ,
 \end{align*}
 where $k_r$ is the repulsive constant and $\Theta$ is the Heaviside step function, that is either $1$ for a positive argument or $0$ otherwise. \\
 In contrast to the RS method, the Smooth Surface (SS) method adopts a smoother representation, modelling polygon edges as circulo-lines, essentially line segments with a finite width $\delta$. 
-Repulsive forces are then calculated based on the minimum distance $d_{\text{min}}$, between these circulo-line segments belonging to different polygons. 
+Repulsive forces are then calculated based on the minimum distance $d_{\text{min}}$, between line segments $l^{i}_{j}$ and $l^{m}_{k}$ on two contacting polygons $i$ and $m$.
 The interaction energy is then formulated using this minimum distance $d_{\text{min}}$.
 \begin{align*}
-	E_{\text{SS}} = \sum_{m=1}^{N_C} \sum_{n \neq m} \sum_{j=1}^{N_V} \sum_{k=1}^{N_V} \frac{1}{2} k_r \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right).
+	E_{\text{SS}} = \sum\limits_{i=1}^{N_C} \sum\limits_{m>i}^{N_C} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right).
 \end{align*}
 This method provides a smoother, more continuous repulsion, better approximating the behaviour of soft, continuous interfaces. \\ 
 Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 

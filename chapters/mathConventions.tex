@@ -6,7 +6,6 @@
         \hline
         \textbf{symbol} & \multicolumn{1}{c}{\textbf{description}}\\ 
         \midrule
-
         $\vec{v}$ & Superscript arrows denote multidimensional variables, e.g. $\vec{v} = (v^x, v^y) \in \R^2$  \\[0.5em] 
         $\vec{v} \cdot \vec{w}$ & Dot between two vector structures is scalar product, e.g. $\vec{v} \cdot \vec{w} = v^x w^x + v^y w^y$ \\[0.5em] 
         $\dfrac{\dequ f}{\dequ x}$ & Derivative of a function $f$ with respect to its single argument $x$ \\[0.5em] 
@@ -30,21 +29,25 @@
         $N_C \in \N$ & Number of cells in a model \\[0.5em]
         $N_V \in \N$ & Number of vertices of each cell in a model \\[0.5em]
         $C^i = (\vec{v}^{\: i}_{1}, \ldots, \vec{v}^{\: i}_{N_V})$ & DF cell $1 \leq i \leq N_C$ \\[0.5em]
+        $\vec{v}^{{: i}}_j = (v^{i, x}_{j}, v^{i, y}_{j})^T \in \R^2$ & Vertex $1 \leq j \leq N_V$ of DF cell $1 \leq i \leq N_C$ \\[0.5em]
+        \midrule
+    \end{tabular}
+\end{table}
+\clearpage
+\begin{table}[t]
+\centering
+    \begin{tabular}{c p{10cm}} % l = left aligned, c = centered, r = right aligned
+        \midrule
         $\partial \Omega$ & Boundary of the domain $\Omega$ \\[0.5em]
         $\Omega^{\circ}$ & Interior of the domain $\Omega$ \\[0.5em]
         $L^1_{loc}(\R)$ & \parbox[t]{10cm}{$L^1_{loc}(\R) = \{\, f : \R \to \R\text{ measurable} \mid \\ 
                                            \hspace*{2.1cm} f \in L^1(K) \: \forall \text{ compact } K \subset \R \,\}$}\\[0.5em] 
         $C_C^{\infty}(\R)$ & $C_C^{\infty}(\R) =\{\, f \in C^{\infty}(\R) \mid \operatorname{supp}(f) \text{ is compact} \,\}$\\[0.5em] 
         $[ \cdot ]_{[a, b)}$ & Modulo operator that maps the given value into the subscript interval \\[0.5em]
-%     \end{tabular}
-% \end{table}
-% \begin{table}
-% \centering
-%     \begin{tabular}{c p{12.3cm}} % l = left aligned, c = centered, r = right aligned
-        $\vec{v}^{{: i}}_j = (v^{i, x}_{j}, v^{i, y}_{j})^T \in \R^2$ & Vertex $1 \leq j \leq N_V$ of DF cell $1 \leq i \leq N_C$ \\[0.5em]
         $P(t; \vec{x}_1, \ldots, \vec{x}_{N_C})$ & Joint probability density function  \\[0.5em]
         $\rho(t; \vec{x})$, $\rho^{N_C}(t; \vec{x})$ & First marginal function \\[0.5em]
         $\bar{\rho}(t; \vec{x})$ & Density in the mean field limit \\
         \bottomrule 
     \end{tabular}
 \end{table}
+\vspace*{10cm}
