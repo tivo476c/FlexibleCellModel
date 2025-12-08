@@ -110,10 +110,10 @@ It repeatedly generates random inputs according to specified probability distrib
 In our case, the Monte Carlo simulations are used to track the positions of cell centres over time. 
 Each simulation begins from an initial configuration of cells, which is consistently generated using Algorithm~\ref{alge:HSCMinitial}. 
 After initialisation, the prescribed dynamics - either the point particle model or the hard sphere model - are applied, and the positions of the cell centres are recorded at a fixed time point, $t=0.05$. \\
-To visualise the results, we construct heatmaps representing the spatial distribution of cells at the final time. 
-This is done by discretizing the domain into a uniform grid ofsubsquares. 
-For eachsubsquare, we count how many cells fall within it across all simulations. 
-The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of asubsquare. 
+To visualise the results, we construct heatmaps representing the spatial distribution of cells at the final time.
+This is done by discretising the domain into a uniform grid of subsquares. 
+For each subsquare, we count how many cells fall within it across all simulations. 
+The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a subsquare. 
 This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: 
 \[
     \sum\limits_{i \: \in \text{subsquares}} \text{value}_i \cdot \text{area}_i = 1. 
@@ -209,8 +209,9 @@ Overall, the results confirm that our DF model accurately captures the behaviour
 
 \subsection{DF model simulations with deformable cells} 
 
-After confirming that our implementation correctly reproduces the dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalise the model to account for cell deformability. \\ 
-In biological systems, cell-cell interactions are rarely perfectly hard; instead, cells can locally deform upon contact, redistributing internal stresses and slightly modifying their effective motion. 
+After confirming that our implementation correctly reproduces the dynamics of non-overlapping (hard) particles described in~\cite{Bruna2012}, we now generalise the model to account for cell deformability.  
+In biological systems, cell-cell interactions are rarely perfectly hard.
+Instead, cells can locally deform upon contact, redistributing internal stresses and slightly modifying their effective motion.
 To capture this behaviour, we relax the hard sphere constraint by introducing a soft deformable force that acts when two cells are sufficiently close to each other. \\
 This modification leads to an extended stochastic description in which the overlap force $F_i^{(\hat{O})}(\vec{C})$, defined in \ref{force:deformingOverlap}, supplements the purely repulsive (bounce) force $F_i^{(\bar{O})}(\vec{C})$ (\ref{force:bounceOverlap}), whenever we use a hardness $h < 1$.
 The resulting system of SDEs describes the coupled motion of deformable cells under diffusion and interaction forces, thereby forming the soft DF model. 
@@ -515,7 +516,7 @@ The asphericity analysis clearly demonstrates the influence of the hardness para
 For the hard configuration ($h = 1$), all cells retain their initial asphericity of $\alpha \approx 0.907$ throughout, confirming that no shape deformation occurs when only the non-deforming bounce overlap force is active. \\
 In contrast, the soft and mid-hardness simulations display a broader distribution of asphericity values, indicating that cells experience measurable deformation during interactions. 
 The soft model ($h = 0$) shows the widest spread of values, reaching down to $\alpha \approx 0.3$. 
-The apshericity values below $0.7$ where reached in the $50$ simulations of the soft DF model, and can not be seen in Figure~\ref{fig:asp_charts}, since it was limited to the range $[0.7, 0.92]$ for better visual clarity.
+The apshericity values below $0.7$ where reached in the $50$ simulations of the soft DF model, and cannot be seen in Figure~\ref{fig:asp_charts}, since it was limited to the range $[0.7, 0.92]$ for better visual clarity.
 However, the mid-hardness model ($h = 0.5$) remains closer to the undeformed state with $\alpha \in [0.84, 0.92]$.  \\
 The most pronounced deformations occur early in the simulation ($t>0$), when the cell density is highest in the central region and collisions are most frequent. 
 Over time, the number of cells returning towards their original asphericity increases, as reflected by the growing proportion of cells in the last interval $[0.9, 0.92]$. 
