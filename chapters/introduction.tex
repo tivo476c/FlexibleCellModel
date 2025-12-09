@@ -79,13 +79,17 @@ Formally, $\vec{B}_i(t) = (B_{i}^x(t), B_{i}^y(t))^\top$ consists of two indepen
 \]
 Thus, the increment has zero mean, uncorrelated components, and variance proportional to $\dequ t$, reflecting the characteristic $\sqrt{\dequ t}$ scaling of diffusive motion.
 This dynamic is fundamental and widely used in SDEs across various fields, including modelling particle diffusion~\cite{Bruna2012}, biological systems such as cell migration and also financial markets. \\ 
-
-The stochastic dynamics of individual particles, governed by Brownian motion and external forces, naturally give rise to a probability density function that characterises the collective behaviour of the entire system through a mean field description. 
-This density function serves as the fundamental mean field that encapsulates the averaged influence of all particles, enabling a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution where individual fluctuations are replaced by deterministic evolution of the ensemble density. \\
-When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
-The first marginal density function $\rho(t; \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ and time $t > 0$. 
-It provides a coarse grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
-In order to compute the first marginal, we have to start with the joint probability density function. 
+% % macro flag
+% The stochastic dynamics of individual particles, governed by Brownian motion and external forces, naturally give rise to a probability density function that characterises the collective behaviour of the entire system.  
+% This density function serves as the fundamental mean field that encapsulates the averaged influence of all particles, enabling a seamless transition from microscopic particle trajectories to a macroscopic description of cell distribution where individual fluctuations are replaced by deterministic evolution of the ensemble density. \\
+% When analysing the diffusion behaviour of a cell model, our focus shifts to understanding the evolution of this density. 
+% The first marginal density function $\rho(t; \vec{x})$ serves as a central quantity in this analysis, representing the probability of finding any particle at position $\vec{x} \in \Omega$ and time $t > 0$. 
+% It provides a coarse grained view of the system, capturing how the spatial distribution of cells evolves over time and revealing key features of collective migration, such as spreading rates and pattern formation. \\ 
+The stochastic dynamics of the individual particles induce a time dependent joint probability density function $P(t;\vec{x}_1,\ldots,\vec{x}_{N_C})$ describing the random evolution of the full system.  
+A central object derived from this distribution is the first marginal density $\rho(t;\vec{x})$, which gives the probability of finding any particle at position $\vec{x} \in \Omega$ at time $t > 0$. 
+When analysing the diffusion behaviour of the cell model, we therefore study the time evolution of this marginal density.  
+It provides a coarse grained statistical description of the system, summarising how the spatial distribution of particles changes over time and highlighting features such as spreading behaviour or emerging spatial patterns. \\
+First, we have to compute the joint probability density function. 
 This function, denoted by 
 \begin{align*}
 	P: \R_{+} \times \Omega^{N_C} \: &\longrightarrow \:  \R_+, \\	
@@ -117,7 +121,7 @@ We can obtain $\rho(t; \vec{x})$ by integrating the joint probability density $P
 	\rho(t; \vec{x}_1) = \int_{\Omega^{N_C-1}}  P(t; \vec{X}) \, \dequ \vec{x}_2 \ldots \dequ \vec{x}_{N_C}.
 \]
 This marginalisation process effectively averages out the influence of the other particles, yielding the probability density $\rho(t; \vec{x})$ for finding any one particle at position $\vec{x}$. 
-Due to the indistinguishability of the particles, this marginal is the same for any particle and represents the macroscopic distribution of the system.
+Due to the indistinguishability of the particles, this marginal is the same for any particle, allowing us to focus on a single representative particle without loss of generality. 
 By integrating over all particles but one, we find $\rho$ acting on a much lower-dimensional space 
 \begin{align*}
 	\rho : \R_{+} \times \Omega \: &\longrightarrow \:  \R_+, \\	
@@ -158,13 +162,19 @@ For our point particle model with included external effects, the joint probabili
 	\dfrac{\partial P(t; \vec{X})}{\partial t} = \nabla_{\vec{X}} \cdot [D \nabla_{\vec{X}} P(t; \vec{X}) - P(t; \vec{X}) F(\vec{X})], \quad \vec{X} \in \Omega^{N_C}, \: t>0, 
 \] 
 where $\nabla_{\vec{X}} \cdot$ denotes the divergence operator with respect to $\vec{X}$ and $\nabla_{\vec{X}}$ is the corresponding gradient. \\
-The Fokker-Planck equation is just as fundamental as the diffusion equation, because it provides a deterministic description of the evolution of the probability density for a stochastic system, enabling the analysis of macroscopic behaviour - such as diffusion, drift, and pattern formation - from microscopic particle dynamics. \\
+% % macro flag
+% The Fokker-Planck equation is just as fundamental as the diffusion equation, because it provides a deterministic description of the evolution of the probability density for a stochastic system, enabling the analysis of macroscopic behaviour - such as diffusion, drift, and pattern formation - from microscopic particle dynamics. \\
+The Fokker-Planck equation is just as fundamental as the diffusion equation, because it provides a deterministic description of the evolution of the probability density associated with an underlying stochastic full particle system. 
+It allows one to analyse how diffusion, drift, or more complex spatial structures emerge from the combined effect of Brownian motion and interaction forces.
 It is derived using the continuity equation (or conservation of probability), which states that the rate of change of probability in a region is equal to the net flux of probability across its boundary, similarly to the model before. \\
 This leads to a flux expression involving both advective (drift) and diffusive components. 
 The divergence theorem is applied in the $2 N_C$-dimensional configuration space $\Omega^{N_C}$ to convert surface integrals into volume integrals.
 This is the step where the additional term comes from, yielding the final form of the Fokker-Planck equation. \\
 % transition to first marginal
-To transition from the joint probability density function to the first marginal density function in the presence of external forces, we consider the evolution of the system at the macroscopic level by integrating out the degrees of freedom of all but one particle. 
+%% macro flag
+% To transition from the joint probability density function to the first marginal density function in the presence of external forces, we consider the evolution of the system at the macroscopic level by integrating out the degrees of freedom of all but one particle. 
+To transition from the joint probability density function to the first marginal density function in the presence of external forces, we integrate out the degrees of freedom of all particles except one. 
+This yields the evolution equation for the probability of finding a single particle at a given position and time.
 This process, which is analogous to the case of pure Brownian motion, relies on the symmetry of the system: since the particles are identical and non-interacting, the joint density is invariant under permutations of particle labels. \\
 The first marginal of the point particle model with external forces and Brownian motion is given by 
 \begin{align}
@@ -243,8 +253,6 @@ The model enforces this constraint using reflective boundary conditions on the c
 	\norm[\vec{x}_i - \vec{x}_j] = \epsilon, \quad 1 \leq  i < j \leq N_C.
 \]
 Due to the presence of numerous holes (occupied by other cells), these reflections create a unique dynamic where cells effectively bounce off each other, distinct from the unhindered motion of point particles. \\
-
-Similarly as in the point particle model, we are now interested in the macroscopic view of this model. 
 The structure for computing the first marginal of the hard sphere model is quite analogous to the computation for the point particles. \\
 The joint probability density function $P$ of the $N_C$ particles satisfies the high-dimensional Fokker-Planck equation
 \begin{align*}

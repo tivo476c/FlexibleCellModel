@@ -245,9 +245,10 @@ It is governed by the consecutive SDE.  \\
 
 While the soft DF model introduces deformability by allowing overlapping interactions, it is instructive to consider an intermediate configuration that gradually transitions between the purely hard and fully deformable regimes. 
 To this end, we define a mid DF model, which retains the fundamental features of the hard sphere dynamics, but introduces a limited degree of deformation.  \\
-In this setup, the deforming overlap force is partially active, providing a tunable stiffness that bridges the discontinuous transition between entirely rigid and fully soft cell interactions.
+In this setup, the deforming overlap force is partially active, providing a tunable stiffness that bridges the transition between entirely rigid and fully soft cell interactions.
 This intermediate formulation allows us to quantify the influence of deformability in a controlled manner by smoothly varying the stiffness parameter. \\
-This not only aids in verifying the robustness of our implementation but also clarifies how emergent macroscopic properties evolve with cell stiffness.
+%% macro flag
+This not only aids in verifying the robustness of our implementation, but also clarifies how emergent cell system densities evolve with cell stiffness.
 The corresponding stochastic representation, referred to as the mid DF model SDE, incorporates both the bounce and deforming overlap forces with an intermediate weighting. 
 The formulation reads as follows: \\
 
@@ -285,7 +286,8 @@ This figure highlights how progressively relaxing the rigidity constraint from t
 The hard DF system, governed by strictly repulsive collisions, shows the fastest diffusion rate of our three models. 
 In contrast, the soft DF model, that only uses cell deformation for overlap degeneration, exhibits a narrower spatial distributions due to the missing push dynamic from the bounce overlap force in case of cell overlap. 
 The mid DF configuration naturally occupies an intermediate regime, demonstrating a gradual transition in diffusion rate. \\
-Together, these visualisations provide an intuitive understanding of how cell deformability influences the macroscopic evolution of the system and serve as a qualitative validation of the modelling framework. 
+%% macro flag
+Together, these visualisations provide an intuitive understanding of how cell deformability influences the density evolution of the system and serve as a qualitative validation of the modelling framework. 
 We therefore proceed by analysing these results in greater detail in the following discussion. 
 \FloatBarrier
 \begin{figure}[h!]
