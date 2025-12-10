@@ -1,5 +1,5 @@
-% \documentclass [a4paper,12pt,leqno, draft]{article}
-\documentclass[a4paper,12pt,leqno]{article}
+\documentclass [a4paper,12pt,leqno, draft]{article}
+% \documentclass[a4paper,12pt,leqno]{article}
 
 
 % ----------------------- USED PACKAGES -----------------------
@@ -59,7 +59,8 @@
 \DeclareMathOperator{\entspricht}{\: \wedge }
 \DeclareMathOperator{\atanxy}{arctan2}
 %\DeclareMathOperator{\norm[1]}{\lVert#1\rVert_{_{2}}}
-\newcommand{\norm[1]}{\lVert#1\rVert_{_{2}}}
+% \newcommand{\norm[1]}{\lVert#1\rVert_{_{2}}}
+\newcommand{\norm[1]}{\left| \! \left|#1\right| \! \right|_{_{2}}}
 \newcommand{\diag[1]}{\text{diag}\!\left(#1\right)}
 \newcommand{\infnorm[1]}{\lVert#1\rVert_{_{\infty}}}
 
