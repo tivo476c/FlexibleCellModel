@@ -353,14 +353,12 @@ We can conclude, with the same derivation as before, that
     \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \nabla E(C)) = 0.
     \label{equ:meanfieldPDE}
 \end{align}
-
-
-For each energy $E$, we need a representation of the cell wise gradient $\nabla_C E(C)$ that we can plug into the mean field PDE from Equation~\eqref{equ:meanfieldPDE}. 
-Therefore, we define the vector of all vertex coordinates of cell C as 
+For each energy $E$, we need a representation of the cell wise gradient $\nabla_C E(C)$ that we can plug into the mean field PDE from Equation~\eqref{equ:meanfieldPDE}. \\
+In the following, we use C as a $2N_V$-dimensional vector, i.e.
 \begin{align*}
-    V_C = (v_1^x, v_1^y, \ldots, v_{N_V}^x, v_{N_V}^y)^T \in \R^{2 N_V}.
+    C = (v_1^x, v_1^y, \ldots, v_{N_V}^x, v_{N_V}^y)^T \in \R^{2 N_V}.
 \end{align*}
-We compute the according matrices that enable as a gradient representation with matrix multiplication for whole cells, and not vertex wise, like already computed in the previous chapters. \\ 
+We compute the according matrices that enable us a gradient representation with matrix multiplication for whole cells, and not vertex wise, like already computed in the previous chapters. \\ 
 
 \subsubsection*{Area energy}
 First, we consider pure scaled area energy, i.e.
@@ -404,7 +402,7 @@ such that, we can write down the cell wise gradient as
             \vdots \\  
             v_{1}^{y} - v_{N_V-1}^{y} \\[0.5em]  v_{N_V-1}^{x} - v_{1}^{x} 
         \end{pmatrix} 
-        =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) M_A V_C.
+        =  \dfrac{\alpha_{A}}{2} (A_{C} - A_d) M_A C.
     \end{split}
     \label{eq:cGradArea}
 \end{align}
@@ -467,7 +465,7 @@ and
 \end{align*}
 We can conclude a cell wise edge energy gradient as 
 \begin{align}
-    \nabla_C E_E(C) = \alpha_{E} \left(  D_{E-} M_{E-} + D_{E} M_{E} \right) V_C.
+    \nabla_C E_E(C) = \alpha_{E} \left(  D_{E-} M_{E-} + D_{E} M_{E} \right) C.
     \label{eq:cGradEdge}
 \end{align}
 
@@ -538,24 +536,24 @@ Finally, we put together  missing vertex terms with matrices $M_{I-}, M_{I+} \in
 \end{align*} 
 We can write down the cell wise interior angle gradient as 
 \begin{align}
-    \nabla_C E_I(C) = \alpha_I \left(  - D_{I-} B_I M_{I-}  + D_I \left(  B_I M_{I-}  - B_{I+}  M_{I+} \right) + D_{I+} B_{I+} M_{I+}  \right) V_C.
+    \nabla_C E_I(C) = \alpha_I \left(  - D_{I-} B_I M_{I-}  + D_I \left(  B_I M_{I-}  - B_{I+}  M_{I+} \right) + D_{I+} B_{I+} M_{I+}  \right) C.
     \label{eq:cGradAngle}
 \end{align}
 
-\subsubsection*{Shape preserving energies}
-If we now consider a combination of the three shape preserving energies, i.e.
-\begin{align*}
-    E_{\text{shape}}(C) = E_A(C) + E_E(C) + E_I(C),
-\end{align*}
-we can use the linearity of the gradient to easily write down 
-\begin{align}
-    \nabla_C E_{\text{shape}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C).
-\end{align} 
-The three gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge} and \eqref{eq:cGradAngle}.
-The mean field PDE for the DF model with shape preserving energies is then given by inserting the above gradient into Equation~\eqref{equ:meanfieldPDE}, i.e.
-\begin{align}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)) = 0.
-\end{align}
+% \subsubsection*{Shape preserving energies}
+% If we now consider a combination of the three shape preserving energies, i.e.
+% \begin{align*}
+%     E_{\text{shape}}(C) = E_A(C) + E_E(C) + E_I(C),
+% \end{align*}
+% we can use the linearity of the gradient to easily write down 
+% \begin{align}
+%     \nabla_C E_{\text{shape}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C).
+% \end{align} 
+% The three gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge} and \eqref{eq:cGradAngle}.
+% The mean field PDE for the DF model with shape preserving energies is then given by inserting the above gradient into Equation~\eqref{equ:meanfieldPDE}, i.e.
+% \begin{align}
+%     \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)) = 0.
+% \end{align}
 
 \subsubsection*{Bounce overlap energy}
 
@@ -699,21 +697,23 @@ Fortunately, we can easily do so, as we just add a zero with the additional term
 %TODO: yeah compute properly ... problem: 0/0 in derivative? 
 \begin{align*}
     \nabla_{C_i} \left( \psi \circ \chi \right) (C_i - C_i) 
-    &= \psi'(\chi(C_i - C_i)) \nabla_{C_i} \chi (C_i - C_i) \\
-    &= \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_i] < 2r\}} (\norm[\vec{x}_i - \vec{x}_i] - 2r)  \begin{pmatrix}
-            I_2 \\ 
-            \vdots \\ 
-            I_2
-        \end{pmatrix} \frac{\vec{x}_i - \vec{x}_i}{ \norm[\vec{x}_i - \vec{x}_j]}.
+    = \nabla_{C_i} \left( \psi \circ \chi \right)(0) 
+    = 0,
 \end{align*}
-
+as $\left( \psi \circ \chi \right)(0)$ is independent of $C_i$. \\
 We continue with the derivation of the mean field PDE.
+For the computation, we use the convolution notation $f * g$ for two functions $f,\, g:\, \R^{d} \to \R$, $d \in \N$, defined as
+\begin{align*}
+    (f * g)(x) = \int f(x - y) g(y) \: \dequ y.
+\end{align*}
+The convolution possesses strong smoothing properties: even if one of the functions is irregular, their convolution is typically more regular, since it forms a spatially averaged combination of local contributions. 
+In our mean field PDE for the bounce overlap interaction, this is advantageous, because the convolution represents a smooth, macroscopic non-local force field, which stabilises the dynamics and improves analytical tractability. \\
 Let $\phi \in C_c^{\infty}(\R^{2 N_V}, \R)$ be a test function. 
 We still consider the empirical measure 
 \[
     \mu^{(N_C, N_V)} = \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{C_i(t)},
 \]
-for a given cell system $\vec{C}(t) = (C_1(t), \ldots, C_{N_C}(t))$ and assume convergence to a mean field density $\bar{\rho}_t^{\:N_V} \in \mathcal{P}(\R^{2 N_V})$ as $N_C \to \infty$.
+for a given cell system $\vec{C}(t) = (C_1(t), \ldots, C_{N_C}(t))$ and assume convergence of the measure to a mean field density $\bar{\rho}_t^{\:N_V} \in \mathcal{P}(\R^{2 N_V})$, as $N_C \to \infty$.
 Then, we compute
 \begin{align*}
     \frac{\dequ}{\dequ t} \int \phi(x) &\: \dequ \mu^{(N_C, N_V)}_t(x)
@@ -722,11 +722,30 @@ Then, we compute
     &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(C_i(t)) \cdot \frac{\alpha_{\bar{O}}}{N_C} \sum\limits_{j = 1}^{N_C}  \nabla_{C_i} \left( \psi \circ \chi \right) (C_i(t) - C_j(t)) \\
     &= - \frac{\alpha_{\bar{O}}}{{N_C}^2} \sum\limits_{i=1}^{N_C}\sum\limits_{j = 1}^{N_C}  \nabla \phi(C_i(t)) \cdot  \nabla_{C_i} \left( \psi \circ \chi \right) (C_i(t) - C_j(t)) \\
     &= - \frac{\alpha_{\bar{O}}}{{N_C}}  \int \sum\limits_{j = 1}^{N_C}  \nabla \phi(x) \cdot  \nabla_{C_i} \left( \psi \circ \chi \right) (x - C_j(t)) \: \dequ \mu^{(N_C, N_V)}_t(x)\\
-    &= - \alpha_{\bar{O}}  \iint  \nabla \phi(x) \cdot  \nabla_{C_i} \left( \psi \circ \chi \right) (x - y) \: \dequ \mu^{(N_C, N_V)}_t(x)\dequ \mu^{(N_C, N_V)}_t(y)\\
+    &= - \alpha_{\bar{O}}  \iint  \nabla \phi(x) \cdot  \nabla_{C_i} \left( \psi \circ \chi \right) (x - y) \: \dequ \mu^{(N_C, N_V)}_t(y) \: \dequ \mu^{(N_C, N_V)}_t(x)\\
     &\xrightarrow{N_C \to \infty} \: - \alpha_{\bar{O}}  \iint  \nabla \phi(x) \cdot  \nabla_{C_i} \left( \psi \circ \chi \right) (x - y) \, \bar{\rho}_t^{\:N_V}(y)\, \dequ y \: \bar{\rho}_t^{\:N_V}(x) \,\dequ x\\
-    &= - \alpha_{\bar{O}}  \int  \nabla \phi(x) \cdot  \left(\nabla_{C_i} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (x) \: \bar{\rho}_t^{\:N_V}(x) \:\dequ x \\
-    &= \alpha_{\bar{O}}  \int  \phi(x) \nabla \cdot \left[ \left(\nabla_{C_i} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (x) \: \bar{\rho}_t^{\:N_V}(x) \right] \: \dequ x \\
-    &=  \int  \phi(x) \nabla \cdot \left[\alpha_{\bar{O}} \left(\nabla_{C_i} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (x) \: \bar{\rho}_t^{\:N_V}(x) \right] \: \dequ x. \\
+    &= - \alpha_{\bar{O}}  \int  \nabla \phi(x) \cdot  \left(\nabla_{C_i} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (x)  \bar{\rho}_t^{\:N_V}(x) \:\dequ x \\
+    &= \alpha_{\bar{O}}  \int  \phi(x) \nabla \cdot \left[ \left(\nabla_{C_i} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(x)  \bar{\rho}_t^{\:N_V}(x) \right] \: \dequ x \\
+    &=  \int  \phi(x) \nabla \cdot \left[\alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(x) \left(\nabla_{C_i} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(x) \right] \: \dequ x. \\
 \end{align*}
+
+\subsubsection*{Hard df mean field pde}
+Since we were able to compute the mean field dynamic for the bounce overlap energy, we can now summarise the mean field PDE for the hard DF model with shape preserving energies and bounce overlap interaction.
+For cell hardness $h=1$, we neglect our other interaction term: the deforming overlap force. 
+The analysis of the influence of the deforming overlap force on the mean field dynamic requires more advanced mathematical techniques and is beyond the scope of this thesis. \\
+We consider the total energy
+\begin{align*}
+    E_{\text{hard}}(C) = E_A(C) + E_E(C) + E_I(C) + E_{\bar{O}}(\vec{C}),
+\end{align*}
+we can use the linearity of the gradient to easily write down 
+\begin{align}
+    \nabla_C E_{\text{hard}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C) + \nabla_C E_{\bar{O}}(\vec{C}).
+\end{align} 
+The four gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge}, \eqref{eq:cGradAngle} and %TODO: add bounce gradient reference.
+That dynamic is equivalent to the deterministic part of the DF SDE, given in Equation~\eqref{DF-deterministic-force}.
+The mean field PDE for the DF model with shape preserving energies is then given by inserting the above gradient into Equation~\eqref{equ:meanfieldPDE}, i.e.
+\begin{align}
+    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)) = 0.
+\end{align}
 
 
