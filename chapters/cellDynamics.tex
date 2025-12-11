@@ -154,9 +154,8 @@ In order to compute a cells area, which is the area of a positively orientated p
 \qed
 \end{proposition}
 
-\FloatBarrier   % prevents floats from passing this point
 
-\begin{figure}[h!]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=0.7\textwidth]{bachelors-thesis/shoelace_new.png}
 		\caption{
@@ -173,6 +172,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	\end{center}
 \end{figure}
 	
+% \FloatBarrier   % prevents floats from passing this point
 
 
 With the Shoelace formula we are able to easily compute all cell areas at all times in the simulation. 
@@ -195,11 +195,11 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
         \includegraphics[width=0.45\textwidth]{forces/area1/t2.png} &
         \includegraphics[width=0.45\textwidth]{forces/area1/t5.png} \\
     \end{tabular}
-    \caption{The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4\times 10^{8}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
-	Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4\times 10^{8} \nabla_{\vec{v}} A_2(C)$ for all vertices.
-	The initial cell area is $A_C = 1\times 10^{-5}$, while the desired cell area is set to $6.5\times 10^{-5}$.\\
+    \caption{The top four plots show the evolution of a DF cell influenced solely by the area force, with $k=2$ applied to the vertices and a force scaling of $4\times 10^{8}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.
+	Thus, we have $\frac{\dequ \vec{v}}{\dequ t} = - 4\times 10^{8} \,\nabla_{\vec{v}} A_2(C)$ for all vertices.
+	The initial cell area is $A_C = 1\times 10^{-5}$, while the desired cell area is set to $6.5\times 10^{-5}$.
 	We deliberately chose an irregular cell shape, since small vertical changes to the vertices lead to large changes in area.
-	Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+	Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-areaForce.gif}{\textit{here}} to view the corresponding animation (GIF).
 	The area force successfully restores the desired cell area after 5 time steps. This reduction in energy is likewise reflected in Figure~\ref{fig:areaEnergyDiagram}.
 	}
 	\label{fig:areaForce}    
@@ -280,36 +280,7 @@ The according energy for this edge is:
 Since each vertex $\vec{v}_j$ influences exactly the edge lengths of the edges $e_{j}$ and $e_{j-1}$, we get the total edge force on $\vec{v}_j$ with: 
 An isolated application of the edge force can be seen in Figure~\ref{fig:edgeForce}.  
 
-\begin{figure}[t!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.45\textwidth]{forces/edge1/t0.png} &
-        \includegraphics[width=0.45\textwidth]{forces/edge1/t1.png} \\
-        \includegraphics[width=0.45\textwidth]{forces/edge1/t2.png} &
-        \includegraphics[width=0.45\textwidth]{forces/edge1/t5.png} \\
-    \end{tabular}
-    \caption{The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.\\
-		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3\times 10^{4} \nabla_{\vec{v}} E_2(C)$ for all vertices.\\
-		The initial edge length of the top edge is $E_C^2 = 1\times 10^{-3}$, while the desired edge lengths are all set to $5\times 10^{-3}$.\\
-		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}} to view the associated animation (GIF).\\
-		The edge force nearly restores the desired edge lengths after 5 time steps, which can also be observed in Figure~\ref{fig:edgeEnergyDiagram}.
-		}
-		\label{fig:edgeForce}
-\end{figure}
-\FloatBarrier   % prevents floats from passing this point
-\vspace{3cm}
-\text{ }
-
-\begin{figure}[t!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/edge1/energies-show-edgeForce.png} 
-    \caption{This energy diagram shows that the edge force nearly restores the desired edge lengths after 5 time steps.}
-	\label{fig:edgeEnergyDiagram}    
-\end{figure}
-
-\vspace{3cm}
-
-\begin{proposition} \textbf{Edge force} \\
+\begin{proposition} \textbf{Edge force} \label{prop:edgeforce} \\
 	The edge force $F_{k}^{(E)}: (\R^2)^{N_V} \rightarrow (\R^2)^{N_V}$ that gets applied on cell $C$ is given by  
 	\begin{align*}
 		F_{k}^{(E)}(C) 
@@ -327,7 +298,7 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
 	\end{align}
 	for all $1 \leq j \leq N_V$.\\
 
-	Proof. \\
+	Proof. %of Proposition \ref{prop:edgeforce}. \\
 	We consider
 	\begin{align*}
 		\nabla_{\vec{v}_{j}} E_k(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \tfrac{1}{k} |E^j_{C} - E^{j}_d|^k \\
@@ -389,6 +360,41 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
 	\qed  
 \end{proposition}
 
+\FloatBarrier
+
+\begin{figure}[t!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/edge1/t5.png} \\
+    \end{tabular}
+    \caption{The top figures illustrate the evolution of a DF cell governed exclusively by the edge force, with $k=2$ applied to the vertices and a force scaling of $3\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 5\times 10^{-5}\}$.
+		Accordingly, we have $\frac{\dequ \vec{v}}{\dequ t} = - 3\times 10^{4}\, \nabla_{\vec{v}} E_2(C)$ for all vertices.
+		The initial edge length of the top edge is $E_C^2 = 1\times 10^{-3}$, while the desired edge lengths are all set to $5\times 10^{-3}$.
+		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-edgeForce.gif}{\textit{here}} to view the associated animation (GIF).
+		The edge force nearly restores the desired edge lengths after 5 time steps, which can also be observed in Figure~\ref{fig:edgeEnergyDiagram}.
+		}
+		\label{fig:edgeForce}
+\end{figure}
+\FloatBarrier   % prevents floats from passing this point
+\vspace{3cm}
+\text{ }
+
+\begin{figure}[t!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/edge1/energies-show-edgeForce.png} 
+    \caption{This energy diagram shows that the edge force nearly restores the desired edge lengths after 5 time steps.}
+	\label{fig:edgeEnergyDiagram}    
+\end{figure}
+
+\vspace{3cm}
+
+
+
+	
+
 \FloatBarrier 
 \subsection{Interior angle force}
 % mention scaling factor of /360 for interior angle force 
@@ -427,7 +433,7 @@ With this, we can compute the angles
 between the positive $x$-axis and the vectors from $\vec{v}_j$ to its neighboring vertices $\vec{v}_{j-1}$ and $\vec{v}_{j+1}$. 
 We get the searched angle at $\vec{v}_j$ by subtracting $\theta_1 - \theta_2$.
 To ensure that the angle lies within the interval $[0, 2\pi)$, we use the modulo operator $[ \cdot ]_{[0,2\pi)}$.
-Thus, our interior angle operator is: 
+Thus, our interior angle operator is
 \begin{center}
 	$
 	I^j_C = [\atanxy(\vec{v}_{j-1} - \vec{v_j}) - \atanxy(\vec{v}_{j+1} - \vec{v_j})]_{[0,2\pi)}.
@@ -464,10 +470,10 @@ However, we just neglect the modulo operator as it does not affect the dynamics 
         \includegraphics[width=0.45\textwidth]{forces/angle1/t5.png} &
         \includegraphics[width=0.45\textwidth]{forces/angle1/t19.png} \\
     \end{tabular}
-    \caption{The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1\times 10^{-1}$, at times $t \in \{0, 3\times 10^{-5}, 5\times 10^{-5}, 19\times 10^{-5}\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1\times 10^{-1} \nabla_{\vec{v}} I_2(C)$ for all vertices.\\
-			At the vertex with initial position $\vec{v}_1 = (0.003, 0.0)^T$, the starting interior angle is $306.9°$, while all desired interior angles are $120°$.\\
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+		\caption{The top four plots depict the evolution of a DF cell subject only to the interior angle force with $k=2$ applied to the vertices and a force scaling of $1\times 10^{-1}$, at times $t \in \{0, 3\times 10^{-5}, 5\times 10^{-5}, 19\times 10^{-5}\}$.
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 1\times 10^{-1}\, \nabla_{\vec{v}} I_2(C)$ for all vertices.
+			At the vertex with initial position $\vec{v}_1 = (0.003, 0.0)^T$, the starting interior angle is $306.9$°, while all desired interior angles are $120$°.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-intAngleForce.gif}{\textit{here}} to view the corresponding animation (GIF).
 			As seen in Figure~\ref{fig:angleEnergyDiagram}, the interior angle force requires more time to reach the target configuration. 
 			This slower convergence is due to the reduced force scaling, which was necessary to avoid stability issues encountered at higher force scaling values. }
 	\label{fig:angleForce}
@@ -804,17 +810,18 @@ If it is even, the point is outside the polygon. \\
 After introducing the method for detecting overlaps, we can now define the overlap force, which acts on the cell vertices involved in an overlap. 
 This force is first computed based on the geometry of the overlap and then distributed to the corresponding vertices of the original cells. \\
 
-\begin{definition} \textbf{Overlap energy} \\
-	Let $C_i$ and $C_m$ be two cells from the system $\vec{C}$ and $\Omega_{C_i,C_m}$ be the set of all overlaps that appear between $C_i$ and $C_m$, like explained above. Then, the total overlap energy $O_k : (\R^{2N_V})^{N_C} \rightarrow \R$ of the cell system is given by the formula 
+\begin{definition} \textbf{Deforming overlap energy} \\
+	Let $C_i$ and $C_m$ be two cells from the system $\vec{C}$ and $\Omega_{C_i,C_m}$ be the set of all overlaps that appear between $C_i$ and $C_m$, like explained above. 
+	Then, the total deforming overlap energy $\hat{O}_k : (\R^{2N_V})^{N_C} \rightarrow \R$ of the cell system is given by the formula 
 	\begin{align}
-		O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \; \sum\limits_{m=i+1}^{N_C} \; \sum\limits_{D \,\in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k,	
+		\hat{O}_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \; \sum\limits_{m=i+1}^{N_C} \; \sum\limits_{D \,\in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k,	
 		\label{eq:overlapEnergy}
 	\end{align} 
 	where $A_{D}$ is the area of the overlap $D$.  \\
 	We define the inner bracket to be the overlap energy of the cell pair $C_i$ and $C_m$
 	\begin{align*}
-		&O_k^{i,m}: (\R^{2 N_V})^2 \: \longrightarrow \: \R, \\[0.5em]
-		(C_i, C_m) \: \longmapsto \: &O_k^{i,m}(C_i, C_m) = \sum\limits_{D\, \in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k.
+		&\hat{O}_k^{i,m}: (\R^{2 N_V})^2 \: \longrightarrow \: \R, \\[0.5em]
+		(C_i, C_m) \: \longmapsto \: &\hat{O}_k^{i,m}(C_i, C_m) = \sum\limits_{D\, \in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k.
 	\end{align*} 
 \end{definition}
 
@@ -1023,7 +1030,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The deforming overlap gradient is then given by 
 	\begin{align}
 		\begin{split}
-			\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A_D  + \\[0.5em]
+			\nabla_{\vec{v}_j^{\: i}} \hat{O}_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}}  |A_{D}|^{k-1} \Biggl(\mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A_D  + \\[0.5em]
 				    							   &+ \sum\limits_{\vec{w} \in W(D)} \left(\mathbf{1}_{\text{out}(w)}(\vec{v}_{j}^{\: i}) D_{\vec{v}_{\text{out}}^{\: i}} \vec{w} %+ \\
 													+ \mathbf{1}_{\text{in}(w)}(\vec{v}_j^{\: i}) D_{\vec{v}_{\text{in}}^{\: i}} \vec{w} \right) \nabla_{\vec{w}}A_D\Biggr),
 		\end{split}
@@ -1037,12 +1044,12 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The deforming overlap force $F_{k}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})^{N_C}$ that gets applied on the whole cell system $\vec{C} = (C_1, \ldots, C_{N_C})$ is then given by  
 	\begin{align*}
 		F_{k}^{\hat{(O)}}(\vec{C}) 
-		= - (\nabla_{\vec{v}_1^{\:1}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} O_k(\vec{C}), \; \cdots \;, \nabla_{\vec{v}_1^{\:N_C}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} O_k(\vec{C}))^T.
+		= - (\nabla_{\vec{v}_1^{\:1}} \hat{O}_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:1}} \hat{O}_k(\vec{C}), \; \cdots \;, \nabla_{\vec{v}_1^{\:N_C}} \hat{O}_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:N_C}} \hat{O}_k(\vec{C}))^T.
 	\end{align*}
 	For addressing the overlap force that acts on cell $1 \leq i \leq N_C$, we define 
 	\begin{center}
 		$F_{k, i}^{\hat{(O)}}: (\R^{2 N_V})^{N_C} \rightarrow (\R^{2 N_V})$, \\
-		$F_{k, i}^{\hat{(O)}}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} O_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} O_k(\vec{C}))^T$. 
+		$F_{k, i}^{\hat{(O)}}(\vec{C}) = - (\nabla_{\vec{v}_1^{\:i}} \hat{O}_k(\vec{C}), \ldots, \nabla_{\vec{v}_{N_V}^{\:i}} \hat{O}_k(\vec{C}))^T$. 
 	\end{center}
 	\FloatBarrier
 	\begin{figure}[h!]
@@ -1054,10 +1061,10 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 			\includegraphics[width=0.45\textwidth]{forces/defOverlap1/t3.png} \\
 		\end{tabular}
 		\caption{
-			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
-			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6\times 10^{4} \nabla_{\vec{v}} \hat{O}_1(C_1, C_2)$ for all vertices.
+			The top four plots show the evolution of a DF cell influenced solely by the deforming overlap force, with $k=1$ applied to the vertices and a force scaling of $6\times 10^{4}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.
+			In this case, we have $\frac{\dequ \vec{v}}{\dequ t} = - 6\times 10^{4}\, \nabla_{\vec{v}} \, \hat{O}_1(C_1, C_2)$ for all vertices.
 			The overlap area $D$ is indicated below each plot.
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-DeformaingOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).
 			Initially, the overlap area is $3\times 10^{-5}$, which is relatively large compared to the cell area of $6.5\times 10^{-5}$. 
 			However, it is completely resolved after just two time steps, as also illustrated in the energy diagram in Figure~\ref{fig:defOverlapEnergyDiagram}.
 			}
@@ -1090,9 +1097,9 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	Since the area $A_D$ is always positive, we can drop the absolute value. \\
 	We aim to compute 
 	\begin{align*}
-		\nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) 
+		\nabla_{\vec{v}_j^{\: i}} \hat{O}_k(\vec{C}) 
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{i=1}^{N_C} \left( \sum\limits_{m=i+1}^{N_C} \left(\sum\limits_{D \in \Omega_{C_i,C_m}} \tfrac{1}{k}{A_{D}}^k\right) \right) \\
-		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} O_k^{i,m}(C_i, C_m) \\
+		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \hat{O}_k^{i,m}(C_i, C_m) \\
 		&= \nabla_{\vec{v}_j^{\: i}} \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \tfrac{1}{k}{A_D}^k \\
 		&= \sum\limits_{m \neq i} \sum\limits_{D \in \Omega_{C_i,C_m}} \nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k}{A_D}^k. 
 	\end{align*}
@@ -1170,7 +1177,7 @@ Figure~\ref{fig:overlapForce} illustrates the interaction between two overlappin
 \FloatBarrier
 
 \subsubsection*{Bounce overlap force} 
-While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially—leaving cells temporarily stuck together, relying on random Brownian motion to diffuse apart. 
+While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially - leaving cells temporarily stuck together, relying on random Brownian motion to diffuse apart. 
 With just that force, it is hard to compare the DF cell model to the hard sphere cell model, where overlaps are solved by reflecting them away from each other, resulting in a real distance that both cells have after a really small amount of time. \\  
 To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non-deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
 This additional force, which we refer to as the bounce overlap force, acts not by changing cell shape but by actively transporting overlapping cells away from each other. 
@@ -1186,73 +1193,138 @@ But we need the following assumptions:
 \end{enumerate}
 
 
+With that given, we can define the according energy. 
 
-
-
-
-\begin{definition}\textbf{Bounce overlap force} \label{force:bounceOverlap}\\
-	Let us consider two DF cells $C_i$ and $C_l$, with centres at $\vec{x}_i$ and $\vec{x}_l$, respectively. 
-	We assume that each cell has a fixed radius $r > 0$.
-	We define the vector $\dequ \bar{o}_{i,l} \in \mathbb{R}^2$, which is applied equally to all vertices of cell $C_i$, representing the repulsive overlap force caused by cell $C_l$. 
-	It is given by
-	\[
-	\dequ \bar{o}_{i,l} = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} (2r - \norm[\vec{x}_i - \vec{x}_l]) \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]}.
-	\]
-	This force is zero if the distance between the cell centres satisfies $\norm[\vec{x}_i - \vec{x}_l] \geq 2r$.
-
-	Otherwise, if the cells overlap (i.e., $\norm[\vec{x}_i - \vec{x}_l] < 2r$), the vector $\dequ \bar{o}_{i,l}$ points from $\vec{x}_l$ to $\vec{x}_i$ and has magnitude equal to the overlap depth $a = 2r - \norm[\vec{x}_i - \vec{x}_l]$. 
-	At the same time in the simulation, the same magnitude of displacement is applied to all vertices of $C_l$ in the opposite direction, i.e., along $\vec{x}_l - \vec{x}_i$.
-	This means that all vertices of cell $C_i$ are displaced away from $C_l$ in the direction $\vec{x}_i - \vec{x}_l$ such that the resulting displacement is sufficient to separate the two cells' centres by exactly $2r + a$. 
-
-	The force $F^{(\bar{O})}_{i,l}$ that acts on cell $C_i$ due to its interaction with cell $C_l$ is given by
-	\[
-	F^{(\bar{O})}_{i,l}(C_i, C_l) =  (\dequ \bar{o}_{i,l}, \ldots, \dequ \bar{o}_{i,l})^T \in \mathbb{R}^{2N_V},
-	\]
-	where the vector $\dequ \bar{o}_{i,l}$ is repeated $N_V$ times, once for each vertex of cell $C_i$.
-
-	The total bounce overlap force $F^{(\bar{O})}_i: (\mathbb{R}^{2N_V})^{N_C} \rightarrow \mathbb{R}^{2N_V}$ acting on cell $C_i$ due to all other cells in the system is then defined as
-	\[
-	F^{(\bar{O})}_i(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l).
-	\]
+\begin{definition} \textbf{Bounce overlap energy} \label{energy:bounce}\\
+    The energy underlying for the bounce overlap dynamics is defined as
+    \begin{align}
+		\begin{split}
+			&\bar{O}: (\R^{2N_V})^{N_C} \: \longrightarrow \: \R_+, \\
+			\vec{C} \: \longmapsto \: &\bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \sum\limits_{j > i}^{N_C}  \left( \psi \circ \chi \right) (C_i - C_j),
+		\end{split}
+		\label{energy:bounce}
+    \end{align}
+    where we use two functions $\chi$ and $\psi$, defined as follows. \\
+    The first function 
+    \begin{align*}
+        &\chi: \R^{2 N_V} \: \longrightarrow \: \R_+, \\
+        (C_i - C_j) \: \longmapsto \: &\chi(C_i - C_j) 
+        = \norm[ \vec{x}_i - \vec{x}_j ],
+    \end{align*} 
+    maps the difference of two cells $C_i - C_j$ to the distance of their cell centres where a cell centre is computed as $\vec{x}_i = \frac{1}{N_V} \sum\limits_{k=1}^{N_V} \vec{v}^{\: i}_k$. 
+    This formulation is feasible, as we can write 
+    \[    
+    C_i - C_j = \begin{pmatrix}    
+        \vec{v}_1^{\:i} - \vec{v}_1^{\:j} \\ 
+        \vdots \\ 
+        \vec{v}_{N_V}^{\:i} -  \vec{v}_{N_V}^{\:j}
+    \end{pmatrix},
+    \]
+    and then use this vector to compute the cell centre distance as 
+    \[
+        \norm[ \frac{1}{N_V} \left( \sum\limits_{k=1}^{N_V} (\vec{v}^{\: i}_k - \vec{v}^{\: j}_k) \right)] 
+        = \norm[ \frac{1}{N_V} \sum\limits_{k=1}^{N_V} \vec{v}^{\: i}_k   - \frac{1}{N_V} \sum\limits_{k=1}^{N_V} \vec{v}^{\: j}_k]
+        = \norm[ \vec{x}_i - \vec{x}_j ].
+    \]
+    \\
+    The second function 
+    \begin{align*}
+        &\psi: \R_+ \: \longrightarrow \: \R_+, \\
+        d \: \longmapsto \: &\psi(d) = \tfrac{N_V}{2} \mathbf{1}_{\{d < 2r\}} (2r - d)^2,
+    \end{align*}
+    penalises cell centre distances smaller than the threshold $2r$, where $r>0$ is the cell radius given in the simulation setup.
 \end{definition}
 
-\FloatBarrier   % prevents floats from passing this point
-\begin{figure}[b!]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t0.png} &
-        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t1.png} \\
-        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t2.png} &
-        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t3.png} \\
-    \end{tabular}
-    \caption{The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $1\times 10^{5}$, at times $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.\\
-			In this case, we have $\frac{\partial C_i}{\partial t} = 1\times 10^{5} \: F_i^{\bar{O}}(C_1, C_2)$ for both cells.
-			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).\\
-			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. 
-			The corresponding energy development is illustrated in Figure~\ref{fig:bounceOverlapEnergyDiagram}.
-		}
-	\label{fig:bounceOverlapForce}   
-\end{figure}
+At first glance, the bounce overlap energy appears to lack smoothness due to the presence of the indicator function in $\psi$. 
+However, noting that the quadratic expression $(2r - d)^2$ vanishes at the transition point $d = 2r$ and that its first derivative is also zero there, we observe that the resulting energy is in fact continuously differentiable.  
+With this regularity established, we proceed to compute the gradient required for the gradient flow dynamic.
 
-\begin{figure}[t!]
-    \centering
-        \includegraphics[width=0.7\textwidth]{forces/bounceOverlap1/energies-show-bounceOverlapForce.png} 
-    \caption{The overlap energy reaches zero after one iteration.}
-	\label{fig:bounceOverlapEnergyDiagram}    
-\end{figure}
+\begin{proposition} \textbf{Bounce overlap force} \label{prop:bounceForce}\\
+    The bounce overlap force $F^{(\bar{O})}_i: (\R^{2N_V})^{N_C} \rightarrow \R^{2N_V}$ that gets applied on cell $i$, is given by
+    \begin{align*}
+        F^{(\bar{O})}_i(\vec{C}) = -(\nabla_{\vec{v}^{\: i}_1} \bar{O}(\vec{C}), \ldots, \nabla_{\vec{v}^{\: i}_{N_V}} \bar{O}(\vec{C})),
+    \end{align*}
+	where the vertex wise gradient is given by 
+	\begin{align}
+		\nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]},
+	\end{align}
+	for any $1\leq k \leq N_V$.\\
 
+    Proof.\\
+	We choose an arbitrary cell $1 \leq i \leq N_C$ and vertex $1 \leq k \leq N_V$. 
+    Then, we consider the gradient with respect to the vertex $\vec{v}^{\: i}_k$ of the bounce overlap energy as
+    \begin{align*}
+        \nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) 
+        &= \nabla_{\vec{v}^{\: i}_k} \left[ \frac{1}{N_C} \sum\limits_{m=1}^{N_C} \sum\limits_{j > m}^{N_C}  \left( \psi \circ \chi \right) (C_m - C_j) \right] \\
+        &= \frac{1}{N_C} \sum\limits_{j \neq i}  \nabla_{\vec{v}^{\: i}_k} \left[  \left( \psi \circ \chi \right) (C_i - C_j) \right] \\
+        &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{\vec{v}^{\: i}_k} \chi (C_i - C_j). \\
+    \end{align*}
+	For the derivative of $\psi$, we first consider $d \in [0,2r]$. 
+    On this interval, we have
+    \begin{align*}
+        \psi'(d) 
+        &= \frac{\dequ}{\dequ d} \left[\frac{N_V}{2} \mathbf{1}_{\{d < 2r\}}  (2r - d)^2\right] \\
+        &= \frac{N_V}{2} \frac{\dequ}{\dequ d} \left[(2r - d)^2\right] \\
+        &= \frac{N_V}{2} 2(2r - d) \frac{\dequ}{\dequ d} \left[(2r - d)\right] \\
+        &= N_V (d - 2r).\\
+    \end{align*}
+	For $d=2r$, this we have a derivative of $\psi'(2r) = 0$. 
+	As for $d>2r$, $psi$ is constant zero, we also have $\psi'(d) = 0$ for all $d > 2r$. 
+	Overall, we get the continuous derivative 
+	\begin{align*}
+	    \psi'(d) = N_V \mathbf{1}_{\{d < 2r\}} (d - 2r).
+	\end{align*} 
+    % TODO: explain why \frac{\dequ}{\dequ d} \left[\mathbf{1}_{\{d < 2r\}}\right] (d - 2r)^2 = 0
+    Thus, 
+    \begin{align*}
+    \psi'(\chi(C_i - C_j)) = \psi'(\norm[\vec{x}_i - \vec{x}_j]) = N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r).
+    \end{align*}
+    We continue with the gradient with respect to a vertex $\vec{v}^{\:i}_k$, $1 \leq k \leq N_V$, of cell $i$ as
+    \begin{align*}
+        \nabla_{\vec{v}^{\:i}_k} \chi (C_i - C_j) 
+        &= \nabla_{\vec{v}^{\:i}_k} \norm[ \vec{x}_i - \vec{x}_j ] \\ 
+        &= \nabla_{\vec{v}^{\:i}_k} \left[ \left( (x^x_i - x^x_j)^2 + (x^y_i - x^y_j)^2 \right)^{\tfrac{1}{2}} \right]  \\ 
+        &= \tfrac{1}{2} \left( (x^x_i - x^x_j)^2 + (x^y_i - x^y_j)^2 \right)^{-\tfrac{1}{2}} \nabla_{\vec{v}^{\:i}_k} \left[ (x^x_i - x^x_j)^2 + (x^y_i - x^y_j)^2 \right] \\ 
+        &= \frac{1}{2 \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
+            \tfrac{\partial}{\partial v^{i, x}_k} \left[ (x^x_i - x^x_j)^2  \right] \\[0.5em]
+            \tfrac{\partial}{\partial v^{i, y}_k} \left[ (x^y_i - x^y_j)^2 \right] 
+        \end{pmatrix} \\ 
+        &= \frac{1}{2 \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
+            2 (x^x_i - x^x_j)\tfrac{\partial}{ \partial v^{i, x}_k} \left[ x^x_i - x^x_j \right] \\[0.5em]
+            2 (x^y_i - x^y_j)\tfrac{\partial}{ \partial v^{i, y}_k} \left[ x^y_i - x^y_j \right] 
+        \end{pmatrix} \\ 
+        &= \frac{1}{ \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
+             (x^x_i - x^x_j) \tfrac{\partial}{  \partial v^{i, x}_k} \left[ \tfrac{1}{N_V} \sum\limits_{k=1}^{N_V} v^{i, x}_k \right] \\[0.5em]
+             (x^y_i - x^y_j) \tfrac{\partial}{  \partial v^{i, y}_k} \left[ \tfrac{1}{N_V} \sum\limits_{k=1}^{N_V} v^{i, y}_k \right] 
+        \end{pmatrix} \\ 
+        &= \frac{1}{ \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
+             \tfrac{1}{N_V} (x^x_i - x^x_j)  \\[0.5em]
+             \tfrac{1}{N_V} (x^y_i - x^y_j) 
+        \end{pmatrix} \\ 
+        &= \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]}  (\vec{x}_i - \vec{x}_j) .       
+    \end{align*}
+    We get the same gradient, no matter which $1 \leq k \leq N_V$ we choose.
+    Now, we can come back to the original computation 
+    \begin{align*}
+        \nabla_{\vec{v}^{\:i}_k} \bar{O}(\vec{C}) 
+        &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{\vec{v}^{\:i}_k} \chi (C_i - C_j) \\
+        &= \frac{1}{N_C} \sum\limits_{j \neq i}  N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r) \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} (\vec{x}_i - \vec{x}_j) \\
+        &= \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]}. 
+    \end{align*}
+    \qed 
+\end{proposition}
 
 In order to achieve a similarly fast degeneration of the overlap as in~\cite{Bruna2012}, we need to scale the force with the scaling factor 
 \(
-\alpha^{(\bar{O})} = 10^5
+\alpha^{(\bar{O})} = N_C \times 10^5
 \)
-as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$. 
+as the time needed to resolve such an overlap in~\cite{Bruna2012} was always one time step which is $10^{-5}$ and we need to compensate the fraction $\frac{1}{N_C}$ that is needed for the mean field density computation in Chapter~\ref{density}. 
 The according dynamic is shown in Figure~\ref{fig:bounceOverlapForce}.
 
 To account for varying cell stiffness, we introduce a new parameter $h \in [0, 1]$ that controls how `hard' the cells are. 
-The total overlap force is then defined as a weighted combination of two overlap force types:
+The total overlap force is then defined as a weighted combination of two overlap force types
 \[
-F^{(\mathbf{O})} = h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
+	h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
 \]
 where $F^{(\bar{O})}$ denotes the bounce off overlap force and $F^{\hat{(O)}}$ the shape deforming overlap force.\\
 When $h = 1$, the cells are maximally stiff. 
@@ -1266,7 +1338,32 @@ In this way, we can systematically investigate how the dynamics evolve between t
 In the limiting case $h = 0$, we recover the DF dynamics without the bounce overlap force term.
 
 
+\begin{figure}
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t0.png} &
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t1.png} \\
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t2.png} &
+        \includegraphics[width=0.45\textwidth]{forces/bounceOverlap1/t3.png} \\
+    \end{tabular}
+			\caption{The top four plots present the evolution of a DF cell governed solely by the bounce overlap force, applied to the vertices with a force scaling of $2.0 \times 10^{5}$, as we used $N_C = 2$ cells for this example. 
+			We consider the time instances $t \in \{0, 1\times 10^{-5}, 2\times 10^{-5}, 3\times 10^{-5}\}$.
+			In this case, we have $\frac{\partial C_i}{\partial t} = 1\times 10^{5} \: F_i^{(\bar{O})}(C_1, C_2)$ for both cells.
+			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-bounceOverlapForce.gif}{\textit{here}} to view the corresponding animation (GIF).
+			The overlap vanishes within the very first time step, leaving a visible gap between the two cells. 
+			The corresponding energy development is illustrated in Figure~\ref{fig:bounceOverlapEnergyDiagram}.
+		}
+	\label{fig:bounceOverlapForce}   
+\end{figure}
 
+\begin{figure}[t!]
+    \centering
+        \includegraphics[width=0.7\textwidth]{forces/bounceOverlap1/energies-show-bounceOverlapForce.png} 
+    \caption{The overlap energy reaches zero after one iteration.}
+	\label{fig:bounceOverlapEnergyDiagram}    
+\end{figure}
+
+\FloatBarrier
 
 \subsection{The DF SDE}
 Having defined all individual force contributions acting on the cell vertices, we now combine them to formulate the full dynamics of the system in terms of a stochastic differential equation. \\
@@ -1296,7 +1393,7 @@ Summarizing all these efforts, we arrived at the following force scalings used i
 		\text{Edge force} & $\alpha_E = 3.0 \times 10^4$ \\
 		\text{Interior angle force} & $\alpha_I = 1.0 \times 10^{-1}$ \\
 		\text{Deforming overlap force} & $\alpha_{\hat{O}} = 6.0 \times 10^4$ \\
-		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 1.0 \times 10^5$ \\
+		\text{Bounce overlap force} & $\alpha_{\bar{O}} = 4.0 \times 10^7$ \\
 		\hline
 	\end{tabular}
 	\caption{Scaling parameters for different force types}
@@ -1315,7 +1412,7 @@ These scaling parameters serve as the foundation for the complete DF SDE model, 
 	\] 
 	to the $x$ and $y$ coordinates of the vertices of a cell, respectively.
 	The cell hardness parameter $h \in [0,1]$ is assumed to be given.
-	The deterministic part $F^{i}(\vec{C})$ of the \textbf{DF SDE} is given by 
+	The deterministic part $\F^{i}(\vec{C})$ of the \textbf{DF SDE} is given by 
 	\begin{align}
 		\begin{split}
 			& \F^i: (\R^{2N_V})^{N_C} \longrightarrow \R^{2N_V} , \\[0.5em]
@@ -1347,7 +1444,7 @@ These scaling parameters serve as the foundation for the complete DF SDE model, 
         \includegraphics[width=0.45\textwidth]{forces/allforces_hard/t3.png} \\
     \end{tabular}
     \caption{
-		This simulation shows two DF cells evolving according to the dynamics for $i = 1, 2$
+		This simulation shows two DF cells evolving according to the dynamics for $i = 1, 2$,
 		$\frac{\partial C_i}{\partial t} = \F^i(C_1, C_2)$ with hardness $h=1$, force scalings as listed in Table~\ref{table:forcescalings} and without Brownian motion.
 		Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard.gif}{\textit{here}} to view the corresponding animation (GIF).
 		The cells are initially generated with overlap. 
@@ -1370,10 +1467,10 @@ These scaling parameters serve as the foundation for the complete DF SDE model, 
         \includegraphics[width=0.45\textwidth]{forces/allforces_0-5/t3.png} \\
     \end{tabular}
     \caption{
-			This simulation shows two DF cells again evolving according to the dynamics $i=1,2$ $\frac{\partial C_i}{\partial t} = \F^i(C_1, C_2)$, with hardness $h=0.5$, force scalings as listed in Table~\ref{table:forcescalings}, and without Brownian motion.
+			This simulation shows two DF cells again evolving according to the dynamics $i=1,2$, $\frac{\partial C_i}{\partial t} = \F^i(C_1, C_2)$, with hardness $h=0.5$, force scalings as listed in Table~\ref{table:forcescalings}, and without Brownian motion.
 			Click \href{https://github.com/tivo476c/FlexibleCellModel/blob/master/figures/gifs/showForces/show-allForces-hard5e-1.gif}{\textit{here}} to view the corresponding animation (GIF).
 			The cells are initially generated with overlap. 
-			Afterwards, the dynamics from $\F^i$ alone resolve the overlap.\\
+			Afterwards, the dynamics from $\F^i$ alone resolve the overlap.
 			In contrast to the previous simulation, the cell shapes now change because the deforming overlap force is active. 
 			The overlap is still removed within a single time step. 
 			By time step~10, the cell shapes are nearly restored, as also illustrated in Figure~\ref{fig:allForces-halfEnergyDiagram}.

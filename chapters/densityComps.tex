@@ -556,132 +556,41 @@ We can write down the cell wise interior angle gradient as
 % \end{align}
 
 \subsubsection*{Bounce overlap energy}
-
-\begin{definition} \textbf{Bounce overlap energy} \label{energy:bounce}\\
-    The energy underlying for the bounce overlap dynamics is defined as
-    \begin{align*}
-        &\bar{O}: (\R^{2N_V})^{N_C} \: \longrightarrow \: \R_+, \\
-        \vec{C} \: \longmapsto \: &\bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \sum\limits_{j > i}^{N_C}  \left( \psi \circ \chi \right) (C_i - C_j),
-    \end{align*}
-    where we use the functions two function $\chi$ and $\psi$, defined as follows. \\
-    The first function 
-    \begin{align*}
-        &\chi: \R^{2 N_V} \: \longrightarrow \: \R_+, \\
-        (C_i - C_j) \: \longmapsto \: &\chi(C_i - C_j) 
-        = \norm[ \vec{x}_i - \vec{x}_j ],
-    \end{align*} 
-    maps the difference of two cells $C_i - C_j$ to the distance of their cell centres where a cell centre is computed as $\vec{x}_i = \frac{1}{N_V} \sum\limits_{k=1}^{N_V} \vec{v}^{\: i}_k$. 
-    This formulation is feasible, as we can write 
-    \[    
-    C_i - C_j = \begin{pmatrix}    
-        \vec{v}_1^{\:i} - \vec{v}_1^{\:j} \\ 
-        \vdots \\ 
-        \vec{v}_{N_V}^{\:i} -  \vec{v}_{N_V}^{\:j}
-    \end{pmatrix},
-    \]
-    and then use this vector to compute the cell centre distance as 
-    \[
-        \norm[ \frac{1}{N_V} \left( \sum\limits_{k=1}^{N_V} (\vec{v}^{\: i}_k - \vec{v}^{\: j}_k) \right)] 
-        = \norm[ \frac{1}{N_V} \sum\limits_{k=1}^{N_V} \vec{v}^{\: i}_k   - \frac{1}{N_V} \sum\limits_{k=1}^{N_V} \vec{v}^{\: j}_k]
-        = \norm[ \vec{x}_i - \vec{x}_j ].
-    \]
-    \\
-    The second function 
-    \begin{align*}
-        &\psi: \R_+ \: \longrightarrow \: \R_+, \\
-        d \: \longmapsto \: &\psi(d) = \tfrac{N_V}{2} \mathbf{1}_{\{d < 2r\}} (2r - d)^2,
-    \end{align*}
-    penalises cell centre distances smaller than the threshold $2r$, where $r>0$ is the cell radius given in the simulation setup.
-\end{definition}
-
-
-\begin{proposition} \textbf{Bounce overlap gradient} \label{prop:bounceForce}\\
-    The bounce overlap force from Definition~\ref{def:bounceForce} is the negative gradient of the bounce overlap energy from Definition~\ref{energy:bounce}, i.e. 
-    \begin{align*}
-        F^{(\bar{O})}_i(\vec{C}) = - \nabla_{C_i} \bar{O}(\vec{C}).
-    \end{align*}
-
-    Proof.\\
-    We compute the gradient of the bounce overlap energy for cell $i$ as
-    \begin{align*}
-        \nabla_{C_i} \bar{O}(\vec{C}) 
-        &= \nabla_{C_i} \left[ \frac{1}{N_C} \sum\limits_{m=1}^{N_C} \sum\limits_{j > m}^{N_C}  \left( \psi \circ \chi \right) (C_m - C_j) \right] \\
-        &= \frac{1}{N_C} \sum\limits_{j \neq i}  \nabla_{C_i} \left[  \left( \psi \circ \chi \right) (C_i - C_j) \right] \\
-        &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{C_i} \chi (C_i - C_j). \\
-    \end{align*}
-    The first derivative of $\psi$ is given by
-    \begin{align*}
-        \psi'(d) 
-        &= \frac{N_V}{2} \frac{\dequ}{\dequ d} \left[\mathbf{1}_{\{d < 2r\}} (2r - d)^2\right] \\
-        &= \frac{N_V}{2} \Bigl( \underbrace{\frac{\dequ}{\dequ d} \left[\mathbf{1}_{\{d < 2r\}}\right] (d - 2r)^2}_{= 0} + \mathbf{1}_{\{d < 2r\}}\frac{\dequ}{\dequ d} \left[(d - 2r)^2\right] \Bigr)\\
-        &= \tfrac{N_V}{2} \mathbf{1}_{\{d < 2r\}} 2(d - 2r) \underbrace{\frac{\dequ}{\dequ d} \left[(d - 2r)\right]}_{=1}\\
-        &= N_V \mathbf{1}_{\{d < 2r\}} (d - 2r).\\
-    \end{align*}
-    % TODO: explain why \frac{\dequ}{\dequ d} \left[\mathbf{1}_{\{d < 2r\}}\right] (d - 2r)^2 = 0
-    Thus, 
-    \begin{align*}
-    \psi'(\chi(C_i - C_j)) = \psi'(\norm[\vec{x}_i - \vec{x}_j]) = N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r).
-    \end{align*}
-    We continue with the gradient with respect to a vertex $\vec{v}^{\:i}_k$, $1 \leq k \leq N_V$, of cell $i$ as
-    \begin{align*}
-        \nabla_{\vec{v}^{\:i}_k} \chi (C_i - C_j) 
-        &= \nabla_{\vec{v}^{\:i}_k} \norm[ \vec{x}_i - \vec{x}_j ] \\ 
-        &= \nabla_{\vec{v}^{\:i}_k} \left[ \left( (x^x_i - x^x_j)^2 + (x^y_i - x^y_j)^2 \right)^{\tfrac{1}{2}} \right]  \\ 
-        &= \tfrac{1}{2} \left( (x^x_i - x^x_j)^2 + (x^y_i - x^y_j)^2 \right)^{-\tfrac{1}{2}} \nabla_{\vec{v}^{\:i}_k} \left[ (x^x_i - x^x_j)^2 + (x^y_i - x^y_j)^2 \right] \\ 
-        &= \frac{1}{2 \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
-            \tfrac{\partial}{\partial v^{i, x}_k} \left[ (x^x_i - x^x_j)^2  \right] \\[0.5em]
-            \tfrac{\partial}{\partial v^{i, y}_k} \left[ (x^y_i - x^y_j)^2 \right] 
-        \end{pmatrix} \\ 
-        &= \frac{1}{2 \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
-            2 (x^x_i - x^x_j)\tfrac{\partial}{ \partial v^{i, x}_k} \left[ x^x_i - x^x_j \right] \\[0.5em]
-            2 (x^y_i - x^y_j)\tfrac{\partial}{ \partial v^{i, y}_k} \left[ x^y_i - x^y_j \right] 
-        \end{pmatrix} \\ 
-        &= \frac{1}{ \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
-             (x^x_i - x^x_j) \tfrac{\partial}{  \partial v^{i, x}_k} \left[ \tfrac{1}{N_V} \sum\limits_{k=1}^{N_V} v^{i, x}_k \right] \\[0.5em]
-             (x^y_i - x^y_j) \tfrac{\partial}{  \partial v^{i, y}_k} \left[ \tfrac{1}{N_V} \sum\limits_{k=1}^{N_V} v^{i, y}_k \right] 
-        \end{pmatrix} \\ 
-        &= \frac{1}{ \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
-             \tfrac{1}{N_V} (x^x_i - x^x_j)  \\[0.5em]
-             \tfrac{1}{N_V} (x^y_i - x^y_j) 
-        \end{pmatrix} \\ 
-        &= \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]}  (\vec{x}_i - \vec{x}_j) .       
-    \end{align*}
-    We get the same gradient, no matter which $1 \leq k \leq N_V$ we choose.
-    Thus, we can write down the cell wise gradient as 
-    \begin{align*}  
-        \nabla_{C_i} \chi (C_i - C_j) 
-        = \begin{pmatrix}
-            \nabla_{\vec{v}^{\:i}_1} \\ 
-            \vdots \\ 
-            \nabla_{\vec{v}^{\:i}_{N_V}} 
-        \end{pmatrix} \chi (C_i - C_j) 
-        = \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
-            I_2 \\ 
-            \vdots \\ 
-            I_2
-        \end{pmatrix} (\vec{x}_i - \vec{x}_j) \; \in \R^{2 N_V},
-    \end{align*} 
-    which is the vertex wise gradient $N_V$-times copied below each other. 
-    Now, we can come back to the original computation 
-    \begin{align*}
-        \nabla_{C_i} \bar{O}(\vec{C}) 
-        &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{C_i} \chi (C_i - C_j) \\
-        &= \frac{1}{N_C} \sum\limits_{j \neq i}  N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r) \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
-            I_2 \\ 
-            \vdots \\ 
-            I_2
-        \end{pmatrix} (\vec{x}_i - \vec{x}_j) \\
-        &= \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)  \begin{pmatrix}
-            I_2 \\ 
-            \vdots \\ 
-            I_2
-        \end{pmatrix} \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]}. \\
-    \end{align*}
-    
-\end{proposition}
-
 % now compute mean field pde with bounce overlap energy 
- 
+
+%%% bounce cell wise gradient   
+% We get the same gradient, no matter which $1 \leq k \leq N_V$ we choose.
+% Thus, we can write down the cell wise gradient as 
+% \begin{align*}  
+%     \nabla_{C_i} \chi (C_i - C_j) 
+%     = \begin{pmatrix}
+%         \nabla_{\vec{v}^{\:i}_1} \\ 
+%         \vdots \\ 
+%         \nabla_{\vec{v}^{\:i}_{N_V}} 
+%     \end{pmatrix} \chi (C_i - C_j) 
+%     = \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
+%         I_2 \\ 
+%         \vdots \\ 
+%         I_2
+%     \end{pmatrix} (\vec{x}_i - \vec{x}_j) \; \in \R^{2 N_V},
+% \end{align*} 
+% which is the vertex wise gradient $N_V$-times copied below each other. 
+% Now, we can come back to the original computation 
+% \begin{align*}
+%     \nabla_{C_i} \bar{O}(\vec{C}) 
+%     &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{C_i} \chi (C_i - C_j) \\
+%     &= \frac{1}{N_C} \sum\limits_{j \neq i}  N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r) \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
+%         I_2 \\ 
+%         \vdots \\ 
+%         I_2
+%     \end{pmatrix} (\vec{x}_i - \vec{x}_j) \\
+%     &= \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)  \begin{pmatrix}
+%         I_2 \\ 
+%         \vdots \\ 
+%         I_2
+%     \end{pmatrix} \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]}. \\
+% \end{align*}
+
 Let us use pure scaled bounce overlap energy, i.e.
 \begin{align*}
     E_{\bar{O}}(\vec{C}) = \alpha_{\bar{O}} \bar{O}(\vec{C}) = \frac{\alpha_{\bar{O}}}{N_C} \sum\limits_{i=1}^{N_C} \sum\limits_{j > i}^{N_C}  \left( \psi \circ \chi \right) (C_i - C_j),
