@@ -41,14 +41,13 @@ Here, we let the number of cells $N_C \rightarrow \infty$.
 In the mean field limit, we can study the transition from the microscopic model view, that uses a finite number of cells, $N_C < \infty$, to a macroscopic model view where we consider the whole system's density without individual cells. \\
 Figure~\ref{fig:muTransition} illustrates how empirical particle distributions converge towards their underlying mean field density as the number of particles increases.  
 The first three panels depict empirical measures obtained from samples of size $N_C \in \{20, 200, 20\,000\}$, drawn independently from the same Gaussian distribution $\mathcal{N}_2((0,0), 0.09^2 \cdot I_2)$.
-To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\)subsquares, on which the empirical measure
+To visualise these empirical measures, the domain \( \Omega = [-0.5,0.5]^2 \) is partitioned into \(50 \times 50\) subsquares, on which the empirical measure
 \[
-    \mu^{N_C}(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i}(A),
+    \mu^{N_C}_t(A) = \frac{1}{N_C} \sum_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A),
 \]
 is evaluated and displayed as a heatmap. \\
 As the particle number grows, the empirical distribution becomes progressively smoother and more faithful to the true underlying density.  
-For small \(N_C\), random fluctuations dominate the visual appearance, while for larger \(N_C\) these fluctuations average out, and the heatmap increasingly resembles the continuous Gaussian density shown in the fourth panel.  \\
-
+For small \(N_C\), random fluctuations dominate the visual appearance, while for larger \(N_C\) these fluctuations average out, and the heatmap increasingly resembles the continuous Gaussian density shown in the fourth panel. 
 \begin{figure}[b!]
 	\begin{center}
 		\includegraphics[width=0.98\textwidth]{density/muplot_combined.png}
@@ -60,10 +59,9 @@ For small \(N_C\), random fluctuations dominate the visual appearance, while for
 		\label{fig:muTransition}
 	\end{center}
 \end{figure}
-
 In the preceding chapters, we wrote $\rho$ for the first marginal, as the mean field limit was not under consideration.  
-To emphasise the dependence on the number of cells $N_C$, we adopt the notation $\rho^{N_C}$ throughout this chapter. \\
-We now want to derive a temporal PDE for the time evolution of a point particles system's density. 
+To emphasise the dependence on the number of cells $N_C$, we adopt the notation $\rho^{N_C}_t$ throughout this chapter. \\
+We now want to derive a temporal PDE for the time evolution of the density of a $2$-dimensional point particle system. 
 At time $t=0$, the first marginal $\rho_0^{N_C}$ converges to the distribution where we sample the particles from, as $N_C \rightarrow \infty$, like illustrated in Figure~\ref{fig:muTransition}. 
 Thus, the initial mean field density $\bar{\rho}_0$ is given by the distribution where we sample the particles from. \\
 As the first marginal distribution changes over time due to the particle dynamics, so does the density in the mean field limit.
@@ -84,17 +82,17 @@ We consider the empirical measure
     \mu_t^{N_C}(A) = \tfrac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{\vec{x}_i(t)}(A).
 \]
 Let $\phi \in C_c^{\infty}(\R^{2}, \R)$ be a test function with gradient field $ \nabla \phi : \R^2 \rightarrow \R^2$. \\
-We assume that $\mu_t^{N_C}$ has density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}\!(x)\:\dequ x $) and we have convergence 
+We assume that $\mu_t^{N_C}$ has a absolute continuous density $\rho_t^{N_C}$ ($\dequ \mu_t^{N_C} = \rho_t^{N_C}\!(x)\:\dequ x $) and we have convergence 
 \begin{align*}
     \rho_t^{N_C} \xrightarrow{N_C \to \infty} \bar{\rho}_t.
 \end{align*}  
 First, we consider 
 \begin{align}
     \begin{split}
-        \frac{\dequ}{\dequ t} \int \phi(x) \: \dequ \mu^{N_C}_t
-        &= \frac{\dequ}{\dequ t} \int \phi(x) \: \rho_t^{N_C}(x) \: \dequ x \\
-        &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(x) \: \bar{\rho}_t(x) \: \dequ x \\
-        &= \int \phi(x) \,\frac{\partial \bar{\rho}_t(x)}{\partial t} \: \dequ x,
+        \frac{\dequ}{\dequ t} \int \phi(\vec{x}) \: \dequ \mu^{N_C}_t
+        &= \frac{\dequ}{\dequ t} \int \phi(\vec{x}) \: \rho_t^{N_C}(\vec{x}) \: \dequ \vec{x} \\
+        &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(\vec{x}) \: \bar{\rho}_t(\vec{x}) \: \dequ \vec{x} \\
+        &= \int \phi(\vec{x}) \,\frac{\partial \bar{\rho}_t(\vec{x})}{\partial t} \: \dequ \vec{x},
     \end{split}
     \label{equ:leftSideMeanFieldPDE}
 \end{align}
@@ -102,35 +100,37 @@ using first the density $\rho_t^{N_C}$ of $\mu_t^{N_C}$ and then convergence $\r
 Then, we use the definition of the empirical measure to obtain 
 \begin{align}
     \begin{split}
-        \frac{\dequ}{\dequ t} \int \phi(x) \: \dequ \mu^{N_C}_t
+        \frac{\dequ}{\dequ t} \int \phi(\vec{x}) \: \dequ \mu^{N_C}_t
         &= \frac{\dequ}{\dequ t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \phi(\vec{x}_i^{\: (s)}(t))\right] \\
         &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(\vec{x}_i^{\: (s)}(t)) \cdot \nabla E(\vec{x}_i^{\: (s)}(t)) \\
-        &= - \int \nabla \phi(x) \cdot \nabla E(x) \: \dequ \mu^{N_C}_t \\
-        &= - \int \nabla \phi(x) \cdot \nabla E(x) \: \rho_t^{N_C}(x) \: \dequ x \\
-        &\xrightarrow{N_C \rightarrow \infty} - \int \nabla \phi(x) \cdot \nabla E(x) \: \bar{\rho}_t(x) \: \dequ x \\
-        &= \int \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x. \\
+        &= - \int \nabla \phi(\vec{x}) \cdot \nabla E(\vec{x}) \: \dequ \mu^{N_C}_t(\vec{x}) \\
+        &= - \int \nabla \phi(\vec{x}) \cdot \nabla E(\vec{x}) \: \rho_t^{N_C}(\vec{x}) \: \dequ \vec{x} \\
+        &\xrightarrow{N_C \rightarrow \infty} - \int \nabla \phi(\vec{x}) \cdot \nabla E(\vec{x}) \: \bar{\rho}_t(\vec{x}) \: \dequ \vec{x} \\
+        &= \int \phi(\vec{x})  \nabla \cdot ( \bar{\rho}_t(\vec{x}) \nabla E(\vec{x})) \: \dequ \vec{x}. \\
     \end{split}
     \label{equ:rightSideMeanFieldPDE}
 \end{align}
 We consider the difference from Equations~\eqref{equ:leftSideMeanFieldPDE} and \eqref{equ:rightSideMeanFieldPDE} for $N_C \rightarrow \infty$
 \begin{align*}
     0 
-    &= \int \phi(x) \,\frac{\partial \bar{\rho}_t(x)}{\partial t} \: \dequ x - \int \phi(x)  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \: \dequ x \\
-    &= \int \phi(x) \left( \frac{\partial \bar{\rho}_t(x)}{\partial t} -  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) \right) \: \dequ x.
+    &= \int \phi(\vec{x}) \,\frac{\partial \bar{\rho}_t(\vec{x})}{\partial t} \: \dequ \vec{x} - \int \phi(\vec{x})  \nabla \cdot ( \bar{\rho}_t(\vec{x}) \nabla E(\vec{x})) \: \dequ \vec{x} \\
+    &= \int \phi(\vec{x}) \left( \frac{\partial \bar{\rho}_t(\vec{x})}{\partial t} -  \nabla \cdot ( \bar{\rho}_t(\vec{x}) \nabla E(\vec{x})) \right) \: \dequ \vec{x}.
 \end{align*}
 
 As this holds true for any $\phi \in C_c^{\infty}(\R^{2}, \R)$, we obtain the mean field PDE 
 \begin{align}
-    \frac{\partial \bar{\rho}_t(x)}{\partial t} -  \nabla \cdot ( \bar{\rho}_t(x) \nabla E(x)) = 0.
+    \frac{\partial \bar{\rho}_t(\vec{x})}{\partial t} -  \nabla \cdot ( \bar{\rho}_t(\vec{x}) \nabla E(\vec{x})) = 0, \quad \vec{x} \in \R^2.
     \label{equ:meanFieldDerivation}
 \end{align}
 For a force function $F(C) = - \nabla_C E(C)$, the we get the formulation
 \begin{align}
-    \frac{\partial \bar{\rho}_t(x)}{\partial t} +  \nabla \cdot ( \bar{\rho}_t(x) F(x)) = 0.
+    \frac{\partial \bar{\rho}_t(\vec{x})}{\partial t} +  \nabla \cdot ( \bar{\rho}_t(\vec{x}) F(\vec{x})) = 0, \quad \vec{x} \in \R^2.
     \label{equ:FmeanFieldDerivation}
 \end{align}
-
 This mean field PDE reveals how the macroscopic density changes over time, as the collective effect of the microscopic particle dynamics driven by the energy $E$. 
+For a two-dimensional particle system, the mean-field density $\bar{\rho}_t$ is defined on the state space $\mathbb{R}^2$, corresponding to the positions of individual particles, as illustrated by the empirical measures in Figure~\ref{fig:muTransition}. 
+When we consider higher-dimensional DF cells $C \in \mathbb{R}^{2N_V}$, however, the state space increases accordingly to $\mathbb{R}^{2N_V}$, making it much harder to visualise the density and its evolution over time.
+
 
 \subsection{1d needles example}
 % TODOs: formulate everything, figure captions, formatting
@@ -310,12 +310,12 @@ Thus, while the hard disc model exhibits a hard exclusion (geometric non-overlap
 Now, we want to transfer the computation for PDE~\eqref{equ:meanFieldDerivation} to our DF model.
 Therefore, we adapt our empirical measure. 
 In the DF model, we model cells as polygons with $N_V \in \N$ vertices. 
-Thus, we need to use $\delta_{C_i}$ that uses high-dimensional subsets $A \subset \R^{2 N_V}$, i.e.
+Thus, we need to use $\delta_{C_i}$ that uses high-dimensional subsets $A \subset \R^{2 N_V}$, as the state space changes to $\R^{2N_V}$, i.e.
 \begin{align*}
     &\mu^{(N_C, N_V)}_t: \mathcal{B}(\R^{2 N_V}) \: \longrightarrow \: [0,1],  \\
     A \: \longmapsto \: &\mu^{(N_C, N_V)}_t(A) = \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \delta_{C_i(t)}(A),
 \end{align*}
-where $C_i(t) = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_{N_V})$ is cell $i$ at time $t$. \\ 
+where $C_i(t) = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_{N_V}) \in \R^{2 N_V}$ is cell $i$ at time $t$. \\ 
 We use a cell wise energy 
 \begin{align*}
     E: \R^{2 N_V} \rightarrow \R, 
@@ -327,33 +327,34 @@ with gradient
 Later on, we want to insert the three shape preserving energies, i.e. the area, edge and interior angle energy, that all have the above attributes.
 We can derive the mean field PDE for this setup as follows. 
 Let $\phi \in C_c^{\infty}(\R^{2N_V}, \R)$ be a test function on the higher-dimensional space $\R^{2N_V}$.
-We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t^{\:N_V}$, as $N_C \rightarrow \infty$.
+We assume that the empirical measure $\mu^{(N_C, N_V)}_t$ has an absolute continuous density $\rho_t^{(N_C, N_V)}$ that converges to the mean field density $\bar{\rho}_t^{\:N_V}$, as $N_C \rightarrow \infty$.
 A rigorous analysis establishing this convergence remains an interesting direction for future work. 
+In order to express the change of state space, we use the variable $X \in \R^{2 N_V}$, instead of $\vec{x} \in \R^2$ from earlier. \\
 Similarly to the calculation at the beginning of this chapter, we observe 
 \begin{align*}
     \begin{split}
-        \frac{\dequ}{\dequ t} \int \phi(C) \: \dequ \mu^{(N_C, N_V)}_t
-        &= \frac{\dequ}{\dequ t} \int \phi(C) \: \rho_t^{(N_C, N_V)}(C) \: \dequ C \\
-        &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(C) \: \bar{\rho}_t^{\:N_V}(C) \: \dequ C \\
-        &= \int \phi(C) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t^{\:N_V}(C)\right] \: \dequ C,
+        \frac{\dequ}{\dequ t} \int \phi(X) \: \dequ \mu^{(N_C, N_V)}_t(X)
+        &= \frac{\dequ}{\dequ t} \int \phi(X) \: \rho_t^{(N_C, N_V)}(X) \: \dequ X \\
+        &\xrightarrow{N_C \rightarrow \infty} \frac{\dequ}{\dequ t} \int \phi(X) \: \bar{\rho}_t^{\:N_V}(X) \: \dequ X \\
+        &= \int \phi(X) \,\frac{\partial}{\partial t} \left[\bar{\rho}_t^{\:N_V}(X)\right] \: \dequ X,
     \end{split}
 \end{align*}
 and 
 \begin{align*}
-    \frac{\dequ}{\dequ t} \int \phi(C) \: \dequ \mu^{(N_C, N_V)}_t
+    \frac{\dequ}{\dequ t} \int \phi(X) \: \dequ \mu^{(N_C, N_V)}_t(X)
     &= \frac{\dequ}{\dequ t} \left[\frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(C_i(t))\right] \\
     &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C}  \nabla \phi(C_i(t)) \cdot \nabla E(C_i(t)) \\
-    &= - \int \nabla \phi(C) \cdot \nabla E(C) \: \dequ \mu^{(N_C, N_V)}_t \\
-    &= - \int \nabla \phi(C) \cdot \nabla E(C) \: \rho_t^{(N_C, N_V)}(C) \: \dequ C \\
-    &\xrightarrow{N_C \rightarrow \infty} - \int \nabla \phi(C) \cdot \nabla E(C) \: \bar{\rho}_t^{\:N_V}(C) \: \dequ C \\
-    &= \int \phi(C)  \nabla \cdot ( \bar{\rho}_t^{\:N_V}(C) \nabla E(C)) \: \dequ C. \\
+    &= - \int \nabla \phi(X) \cdot \nabla E(X) \: \dequ \mu^{(N_C, N_V)}_t(X) \\
+    &= - \int \nabla \phi(X) \cdot \nabla E(X) \: \rho_t^{(N_C, N_V)}(X) \: \dequ X \\
+    &\xrightarrow{N_C \rightarrow \infty} - \int \nabla \phi(X) \cdot \nabla E(X) \: \bar{\rho}_t^{\:N_V}(X) \: \dequ X \\
+    &= \int \phi(X)  \nabla \cdot ( \bar{\rho}_t^{\:N_V}(X) \nabla E(X)) \: \dequ X. \\
 \end{align*}
 We can conclude, with the same derivation as before, that   
 \begin{align}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(\vec{x})}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(\vec{x}) \nabla E(\vec{x})) = 0.
+    \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(X) \nabla E(X)) = 0, \quad X \in \R^{2N_V}.
     \label{equ:meanfieldPDE}
 \end{align}
-For each energy $E$, we need a representation of the cell wise gradient $\nabla_C E(C)$ that we can plug into the mean field PDE from Equation~\eqref{equ:meanfieldPDE}. \\
+For each energy $E$, we need a representation of the cell wise gradient $\nabla_C E(X)$ that we can plug into the mean field PDE from Equation~\eqref{equ:meanfieldPDE}. \\
 In the following, we use C as a $2N_V$-dimensional vector, i.e.
 \begin{align*}
     C = (v_1^x, v_1^y, \ldots, v_{N_V}^x, v_{N_V}^y)^T \in \R^{2 N_V}.
@@ -443,9 +444,10 @@ If we define matrices for the prefactors: $D_E, D_{E-} \in \R^{2 N_V \times 2 N_
 \end{align*}
 and 
 \begin{align*}
-    D_{E-} = \diag[\tfrac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \tfrac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \tfrac{E_C^{1} - E_d^{1}}{E_C^{1}}, \tfrac{E_C^{1} - E_d^{1}}{E_C^{1}},  \ldots, \tfrac{E_C^{N_V-1} - E_d^{N_V-1}}{E_C^{N_V-1}}].
+    D_{E-} = \diag[\tfrac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \tfrac{E_C^{N_V} - E_d^{N_V}}{E_C^{N_V}}, \tfrac{E_C^{1} - E_d^{1}}{E_C^{1}}, \tfrac{E_C^{1} - E_d^{1}}{E_C^{1}},  \ldots, \tfrac{E_C^{N_V-1} - E_d^{N_V-1}}{E_C^{N_V-1}}],
 \end{align*}
-And rewrite the following parts as  
+where the function $\diag[\cdot]$ maps the scalar arguments to the quadratic matrix with the arguments on the diagonal and zeros elsewhere. 
+We rewrite the following parts as  
 \begin{align*}
     M_E = \begin{pmatrix}
     \fblock{ 1 & 0 \\ 0 & 1 } & \fblock{ -1 & 0 \\ 0 & -1 } & \zeroblock                & \cdots     &  & \zeroblock \\[1cm]
@@ -509,16 +511,19 @@ In Chapter~\ref{dynamics}, we already computed the first derivative as
 \end{align*}
 in Equation~\eqref{gradient:angle}. \\
 We define the matrices $D_I, D_{I-}, D_{I+} \in \R^{2N_V \times 2N_V}$ as 
-\begin{center}
-    $D_I = \diag[I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d, I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d]$, \\[0.5em]
-    $D_{I-} = \text{diag}\bigl(${\footnotesize$I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d,\ldots, I^{N_V-1}_{C} - I^{N_V-1}_d, I^{N_V-1}_{C} - I^{N_V-1}_d$}$\bigr)$,\\[0.5em]
-    $D_{I+} = \diag[I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d]$. \\
-\end{center}
-The terms of form $\frac{1}{(E^j_C)^2}$ and  $\frac{1}{(E^{j+1}_C)^2}$ are summerised in $B_I, B_{I+} \in \R^{2N_V \times 2N_V}$ as, 
-\begin{center}
-    $B_I = \diag[(E^1_C)^{-2}, (E^1_C)^{-2}, \ldots, (E^{N_V}_C)^{-2}, (E^{N_V}_C)^{-2}]$, \\[0.5em]
-    $B_{I+} = \diag[(E^2_C)^{-2}, (E^2_C)^{-2}, \ldots, (E^{N_V}_C)^{-2}, (E^{N_V}_C)^{-2}, (E^{1}_C)^{-2}, (E^{1}_C)^{-2}]$. \\[0.5em]
-\end{center}
+\begin{align*}
+    D_I &= \diag[I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d, I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d], \\[0.5em]
+    % D_{I-} &= \text{diag}\bigl(${\footnotesize $ I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d,\ldots, I^{N_V-1}_{C} - I^{N_V-1}_d, I^{N_V-1}_{C} - I^{N_V-1}_d$}$\bigr),\\[0.5em]
+    D_{I-} &= \diag[\footnotesize 
+     I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d, \ldots, I^{N_V-1}_{C} - I^{N_V-1}_d
+    ],\\[0.5em]
+    D_{I+} &= \diag[I^{2}_{C} - I^{2}_d, I^{2}_{C} - I^{2}_d,\ldots, I^{N_V}_{C} - I^{N_V}_d, I^{N_V}_{C} - I^{N_V}_d, I^{1}_{C} - I^{1}_d, I^{1}_{C} - I^{1}_d]. \\
+\end{align*}
+The terms of form $\frac{1}{(E^j_C)^2}$ and  $\frac{1}{(E^{j+1}_C)^2}$ are summarised in $B_I, B_{I+} \in \R^{2N_V \times 2N_V}$ as, 
+\begin{align*}
+    B_I &= \diag[(E^1_C)^{-2}, (E^1_C)^{-2}, \ldots, (E^{N_V}_C)^{-2}, (E^{N_V}_C)^{-2}], \\[0.5em]
+    B_{I+} &= \diag[(E^2_C)^{-2}, (E^2_C)^{-2}, \ldots, (E^{N_V}_C)^{-2}, (E^{N_V}_C)^{-2}, (E^{1}_C)^{-2}, (E^{1}_C)^{-2}]. \\[0.5em]
+\end{align*}
 Finally, we put together  missing vertex terms with matrices $M_{I-}, M_{I+} \in \R^{2N_V \times 2N_V}$ as
 \begin{align*}
     M_{I-} = \begin{pmatrix}
@@ -589,13 +594,18 @@ That results in the cell dynamic
 \end{align*}
 Note, that we would usually expect the $j$-sum to exclude $j=i$, as it does not really make sense to consider an interaction dynamic of a cell with itself.
 However, we need to use the full sum in order for the following computation to hold. 
-Fortunately, we can easily do so, as we just add a zero with the additional term, because 
+Fortunately, we can easily do so, as we just add a zero with the additional term, because the function  
+\begin{align*}
+    C_i \mapsto \left( \psi \circ \chi \right) (C_i - C_i) 
+    &= \left( \psi \circ \chi \right)(0) \\
+    &= \tfrac{N_V}{2} \mathbf{1}_{\{0 < 2r\}} (2r - 0)^2 \\
+    &= 2 N_V r^2,
+\end{align*} 
+is constant and thus
 \begin{align*}
     \nabla_{C_i} \left( \psi \circ \chi \right) (C_i - C_i) 
-    = \nabla_{C_i} \left( \psi \circ \chi \right)(0) 
-    = 0,
+    = 0.
 \end{align*}
-as $\left( \psi \circ \chi \right)(0)$ is independent of $C_i$. \\
 In Proposition~\ref{prop:bounceForce}, we already computed the vertex wise gradient of the bounce overlap interaction potential as
 \begin{align*}
     \nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]}.
@@ -623,34 +633,44 @@ We still consider the empirical measure
     \mu^{(N_C, N_V)}_t = \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \delta_{C_i(t)},
 \]
 for a given cell system $\vec{C}(t) = (C_1(t), \ldots, C_{N_C}(t))$ and assume the measure has density $\rho_t^{(N_C, N_V)} \in \mathcal{P}(\R^{2 N_V})$.
-Furthermore, we assume that $\rho_t^{(N_C, N_V)}$ converges to the mean field density $\bar{\rho}_t^{\:N_V} \in \mathcal{P}(\R^{2 N_V})$, as $N_C \rightarrow \infty$.
+We assume that the empirical measure $\mu^{(N_C,N_V)}_t$ converges weakly, as $N_C \to \infty$, to an absolutely continuous limit with density $\bar{\rho}^{\,N_V}_t$. 
+For the bounce overlap dynamics considered here, the corresponding interaction force is strictly repulsive on the regime $\{\|x_i - x_j\| < 2r\}$, and therefore prevents pathological concentration of infinitely many cells at a single point. 
+In particular, this excludes the formation of Dirac masses in the limit and ensures that the family $\{\mu^{(N_C,N_V)}_t\}_{N_C \in \N}$ is tight. \\
+Moreover, the interaction kernel
+% \[
+%     K(z) 
+%     = \mathbf{1}_{\{\|z\| < 2r\}}\, (2r - \|z\|)\,\frac{z}{\|z\|},
+% \]
+is compactly supported in the ball $B_{2r}(0)$, bounded between $0$ and $2r$, and continuous. 
+These properties imply that the integrand in the mean field limit is uniformly dominated by an integrable function, allowing us to apply the dominated convergence theorem in order to pass to the limit $N_C \to \infty$ in the computation below.
 Then, we compute
 \begin{align*}
-    \frac{\dequ}{\dequ t} \int \phi(x) &\: \dequ \mu^{(N_C, N_V)}_t(x)
+    \frac{\dequ}{\dequ t} \int \phi(X) &\: \dequ \mu^{(N_C, N_V)}_t(X)
     =  \frac{\dequ}{\dequ t} \left[ \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \phi(C_i(t)) \right] \\
     &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(C_i(t)) \cdot \nabla_{C_i} E_{\bar{O}}(\vec{C}(t)) \\
     &= - \frac{1}{N_C} \sum\limits_{i=1}^{N_C} \nabla \phi(C_i(t)) \cdot \frac{\alpha_{\bar{O}}}{N_C} \sum\limits_{j = 1}^{N_C}  \nabla_{C_i} \left( \psi \circ \chi \right) (C_i(t) - C_j(t)) \\
     &= - \frac{\alpha_{\bar{O}}}{{N_C}^2} \sum\limits_{i=1}^{N_C}\sum\limits_{j = 1}^{N_C}  \nabla \phi(C_i(t)) \cdot  \nabla_{C_i} \left( \psi \circ \chi \right) (C_i(t) - C_j(t)) \\
-    &= - \frac{\alpha_{\bar{O}}}{{N_C}}  \int \sum\limits_{j = 1}^{N_C}  \nabla \phi(x) \cdot  \nabla_{x} \left( \psi \circ \chi \right) (x - C_j(t)) \: \dequ \mu^{(N_C, N_V)}_t(x)\\
-    &= - \alpha_{\bar{O}}  \iint  \nabla \phi(x) \cdot  \nabla_{x} \left( \psi \circ \chi \right) (x - y) \: \dequ \mu^{(N_C, N_V)}_t(y) \: \dequ \mu^{(N_C, N_V)}_t(x)\\
-    &\xrightarrow{N_C \to \infty} \: - \alpha_{\bar{O}}  \iint  \nabla \phi(x) \cdot  \nabla_{x} \left( \psi \circ \chi \right) (x - y) \, \bar{\rho}_t^{\:N_V}(y)\, \dequ y \: \bar{\rho}_t^{\:N_V}(x) \,\dequ x\\
-    &= - \alpha_{\bar{O}}  \int  \nabla \phi(x) \cdot  \left(\nabla_{x} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (x)  \bar{\rho}_t^{\:N_V}(x) \:\dequ x \\
-    &= \alpha_{\bar{O}}  \int  \phi(x) \nabla \cdot \left[ \left(\nabla_{x} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(x)  \bar{\rho}_t^{\:N_V}(x) \right] \: \dequ x \\
-    &=   \int  \phi(x) \nabla \cdot \left[ \alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(x) \left(\nabla_{x} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(x)   \right] \: \dequ x. \\
+    &= - \frac{\alpha_{\bar{O}}}{{N_C}}  \int \sum\limits_{j = 1}^{N_C}  \nabla \phi(X) \cdot  \nabla_{X} \left( \psi \circ \chi \right) (X - C_j(t)) \: \dequ \mu^{(N_C, N_V)}_t(X)\\
+    &= - \alpha_{\bar{O}}  \iint  \nabla \phi(X) \cdot  \nabla_{X} \left( \psi \circ \chi \right) (X - Y) \: \dequ \mu^{(N_C, N_V)}_t(Y) \: \dequ \mu^{(N_C, N_V)}_t(X)\\
+    &\xrightarrow{N_C \to \infty} \: - \alpha_{\bar{O}}  \iint  \nabla \phi(X) \cdot  \nabla_{X} \left( \psi \circ \chi \right) (X - Y) \, \bar{\rho}_t^{\:N_V}(Y)\, \dequ Y \: \bar{\rho}_t^{\:N_V}(X) \,\dequ X\\
+    &= - \alpha_{\bar{O}}  \int  \nabla \phi(X) \cdot  \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (X)  \bar{\rho}_t^{\:N_V}(X) \:\dequ X \\
+    &= \alpha_{\bar{O}}  \int  \phi(X) \nabla \cdot \left[ \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X)  \bar{\rho}_t^{\:N_V}(X) \right] \: \dequ X \\
+    &=   \int  \phi(X) \nabla \cdot \left[ \alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(X) \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X)   \right] \: \dequ X. \\
 \end{align*}
 % TODO: there is still confusion with the lower formulation, what is the argument x and what does \psi \circ \chi(x) then mean?
 We can write the above gradient in the convolution as 
 \begin{align}
-    \nabla_{x} \left( \psi \circ \chi \right)(x) = \mathbf{1}_{\{\norm[x] < 2r\}} (\norm[x] - 2r)  \begin{pmatrix}
+    \nabla_{X} \left( \psi \circ \chi \right)(X) = \mathbf{1}_{\{\norm[\vec{x}] < 2r\}} (\norm[\vec{x}] - 2r)  \begin{pmatrix}
         I_2 \\ 
         \vdots \\ 
         I_2
-    \end{pmatrix} \frac{x}{ \norm[x]}
+    \end{pmatrix} \frac{\vec{x}}{ \norm[\vec{x}]},
     \label{grad:bounceConvolution}
 \end{align}
+where $X \in \R^{2N_V}$ denotes the full cell configuration vector and $\vec{x} \in \R^2$ the cell center position extracted from $X$.
 For pure bounce overlap interaction energy, we can conclude the mean field PDE as
 \begin{align}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(\vec{x})}{\partial t} - \nabla \cdot \left[\alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(\vec{x}) \left(\nabla_{\vec{x}} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(\vec{x}) \right] = 0.
+    \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - \nabla \cdot \left[\alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(X) \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X) \right] = 0, \quad X \in \R^{2 N_V}.
     \label{equ:meanfieldPDE-bounce}     
 \end{align}
 

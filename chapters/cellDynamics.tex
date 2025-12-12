@@ -1238,9 +1238,10 @@ With that given, we can define the according energy.
 At first glance, the bounce overlap energy appears to lack smoothness due to the presence of the indicator function in $\psi$. 
 However, noting that the quadratic expression $(2r - d)^2$ vanishes at the transition point $d = 2r$ and that its first derivative is also zero there, we observe that the resulting energy is in fact continuously differentiable.  
 With this regularity established, we proceed to compute the gradient required for the gradient flow dynamic.
+We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ensure that the interaction term remains of order $\mathcal{O}(1)$ as the number of cells $N_C \rightarrow \infty$, preventing unbounded growth in interaction strength in large cell populations. 
 
 \begin{proposition} \textbf{Bounce overlap force} \label{prop:bounceForce}\\
-    The bounce overlap force $F^{(\bar{O})}_i: (\R^{2N_V})^{N_C} \rightarrow \R^{2N_V}$ that gets applied on cell $i$, is given by
+    The bounce overlap force $F^{(\bar{O})}_i: (\R^{2N_V})^{N_C}\setminus\{0\} \rightarrow \R^{2N_V}$ that gets applied on cell $i$, is given by
     \begin{align*}
         F^{(\bar{O})}_i(\vec{C}) = -(\nabla_{\vec{v}^{\: i}_1} \bar{O}(\vec{C}), \ldots, \nabla_{\vec{v}^{\: i}_{N_V}} \bar{O}(\vec{C})),
     \end{align*}
@@ -1304,6 +1305,15 @@ With this regularity established, we proceed to compute the gradient required fo
         &= \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]}  (\vec{x}_i - \vec{x}_j) .       
     \end{align*}
     We get the same gradient, no matter which $1 \leq k \leq N_V$ we choose.
+	In the derivative, we get a quotient $$\frac{1}{ \norm[\vec{x}_i - \vec{x}_j]},$$ that is undefined for $\vec{x}_i - \vec{x}_j = 0 \in \R^2$.
+	For a general function argument $B = (\vec{b}_1, \ldots, \vec{b}_{N_V}) \in \R^{2N_V}$, that we can interpret as a vector of $2$-dimensional vertices, the problematic division occurs whenever 
+	\[
+		\sum\limits_{k=1}^{N_V} \vec{b}_k = 0 \in \R^2,
+	\]
+	thus whenever the centre of mass of that vector of $2$-dimensional vertices is at the origin. 
+	If we use the difference of two cells $C_i - C_j$ as function argument, this division by zero occurs whenever both cells have the same cell centre, i.e. $\vec{x}_i = \vec{x}_j$. 
+	% As this dynamic works against this exact situation, we can safely assume that this case will not occur in practice. 
+	In a numerical simulation, if you start with no exact centre coincidences and use a time step small enough that the repulsive dynamics prevent an exact same centre of mass, then $\norm[\vec{x}_i = \vec{x}_j]$ will not equal $0$ and the formula is safe to apply. \\
     Now, we can come back to the original computation 
     \begin{align*}
         \nabla_{\vec{v}^{\:i}_k} \bar{O}(\vec{C}) 
