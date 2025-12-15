@@ -621,9 +621,9 @@ Thus, we can write down the cell wise gradient as
 \end{align}
 which is just the vertex wise gradient $N_V$-times copied below each other. \\
 We continue with the derivation of the mean field PDE.
-For the computation, we use the convolution notation $f * g$ for two functions $f,\, g:\, \R^{d} \to \R$, $d \in \N$, defined as
+For the computation, we use the convolution notation $f * g$ for two functions $f,\, g:\, \R^{d} \to \R$, $d \in \N$ and according variables $\vec{x}, \vec{y} \in \R^d$ defined as
 \begin{align*}
-    (f * g)(x) = \int f(x - y) g(y) \: \dequ y.
+    (f * g)(\vec{x}) = \int f(\vec{x} - \vec{y}) g(\vec{y}) \: \dequ \vec{y}.
 \end{align*}
 The convolution possesses strong smoothing properties: even if one of the functions is irregular, their convolution is typically more regular, since it forms a spatially averaged combination of local contributions. 
 In our mean field PDE for the bounce overlap interaction, this is advantageous, because the convolution represents a smooth, macroscopic non-local force field, which stabilises the dynamics and improves analytical tractability. \\
@@ -654,7 +654,10 @@ Then, we compute
     &= - \alpha_{\bar{O}}  \iint  \nabla \phi(X) \cdot  \nabla_{X} \left( \psi \circ \chi \right) (X - Y) \: \dequ \mu^{(N_C, N_V)}_t(Y) \: \dequ \mu^{(N_C, N_V)}_t(X)\\
     &\xrightarrow{N_C \to \infty} \: - \alpha_{\bar{O}}  \iint  \nabla \phi(X) \cdot  \nabla_{X} \left( \psi \circ \chi \right) (X - Y) \, \bar{\rho}_t^{\:N_V}(Y)\, \dequ Y \: \bar{\rho}_t^{\:N_V}(X) \,\dequ X\\
     &= - \alpha_{\bar{O}}  \int  \nabla \phi(X) \cdot  \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\! (X)  \bar{\rho}_t^{\:N_V}(X) \:\dequ X \\
-    &= \alpha_{\bar{O}}  \int  \phi(X) \nabla \cdot \left[ \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X)  \bar{\rho}_t^{\:N_V}(X) \right] \: \dequ X \\
+\end{align*}
+
+\begin{align*}
+    &= \alpha_{\bar{O}}  \int  \phi(X) \nabla \cdot \left[ \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X)  \bar{\rho}_t^{\:N_V}(X) \right] \: \dequ X \hspace*{1cm}\\
     &=   \int  \phi(X) \nabla \cdot \left[ \alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(X) \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X)   \right] \: \dequ X. \\
 \end{align*}
 % TODO: there is still confusion with the lower formulation, what is the argument x and what does \psi \circ \chi(x) then mean?
@@ -667,30 +670,33 @@ We can write the above gradient in the convolution as
     \end{pmatrix} \frac{\vec{x}}{ \norm[\vec{x}]},
     \label{grad:bounceConvolution}
 \end{align}
-where $X \in \R^{2N_V}$ denotes the full cell configuration vector and $\vec{x} \in \R^2$ the cell center position extracted from $X$.
+where $X \in \R^{2N_V}$ denotes the full cell configuration vector and $\vec{x} \in \R^2$ the cell center position extracted from $X$, such that $\norm[\vec{x}] = \chi(X)$.
 For pure bounce overlap interaction energy, we can conclude the mean field PDE as
 \begin{align}
     \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - \nabla \cdot \left[\alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(X) \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X) \right] = 0, \quad X \in \R^{2 N_V}.
     \label{equ:meanfieldPDE-bounce}     
 \end{align}
 
-\subsubsection*{Hard DF mean field pde}
+\subsubsection*{Hard DF mean field PDE}
 Since we were able to compute the mean field dynamic for the bounce overlap energy, we can now summarise the mean field PDE for the hard DF model with shape preserving energies and bounce overlap interaction.
 For cell hardness $h=1$, we neglect our other interaction term: the deforming overlap force. 
 The analysis of the influence of the deforming overlap force on the mean field dynamic requires more advanced mathematical techniques and is beyond the scope of this thesis. \\
 We consider the total energy
 \begin{align*}
-    E_{\text{hard}}(C) = E_A(C) + E_E(C) + E_I(C) + E_{\bar{O}}(\vec{C}),
+    E_{\text{hard}}(C) = E_A(C) + E_E(C) + E_I(C) + E_{\bar{O}}(\vec{C}).
 \end{align*}
-we can use the linearity of the gradient to easily write down 
-\begin{align}
-    \nabla_C E_{\text{hard}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C) + \nabla_C E_{\bar{O}}(\vec{C}).
-\end{align} 
-The four gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge}, \eqref{eq:cGradAngle} and %TODO: add bounce gradient reference.
+% we can use the linearity of the gradient to easily write down 
+% \begin{align}
+%     \nabla_C E_{\text{hard}}(C) = \nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C) + \nabla_C E_{\bar{O}}(\vec{C}).
+% \end{align} 
 That dynamic is equivalent to the deterministic part of the DF SDE, given in Equation~\eqref{DF-deterministic-force}.
-The mean field PDE for the DF model with shape preserving energies is then given by inserting the above gradient into Equation~\eqref{equ:meanfieldPDE}, i.e.
+The mean field PDE for the DF model with shape preserving energies and bounce overlap energy is then given by
 \begin{align}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} - \nabla \cdot (\bar{\rho}_t^{\:N_V}(C) \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)) = 0.
+    \begin{split}
+        \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - \nabla \cdot \Biggl[ \bar{\rho}_t^{\:N_V}(X) \left(\nabla_X E_A(X) + \nabla_X E_E(X) + \nabla_X E_I(X)\right) \\
+        + \alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(X) \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X)\Biggr] = 0.
+    \end{split}
 \end{align}
+The shape preserving gradients are given in the Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge}, \eqref{eq:cGradAngle}. %TODO: add bounce gradient reference.
 
 
