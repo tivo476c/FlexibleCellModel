@@ -16,7 +16,7 @@ Therefore, we define the empirical measure
     A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{\vec{x}_i^{\:(s)}(t)}(A),
 \end{align*}
 where $N_C$ is again the number of cells in each simulation, $N_S$ denotes the number of simulations in the Monte Carlo simulation and $\vec{x}_i^{\:(s)}(t) \in \Omega \subset \R^2$ is the location of point particle $1 \leq i \leq N_C$ in simulation $1 \leq s \leq N_S$ and at time $t \in [0, T]$.   \\
-$\mathcal{B}(\R^2)$ is the Borel $\sigma$-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure: 
+$\mathcal{B}(\R^2)$ is the Borel $\sigma$-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure
 \begin{align*}
     &\delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \: \longrightarrow \: \{0,1\},  \\
     A \: \longmapsto \: &\delta_{\vec{x}_i(t)}(A) = \begin{cases}
@@ -558,7 +558,7 @@ Fortunately, we can easily do so, as we just add a zero with the additional term
 \begin{align*}
     C_i \mapsto \left( \psi \circ \chi \right) (C_i - C_i) 
     &= \left( \psi \circ \chi \right)(0) \\
-    &= \tfrac{N_V}{2} \mathbf{1}_{\{0 < 2r\}} (2r - 0)^2 \\
+    &= \tfrac{N_V}{2} \mathbf{1}_{[0, 2r)}(0) (2r - 0)^2 \\
     &= 2 N_V r^2,
 \end{align*} 
 is constant and thus
@@ -573,7 +573,7 @@ In Proposition~\ref{prop:bounceForce}, we already computed the vertex wise gradi
 In the proof of this proposition, we saw that this gradient is independent of the vertex index $1 \leq k \leq N_V$.
 Thus, we can write down the cell wise gradient as
 \begin{align}
-    \nabla_{C_i} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)  \begin{pmatrix}
+    \nabla_{C_i} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j]) (\norm[\vec{x}_i - \vec{x}_j] - 2r)  \begin{pmatrix}
         I_2 \\ 
         \vdots \\ 
         I_2
@@ -618,14 +618,14 @@ Then, we compute
 \end{align*}
 We can write the above gradient in the convolution as 
 \begin{align}
-    \nabla_{X} \left( \psi \circ \chi \right)(X) = \mathbf{1}_{\{\norm[\vec{x}] < 2r\}} (\norm[\vec{x}] - 2r)  \begin{pmatrix}
+    \nabla_{X} \left( \psi \circ \chi \right)(X) = \mathbf{1}_{[0, 2r)}\norm[\vec{x}] (\norm[\vec{x}] - 2r)  \begin{pmatrix}
         I_2 \\ 
         \vdots \\ 
         I_2
     \end{pmatrix} \frac{\vec{x}}{ \norm[\vec{x}]},
     \label{grad:bounceConvolution}
 \end{align}
-where $X \in \R^{2N_V}$ denotes the full cell configuration vector and $\vec{x} \in \R^2$ the cell center position extracted from $X$, such that $\norm[\vec{x}] = \chi(X)$.
+where $X \in \R^{2N_V}$ denotes the full cell configuration vector and $\vec{x} \in \R^2$ the cell centre position extracted from $X$, such that $\norm[\vec{x}] = \chi(X)$.
 For pure bounce overlap interaction energy, we can conclude the mean field PDE as
 \begin{align}
     \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - \nabla_{X} \cdot \left[\alpha_{\bar{O}} \bar{\rho}_t^{\:N_V}(X) \left(\nabla_{X} \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X) \right] = 0, \quad X \in \R^{2 N_V}.

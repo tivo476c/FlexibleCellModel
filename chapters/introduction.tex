@@ -129,7 +129,7 @@ By integrating over all particles but one, we find $\rho$ acting on a much lower
 \end{align*}	
 
 
-In the setting of our point particle model, the first marginal $\rho$ satisfies the PDE:
+In the setting of our point particle model, the first marginal $\rho$ satisfies the PDE
 \begin{align*}
 	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t; \vec{x}), \quad \vec{x} \in \Omega, \: t>0, 
 \end{align*}
@@ -175,7 +175,8 @@ This is the step where the additional term comes from, yielding the final form o
 % To transition from the joint probability density function to the first marginal density function in the presence of external forces, we consider the evolution of the system at the macroscopic level by integrating out the degrees of freedom of all but one particle. 
 To transition from the joint probability density function to the first marginal density function in the presence of external forces, we integrate out the degrees of freedom of all particles except one. 
 This yields the evolution equation for the probability of finding a single particle at a given position and time.
-This process, which is analogous to the case of pure Brownian motion, relies on the symmetry of the system: since the particles are identical and non-interacting, the joint density is invariant under permutations of particle labels. \\
+This process, which is analogous to the case of pure Brownian motion, relies on the symmetry of the system.
+Since the particles are identical and non-interacting, the joint density is invariant under permutations of particle labels. \\
 The first marginal of the point particle model with external forces and Brownian motion is given by 
 \begin{align}
 	\dfrac{\partial \rho (t; \vec{x})}{\partial t} = D \Delta_{\vec{x}} \rho(t; \vec{x}) - \nabla_{\vec{x}} \cdot ( f(\vec{x}) \rho(t; \vec{x}) ), \quad \vec{x} \in \Omega, \: t>0.
@@ -390,7 +391,7 @@ An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield
 \end{figure}
 
 
-The dynamics of a phase field variable $\phi_i$ can typically be given by a gradient flow of a free energy functional:
+The dynamics of a phase field variable $\phi_i$ can typically be given by a gradient flow of a free energy functional
 \begin{align*}
 	\frac{\partial \phi_i}{\partial t} + v_0 (\vec{v}_i \cdot \nabla_{\vec{x}} \phi_i) = \Delta_{\vec{x}} \frac{\delta F}{\delta \phi_i}, \quad 1 \leq i \leq N_C,
 \end{align*}
@@ -434,7 +435,33 @@ It identifies the longest axis of the cell's phase field and aligns the directio
 The third and fourth models presented are referred to as the polar model and the nematic model, respectively.
 Cell motion strength and direction are determined based on subcellular details at the single cell level. 
 All models are compared with respect to generic features, such as coordination number distribution, cell shape variability, emerging nematic properties, as well as vorticity correlations and flow patterns in large confluent monolayers and confinements. 
-We can see the results in Table~\ref{table:phasefield}. 
+We can see the results in Table~\ref{table:phasefield}. \\
+The goal of~\cite{wenzel2021} is a systematic comparison of these approaches and their linkage with statistical observables of experiments to provide a route towards predictive simulations of patterns and correlations in cell colonies. 
+Model predictions are compared with experimental data from various cell cultures. 
+The qualitative differences observed highlight the importance of microscopic details. \\ 
+% TODO: consider if its in 
+% \begin{figure}[h!]
+% 	\centering
+% 	\includegraphics[width=0.7\textwidth]{intro/curved_phasefield.png}
+% 	\caption{A figure from the paper~\cite{Happel2023} showing a phase field variable $\phi$ on a curved domain, specifically a torus. 
+% 	In (a) and (b), the surface of the torus from (c) is shown as a parametrisation on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
+% 	Red and blue lines represent periodic boundary conditions, which are enforced by gluing the corresponding edges in (b) and (c).
+% 	The colour coding corresponds to the extrinsic curvature parameter $E_c$ (see Eq.~(3)): $E_c = 0$ (purple) results in a geodesic circle on both geometries; $E_c > 0$ (green) favours alignment with the direction of maximum absolute curvature; $E_c < 0$ (yellow) favours alignment with the direction of minimal absolute curvature. 
+% 	Cell elongation is highlighted for visibility. 
+% 	On toroidal surfaces, cell shape depends on position due to varying curvature. 
+% 	(c) shows the trajectories, final positions, and shapes of cells over time. 
+% 	The influence of extrinsic curvature is not apparent in the final configuration, as all shapes were obtained by solving Eq.~(1) with $v_0 = 0$. 
+% 	}
+% 	\label{fig:curved_phasefield}
+% \end{figure}
+% A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behaviour. 
+% The visualisation of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
+% Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self propulsion. 
+% Unlike the soft sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
+% This capability enables the simulation of complex collective behaviours but also increases computational demands compared to simpler point particle models. \\
+% The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
+% By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature dependent morphological changes on tori. 
+% This work emphasises the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
 
 \begin{table*}[h!]
 	\centering
@@ -483,35 +510,7 @@ We can see the results in Table~\ref{table:phasefield}.
 	If experimental data are not available or insufficient for a comparison, only similarities or differences of the models are noted.}
 	\label{table:phasefield}
 \end{table*}
-
-The goal of~\cite{wenzel2021} is a systematic comparison of these approaches and their linkage with statistical observables of experiments to provide a route towards predictive simulations of patterns and correlations in cell colonies. 
-Model predictions are compared with experimental data from various cell cultures. 
-The qualitative differences observed highlight the importance of microscopic details. \\ 
-% TODO: consider if its in 
-% \begin{figure}[h!]
-% 	\centering
-% 	\includegraphics[width=0.7\textwidth]{intro/curved_phasefield.png}
-% 	\caption{A figure from the paper~\cite{Happel2023} showing a phase field variable $\phi$ on a curved domain, specifically a torus. 
-% 	In (a) and (b), the surface of the torus from (c) is shown as a parametrisation on a rectangle, where the blue edges are identified (glued together) to form the toroidal direction, and the red edges are similarly identified to form the poloidal direction. 
-% 	Red and blue lines represent periodic boundary conditions, which are enforced by gluing the corresponding edges in (b) and (c).
-% 	The colour coding corresponds to the extrinsic curvature parameter $E_c$ (see Eq.~(3)): $E_c = 0$ (purple) results in a geodesic circle on both geometries; $E_c > 0$ (green) favours alignment with the direction of maximum absolute curvature; $E_c < 0$ (yellow) favours alignment with the direction of minimal absolute curvature. 
-% 	Cell elongation is highlighted for visibility. 
-% 	On toroidal surfaces, cell shape depends on position due to varying curvature. 
-% 	(c) shows the trajectories, final positions, and shapes of cells over time. 
-% 	The influence of extrinsic curvature is not apparent in the final configuration, as all shapes were obtained by solving Eq.~(1) with $v_0 = 0$. 
-% 	}
-% 	\label{fig:curved_phasefield}
-% \end{figure}
-% A related study by Happel and Voigt~\cite{Happel2023} employs phase field models to investigate cell dynamics, specifically focusing on the influence of curved domains (defined as tori) on collective cell behaviour. 
-% The visualisation of cells on a torus is shown in Figure~\ref{fig:curved_phasefield}. \\ 
-% Their work examines emergent phenomena like coordinated rotation on curved surfaces, driven by curvature alignment and self propulsion. 
-% Unlike the soft sphere model, which typically assumes spherical symmetry and isotropic interactions, the phase field approach allows for the incorporation of anisotropic effects, such as alignment with principal curvature directions, through geometric coupling terms. 
-% This capability enables the simulation of complex collective behaviours but also increases computational demands compared to simpler point particle models. \\
-% The phase field model developed by Happel and Voigt~\cite{Happel2023} highlights the critical role of extrinsic curvature coupling in dictating the alignment of cell elongation with principal curvature directions and the emergence of coordinated rotation in epithelial layers on curved surfaces. 
-% By combining a diffuse interface representation with a free energy incorporating both intrinsic and extrinsic geometric terms, their simulations successfully reproduce key experimental observations, including spontaneous rotation on cylindrical surfaces and curvature dependent morphological changes on tori. 
-% This work emphasises the significance of geometric constraints in tissue morphogenesis and offers a framework for investigating how curvature influences collective cell dynamics beyond planar environments. \\
-
-
+\FloatBarrier
 
 \subsubsection{Vertex model} 
 The last cell model approach is also the approach we choose in this thesis. 
@@ -548,7 +547,7 @@ It uniquely combines the ability to represent individual deformable particles wi
 This shape energy function incorporates terms that penalise deviations from a target area $a$ and perimeter $p$, along with repulsive interparticular forces to prevent overlap. \\
 The model defines polygons with $N_V \in \N$ vertices, where the bond vector $\vec{l}^{\:i}_j$ connects vertex $\vec{v}^{\:i}_j$ to $\vec{v}^{\:i}_{j+1}$, i.e. vertex $j$ to vertex $j+1$ of cell $i$. 
 We denote the length of a bond as $l^{i}_j = \norm[\vec{l}^{\:i}_j]$.
-The complete shape energy function, which governs the particle dynamics, integrates these various contributions:
+The complete shape energy function, which governs the particle dynamics, integrates these various contributions
 \begin{align*}
 	E &= E_{\text{contract}} + E_{\text{compress}} + E_{\text{line tension}} + E_{\text{bending}} + E_{\text{interaction}}.
 \end{align*}
@@ -601,10 +600,7 @@ This approach effectively simulates a rough surface interaction, characterised b
 where $k_r$ is the repulsive constant and $\Theta$ is the Heaviside step function, that is either $1$ for a positive argument or $0$ otherwise. \\
 In contrast to the RS method, the Smooth Surface (SS) method adopts a smoother representation, modelling polygon edges as circulo-lines, essentially line segments with a finite width $\delta$. 
 Repulsive forces are then calculated based on the minimum distance $d_{\text{min}}$, between line segments $l^{i}_{j}$ and $l^{m}_{k}$ on two contacting polygons $i$ and $m$.
-The interaction energy is then formulated using this minimum distance $d_{\text{min}}$.
-\begin{align*}
-	E_{\text{SS}} = \sum\limits_{i=1}^{N_C} \sum\limits_{m>i}^{N_C} \sum\limits_{j=1}^{N_V} \sum\limits_{k=1}^{N_V} \frac{k_r}{2} \left( \delta - d_{\min} \right)^2 \Theta\left( \delta - d_{\min} \right).
-\end{align*}
+The SS interaction energy is then formulated by replacing the RS term $\delta - |\vec{v}^{\:i}_{j} - \vec{v}^{\:m}_{k}|$ with $\delta - d_{\min}$. 
 This method provides a smoother, more continuous repulsion, better approximating the behaviour of soft, continuous interfaces. \\ 
 Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
 This indicates that the overall jamming behaviour is robust to the specific choice of interaction model. \\

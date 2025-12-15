@@ -19,7 +19,7 @@ Here, cells are considered to be polygons.
 \begin{definition} \textbf{Polygon} \\
 	A polygon is a closed geometric figure in $\R^2$, constructed by joining a finite number of straight line segments end to end. 
 	It can be described by a sequence of its vertices $(\vec{v}_1, \ldots, \vec{v}_N)$.
-	The following properties characterise a polygon:
+	The following properties characterise a polygon. 
 	\begin{enumerate}
 	% \begin{enumerate}
 		\item A polygon is \textbf{simple} if no two line segments cross each other. 
@@ -56,7 +56,7 @@ The next step is to describe the setup of a DF simulation.
 	\end{center}
 	which also contains all vertices from all cells.
 
-	The simulation's dynamics are defined on all cell vertices via the stochastic differential equation (SDE):
+	The simulation's dynamics are defined on all cell vertices via the stochastic differential equation (SDE)
 	\begin{center}
 		$ \dequ \vec{v}^{\:i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2 D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V}$. 
 	\end{center}
@@ -113,7 +113,7 @@ There exists a locally integrable function
 \[ 
 	x \mapsto k \sgn(x)|x|^{k-1} \in L^1_{loc}(\R),
 \] 
-such that for all $\phi \in C_C^{\infty}(\R)$:
+such that for all $\phi \in C_C^{\infty}(\R)$	
 \begin{align*}
 	\int_{\R} |x|^k \phi'(x) \: \dequ x  
 	&= \int_{\R_{+}} x^k \phi'(x) \: \dequ x + \int_{\R_{-}} (-x)^k \phi'(x) \: \dequ x \\
@@ -267,8 +267,6 @@ We define the edge $j$ to be between $\vec{v}_j$ and $\vec{v}_{j+1}$ and use the
 	$
 \end{center}
 to compute the length of the edge. 
-
-The according energy for this edge is:
 \begin{definition} \textbf{Edge energy} \\
 	The energy $E_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$, used to keep the edges at a constant length, reads 
 	\begin{align}
@@ -332,7 +330,7 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
 		\end{pmatrix}.
 	\end{align*}
 
-	For the second summand, we get:
+	For the second summand, we get
 	\begin{align*}
 		\tfrac{1}{k} \nabla_{\vec{v}_{j}} |E^{j}_{C} - E^{j}_d|^k 
 		&= \sgn(E^{j}_C - E^{j}_d) |E^{j}_C - E^{j}_d|^{k-1} \nabla_{\vec{v}_j} E^{j}_C \\
@@ -856,7 +854,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\text{in}(\vec{w}) = \{\vec{v}_{\text{in}}^{\: i}, \vec{v}_{\text{in}}^{\: m} \}, \quad \text{out}(\vec{w}) = \{\vec{v}_{\text{out}}^{\: i}, \vec{v}_{\text{out}}^{\: m} \}.
 	\]
 	Figure~\ref{fig:adjacent} illustrates what the in- and outside vertices of an intersection are. \\
-	Given the four adjacent vertices, we can always compute the intersection with the function:
+	Given the four adjacent vertices, we can always compute the intersection with the function
 	\begin{align*}
 		& w: (\R^2)^4 \: \longrightarrow \:\R^2, \\[0.5em]
 		(\vargs) \: \longmapsto\: &\vec{v}_{\text{out}}^{\: i} + \dfrac{(\vec{v}_{\text{out}}^{\: m} - \vec{v}_{\text{out}}^{\: i}) \times (\vec{v}_{\text{in}}^{\: m} - \vec{v}_{\text{out}}^{\: m})}{(\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}) \times (\vec{v}_{\text{in}}^{\: m} - \vec{v}_{\text{out}}^{\: m})} (\vec{v}_{\text{in}}^{\: i} - \vec{v}_{\text{out}}^{\: i}),
@@ -885,7 +883,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 \begin{proposition} \textbf{Partial derivatives of intersection points} \\
 	We use $w(\vargs)$ to compute the influence of the adjacent vertices to the intersection point via their partial derivatives.
 	In this proposition, we compute the needed partial derivatives. \\
-	We define the following auxiliary terms:
+	We define the following auxiliary terms
 	\begin{align*}
 		f = \tu, \quad 
 		&g = \tl,\\[0.5em]
@@ -894,7 +892,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{align*}
 	It is sufficient to just compute the partial derivatives with respect to $\vec{v}_{\text{in}}^{\: i}$ and $\vec{v}_{\text{out}}^{\: i}$.
 	If we want the dynamic for the vertices of the other cell, we just switch the arrangement of the arguments (switch $\vec{v}_{\text{in}}^{\: i}$ with $\vec{v}_{\text{in}}^{\: j}$ and $\vec{v}_{\text{out}}^{\: i}$ with $\vec{v}_{\text{out}}^{\: j}$) and then use the same partial derivatives as for the first cell. \\
-	The partial derivatives are: 
+	The partial derivatives are
 	\begin{align}
 		\begin{split}
 			D_{\vec{v}_{\text{out}}^{\: i}} w(\vargs): (\R^2)^4 \longrightarrow \R^{2 \times 2}, \\[0.5em]
@@ -1129,7 +1127,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 		\end{pmatrix}^T,
 	\end{align*}
 	because $\vec{v}_j^{\: i}$ is an outside vertex in this case and $\vec{v}_{\text{in}}^{\: i}$ is the vertex adjacent to $\vec{v}_j^{\: i}$ in cell $i$, such that these vertices build the edge causing the intersection. \\
-	The gradient $\nabla_{\vec{w}}A_D$ can easily be computed via the Shoelace Formula~\ref{prop:Shoelace}, as in the area gradient from Formula~\ref{gradient:area}:
+	The gradient $\nabla_{\vec{w}}A_D$ can easily be computed via the Shoelace Formula~\ref{prop:Shoelace}, as in the area gradient from Formula~\ref{gradient:area}
 	\begin{align*}
 		\nabla_{\vec{w}}A_D = \dfrac{1}{2} \begin{pmatrix} d_{j+1}^{y} - d_{j-1}^{y} \\[0.5em]  d_{j-1}^{x} - d_{j+1}^{x} \end{pmatrix},
 	\end{align*}
@@ -1137,7 +1135,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 
 	\textbf{Case 3:} $\vec{v}_j^{\: i} \in D$ and $\vec{v}_j^{\: i} \notin \text{adj}(\vec{w}) \; \forall \vec{w} \in W(D)$\\
 	Now, $\vec{v}_j^{\: i}$ is a pure inside overlap vertex, in the sence that it does not have an intersection point as a neighbor in the overlap. 
-	This dynamic is quite easy, since we just have to use the Shoelace Formula~\ref{prop:Shoelace} for once more: 
+	This dynamic is quite easy, since we just have to use the Shoelace Formula~\ref{prop:Shoelace} for once more
 	\begin{align*}
 		\nabla_{\vec{v}_j^{\: i}} \tfrac{1}{k} {A_D}^k 
 		&= {A_{D}}^{k-1} \nabla_{\vec{v}_j^{\: i}} A_D \\
@@ -1186,7 +1184,7 @@ This mechanism captures the spatial repulsion characteristic of rigid body inter
 In the end, we will use a combination of both overlap forces to get a nice transition from the HCSM to the DF cell model. \\ 
 In~\cite{Bruna2012} overlapping cells with a radius of $r$ that have a centre-to-centre distance of $2r - a$ will be reflective apart in one time step (that is $10^{-5}$), resulting in a distance of $2r + a$ between the two cell centres afterwards. \\
 The following force does the exact same for our DF cells. 
-But we need the following assumptions:
+But we need the following assumptions.
 \begin{enumerate}
 	\item Our DF cells model circular discs. 
 	\item The cells have a radius of $r \in \R_{>0}$.
@@ -1231,7 +1229,7 @@ With that given, we can define the according energy.
     The second function 
     \begin{align*}
         &\psi: \R_+ \: \longrightarrow \: \R_+, \\
-        d \: \longmapsto \: &\psi(d) = \tfrac{N_V}{2} \mathbf{1}_{\{d < 2r\}} (2r - d)^2,
+        d \: \longmapsto \: &\psi(d) = \tfrac{N_V}{2} \mathbf{1}_{[0, 2r)}(d) (2r - d)^2,
     \end{align*}
     penalises cell centre distances smaller than the threshold $2r$, where $r>0$ is the cell radius given in the simulation setup.
 \end{definition}
@@ -1242,13 +1240,13 @@ With this regularity established, we proceed to compute the gradient required fo
 We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ensure that the interaction term remains of order $\mathcal{O}(1)$ as the number of cells $N_C \rightarrow \infty$, preventing unbounded growth in interaction strength in large cell populations. 
 
 \begin{proposition} \textbf{Bounce overlap force} \label{prop:bounceForce}\\
-    The bounce overlap force $F^{(\bar{O})}_i: (\R^{2N_V})^{N_C}\setminus\{0\} \rightarrow \R^{2N_V}$ that gets applied on cell $i$, is given by
+    The bounce overlap force $F^{(\bar{O})}_i: (\R^{2N_V})^{N_C} \rightarrow \R^{2N_V}$ that gets applied on cell $i$, is given by
     \begin{align*}
         F^{(\bar{O})}_i(\vec{C}) = -(\nabla_{\vec{v}^{\: i}_1} \bar{O}(\vec{C}), \ldots, \nabla_{\vec{v}^{\: i}_{N_V}} \bar{O}(\vec{C})),
     \end{align*}
 	where the vertex wise gradient is given by 
 	\begin{align}
-		\nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]},
+		\nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j]) (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]},
 	\end{align}
 	for any $1\leq k \leq N_V$.\\
 
@@ -1265,7 +1263,7 @@ We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ens
     On this interval, we have
     \begin{align*}
         \psi'(d) 
-        &= \frac{\dequ}{\dequ d} \left[\frac{N_V}{2} \mathbf{1}_{\{d < 2r\}}  (2r - d)^2\right] \\
+        &= \frac{\dequ}{\dequ d} \left[\frac{N_V}{2} \mathbf{1}_{[0, 2r)}(d)  (2r - d)^2\right] \\
         &= \frac{N_V}{2} \frac{\dequ}{\dequ d} \left[(2r - d)^2\right] \\
         &= \frac{N_V}{2} 2(2r - d) \frac{\dequ}{\dequ d} \left[(2r - d)\right] \\
         &= N_V (d - 2r).\\
@@ -1274,12 +1272,12 @@ We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ens
 	As for $d>2r$, $psi$ is constant zero, we also have $\psi'(d) = 0$ for all $d > 2r$. 
 	Overall, we get the continuous derivative 
 	\begin{align*}
-	    \psi'(d) = N_V \mathbf{1}_{\{d < 2r\}} (d - 2r).
+	    \psi'(d) = N_V \mathbf{1}_{[0, 2r)}(d) (d - 2r).
 	\end{align*} 
-    % TODO: explain why \frac{\dequ}{\dequ d} \left[\mathbf{1}_{\{d < 2r\}}\right] (d - 2r)^2 = 0
+    % TODO: explain why \frac{\dequ}{\dequ d} \left[\mathbf{1}_{[0, 2r)}(d)\right] (d - 2r)^2 = 0
     Thus, 
     \begin{align*}
-    \psi'(\chi(C_i - C_j)) = \psi'(\norm[\vec{x}_i - \vec{x}_j]) = N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r).
+    \psi'(\chi(C_i - C_j)) = \psi'(\norm[\vec{x}_i - \vec{x}_j]) = N_V \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j]) (\norm[\vec{x}_i - \vec{x}_j] - 2r).
     \end{align*}
     We continue with the gradient with respect to a vertex $\vec{v}^{\:i}_k$, $1 \leq k \leq N_V$, of cell $i$ as
     \begin{align*}
@@ -1319,8 +1317,8 @@ We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ens
     \begin{align*}
         \nabla_{\vec{v}^{\:i}_k} \bar{O}(\vec{C}) 
         &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{\vec{v}^{\:i}_k} \chi (C_i - C_j) \\
-        &= \frac{1}{N_C} \sum\limits_{j \neq i}  N_V \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r) \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} (\vec{x}_i - \vec{x}_j) \\
-        &= \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]}. 
+        &= \frac{1}{N_C} \sum\limits_{j \neq i}  N_V \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j])(\norm[\vec{x}_i - \vec{x}_j] - 2r) \frac{1}{ N_V\norm[\vec{x}_i - \vec{x}_j]} (\vec{x}_i - \vec{x}_j) \\
+        &= \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j]) (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]}. 
     \end{align*}
     \qed 
 \end{proposition}

@@ -68,7 +68,7 @@ The resulting spatial configuration, illustrating how cell overlaps are avoided,
 The marginal equation~\eqref{equ:marginalHSCM} exhibits an enhanced diffusion rate because of the additional positive non-linear term \(\tfrac{\pi}{2}(N_C-1)\epsilon^2 \rho^2\) inside the diffusion operator. 
 This term represents excluded volume interactions between finite sized particles, which especially bias motion at regions of high density and thereby accelerate the overall spread. \\
 As a result, the effective collective diffusion increases with particle number \(N_C\), particle size \(\epsilon\), and local density \(\rho\). 
-We can rewrite Equation~\eqref{equ:marginalHSCM} to explicitly show this enhanced diffusion effect as follows:
+We can rewrite Equation~\eqref{equ:marginalHSCM} to explicitly show this enhanced diffusion effect as follows
 \begin{align*}
     \frac{\partial \rho}{\partial t}
     &= \nabla_{\vec{x}} \cdot \nabla_{\vec{x}}[\rho + \frac{\pi}{2} (N_C - 1)\epsilon^2 \rho^2] \\
@@ -114,7 +114,7 @@ To visualise the results, we construct heatmaps representing the spatial distrib
 This is done by discretising the domain into a uniform grid of subsquares. 
 For each subsquare, we count how many cells fall within it across all simulations. 
 The resulting counts are normalised by dividing by the total number of cells $N_C$, the number of simulations, and the area of a subsquare. 
-This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition: 
+This normalisation ensures that the heatmap represents a probability density, satisfying the mass conservation condition
 \[
     \sum\limits_{i \: \in \text{subsquares}} \text{value}_i \cdot \text{area}_i = 1. 
 \]
@@ -161,7 +161,7 @@ Consistent with the hard sphere model, the hexagonal cells have a diameter of $\
 To replicate the dynamics of hard spheres, shape deformation is disabled by setting the cell hardness to $h = 1$ (see Section~\ref{dynamics}). 
 Consequently, all shape preserving forces from the DF model can be neglected, and only the bounce overlap force is applied. \\
 
-\begin{simulation} \textbf{Hard DF model – Monte Carlo Simulation Setup} \\
+\begin{simulation} \textbf{Hard DF model - Monte Carlo Simulation Setup} \\
     In this simulation, each cell \(C_i = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_6)\) represents a list of vertices.
     The desired cell shape is given as a regular hexagon with a diameter of \(\epsilon = 0.01\), defined as the distance between two opposite vertices.
     The dynamic of the cells, significant for hardness $h=1$, is governed by the SDE
@@ -183,14 +183,14 @@ Consequently, all shape preserving forces from the DF model can be neglected, an
         \vec{c}_i = \frac{1}{6} \sum_{k=1}^{6} \vec{v}^{\:i}_k,
     \]
     of a cell crosses the domain boundary \(\partial \Omega\), the entire cell is pushed back into the interior \(\Omega^{\circ}\).  \\
-    The SDEs are solved using the Euler–Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
+    The SDEs are solved using the Euler-Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
     A total of $10^4$ independent Monte Carlo simulations were performed to ensure statistical significance. 
     The simulations were carried out on the time interval \([0, 0.05]\).
 \end{simulation}
 
-
 Using this setup, we generated heatmaps representing the evolution of cell density over time. 
 Figure~\ref{fig:compareHSCM} compares our simulation results with the corresponding results from~\cite{Bruna2012}.  
+We use the same reflective boundary condition also for the two coming simulations. 
 
 \begin{figure}[h!]
     \centering
@@ -232,13 +232,9 @@ It is governed by the consecutive SDE.  \\
 			\F^{i}(\vec{C}) = \; & \alpha_{A} F_2^{(A)}(C_i) + \alpha_{E} F_2^{(E)}(C_i) + \alpha_{I} F_2^{(I)}(C_i) + \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}).
 		\end{split}
 	\end{align*}  
-    The force scalings are chosen as in Table~\ref{table:forcescalings}. \\
-    Reflective boundary conditions are applied collectively to each cell: if the centre
-    \[
-        \vec{c}_i = \frac{1}{6} \sum_{k=1}^{6} \vec{v}^{\:i}_k,
-    \]
-    of a cell crosses the domain boundary \(\partial \Omega\), the entire cell is pushed back into the interior \(\Omega^{\circ}\).  \\
-    The SDEs are solved using the Euler–Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
+    The force scalings are chosen as in Table~\ref{table:forcescalings}. 
+    Reflective boundary conditions are applied. 
+    The SDEs are solved using the Euler-Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
     A total of $10^4$ independent Monte Carlo simulations were performed to ensure statistical significance. 
     The simulations were carried out on the time interval \([0, 0.05]\). \\
 \end{simulation}
@@ -250,7 +246,6 @@ This intermediate formulation allows us to quantify the influence of deformabili
 %% macro flag
 This not only aids in verifying the robustness of our implementation, but also clarifies how emergent cell system densities evolve with cell stiffness.
 The corresponding stochastic representation, referred to as the mid DF model SDE, incorporates both the bounce and deforming overlap forces with an intermediate weighting. 
-The formulation reads as follows: \\
 
 \begin{simulation} \textbf{Mid DF model - Monte Carlo simulation setup} \\
     In this simulation, each cell \(C_i = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_6)\) represents a list of vertices.
@@ -266,13 +261,9 @@ The formulation reads as follows: \\
 			& 0.5 \alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) + 0.5 \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C}).
 		\end{split}
 	\end{align*}  
-    The force scalings are chosen as in Table~\ref{table:forcescalings}. \\
-    Reflective boundary conditions are applied collectively to each cell: if the centre
-    \[
-        \vec{c}_i = \frac{1}{6} \sum_{k=1}^{6} \vec{v}^{\:i}_k,
-    \]
-    of a cell crosses the domain boundary \(\partial \Omega\), the entire cell is pushed back into the interior \(\Omega^{\circ}\).  \\
-    The SDEs are solved using the Euler–Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
+    The force scalings are chosen as in Table~\ref{table:forcescalings}.
+    Reflective boundary conditions are applied.
+    The SDEs are solved using the Euler-Maruyama scheme with constant time step \(\Delta t = 10^{-5}\). 
     A total of $10^4$ independent Monte Carlo simulations were performed to ensure statistical significance. 
     The simulations were carried out on the time interval \([0, 0.05]\). \\
 \end{simulation}
@@ -394,13 +385,15 @@ While the previous sections examined how cell hardness influences collective dif
 To quantify this, we require a consistent measure of cell deformation that can be evaluated throughout our large scale Monte Carlo simulations. 
 Several approaches have been proposed in the literature for characterising the shape of two-dimensional objects, such as the method used by~\cite{miyazawa2010} in the context of analysing animal colour patterns. \\
 A simple yet effective measure is based on the ratio between a cell's area and its perimeter, which reflects how close its shape is to an ideal circle. 
-We denote this quantity as the asphericity~$\alpha$ of a geometric figure~$F$, defined as
-\[
-    \alpha_{F} = 4 \pi \frac{A_F}{{P_F}^{2}},
-\]
-for an area $A_F$ and perimeter $P_F$.
-The scaling factor $4 \pi$ ensures that a perfect circle yields $\alpha_{\text{c}} = 1$. 
-Lower values of~$\alpha_{F}$ therefore indicate stronger deviations from circularity, corresponding to more pronounced cell deformation. \\ 
+\begin{definition} \textbf{Asphericity of a two-dimensional geometrical figure} \\
+    Let $F$ be a connected subspace of $\R^2$ with area $A_F$ and perimeter $P_F$.
+    We define the asphericity~$\alpha_F$ of $F$ as
+    \[
+        \alpha_{F} = 4 \pi \frac{A_F}{{P_F}^{2}}.
+    \]
+\end{definition}
+The scaling factor $4 \pi$ ensures that a perfect circle $c$ yields $\alpha_{\text{c}} = 1$. 
+Lower asphericity values therefore indicate stronger deviations from circularity, corresponding to more pronounced cell deformation. \\ 
 The circle is the only two-dimensional geometric figure that attains the maximal asphericity value of $1$.  
 For a circle $c$ of radius $r>0$ we have $A_{\text{c}} = \pi r^2$ and $P_\text{c} = 2\pi r$. 
 Hence
@@ -408,7 +401,7 @@ Hence
     \alpha_{\text{c}} \;=\; 4 \pi \frac{\pi r^2}{(2\pi r)^2} \;=\; 1.
 \]
 
-The classical isoperimetric inequality states that for any sufficiently regular planar region $F$ % with area $A$ and perimeter $P$ one has
+The classical isoperimetric inequality, introduced in~\cite{osserman1978}, states that for any sufficiently regular planar region $F$ % with area $A$ and perimeter $P$ one has
 \[
     {P_{F}}^2 \;\geq\; 4\pi A_{F},
 \]

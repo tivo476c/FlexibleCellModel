@@ -132,6 +132,12 @@ OpenAI.
 \newblock \url{https://chat.openai.com}, 2025.
 \newblock Large language model.
 
+\bibitem[Oss78]{osserman1978}
+Robert Osserman.
+\newblock The isoperimetric inequality.
+\newblock {\em Bulletin of the American Mathematical Society},
+  84(6):1182--1238, 1978.
+
 \bibitem[PJJ15]{prost2015}
 Jacques Prost, Frank J{\"u}licher, and Jean-Fran{\c{c}}ois Joanny.
 \newblock Active gel physics.
