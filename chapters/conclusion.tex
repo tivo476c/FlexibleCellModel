@@ -79,7 +79,7 @@ The interior angle energy yielded the vertex gradient
 as shown in Equation~\eqref{gradient:angle}. \\
 
 After establishing the shape preserving forces, we turned our attention to modelling cell-cell overlap resolution. 
-We considered the overlap energy from Equation~\eqref{eq:overlapEnergy} 
+We considered the deforming overlap energy from Equation~\eqref{eq:overlapEnergy} 
 \[
     O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \; \sum\limits_{m=i+1}^{N_C} \; \sum\limits_{D \,\in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k.
 \]
@@ -100,21 +100,15 @@ From that energy, we derived the deforming overlap force by computing the vertex
 \end{split}
 \end{align*}
 
-In order to be able to model the dynamic of the hard sphere model from Bruna and Chapman in~\cite{Bruna2012} more closely, we also implemented the bounce overlap force of the form  
-\[
-	\dequ \bar{o}_{i,l} 
-    = \mathbf{1}_{\norm[\vec{x}_i - \vec{x}_l] < 2r} 
-    (2r - \norm[\vec{x}_i - \vec{x}_l]) 
-    \dfrac{\vec{x}_i - \vec{x}_l}{\norm[\vec{x}_i - \vec{x}_l]},
-\]
-\[
-	F^{(\bar{O})}_{i,l}(C_i, C_l) 
-    = (\dequ \bar{o}_{i,l}, \ldots, \dequ \bar{o}_{i,l})^T \in \mathbb{R}^{2N_V},
-\]
-\[
-	F^{(\bar{O})}_i(\vec{C}) = \sum\limits_{l \neq i} F^{(\bar{O})}_{i,l}(C_i, C_l),
-\]
-defined in Definition~\ref{force:bounceOverlap}. \\
+In order to be able to model the dynamic of the hard sphere model from Bruna and Chapman in~\cite{Bruna2012} more closely, we also implemented the bounce overlap force, that is 
+\begin{align*}
+    F^{(\bar{O})}_i(\vec{C}) = -(\nabla_{\vec{v}^{\: i}_1} \bar{O}(\vec{C}), \ldots, \nabla_{\vec{v}^{\: i}_{N_V}} \bar{O}(\vec{C})),
+\end{align*}
+where the vertex wise gradient is given by 
+\begin{align}
+    \nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{\{\norm[\vec{x}_i - \vec{x}_j] < 2r\}} (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]},
+\end{align}
+derived in Proposition~\ref{prop:bounceForce}. \\
 We further introduced a hardness parameter $h \in [0,1]$ to interpolate between deforming and bouncing overlap forces. 
 Based on all previous components, we then derived the full DF dynamics in SDE form and conducted a parameter study to determine suitable force scalings, summarised in Table~\ref{table:forcescalings}. 
 Altogether, the resulting DF SDE was given in Definition~\ref{def:df-sde} by  
@@ -144,21 +138,16 @@ Finally, we investigated shape deformation across simulations.
 Here, we observed that deformation becomes more pronounced as the cell hardness decreases, which is consistent with the construction of the model. 
 Moreover, most of the deformation occurs at the beginning of each simulation, when the cells start out densely packed near the centre of the domain before gradually spreading out. 
 This behaviour confirms the intended interplay between overlap forces, shape energies, and the hardness parameter. \\
-In the final chapter, we derived the mean field description corresponding to the DF dynamics. 
-Starting from the underlying stochastic model, we obtained a partial differential equation governing the temporal evolution of the mean field density. 
-For general DF cells, this mean field PDE takes the form  
-\begin{align*}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} 
-    - \nabla \cdot \bigl(\bar{\rho}_t^{\:N_V}(C)\, \nabla E(C)\bigr) = 0.
-\end{align*}
-To illustrate the connection between the particle based representation and its mean field limit, we considered a low-dimensional needle example. 
+In the final chapter, we derived the mean field description corresponding to the hard DF dynamics. 
+We obtained a partial differential equation governing the temporal evolution of the mean field density. 
 Figures~\ref{fig:needle400} and~\ref{fig:needle-limit} demonstrate the correspondence between the first marginal of the empirical measure and the resulting mean field density, thereby providing an explicit example of the mean field convergence mechanism. \\
-Finally, we specialised the mean field equation to the setting of shape preserving DF cells. 
+Finally, we specialised the mean field equation to the setting of hard DF cells, without the deforming overlap force. 
 In this case, the resulting PDE reads  
 \begin{align*}
-    \frac{\partial \bar{\rho}_t^{\:N_V}(C)}{\partial t} 
-    - \nabla \cdot \bigl(\bar{\rho}_t^{\:N_V}(C)\, \left(\nabla_C E_A(C) + \nabla_C E_E(C) + \nabla_C E_I(C)\right)\bigr) = 0,
+    \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - &\nabla_X \cdot \Bigl[ \bar{\rho}_t^{\:N_V}(X) \Bigl\{ \alpha_{\bar{O}}\left(\nabla_X \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X) \\
+    & + \nabla_X E_A(X) + \nabla_X E_E(X) + \nabla_X E_I(X)\Bigr\} \Bigr] = 0, \quad X \in \R^{2N_V},
 \end{align*}
 where the corresponding cell wise gradients for the area, edge, and interior angle energies were found explicitly in Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge}, and~\eqref{eq:cGradAngle}. 
-This concludes the derivation of the continuum level description of our DF model without interaction terms.
+The gradient $\nabla_X \left( \psi \circ \chi \right)(X)$ is given in Equation~\eqref{cellgrad:bounce}.
+This concludes the derivation of the continuum level description of our hard DF model without deforming overlap force. 
 
