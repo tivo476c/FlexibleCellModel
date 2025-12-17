@@ -1,5 +1,32 @@
 \section{DF model validation and simulation analysis} \label{sanitycheck}
 
+
+% We want to consider the point particle Monte Carlo simulations from Chapter~\ref{sanitycheck}.
+% Therefore, we define the empirical measure 
+% \begin{align*}
+%     &\mu^{(N_C, N_S)}_t: \mathcal{B}(\R^2) \: \longrightarrow \: [0,1],  \\
+%     A \: \longmapsto \: &\mu^{(N_C, N_S)}_t(A) = \frac{1}{N_C N_S} \sum\limits_{i=1}^{N_C} \sum\limits_{s=1}^{N_S} \delta_{\vec{x}_i^{\:(s)}(t)}(A),
+% \end{align*}
+% where $N_C$ is again the number of cells in each simulation, $N_S$ denotes the number of simulations in the Monte Carlo simulation and $\vec{x}_i^{\:(s)}(t) \in \Omega \subset \R^2$ is the location of point particle $1 \leq i \leq N_C$ in simulation $1 \leq s \leq N_S$ and at time $t \in [0, T]$.   \\
+% $\mathcal{B}(\R^2)$ is the Borel $\sigma$-algebra on $\R^2$ and \( \delta_{\vec{x}_i(t)} \) denotes the Dirac measure
+% \begin{align*}
+%     &\delta_{\vec{x}_i(t)}: \mathcal{B}(\R^2) \: \longrightarrow \: \{0,1\},  \\
+%     A \: \longmapsto \: &\delta_{\vec{x}_i(t)}(A) = \begin{cases}
+%         1 & \text{if } \vec{x}_i(t) \in A, \\
+%         0 & \text{if } \vec{x}_i(t) \notin A.
+%    \end{cases}
+% \end{align*}
+% For any test function \( \phi \in C_c^\infty(\R^2) \), the Dirac measure satisfies
+% \[
+% \int_{\R^2} \phi(x) \: \dequ \delta_{\vec{x}_i(t)}(x) = \phi(\vec{x}_i(t)).
+% \]
+% For a set $A \in \mathcal{B}(\mathbb{R}^2)$, the quantity $\mu^{(N_C, N_S)}_t(A)$ denotes the relative proportion of the $N_C$ particles that lie in $A$ at time $t$, averaged over all $N_S$ simulations.\\
+% The heatmaps in Chapter~\ref{sanitycheck} are obtained by evaluating this empirical measure on a family of subsets $\{A_{ij}\}_{i,j=1}^{N_H}$, where $N_H^2$ is the number of subsquares into which we partition the domain $\Omega = [-0.5, 0.5]^2$.  
+% Each subsquare $A_{ij}$ has side length $\tfrac{1}{N_H}$, and increasing $N_H$ yields an increasingly fine spatial resolution of~$\Omega$.\\
+% If, in addition, we let $N_S \to \infty$, then by the Central Limit Theorem the empirical heatmaps converge to their expectation, which coincides with the first marginal distribution of the system, since the simulations are independent and identically distributed.  
+% In our computations we used $10\,000$ simulations to ensure a reliable numerical approximation of this first marginal. \\
+
+
 In this chapter, we continue by performing and analysing cell simulations based on the DF model. 
 The chapter is structured into four subsections: we first introduce the reference model from~\cite{Bruna2012}, followed by a reproduction of their published results to validate our implementation. 
 We then extend the analysis to simulations involving deformable cells and finally conclude with a quantitative assessment of cell shape deformation.  \\

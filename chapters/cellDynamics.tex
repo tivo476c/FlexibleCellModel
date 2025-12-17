@@ -1305,11 +1305,11 @@ We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ens
     \end{align*}
     We get the same gradient, no matter which $1 \leq k \leq N_V$ we choose.
 	In the derivative, we get a quotient $$\frac{1}{ \norm[\vec{x}_i - \vec{x}_j]},$$ that is undefined for $\vec{x}_i - \vec{x}_j = 0 \in \R^2$.
-	For a general function argument $B = (\vec{b}_1, \ldots, \vec{b}_{N_V}) \in \R^{2N_V}$, that we can interpret as a vector of $2$-dimensional vertices, the problematic division occurs whenever 
+	For a general function argument $B = (\vec{b}_1, \ldots, \vec{b}_{N_V}) \in \R^{2N_V}$, that we can interpret as a vector of two-dimensional vertices, the problematic division occurs whenever 
 	\[
 		\sum\limits_{k=1}^{N_V} \vec{b}_k = 0 \in \R^2,
 	\]
-	thus whenever the centre of mass of that vector of $2$-dimensional vertices is at the origin. 
+	thus whenever the centre of mass of that vector of two-dimensional vertices is at the origin. 
 	If we use the difference of two cells $C_i - C_j$ as function argument, this division by zero occurs whenever both cells have the same cell centre, i.e. $\vec{x}_i = \vec{x}_j$. 
 	% As this dynamic works against this exact situation, we can safely assume that this case will not occur in practice. 
 	In a numerical simulation, if you start with no exact centre coincidences and use a time step small enough that the repulsive dynamics prevent an exact same centre of mass, then $\norm[\vec{x}_i = \vec{x}_j]$ will not equal $0$ and the formula is safe to apply. \\
