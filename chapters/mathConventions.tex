@@ -34,7 +34,6 @@
         \midrule
     \end{tabular}
 \end{table}
-\clearpage
 \begin{table}[t]
 \centering
     \begin{tabular}{c p{10cm}} % l = left aligned, c = centered, r = right aligned
@@ -52,7 +51,14 @@
         $P(t; \vec{x}_1, \ldots, \vec{x}_{N_C})$ & Joint probability density function  \\[0.5em]
         $\rho(t; \vec{x})$, $\rho^{N_C}_t(\vec{x})$ & First marginal function \\[0.5em]
         $\bar{\rho}_t(\vec{x})$ & Density in the mean field limit \\
+        $\Omega_{C_i, C_m}$ &  \parbox[t]{10cm}{$\Omega_{C_i,C_m} = \{\, D \mid D \text{ is an overlap DF cell}\\
+        \hspace*{2.6cm} \text{ formed from } C_i \text{ and } C_m \,\}$} \\ 
+        $V(D)$ & $V(D) = \{\vec{v} \in D \:|\: \vec{v} \in C_i \cup C_m,\, D \in \Omega_{C_i, C_m} \}$ \\
+        $W(D)$ & Set of all intersection points of an overlap DF cell D, i.e. $W(D) = D \setminus V(D)$ \\
+        $\text{adj}(\vec{w})$ & Set of the four vertices from $C_i$ or $C_m$, that are adjacent to the intersection point $\vec{w} \in D \in \Omega_{C_i, C_m}$ \\
+        $\text{in}(\vec{w})$ & Set of the two vertices from $C_i$ or $C_m$, that are inside the overlap and adjacent to the intersection point $\vec{w}$  \\
+        $\text{out}(\vec{w})$ & Set of the two vertices from $C_i$ or $C_m$, that are outside the overlap and adjacent to the intersection point $\vec{w}$\\
         \bottomrule 
     \end{tabular}
 \end{table}
-\vspace*{10cm}
+\vspace*{0.1cm}

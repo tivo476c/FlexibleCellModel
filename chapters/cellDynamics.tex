@@ -1,18 +1,15 @@
 \section{DF model and dynamics}\label{dynamics}
-
-%TODO find right references for non confluent and deformable cell models
 Several cell modelling approaches have already been discussed in the introduction. 
 In the following section, we establish the specific model and dynamical framework used in this thesis. 
 We focus on a non-confluent cell setting, as in~\cite{Boromand2018}, where free space in between cells is permitted.
 Moreover, we require cells to be deformable, following ideas from~\cite{Boromand2018, Fletcher14, wenzel2021, Happel2023}. \\
-Therefore, we choose a vertex based cell approach, like in~\cite{Fletcher14, Boromand2018}, in which each cell is represented by a polygon defined by its vertices.
+Therefore, we choose a vertex based cell approach, like in~\cite{Fletcher14, Boromand2018}, in which each cell is represented by a polygon defined by its vertices, enabling the representation of a wide range of cell shapes.
 The DF cell model, originally introduced in my Bachelor's thesis~\cite{Vogel2023}, satisfies these properties. 
 This chapter revisits this model and its dynamical formulation. 
 Over the course of this thesis, the dynamics and implementation of the original DF model were refined and extended in several ways.
 
 \subsection{DF cell model}\label{model}
-% give definition for DF model, before that explain all needed math. terms 
-
+First, we want to introduce the DF cell model before establishing the dynamics. 
 We are considering cells in the two-dimensional space $\R^2$. 
 Here, cells are considered to be polygons. 
 
@@ -35,43 +32,30 @@ Having established this definition, we are now ready to define our cell model.
 	We set $\vec{v}_{N+1} = \vec{v}_{1}$ and $\vec{v}_{0} = \vec{v}_{N}$ to enable periodic indexing, which simplifies the computation of the upcoming forces a lot.
 \end{definition}
 
-In this thesis, DF cells may also be called discrete cells. 
 In our model, the cell vertices are denoted by $\vec{v}$. 
 Thus, the character $v$ refers to vertex positions and not to velocity.
-The term velocity is not used throughout this thesis as vertex dynamics are entirely given by the upcoming forces and a cell wise computed Brownian motion. \\
-
-
+The term velocity is not used throughout this thesis as vertex dynamics are entirely given by the upcoming forces and a cell wise computed Brownian motion. 
 The next step is to describe the setup of a DF simulation. 
-\begin{definition} \textbf{DF simulation} \label{def:DF-Sim}  \\
-	A DF simulation considers $N_C \in \N$ cells. 
-	Each cell has the same amount of $N_V \in \N$ vertices.
+\begin{definition} \textbf{DF SDE} \label{def:DF-Sim}  \\
+	The DF SDE considers a system of $N_C \in \N$ cells with $N_V \in \N$ vertices per cell. 
 	The notation of cell $i$ is given by 
 	\begin{center}
 		$C^{i} = (\vec{v}^{\:i}_1, \ldots, \vec{v}^{\:i}_{N_V}), \quad 1 \leq i \leq N_{C}$. 
 	\end{center}
-
 	The complete set of all cells is represented by 
 	\begin{center}
-		$\vec{C} = (C^{1}, \ldots, C^{N_C})$,
+		$\vec{C} = (C^{1}, \ldots, C^{N_C})$.
 	\end{center}
-	which also contains all vertices from all cells.
-
-	The simulation's dynamics are defined on all cell vertices via the stochastic differential equation (SDE)
+	We define the vertex wise DF SDE generally as
 	\begin{center}
 		$ \dequ \vec{v}^{\:i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2 D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V}$. 
 	\end{center}
 	where $\F^i_j$ describes the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system $\vec{C}$ and $\sqrt{2 D} \dequ \vec{B}_i(t)$ models the two-dimensional standard Brownian motion of cell $i$ with diffusion coefficient $D$.  
 	Note, that all vertices of cell $i$ perform the same Brownian motion such that the whole cell $i$ moves in the direction of $\dequ \vec{B}_i(t)$. \\
-
-	The simulation domain is always a square around the origin that is defined by $L > 0$ via 
-	\begin{center}
-		$
-		\Omega_L = [-L, L]^2.
-		$
-	\end{center} 
 \end{definition}
 
 We characterise the interaction force $\F$ as the sum of gradient flows of energies. 
+Later on, we also write down a cell wise formulation of the DF SDE in Equation~\eqref{equ:cellwiseDFpde}.
 A gradient flow describes how a system changes over time in a way that always reduces a given energy $E(\vec{C})$.
 To obtain the gradient flow of this energy on vertex $\vec{v}$, we must add the term $-\nabla_{\vec{v}} E(\vec{C})$ to $\F$.
 Since all our energy terms are positive, the lowest possible value is zero.  
@@ -84,11 +68,11 @@ Unlike in~\cite{Vogel2023}, where each cell was assigned an individual desired s
 We assume that all cells are initially given in their desired states in order to prevent system instabilities right from the beginning. \\
 Additionally, we introduce slight modifications to the energy formulation: rather than being defined locally on vertices or edges, the energies are now defined over entire cells. 
 This adjustment provides a more coherent basis for deriving cell-level forces and ensures consistency with the global dynamic framework introduced in this study. \\
-Interactions between different cells just arise from the overlap force, which acts to resolve overlaps and to prevent cell interpenetration. 
-In the process of resolving overlaps, the shape of the cells will change.  
+Interactions between different cells arise from the overlap forces, which act to resolve overlaps and to prevent cell interpenetration. 
+In the process of resolving overlaps, the shape of the cells will change whenever the deforming overlap force is active.  
 Once the overlap is resolved, the first three forces act to restore the cell's original shape. \\
-The central question we aim to investigate in this thesis is how the deformability of individual cells influences the overall diffusivity of the cell system.
-But first, let us introduce each of the mentioned forces. \\
+In this setup we can investigate the influence of cell deformability to the overall cell diffusion behaviour. 
+But first, let us introduce each of the mentioned forces. 
 We define our energies as
 \[
 	E_k(x) = \tfrac{1}{k} |x_{\text{current}} - x_{\text{desired}}|^k, 
@@ -123,7 +107,7 @@ such that for all $\phi \in C_C^{\infty}(\R)$
 	&= - \int_{\R} k \sgn(x)|x|^{k-1} \phi(x) \: \dequ x.
 \end{align*}
 Thus, $x \mapsto k \sgn(x)|x|^{k-1}$ is the weak derivative of $x \mapsto |x|^k$. 
-We will use this weak derivative for all of our force computations. 
+We will use this weak derivative for some of our force computations. 
 Next, we introduce the DF energies and dynamics. 
 The following energies show a similar structure as the energies in~\cite{Boromand2018}.
 
@@ -255,7 +239,6 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 	\qed
 \end{proposition}
 
-It is also valid to write $F_{j}^{(A)}(\vec{C})$ instead of $F_{j}^{(A)}(C)$, since $C$ is included in $\vec{C}$. 
 Figure~\ref{fig:areaForce} illustrates how the area force acts on a cell to either expand or contract it toward the desired target area.\\ 
 
 
@@ -268,9 +251,9 @@ We define the edge $j$ to be between $\vec{v}_j$ and $\vec{v}_{j+1}$ and use the
 	E^j_C = \norm[\vec{v}_j - \vec{v}_{j+1}], 
 	$
 \end{center}
-to compute the length of the edge. 
+to denote the length of the edge. 
 \begin{definition} \textbf{Edge energy} \\
-	The energy $E_k: (\R^2)^{N_V} \rightarrow \R_{\geq 0}$, used to keep the edges at a constant length, reads 
+	The energy $E_k: (\R^2)^{N_V} \rightarrow \R_{+}$, used to keep the edges at a constant length, reads 
 	\begin{align}
 		E_k(C) =  \sum\limits_{j=1}^{N_V} \tfrac{1}{k} |E^j_{C} - E^{j}_d|^k, \label{eq:edgeEnergy} 
 	\end{align}
@@ -399,7 +382,7 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
 \subsection{Interior angle force}
 % mention scaling factor of /360 for interior angle force 
 The combined application of the area and edge forces revealed instabilities in unfavorable configurations, where self intersections of the cell edges occurred. 
-Simulations without this energy sometimes can also result in constrictions at certain vertices, where the interior angle approaches $360$°. 
+Simulations without the interior angle energy sometimes can also result in constrictions at certain vertices, where the interior angle approaches $360$°. 
 To address this issue, we introduce the interior angle energy. \\
 The first challenge is to consistently determine the interior angle at a given vertex throughout the simulation.
 Although we could apply the law of cosines and use $\arccos$ to compute the angle, this method would suffer from poor stability as the angle approaches $180$°.
@@ -424,8 +407,8 @@ A better alternative is to use the $\atanxy$ function, as it remains reliably st
 	\end{center}
 \end{definition}
 
-The $\atanxy(\vec{v})$ function computes the angle of a vector $\vec{v}$ with respect to the positive $x$-axis. \\
-With this, we can compute the angles 
+This function computes the angle of a vector $\vec{v}$ with respect to the positive $x$-axis. \\
+We can use it to compute the angles 
 \begin{center}
 	$\theta_1 = \atanxy( \vec{v}_{j-1} - \vec{v_j} )$, \\
 	$\theta_2 = \atanxy( \vec{v}_{j+1} - \vec{v_j} )$,
@@ -460,7 +443,7 @@ It is
 almost everywhere, just not on areas with measure zero. 
 We just compute the gradient of $\arctan(\frac{v^{y}}{v^{x}})$ instead. \\
 Another problem is the modulo operator $[ \cdot ]_{[0,2\pi)}$, which is not differentiable at the interval limits.
-However, we just neglect the modulo operator as it does not affect the dynamics of the gradient.
+However, we just neglect the modulo operator as it does not affect the dynamic of the gradient.
 
 \begin{figure}
     \centering
@@ -712,13 +695,17 @@ Figure \ref{fig:angleForce} illustrates the isolated effect of the interior angl
 
 \FloatBarrier
 
-\subsection{Overlap force}
+\subsection{Overlap forces}
 % explain the algorithm
-Unlike the previous energies, which act independently on each cell, the overlap force is the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the simulation. 
+Unlike the previous energies, which act independently on each cell, the overlap forces are the first to account for interactions between multiple cells, thereby introducing cell-to-cell interaction into the DF dynamic. 
+To resolve overlaps between cells, two conceptually different interaction forces are introduced. 
+The deforming overlap force acts by locally modifying the cell shape, allowing overlaps to be reduced through elastic deformation. 
+In contrast, the bounce overlap force resolves overlaps through the collective transport of entire cells, inducing a repulsive motion without altering their shape. 
+While both mechanisms serve to eliminate overlaps, they operate on different geometric levels and lead to fundamentally different contributions in the DF dynamics.
 
-\subsubsection*{Deforming overlap force}
+\subsubsection{Deforming overlap force}
 The first overlap force, that we want to introduce, is an adapted form of the overlap force introduced in~\cite{Vogel2023}. 
-It degenerates a cell overlap by influencing that cell shapes of the affected cells. \\
+It degenerates cell overlaps by influencing that cell shapes of the affected cells. 
 The challenging aspect of computing the overlap force lies in detecting overlaps within the cell system. 
 \begin{definition} \textbf{Overlap cell}\\
 	An overlap cell between two DF cells $C_i$ and $C_m$ is a DF cell in the sence of Definition~\ref{def:DF}, composed of all vertices of $C_i$ that lie inside $C_m$, all vertices of $C_m$ that lie inside $C_i$ and the intersection points of the cell walls of $C_i$ and $C_m$.
@@ -729,7 +716,7 @@ To be able to catch the correct dynamic in all cases, we need to introduce the s
 	Let $C_i, C_m \in \vec{C}$ be two DF cells. 
 	Then, the set of overlaps $\Omega_{C_i,C_m}$ is defined as
 	\[
-		\Omega_{C_i,C_m} = \{\, D \mid D \text{ is an overlap cell formed between } C_i \text{ and } C_m \,\}.
+		\Omega_{C_i,C_m} = \{\, D \mid D \text{ is an overlap cell formed from } C_i \text{ and } C_m \,\}.
 	\]
 \end{definition}
 Once all overlaps have been identified, we apply a dynamic similar to that of the area force, but with a desired area of zero. 
@@ -837,7 +824,7 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	The vertices of an overlap cell $D$ can be divided into the vertices that are either in $C_i$ in $C_m$, we call that set 
 	\[
 		V(D) = \{\vec{v} \in D \:|\: \vec{v} \in C_i \cup C_m \}, 
-		\] 
+	\] 
 	and into the vertices that are neither in $C_i$ nor $C_m$, named 
 	\[
 		W(D) = D \setminus V(D).
@@ -918,7 +905,6 @@ To decrease the overlap areas during the simulation, we evaluate the gradient fl
 	\end{align}
 
 	Proof.\\
-
 	First of all, we compute the gradients of $f$ and $g$
 	\begin{align*}
 		\nabla_{\vec{v}_{\text{out}}^{\: i}} f 
@@ -1177,7 +1163,7 @@ Figure~\ref{fig:overlapForce} illustrates the interaction between two overlappin
 
 \FloatBarrier
 
-\subsubsection*{Bounce overlap force} 
+\subsubsection{Bounce overlap force} 
 While the previously introduced overlap force effectively reduces cell overlap by deforming the cells' shapes, it does not directly separate them spatially - leaving cells temporarily stuck together, relying on random Brownian motion to diffuse apart. 
 With just that force, it is hard to compare the DF cell model to the hard sphere cell model, where overlaps are solved by reflecting them away from each other, resulting in a real distance that both cells have after a really small amount of time. \\  
 To address this limitation and ensure a smoother conceptual and mechanical transition from the hard disc cell model, where non-deformable cells simply bounce off one another, we introduce a second overlap degeneration force. 
@@ -1261,22 +1247,21 @@ We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ens
         &= \frac{1}{N_C} \sum\limits_{j \neq i}  \nabla_{\vec{v}^{\: i}_k} \left[  \left( \psi \circ \chi \right) (C_i - C_j) \right] \\
         &= \frac{1}{N_C} \sum\limits_{j \neq i}  \psi'(\chi(C_i - C_j)) \nabla_{\vec{v}^{\: i}_k} \chi (C_i - C_j). \\
     \end{align*}
-	For the derivative of $\psi$, we first consider $d \in [0,2r]$. 
+	For the derivative of $\psi$, we first consider $s \in [0,2r]$. 
     On this interval, we have
     \begin{align*}
-        \psi'(d) 
-        &= \frac{\dequ}{\dequ d} \left[\frac{N_V}{2} \mathbf{1}_{[0, 2r)}(d)  (2r - d)^2\right] \\
-        &= \frac{N_V}{2} \frac{\dequ}{\dequ d} \left[(2r - d)^2\right] \\
-        &= \frac{N_V}{2} 2(2r - d) \frac{\dequ}{\dequ d} \left[(2r - d)\right] \\
-        &= N_V (d - 2r).\\
+        \psi'(s) 
+        &= \frac{\dequ}{\dequ s} \left[\frac{N_V}{2} \mathbf{1}_{[0, 2r)}(s)  (2r - s)^2\right] \\
+        &= \frac{N_V}{2} \frac{\dequ}{\dequ s} \left[(2r - s)^2\right] \\
+        &= \frac{N_V}{2} 2(2r - s) \frac{\dequ}{\dequ s} \left[(2r - s)\right] \\
+        &= N_V (s - 2r).\\
     \end{align*}
-	For $d=2r$, this we have a derivative of $\psi'(2r) = 0$. 
-	As for $d>2r$, $psi$ is constant zero, we also have $\psi'(d) = 0$ for all $d > 2r$. 
+	For $s=2r$, we have a derivative of $\psi'(2r) = 0$. 
+	As for $s>2r$, $psi$ is constant zero, we also have $\psi'(s) = 0$ for all $s > 2r$. 
 	Overall, we get the continuous derivative 
 	\begin{align*}
-	    \psi'(d) = N_V \mathbf{1}_{[0, 2r)}(d) (d - 2r).
+	    \psi'(s) = N_V \mathbf{1}_{[0, 2r)}(s) (s - 2r).
 	\end{align*} 
-    % TODO: explain why \frac{\dequ}{\dequ d} \left[\mathbf{1}_{[0, 2r)}(d)\right] (d - 2r)^2 = 0
     Thus, 
     \begin{align*}
     \psi'(\chi(C_i - C_j)) = \psi'(\norm[\vec{x}_i - \vec{x}_j]) = N_V \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j]) (\norm[\vec{x}_i - \vec{x}_j] - 2r).
@@ -1337,11 +1322,11 @@ The total overlap force is then defined as a weighted combination of two overlap
 \[
 	h \cdot F^{(\bar{O})} + (1 - h) \cdot F^{\hat{(O)}},
 \]
-where $F^{(\bar{O})}$ denotes the bounce off overlap force and $F^{\hat{(O)}}$ the shape deforming overlap force.\\
+where $F^{(\bar{O})}$ denotes the bounce overlap force and $F^{\hat{(O)}}$ the shape deforming overlap force.\\
 When $h = 1$, the cells are maximally stiff. 
-In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce off mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
+In this case, shape deformation is entirely suppressed: all overlaps are resolved solely through the bounce mechanism, and the shape preserving forces become redundant since the cells always retain their desired configurations. \\
 As $h$ decreases, the cells become progressively softer. 
-The influence of the bounce off force diminishes, while the shape deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
+The influence of the bounce overlap force diminishes, while the shape deforming overlap force gains dominance, allowing cells to deform more in response to contact with neighbors. \\
 With the introduction of the hardness parameter $h$, we have established a mechanism that enables a smooth transition from the HSCM dynamics introduced in~\cite{Bruna2012} to our new DF cell model. \\
 For $h = 1$, the dynamics are identical to the original HSCM model, as we will show in the following chapter. 
 By gradually decreasing $h$, we can continuously adapt the system behaviour toward the pure deformable (DF) cell model. 
@@ -1391,7 +1376,7 @@ These tests were conducted using a fixed time step of $10^{-5}$, with cell confi
 To rigorously challenge the model, we initialised the cells in deliberately distorted and uncomfortable shapes, which are most prone to triggering instabilities. 
 The configurations used in these tests are the same as those shown in the figures throughout this chapter, where the isolated effects of each force were illustrated following their respective introductions. 
 This allowed us to verify that the chosen scalings are robust even under unfavorable conditions. 
-For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce off dynamics used in~\cite{Bruna2012}. \\
+For the bounce overlap force, a scaling factor of $10^5$ is necessary to reproduce the original bounce dynamics used in~\cite{Bruna2012}. \\
 Summarizing all these efforts, we arrived at the following force scalings used in the simulations
 
 \begin{table}[h]
@@ -1515,15 +1500,17 @@ These scaling parameters serve as the foundation for the complete DF SDE model, 
 \begin{figure}[h!]
     \centering
         \includegraphics[width=0.7\textwidth]{forces/allforces_hard/energies-show-allForces-hard1.png} 
-    \caption{The bounce overlap force eliminates the overlap within a single time step.
-			 The energy diagram shows that the overlap energy drops to zero immediately, while the other energies remain constant at zero as the cell shapes do not change.}
+    \caption{Energy diagram of the hard DF dynamic.
+			The bounce overlap force eliminates the overlap within a single time step.
+			The energy diagram shows that the overlap energy drops to zero immediately, while the other energies remain constant at zero as the cell shapes do not change.}
 	\label{fig:allForces-hardEnergyDiagram}    
 \end{figure}
 
 \begin{figure}[h!]
     \centering
         \includegraphics[width=0.7\textwidth]{forces/allforces_0-5/energies-show-allForces-hard5e-1.png} 
-    \caption{The energy diagram shows that the overlap energy drops to zero immediately, while the shape preserving energies increase initially as the cells deform to resolve the overlap.
+    \caption{Energy diagram of the mid DF dynamic.
+			 It shows that the overlap energy drops to zero immediately, while the shape preserving energies increase initially as the cells deform to resolve the overlap.
 			 By time step~10, the cell shapes are nearly restored, which is reflected in the decrease of all energies.}
 	\label{fig:allForces-halfEnergyDiagram}
 \end{figure}
@@ -1532,7 +1519,8 @@ These scaling parameters serve as the foundation for the complete DF SDE model, 
 \begin{figure}[t!]
     \centering
         \includegraphics[width=0.7\textwidth]{forces/allforces_soft/energies-show-allForces-hard0.png} 
-    \caption{The energy diagram shows that the overlap energy drops initially but then increases again as the cells deform to restore their shapes.
+    \caption{Energy diagram of the soft DF dynamic.
+			 The diagram shows that the overlap energy drops initially but then increases again as the cells deform to restore their shapes.
 			 This deformation again induces overlap, leading to a repeating cycle.
 			 But overall, the total energy converges to a low level, indicating that the system stabilises over time.} 
 	\label{fig:allForces-softEnergyDiagram}    
