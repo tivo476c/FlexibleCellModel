@@ -25,6 +25,8 @@ We compute the second derivative
     &= \dfrac{1}{2}  \left((v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ A_{C} \right] + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[ A_{C} \right] \right) \\[0.5em]
     &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{\partial}{\partial v_j^x} \left[ \frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})\right] + \\
     & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{\partial}{\partial v_j^y} \left[\frac{1}{2}\sum\limits_{l = 1}^{N} (v_l^{x} v_{l+1}^{y} - v_{l+1}^{x} v_l^{y})  \right] \Biggr) \\[0.5em]
+\end{align*}
+\begin{align*}
     &= \dfrac{1}{2}  \Biggl(  (v_{j+1}^{y} - v_{j-1}^{y}) \frac{1}{2}\frac{\partial}{\partial v_j^x} \left[ (v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y) \right] + \\
     & \hspace{0.7cm} + (v_{j-1}^{x} - v_{j+1}^{x}) \frac{1}{2}\frac{\partial}{\partial v_j^y} \left[(v_j^x v_{j+1}^y - v_{j+1}^x v_j^y) + (v_{j-1}^x v_j^y - v_j^x v_{j-1}^y)  \right] \Biggr) \\[0.5em]
     &= \dfrac{1}{4}  \left(  (v_{j+1}^{y} - v_{j-1}^{y}) \left( v_{j+1}^y - v_{j-1}^y \right) +  (v_{j-1}^{x} - v_{j+1}^{x}) (v_{j-1}^{x} - v_{j+1}^{x}) \right) \\[0.5em]
@@ -82,7 +84,7 @@ We continue with the computation of the second derivative of the first summand i
 \begin{align*}
     \nabla_{\vec{v}_j} \cdot &\left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \begin{pmatrix} v_{j}^{x} - v_{j-1}^{x} \\[0.5em]  v_{j}^{y} - v_{j-1}^{y}  \end{pmatrix} \right] = \\
     &= \frac{\partial}{\partial v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{x} - v_{j-1}^{x}) \right] 
-      + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{y} - v_{j-1}^{y}) \right] \\
+    + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} (v_{j}^{y} - v_{j-1}^{y}) \right] \\
     &= \frac{\partial}{\partial v_j^x} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{x} - v_{j-1}^{x})  
     + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}} \frac{\partial}{\partial v_j^x} \left[(v_{j}^{x} - v_{j-1}^{x})\right] \\
     &\;\;\;\; + \frac{\partial}{\partial v_j^y} \left[ \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}\right] (v_{j}^{y} - v_{j-1}^{y}) 
@@ -91,7 +93,9 @@ We continue with the computation of the second derivative of the first summand i
     + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\
     &\;\;\;\; + \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (v_{j}^{y} - v_{j-1}^{y}) (v_{j}^{y} - v_{j-1}^{y}) 
     + \dfrac{E^{j-1}_{C}- E_d^{j-1}}{E^{j-1}_{C}}  \\ 
-    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (\underbrace{(v_{j}^{x} - v_{j-1}^{x})^2 + (v_{j}^{y} - v_{j-1}^{y})^2}_{\displaystyle = (E^{j-1}_{C})^2}) + \dfrac{2(E^{j-1}_{C}- E_d^{j-1})}{E^{j-1}_{C}} \\
+\end{align*}
+\begin{align*}
+    &= \frac{E_d^{j-1}}{(E^{j-1}_{C})^3} (\underbrace{(v_{j}^{x} - v_{j-1}^{x})^2 + (v_{j}^{y} - v_{j-1}^{y})^2}_{\displaystyle = (E^{j-1}_{C})^2}) + \dfrac{2(E^{j-1}_{C}- E_d^{j-1})}{E^{j-1}_{C}} \hspace*{1.3cm} \\
     &= \frac{E_d^{j-1}}{E^{j-1}_{C}} + \dfrac{2(E^{j-1}_{C} - E_d^{j-1})}{E^{j-1}_{C}} \\
     &= \frac{2 E^{j-1}_{C} - E_d^{j-1}}{E^{j-1}_{C}} \\
     &= 2 - \frac{E_d^{j-1}}{E^{j-1}_{C}}.

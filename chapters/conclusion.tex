@@ -1,21 +1,22 @@
 \section{Conclusion}
-In this work, we develop a vertex based discrete form (DF) model that captures the behaviour of deformable cells with realistic mechanical interactions, including shape preservation, cell-cell overlap resolution, and stochastic motion. 
+In this work, we developed a vertex based cell model: the DF model. 
+It captures the behaviour of deformable cells with realistic mechanical interactions, including shape preservation, cell-cell overlap resolution, and stochastic motion. 
 The first chapter provided a brief introduction to the DF cell model and its dynamics. 
-We began by defining what is meant by a DF cell and how such a cell is represented through its ordered sequence of vertices. 
+We began by defining what a DF cell is and how such a cell is represented through its ordered sequence of vertices. 
 Based on this representation, we then stated a first form of the vertex-wise dynamics in Definition~\ref{def:DF-Sim}, given by the stochastic differential equation
-\[
+\begin{align}
     \dequ \vec{v}^{\: i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V},
-\]
+    \label{SDE:DFvertexwise}
+\end{align}
 which specifies how each vertex evolves under the total deterministic force $\F^i_j(\vec{C}(t))$ and stochastic fluctuations. 
-As such, the chapter mainly served to set up the basic objects and notation that are used throughout the remainder of the work. \\
 Afterwards, we started with refining the DF cell dynamics by introducing shape preserving energies at the cell level. 
-Building on the initial vertex based formulation, we redefined the dynamics through suitably chosen area, edge, and interior angle energies
+Building on the initial vertex based formulation, first introduced in~\cite{Vogel2023}, we redefined the dynamics through suitably chosen area, edge, and interior angle energies
 \begin{align*}
-    A_k(C) &= \tfrac{1}{k} |A_{C} - A_d|^k, \\
-    E_k(C) &=  \sum\limits_{j=1}^{N_V} \tfrac{1}{k} |E^j_{C} - E^{j}_d|^k, \\ 
+    A_k(C) &= \tfrac{1}{k} |A_{C} - A_d|^k, \quad
+    E_k(C) &=  \sum\limits_{j=1}^{N_V} \tfrac{1}{k} |E^j_{C} - E^{j}_d|^k, \quad
     I_k(C) &= \sum\limits_{j=1}^{N_V} \tfrac{1}{k}| I^j_{C} - I^{j}_d |^k,
 \end{align*}
-from Equations~\eqref{eq:areaEnergy}, \eqref{eq:edgeEnergy} and \eqref{eq:intAngleEnergy}, respectively.\\
+from Equations~\eqref{eq:areaEnergy}, \eqref{eq:edgeEnergy} and \eqref{eq:intAngleEnergy}, respectively. \\
 To this end, we explicitly computed the corresponding vertex gradients. 
 For the area energy, we obtained  
 \begin{align*}
@@ -76,17 +77,17 @@ The interior angle energy yielded the vertex gradient
 				\right),
 		\end{split}
 \end{align*}
-as shown in Equation~\eqref{gradient:angle}. \\
+as shown in Equation~\eqref{gradient:angle}. 
 
 After establishing the shape preserving forces, we turned our attention to modelling cell-cell overlap resolution. 
 We considered the deforming overlap energy from Equation~\eqref{eq:overlapEnergy} 
 \[
-    O_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \; \sum\limits_{m=i+1}^{N_C} \; \sum\limits_{D \,\in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k.
+    \hat{O}_k(\vec{C}) = \sum\limits_{i=1}^{N_C} \; \sum\limits_{m=i+1}^{N_C} \; \sum\limits_{D \,\in\, \Omega_{C_i,C_m}} \tfrac{1}{k}|A_{D}|^k.
 \]
 From that energy, we derived the deforming overlap force by computing the vertex gradient in Equation~\eqref{grad:overlap}
 \begin{align*}
 \begin{split}
-    \nabla_{\vec{v}_j^{\: i}} O_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}} 
+    \nabla_{\vec{v}_j^{\: i}} \hat{O}_k(\vec{C}) &= \sum\limits_{D \in \Omega_{C_i,C_m}} 
     |A_{D}|^{k-1} \Biggl(
         \mathbf{1}_{V(D)}(\vec{v}_j^{\: i}) \nabla_{\vec{v}_j^{\: i}}A(D)  \\[0.5em]
         &\qquad + \sum\limits_{\vec{w} \in W(D)} 
@@ -99,36 +100,27 @@ From that energy, we derived the deforming overlap force by computing the vertex
     \Biggr).
 \end{split}
 \end{align*}
-
-In order to be able to model the dynamic of the hard sphere model from Bruna and Chapman in~\cite{Bruna2012} more closely, we also implemented the bounce overlap force, that is 
+This force dissolves cell overlaps by moving overlap involved vertices out of the overlap, thereby changing the cell shape.
+In order to be able to model the dynamic of the HSCM from Bruna and Chapman in~\cite{Bruna2012} more closely, we also implemented the bounce overlap force.
+Unlike the deforming overlap force, the bounce overlap force does not change cell shapes, but it transports the whole cell away from overlapping cells.
+The vertex gradient is given by
 \begin{align*}
-    F^{(\bar{O})}_i(\vec{C}) = -(\nabla_{\vec{v}^{\: i}_1} \bar{O}(\vec{C}), \ldots, \nabla_{\vec{v}^{\: i}_{N_V}} \bar{O}(\vec{C})),
-\end{align*}
-where the vertex wise gradient is given by 
-\begin{align}
     \nabla_{\vec{v}^{\: i}_k} \bar{O}(\vec{C}) = \frac{1}{N_C} \sum\limits_{j \neq i} \mathbf{1}_{[0, 2r)}(\norm[\vec{x}_i - \vec{x}_j]) (\norm[\vec{x}_i - \vec{x}_j] - 2r)   \frac{\vec{x}_i - \vec{x}_j}{ \norm[\vec{x}_i - \vec{x}_j]},
-\end{align}
+\end{align*}
 derived in Proposition~\ref{prop:bounceForce}. \\
 We further introduced a hardness parameter $h \in [0,1]$ to interpolate between deforming and bouncing overlap forces. 
-Based on all previous components, we then derived the full DF dynamics in SDE form and conducted a parameter study to determine suitable force scalings, summarised in Table~\ref{table:forcescalings}. 
-Altogether, the resulting DF SDE was given in Definition~\ref{def:df-sde} by  
+Based on all previous components, we then derived the full DF dynamics in SDE form and conducted a parameter study to determine suitable force scalings, summarised in Table~\ref{table:forcescalings}. \\
+Altogether, the resulting deterministic part $\F^i_j$ from SDE~\eqref{SDE:DFvertexwise} can be written as 
 \begin{align*}
-    \dequ C_i(t) 
-    = \F^{i}(\vec{C}(t)) \dequ t 
-    + \dequ B_i^{x}(t) \: e_{N_V}^{x} 
-    + \dequ B_i^{y}(t) \: e_{N_V}^{y},
+    \F^i_j(\vec{C}(t)): (\R^{2N_V})^{N_C} \:&\longrightarrow\: \R^{2}, \\[0.5em]
+    \F^i_j(\vec{C}(t)) 
+    =\;  - \nabla_{\vec{v}^{\:i}_j} \bigl(&\alpha_{A}   A_2(C_i(t))  
+    + \alpha_{E} E_2(C_i(t))  
+    + \alpha_{I} I_2(C_i(t))  \\
+    &+ (1-h)\alpha_{\hat{O}}  \hat{O}_{1}(\vec{C}(t)) 
+    + h \alpha_{\bar{O}}\bar{O}(\vec{C}(t))\bigr).
 \end{align*}
-where the deterministic part takes the form  
-\begin{align*}
-    & \F^i: (\R^{2N_V})^{N_C} \longrightarrow \R^{2N_V}, \\[0.5em]
-    \F^{i}(\vec{C}) 
-    =\; & \alpha_{A} F_2^{(A)}(C_i) 
-    + \alpha_{E} F_2^{(E)}(C_i) 
-    + \alpha_{I} F_2^{(I)}(C_i) \\[0.5em]
-    & + (1-h)\alpha_{\hat{O}} F_{1,i}^{(\hat{O})}(\vec{C}) 
-    + h \alpha_{\bar{O}} F_i^{(\bar{O})}(\vec{C}).
-\end{align*}
-
+Definition~\ref{def:df-sde} also states the DF SDE in a cell wise view. \\
 In Chapter~\ref{sanitycheck}, `DF model validation and simulation analysis', we turned to the validation and analysis of the DF model. 
 First, we confirmed the qualitative correctness of our approach by comparing the hard DF dynamics with an established hard sphere model from the literature \cite{Bruna2012}. 
 As illustrated in Figure~\ref{fig:compareHSCM}, the trajectories produced by our hard DF model closely resemble those obtained in their setting, thereby supporting the consistency of our formulation. \\
@@ -137,15 +129,15 @@ These comparisons revealed a clear trend: the diffusion rate increases as the ha
 Finally, we investigated shape deformation across simulations. 
 Here, we observed that deformation becomes more pronounced as the cell hardness decreases, which is consistent with the construction of the model. 
 Moreover, most of the deformation occurs at the beginning of each simulation, when the cells start out densely packed near the centre of the domain before gradually spreading out. 
-This behaviour confirms the intended interplay between overlap forces, shape energies, and the hardness parameter. \\
-In the final chapter, we derived the mean field description corresponding to the hard DF dynamics. 
+This behaviour confirms the intended interplay between the interaction forces and shape preserving forces, regulated by the hardness parameter. \\
+In the final chapter, we derived the mean field description corresponding to the hard DF dynamics (hardness $h=1$). 
 We obtained a partial differential equation governing the temporal evolution of the mean field density. 
 Figures~\ref{fig:needle400} and~\ref{fig:needle-limit} demonstrate the correspondence between the first marginal of the empirical measure and the resulting mean field density, thereby providing an explicit example of the mean field convergence mechanism. \\
 Finally, we specialised the mean field equation to the setting of hard DF cells, without the deforming overlap force. 
-In this case, the resulting PDE reads  
+In this case, the resulting PDE for the mean field density $\bar{\rho}_t^{\:N_V}$ reads  
 \begin{align*}
     \frac{\partial \bar{\rho}_t^{\:N_V}(X)}{\partial t} - &\nabla_X \cdot \Bigl[ \bar{\rho}_t^{\:N_V}(X) \Bigl\{ \alpha_{\bar{O}}\left(\nabla_X \left( \psi \circ \chi \right) * \bar{\rho}_t^{\:N_V}\right)\!(X) \\
-    & + \nabla_X E_A(X) + \nabla_X E_E(X) + \nabla_X E_I(X)\Bigr\} \Bigr] = 0, \quad X \in \R^{2N_V},
+    & + \alpha_A \nabla_X A_2(X) + \alpha_E \nabla_X E_2(X) + \alpha_I \nabla_X I_2(X)\Bigr\} \Bigr] = 0, \quad X \in \R^{2N_V},
 \end{align*}
 where the corresponding cell wise gradients for the area, edge, and interior angle energies were found explicitly in Equations~\eqref{eq:cGradArea}, \eqref{eq:cGradEdge}, and~\eqref{eq:cGradAngle}. 
 The gradient $\nabla_X \left( \psi \circ \chi \right)(X)$ is given in Equation~\eqref{cellgrad:bounce}.
