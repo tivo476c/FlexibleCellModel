@@ -1,7 +1,4 @@
 \section{DF model validation and simulation analysis} \label{sanitycheck}
-
-
-
 In this chapter, we continue by performing and analysing cell simulations based on the DF model. 
 The chapter is structured into four subsections: we first introduce the reference model from~\cite{Bruna2012}, followed by a reproduction of their published results to validate our implementation. 
 We then extend the analysis to simulations involving deformable cells and finally conclude with a quantitative assessment of cell shape deformation.  \\
@@ -11,14 +8,13 @@ In the following subsection, we briefly summarise the theoretical formulation of
 
 \subsection{Reference simulations: Bruna and Chapman (2012)}
 
-The point particle and hard sphere models from~\cite{Bruna2012} were already introduced in Section~\ref{intro}. 
-In the following, we restate the explicit cell dynamics and corresponding first marginals, using specified parameters from the reference paper~\cite{Bruna2012}, to set the stage for our subsequent numerical reproduction. \\
+The point particle model and HSCM from~\cite{Bruna2012} were already introduced in Section~\ref{intro}. 
+In the following, we restate the explicit cell dynamics and corresponding first marginals, using specified parameters from the reference paper~\cite{Bruna2012}, to set the stage for our subsequent numerical reproduction. 
 The paper~\cite{Bruna2012} investigates its problem on the square domain
 \[
     \Omega_{BC} = [-0.5, 0.5]^2,
 \]
 in which $N_{C} = 400$ particles are located.  
-
 The point particle dynamics are defined by
 \begin{equation*}
     \dequ \vec{x}_i(t) = \sqrt{2} \, \dequ \vec{B}_i(t), \quad \vec{x}_i \in \Omega_{BC}^{\circ},
@@ -36,7 +32,6 @@ In this case, we set the diffusion coefficient to $D = 1$ and omit any external 
     \label{equ:marginalPP}
 \end{align}
 which is expressed in divergence form and represents the diffusion of independent Brownian particles within the confined domain. \\
-
 In order to transition from the point particle system to the hard sphere cell model, we introduce the cell diameter $0 < \epsilon \ll 1$. 
 As recalled from the introduction, Section~\ref{intro}, the hard sphere dynamics are defined by
 \begin{equation*}
@@ -273,14 +268,13 @@ The corresponding stochastic representation, referred to as the mid DF model SDE
 
 
 
-Having established the three DF model formulations — the hard, mid, and soft variants — we now turn to a direct visual comparison of their collective dynamics. \\
+Having established the three DF model formulations - the hard, mid, and soft variants - we now turn to a direct visual comparison of their collective dynamics. \\
 Figure~\ref{fig:dfHeatmaps} presents one of the central results of this work, illustrating the temporal evolution of the cell density for each model side by side. 
 Each panel shows the corresponding heatmap representation of the simulated particle distribution, normalised to unit mass, thus enabling a direct comparison of the spatial spreading behaviour under the different interaction assumptions. \\
 This figure highlights how progressively relaxing the rigidity constraint from the hard to the soft DF model alters the emergent cell dynamics. 
 The hard DF system, governed by strictly repulsive collisions, shows the fastest diffusion rate of our three models. 
 In contrast, the soft DF model, that only uses cell deformation for overlap degeneration, exhibits a narrower spatial distributions due to the missing push dynamic from the bounce overlap force in case of cell overlap. 
 The mid DF configuration naturally occupies an intermediate regime, demonstrating a gradual transition in diffusion rate. \\
-%% macro flag
 Together, these visualisations provide an intuitive understanding of how cell deformability influences the density evolution of the system and serve as a qualitative validation of the modelling framework. 
 We therefore proceed by analysing these results in greater detail in the following discussion. 
 \FloatBarrier
@@ -340,7 +334,6 @@ For each vertical line across the domain, we compute the integrated density by s
 This yields a vector of length~$N_H$ representing the average cell density per vertical line. \\
 The same operation is then repeated along all horizontal lines to obtain a second vector. 
 The final one-dimensional density profile is obtained as the arithmetic mean of the two vectors, thereby combining information from both orientations to reduce sampling bias. \\
-
 The resulting averaged density vector $\rho_{\mathrm{cross}}$ is then plotted against the spatial coordinate in $[-0.5, 0.5]$, providing a concise visualisation of the overall distribution of cells along the domain. \\
 By construction, the cross-section profile is normalised to unit mass,
 \[
@@ -348,7 +341,7 @@ By construction, the cross-section profile is normalised to unit mass,
 \]
 ensuring direct comparability between simulations with different model parameters or deformability assumptions. \\
 This representation offers a clear and compact way to quantify the spread and peak structure of the cell population, complementing the qualitative insights from the heatmaps. 
-The cross-section plots for our three DF model variants at different time points are shown in Figure~\ref{fig:crosssections}. \\ 
+The cross-section plots for our three DF model variants at different time points are shown in Figure~\ref{fig:crosssections}. 
 
 \begin{figure}[h!]
     \centering
@@ -370,7 +363,6 @@ The cross-section plots for our three DF model variants at different time points
  
 	\label{fig:crosssections}    
 \end{figure}
-
 The cross-section plots allow for a more direct quantitative comparison of the density evolution across the three DF models. Initially, all simulations start from an identical spatial distribution, ensuring that any subsequent differences arise solely from the respective interaction rules. 
 Note that the scaling of the $y$-axis changes from $[0, 3.5]$ at $t = 0$ to $[0.7, 1.3]$ at $t = 0.05$, reflecting the diffusive spreading of the density field in all cases. \\
 As the plots reveal, increasing the hardness of the model leads to a faster redistribution of the density over time. 
