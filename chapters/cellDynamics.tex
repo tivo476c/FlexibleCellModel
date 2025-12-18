@@ -122,6 +122,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 		$A_C = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^{x} v_{j+1}^{y} - v_{j+1}^{x} v_j^{y})$,
 	\end{center} 
 	where $\vec{v}_{N + 1} = \vec{v}_1$. \\
+
 	Proof. 	\\
 	An illustration supporting the proof is provided in Figure~\ref{fig:shoelace}, which is where the idea of the proof comes from. 
 	Without loss of generality, we may assume that all coordinates are positive.
@@ -219,7 +220,6 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 
 	Proof.\\
 	Choose $1 \leq j \leq N_V$.  
- 
 	\begin{align*}
 		\nabla_{\vec{v}_j} A_k(C) &= \tfrac{1}{k} \nabla_{\vec{v}_j} | A_{C} - A_d |^k  \\ 
 		&= \sgn(A_{C} - A_d) | A_{C} - A_d |^{k-1} \nabla_{\vec{v}_j} (A_{C} - A_d) \\
@@ -234,7 +234,6 @@ To maintain the cell area during the simulation, we evaluate the gradient flow o
 				v_{j-1}^{x}  - v_{j+1}^{x} 
 			\end{pmatrix}.
 	\end{align*}
-
 	Remember that $A_d$ is just an independent constant. 
 	\qed
 \end{proposition}
@@ -281,7 +280,7 @@ An isolated application of the edge force can be seen in Figure~\ref{fig:edgeFor
 	\end{align}
 	for all $1 \leq j \leq N_V$.\\
 
-	Proof. %of Proposition \ref{prop:edgeforce}. \\
+	Proof. \\
 	We consider
 	\begin{align*}
 		\nabla_{\vec{v}_{j}} E_k(C) &= \nabla_{\vec{v}_{j}} \sum\limits_{j=1}^{N_V} \tfrac{1}{k} |E^j_{C} - E^{j}_d|^k \\
@@ -774,19 +773,19 @@ It may be empty if the next intersection occurs on the same edge as the current 
 Both the path and the newly found intersection are appended to `newOverlap', and the intersection is also added to the list usedIntersections.\\
 Since each intersection implies changing the cell from which the overlapping cell uses the edges, `\textsc{findPath}' is now applied to the other cell. 
 Again, it will deliver the next intersection as well as a list of the in between laying vertices. 
-The vertex list always gets appended to `newOverlap'. \\
+The vertex list always gets appended to `newOverlap'. 
 If the newly found intersection is equal to the initial intersection $I[1]$, then the construction of the discrete overlap cell `newOverlap' is complete. 
-At this point, both `newOverlap' and `usedIntersections' can be returned by the function `\textsc{construct-Overlap}'. \\
+At this point, both `newOverlap' and `usedIntersections' can be returned by the function `\textsc{construct-Overlap}'. 
 Otherwise, the newly found intersection is appended to both `newOverlap' and `usedIntersections', and the process continues by calling `\textsc{findPath}' on the other discrete cell.   
 This step is repeated until the starting intersection is reached, completing the overlap cell construction. \\
 Once an overlap between $C$ and $\zeta$ has been successfully extracted, all intersections used in its construction can be removed from the list $I$, since each intersection point belongs to exactly one overlap. 
 As long as $I$ is not empty, the function `\textsc{constructOverlap}' can be called again with the updated list to extract the next overlap. 
 When $I$ is empty, we can be certain that all intersections between $C$ and $\zeta$ have been processed, and thus all overlaps between the two cells have been identified. \\
 Each time `\textsc{findPath}' is called, it is not immediately clear in which direction the function should traverse the vertices of the given cell. 
-However, the correct direction can be determined using the following approach. \\
+However, the correct direction can be determined using the following approach. 
 Starting from the current intersection passed into the function, move a small distance in one direction along the edge of the given cell where the intersection is located. Next, check whether this new point lies within the boundaries of the other cell as well. 
 If the point is found in both cells, the chosen direction is correct. 
-If not, then the opposite direction must be used. \\ 
+If not, then the opposite direction must be used. 
 A simple method to determine whether a point lies inside a polygon is to draw a ray from the point to the outside of the polygon. 
 The number of intersections between the ray and the polygon's edges determines the point's position. 
 If the number of intersections is odd, the point is inside the polygon.
@@ -1280,10 +1279,12 @@ We use a normalisation factor of $\frac{1}{N_C}$ in the energy definition to ens
             2 (x^x_i - x^x_j)\tfrac{\partial}{ \partial v^{i, x}_k} \left[ x^x_i - x^x_j \right] \\[0.5em]
             2 (x^y_i - x^y_j)\tfrac{\partial}{ \partial v^{i, y}_k} \left[ x^y_i - x^y_j \right] 
         \end{pmatrix} \\ 
+	\end{align*}
+	\begin{align*}
         &= \frac{1}{ \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
              (x^x_i - x^x_j) \tfrac{\partial}{  \partial v^{i, x}_k} \left[ \tfrac{1}{N_V} \sum\limits_{k=1}^{N_V} v^{i, x}_k \right] \\[0.5em]
              (x^y_i - x^y_j) \tfrac{\partial}{  \partial v^{i, y}_k} \left[ \tfrac{1}{N_V} \sum\limits_{k=1}^{N_V} v^{i, y}_k \right] 
-        \end{pmatrix} \\ 
+        \end{pmatrix} \hspace*{1cm}\\ 
         &= \frac{1}{ \norm[\vec{x}_i - \vec{x}_j]} \begin{pmatrix}
              \tfrac{1}{N_V} (x^x_i - x^x_j)  \\[0.5em]
              \tfrac{1}{N_V} (x^y_i - x^y_j) 

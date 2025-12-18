@@ -252,8 +252,8 @@ The model enforces this constraint using reflective boundary conditions on the c
 \[
 	\norm[\vec{x}_i - \vec{x}_j] = \epsilon, \quad 1 \leq  i < j \leq N_C.
 \]
-Due to the presence of numerous holes (occupied by other cells), these reflections create a unique dynamic where cells effectively bounce off each other, distinct from the unhindered motion of point particles. \\
-The structure for computing the first marginal of the HSCM is quite analogous to the computation for the point particles. \\
+Due to the presence of numerous holes (occupied by other cells), these reflections create a unique dynamic where cells effectively bounce off each other, distinct from the unhindered motion of point particles. 
+The structure for computing the first marginal of the HSCM is quite analogous to the computation for the point particles. 
 The joint probability density function $P$ of the $N_C$ particles satisfies the high-dimensional Fokker-Planck equation
 \begin{align*}
 	\dfrac{\partial P}{\partial t} = \nabla_{X} \cdot [ D \nabla_{X} P - P F], \quad X \in \Omega_{\epsilon}^{N_C}, \: t > 0,
@@ -274,10 +274,9 @@ Using the method of matched asymptotic expansions, the authors also derived the 
 \end{align}
 Comparing Equation~\eqref{equ:hardsphere} (the first marginal distribution for hard spheres) with Equation~\eqref{equ:pointparticle} (the first marginal distribution for point particles), we observe an additional term in Equation~\eqref{equ:hardsphere}. 
 This term accounts for the enhanced diffusion rate resulting from the excluded volume effects of the hard spheres. 
-As the particle diameter $\epsilon \to 0$, Equation~\eqref{equ:hardsphere} converges to Equation~\eqref{equ:pointparticle}, recovering the dynamics of point particles. \\
-It is important to note that while the joint probability density function for hard spheres is defined on the restricted configuration space $\Omega_{\epsilon}^{N_C}$, the first marginal density function $\rho(t; \vec{x})$ remains defined on the original domain $\Omega$. \\
-This distinction arises because $\rho(t; \vec{x})$ is obtained by integrating the joint density over all other particle positions, effectively averaging out the excluded volume constraints. 
-
+As the particle diameter $\epsilon \to 0$, Equation~\eqref{equ:hardsphere} converges to Equation~\eqref{equ:pointparticle}, recovering the dynamics of point particles. 
+It is important to note that while the joint probability density function for hard spheres is defined on the restricted configuration space $\Omega_{\epsilon}^{N_C}$, the first marginal density function $\rho(t; \vec{x})$ remains defined on the original domain $\Omega$. 
+This distinction arises because $\rho(t; \vec{x})$ is obtained by integrating the joint density over all other particle positions, effectively averaging out the excluded volume constraints. \\
 For any position $\vec{x} \in \Omega$, there exist valid configurations where the first particle occupies $\vec{x}$ while all other particles are positioned to avoid overlap. 
 Consequently, the marginal density remains well defined across the entire domain $\Omega$, despite the joint density being restricted to $\Omega_{\epsilon}^{N_C}$. \\
 In the derivation of Equation~\eqref{equ:hardsphere}, the divergence theorem introduces additional boundary terms arising from the excluded volume holes in the configuration space $\Omega_{\epsilon}^{N_C}$. 
@@ -298,7 +297,7 @@ It uses the Monte Carlo method for the point particles and the hard sphere in or
 Next, we consider an extension of the model by introducing deformable soft spherical particles. 
 This new model incorporates the effect of deformation and interaction between particles through a potential energy function that depends on the distance between the particles.
 For example, the paper~\cite{Bruna2017}, written by Bruna, Chapman and Robinson, analyses the diffusion properties of such a model. \\
-The HSCM enforces rigid, non-deformable cell boundaries through reflective boundary conditions at a fixed separation distance, leading to abrupt, instantaneous collisions without any interface deformation. \\
+The HSCM enforces rigid, non-deformable cell boundaries through reflective boundary conditions at a fixed separation distance, leading to abrupt, instantaneous collisions without any interface deformation. 
 Cells are still represented solely by their centre points $\vec{x}_i \in \Omega$, $1 \leq i \leq N_C$.
 Consequently, this model does not account for shape deformations, as no explicit cell boundary is included in the system. \\
 In contrast to the HSCM, the soft sphere cell model (SSCM) does not enforce rigid reflective boundaries. 
@@ -306,7 +305,7 @@ Instead, it allows the centres of two cells to temporarily approach each other t
 The system is driven to resolve such overlaps through a repulsive interaction potential, $u: \R_+ \longrightarrow \R$ that assigns an energy penalisation for a given intercellular distance. 
 For repulsive short range potentials, $u$ is characterised by a rapid decay from a high value at small separations to zero at larger distances. \\
 The transition from reflective boundary conditions on neighbouring cell walls to interaction potentials renders the use of a hollow domain impractical.
-Therefore, we return to the original domain $\Omega$, within which all cells are located. \\
+Therefore, we return to the original domain $\Omega$, within which all cells are located. 
 There are different approaches for modelling a specific function for $u$, that of course also change the cell system dynamics. 
 The interaction potentials discussed in Bruna, Chapman, and Robinson~\cite{Bruna2012}, represent the energy of interaction between two particles separated by distance $r$. 
 The cell diameter $\epsilon > 0$ used in the HSCM now represents the range of interaction in the soft sphere setting. 
@@ -322,7 +321,6 @@ Another common form is the exponential (EX) potential
 	u_{\text{EX}}(r) = e^{- \tfrac{r}{\epsilon}},
 \]
 which features a smooth, rapidly decaying repulsion. \\
-
 Once an interaction potential has been chosen, the dynamics of the soft sphere cell model for cell $i$ can be defined as follows
 \begin{align*}
 	\dequ \vec{x}_i(t) =  f(\vec{x}_i(t))\, \dequ t - \sum\limits_{j\neq i} \nabla_{\vec{x}_i} u (\norm[ \vec{x}_i(t) - \vec{x}_j(t)])\, \dequ t + \sqrt{2D} \, \dequ \vec{B}_i(t), 
@@ -352,7 +350,7 @@ Crucially, the parameter
 \]
 quantifies the strength of the non-linear diffusion effect, with larger values corresponding to stronger excluded volume effects that enhance the overall diffusion rate of the system. \\
 When comparing the first marginals of the SSCM Equation~\eqref{equ:softsphere} and the HSCM Equation~\eqref{equ:hardsphere}, we can see that they are similar in structure, with the difference being the coefficients of the non-linear diffusion terms. 
-We cannot say definitely which model diffuses faster, as this is dependent on the modelling of the soft interaction. \\
+We cannot say definitely which model diffuses faster, as this is dependent on the modelling of the soft interaction. 
 The influence of the cell hardness to the diffusion rate of the cell system will be investigated in this thesis. 
 We even introduce a parameter that can continuously change the cell hardness from hard to soft. \\
 While these models are powerful, they are limited to spherical particles and do not account for the complex shapes and deformations observed in biological cells.  \\
@@ -363,7 +361,7 @@ A new cell modelling framework is now considered which, unlike the models before
 The representation of a cell shifts from just a two-dimensional point $\vec{x}_i(t) \in \Omega$ to a phase field variable 
 $$\phi_i(t, \vec{x}): \R_+ \times \Omega \longrightarrow [-1,1],$$ 
 that defines its cell border through the level null set, i.e., points $\vec{x} \in \Omega$ where $\phi_i(t, \vec{x}) = 0$. \\
-The phase field approach exhibits conceptual parallels with the SSCM proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modelled through a continuous repulsive energy that prevents overlap. \\
+The phase field approach exhibits conceptual parallels with the SSCM proposed by Bruna, Chapman, and Robinson~\cite{Bruna2017}, particularly in how cell-cell interactions are modelled through a continuous repulsive energy that prevents overlap. 
 In both formulations, interactions are governed by a smooth, short range influence. 
 The SSCM derives its interaction dynamics from the potential energy $u(\|\vec{x}_i - \vec{x}_j\|_2)$, which leads to a non-linear diffusion equation featuring a diffusion coefficient that depends on local density. \\
 The phase field model resolves cell overlaps through a free energy producing a repulsive force between cells. 
@@ -375,7 +373,7 @@ Unlike the SSCM, which treats cells as point like entities interacting via a smo
 This enables a natural description of complex cell morphologies, topological transitions such as cell division or fusion, and the integration of cell mechanics with geometric curvature via extrinsic curvature contributions in the free energy. \\
 Phase field variables represent cells as smooth functions $\phi_i(\vec{x}, t) \in [-1, 1]$, with $\phi_i > 0$ in the cell interior and $\phi_i <0$ in the exterior. 
 The cell wall is denoted by values of $\phi_i = 0$. 
-An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield}. \\
+An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield}. 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.9\textwidth]{intro/phasefield+cut.png}
@@ -386,7 +384,6 @@ An illustration of a phase field variable is shown in Figure~\ref{fig:phasefield
 	}
 	\label{fig:phasefield}
 \end{figure}
-
 
 The dynamics of a phase field variable $\phi_i$ can typically be given by a gradient flow of a free energy functional
 \begin{align*}
@@ -422,7 +419,7 @@ is an approximation of the delta function of the cell boundary that is non-zero 
 The sum in the integral accounts for the interaction with all other cells $j \neq i$ through a short range potential $w(d_j)$, where $d_j$ is the signed distance function to the cell boundary of cell $j$.  
 When employing this dynamics, the interaction force $F_{\text{INT}}$, acts to reduce or eliminate cell overlaps. \\
 The third energy term $F_\text{M}$ differs for different models and incorporates additional mechanical properties of the cells, such as area conservation or bending energy.
-This energy is dependent on the use case of the model. \\
+This energy is dependent on the use case of the model. 
 It can have a large influence on the dynamic of a phase field model, as analysed in~\cite{wenzel2021}, where the authors focus on the influence of microscopic details to incorporate active forces on emerging phenomena.\\
 Four different approaches are considered.
 One in which the activity is determined by a random orientation, one where the activity is related to the deformation of the cells, and two models with subcellular details to resolve the mechanical interactions underlying cell migration. 
@@ -488,9 +485,9 @@ The qualitative differences observed highlight the importance of microscopic det
 
 \subsubsection{Vertex model} 
 The last cell model approach is also the approach we choose in this thesis. 
-Vertex models represent a powerful and versatile approach for simulating the mechanical behaviour of biological cells and tissues. \\
+Vertex models represent a powerful and versatile approach for simulating the mechanical behaviour of biological cells and tissues. 
 Originating from materials science and solid mechanics, these models represent cells as polygons, where the boundaries are defined by a discrete set of vertices connected by edges. 
-The degrees of freedom in these models are precisely these vertices, meaning that all the cell model dynamics are applied only to the vertices. \\
+The degrees of freedom in these models are precisely these vertices, meaning that all the cell model dynamics are applied only to the vertices. 
 The cell dynamic in a vertex model is usually given by the equation
 \begin{align}
 	\dfrac{\dequ \vec{x}^{\:i}_j}{\dequ t} = F^{\:i}_j, \label{eq:vertexmodel}
@@ -502,7 +499,6 @@ This method called gradient flow is also used for phase field models. \\
 Due to their discrete nature, vertex models are computationally efficient compared to continuum models, while still providing rich insights into the interplay between cell mechanics and collective behaviour, making them invaluable for grasping	 fundamental principles governing cell organisation and tissue dynamics across diverse biological contexts. \\
 This geometric representation allows for the incorporation of key cellular properties, such as surface tension, cortical tension, adhesion, and local shape constraints, into an energy functional. 
 Minimising this energy through computational simulation enables the capture of emergent phenomena like tissue morphogenesis, cell migration, wound healing, and pattern formation. \\
-
 % fletcher 
 In~\cite{Fletcher14} a sophisticated vertex based model is presented.
 It is used to simulate the dynamic behaviour of confluent epithelial cell sheets, representing tissues where cells completely cover the available space without gaps. 
@@ -576,11 +572,9 @@ Repulsive forces are then calculated based on the minimum distance $d_{\text{min
 The SS interaction energy is then formulated by replacing the RS term $\delta - |\vec{v}^{\:i}_{j} - \vec{v}^{\:m}_{k}|$ with $\delta - d_{\min}$. 
 This method provides a smoother, more continuous repulsion, better approximating the behaviour of soft, continuous interfaces. \\ 
 Despite the different interaction mechanisms, both methods yield similar structural and mechanical properties at jamming onset. 
-This indicates that the overall jamming behaviour is robust to the specific choice of interaction model. \\
-
+This indicates that the overall jamming behaviour is robust to the specific choice of interaction model. 
 % transition to our model:
 \subsection{Discrete Form model} 
-
 This thesis investigates the Discrete Form (DF) cell model, a vertex based framework inspired by~\cite{Fletcher14, Boromand2018} for simulating cell dynamics in non-confluent systems, similar to~\cite{Boromand2018}, but typically using fewer vertices (e.g., $N_V=6$). \\
 The DF model incorporates shape preserving forces (area, edge, interior angle force) and interaction forces (deforming and bounce overlap force) derived as gradient flows of energy functionals, allowing for cell deformation like in~\cite{Boromand2018, Fletcher14,wenzel2021,Happel2023} and ensuring evolution towards lower energy configurations. 
 This allows representation of a wide range of desired cell shapes. \\

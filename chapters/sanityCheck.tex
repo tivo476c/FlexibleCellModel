@@ -211,7 +211,7 @@ After confirming that our implementation correctly reproduces the dynamics of no
 In biological systems, cell-cell interactions are rarely perfectly hard.
 Instead, cells can locally deform upon contact, redistributing internal stresses and slightly modifying their effective motion.
 To capture this behaviour, we relax the hard sphere constraint by introducing a soft deformable force that acts when two cells are sufficiently close to each other. \\
-This modification leads to an extended stochastic description in which the overlap force $F_i^{(\hat{O})}(\vec{C})$, defined in \ref{force:deformingOverlap}, supplements the purely repulsive (bounce) force $F_i^{(\bar{O})}(\vec{C})$ (\ref{force:bounceOverlap}), whenever we use a hardness $h < 1$.
+This modification leads to an extended stochastic description in which the deforming overlap force $F_i^{(\hat{O})}(\vec{C})$, defined in Proposition~\ref{force:deformingOverlap}, supplements the purely repulsive bounce overlap force $F_i^{(\bar{O})}(\vec{C})$ (Proposition~\ref{prop:bounceForce}), whenever we use a hardness $h < 1$.
 The resulting system of SDEs describes the coupled motion of deformable cells under diffusion and interaction forces, thereby forming the soft DF model. 
 In the following, we derive two SDE formulation, called soft and mid DF model, and discuss their relation to the non-deformable case, the hard DF model. \\ 
 The soft DF model corresponds to the case of fully deformable cells without any hard repulsion, i.e. with hardness $h = 0$. 
@@ -268,7 +268,7 @@ The corresponding stochastic representation, referred to as the mid DF model SDE
 
 
 
-Having established the three DF model formulations - the hard, mid, and soft variants - we now turn to a direct visual comparison of their collective dynamics. \\
+Having established the three DF model formulations - the hard, mid, and soft variants - we now turn to a direct visual comparison of their collective dynamics. 
 Figure~\ref{fig:dfHeatmaps} presents one of the central results of this work, illustrating the temporal evolution of the cell density for each model side by side. 
 Each panel shows the corresponding heatmap representation of the simulated particle distribution, normalised to unit mass, thus enabling a direct comparison of the spatial spreading behaviour under the different interaction assumptions. \\
 This figure highlights how progressively relaxing the rigidity constraint from the hard to the soft DF model alters the emergent cell dynamics. 
@@ -331,10 +331,10 @@ To this end, we introduce cross-section plots, which provide averaged density pr
 The procedure is as follows. 
 Starting from the discrete density field obtained from a DF simulation, the quadratic domain~$\Omega$ is subdivided into $N_H \times N_H$subsquares, where $N_H \in \N$ defines the spatial resolution with a corresponding step size $\Delta x = 1 / N_H$, as $\Omega$ has a side length of $1$. \\
 For each vertical line across the domain, we compute the integrated density by summing the density values of all subsquares along that line, multiplied by the step size~$\Delta x$. 
-This yields a vector of length~$N_H$ representing the average cell density per vertical line. \\
+This yields a vector of length~$N_H$ representing the average cell density per vertical line. 
 The same operation is then repeated along all horizontal lines to obtain a second vector. 
 The final one-dimensional density profile is obtained as the arithmetic mean of the two vectors, thereby combining information from both orientations to reduce sampling bias. \\
-The resulting averaged density vector $\rho_{\mathrm{cross}}$ is then plotted against the spatial coordinate in $[-0.5, 0.5]$, providing a concise visualisation of the overall distribution of cells along the domain. \\
+The resulting averaged density vector $\rho_{\mathrm{cross}}$ is then plotted against the spatial coordinate in $[-0.5, 0.5]$, providing a concise visualisation of the overall distribution of cells along the domain. 
 By construction, the cross-section profile is normalised to unit mass,
 \[
 \sum_{i=1}^{N_H} \rho_{\mathrm{cross}}(x_i)\, \Delta x = 1,
@@ -405,7 +405,7 @@ Dividing by $P^2$ and multiplying by the factor $4\pi$ gives
 \[
     4\pi\,\frac{A_{F}}{{P_{F}}^2} \;\leq\; 1,
 \]
-and therefore $\alpha_F \leq 1$ for every region $F$, with $\alpha_F=1$ only for the circle. \\
+and therefore $\alpha_F \leq 1$ for every region $F$, with $\alpha_F=1$ only for the circle. 
 We can conclude that the asphericity of a two-dimensional figure is always bounded between $0$ and $1$.
 The lower bound $0$ is trivial since both area and perimeter are positive for any non-degenerate region, and hence $\alpha_F\in[0,1]$. \\
 In our simulations, the asphericity is straightforward to compute from the DF cell geometry. 
