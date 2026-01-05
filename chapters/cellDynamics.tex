@@ -48,7 +48,7 @@ The next step is to describe the setup of a DF simulation.
 	\end{center}
 	We define the vertex wise DF SDE generally as
 	\begin{center}
-		$ \dequ \vec{v}^{\:i}_j(\vec{C}(t), t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2 D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V}$. 
+		$ \dequ \vec{v}^{\:i}_j(t) = \F^i_j(\vec{C}(t)) \, \dequ t + \sqrt{2 D} \, \dequ \vec{B}_i(t), \quad 1 \leq i \leq N_{C}, \: 1 \leq j \leq N_{V}$. 
 	\end{center}
 	where $\F^i_j$ describes the total interaction force on vertex $\vec{v}^{\:i}_j$ caused by the current cell system $\vec{C}$ and $\sqrt{2 D} \dequ \vec{B}_i(t)$ models the two-dimensional standard Brownian motion of cell $i$ with diffusion coefficient $D$.  
 	Note, that all vertices of cell $i$ perform the same Brownian motion such that the whole cell $i$ moves in the direction of $\dequ \vec{B}_i(t)$. \\
@@ -119,7 +119,7 @@ In order to compute a cells area, which is the area of a positively orientated p
 	Let $C = (\vec{v}_1, \ldots, \vec{v}_N)$ be a DF cell with $\vec{v}_j = (v_j^{x}, v_j^{y})^T$ for $j=1,\ldots,N$.
 	We determine the area $A_C$ of $C$ by applying the Shoelace formula
 	\begin{center}
-		$A_C = \frac{1}{2}\sum\limits_{j = 1}^{N} (v_j^{x} v_{j+1}^{y} - v_{j+1}^{x} v_j^{y})$,
+		$A_C = \frac{1}{2}\sum\limits_{j = 1}^{N_V} (v_j^{x} v_{j+1}^{y} - v_{j+1}^{x} v_j^{y})$,
 	\end{center} 
 	where $\vec{v}_{N + 1} = \vec{v}_1$. \\
 
